@@ -32,6 +32,7 @@ dependencies {
 }
 
 generateGrammarSource {
+	// Set maxHeapSize to pervent extremely large grammar from compiling (probably not needed)
     maxHeapSize = "64m"
 
     // Keep a copy of generated sources
