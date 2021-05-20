@@ -1,8 +1,7 @@
-// Generated from CTL.g4 by ANTLR 4.5
+// Generated from CTL.g4 by ANTLR 4.9
 
     package parser;
 
-import org.antlr.v4.runtime.misc.NotNull;
 import org.antlr.v4.runtime.tree.AbstractParseTreeVisitor;
 
 /**
@@ -55,14 +54,14 @@ public class CTLBaseVisitor<T> extends AbstractParseTreeVisitor<T> implements CT
 	 * <p>The default implementation returns the result of calling
 	 * {@link #visitChildren} on {@code ctx}.</p>
 	 */
-	@Override public T visitExistsEventually(CTLParser.ExistsEventuallyContext ctx) { return visitChildren(ctx); }
+	@Override public T visitFalse(CTLParser.FalseContext ctx) { return visitChildren(ctx); }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation returns the result of calling
 	 * {@link #visitChildren} on {@code ctx}.</p>
 	 */
-	@Override public T visitFalse(CTLParser.FalseContext ctx) { return visitChildren(ctx); }
+	@Override public T visitExistsEventually(CTLParser.ExistsEventuallyContext ctx) { return visitChildren(ctx); }
 	/**
 	 * {@inheritDoc}
 	 *

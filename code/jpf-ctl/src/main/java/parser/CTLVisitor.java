@@ -1,8 +1,7 @@
-// Generated from CTL.g4 by ANTLR 4.5
+// Generated from CTL.g4 by ANTLR 4.9
 
     package parser;
 
-import org.antlr.v4.runtime.misc.NotNull;
 import org.antlr.v4.runtime.tree.ParseTreeVisitor;
 
 /**
@@ -49,19 +48,19 @@ public interface CTLVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitTrue(CTLParser.TrueContext ctx);
 	/**
-	 * Visit a parse tree produced by the {@code ExistsEventually}
-	 * labeled alternative in {@link CTLParser#formula}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitExistsEventually(CTLParser.ExistsEventuallyContext ctx);
-	/**
 	 * Visit a parse tree produced by the {@code False}
 	 * labeled alternative in {@link CTLParser#formula}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
 	T visitFalse(CTLParser.FalseContext ctx);
+	/**
+	 * Visit a parse tree produced by the {@code ExistsEventually}
+	 * labeled alternative in {@link CTLParser#formula}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitExistsEventually(CTLParser.ExistsEventuallyContext ctx);
 	/**
 	 * Visit a parse tree produced by the {@code AtomicProposition}
 	 * labeled alternative in {@link CTLParser#formula}.

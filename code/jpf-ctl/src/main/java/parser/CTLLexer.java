@@ -1,4 +1,4 @@
-// Generated from CTL.g4 by ANTLR 4.5
+// Generated from CTL.g4 by ANTLR 4.9
 
     package parser;
 
@@ -13,7 +13,7 @@ import org.antlr.v4.runtime.misc.*;
 
 @SuppressWarnings({"all", "warnings", "unchecked", "unused", "cast"})
 public class CTLLexer extends Lexer {
-	static { RuntimeMetaData.checkVersion("4.5", RuntimeMetaData.VERSION); }
+	static { RuntimeMetaData.checkVersion("4.9", RuntimeMetaData.VERSION); }
 
 	protected static final DFA[] _decisionToDFA;
 	protected static final PredictionContextCache _sharedContextCache =
@@ -22,25 +22,38 @@ public class CTLLexer extends Lexer {
 		T__0=1, T__1=2, T__2=3, T__3=4, T__4=5, T__5=6, T__6=7, T__7=8, T__8=9, 
 		T__9=10, T__10=11, T__11=12, T__12=13, T__13=14, T__14=15, T__15=16, T__16=17, 
 		ATOMIC_PROPOSITION=18, WS=19;
+	public static String[] channelNames = {
+		"DEFAULT_TOKEN_CHANNEL", "HIDDEN"
+	};
+
 	public static String[] modeNames = {
 		"DEFAULT_MODE"
 	};
 
-	public static final String[] ruleNames = {
-		"T__0", "T__1", "T__2", "T__3", "T__4", "T__5", "T__6", "T__7", "T__8", 
-		"T__9", "T__10", "T__11", "T__12", "T__13", "T__14", "T__15", "T__16", 
-		"ATOMIC_PROPOSITION", "JAVANAME", "IDENTIFIER", "IDENTIFIER_START", "IDENTIFIER_PART", 
-		"WS"
-	};
+	private static String[] makeRuleNames() {
+		return new String[] {
+			"T__0", "T__1", "T__2", "T__3", "T__4", "T__5", "T__6", "T__7", "T__8", 
+			"T__9", "T__10", "T__11", "T__12", "T__13", "T__14", "T__15", "T__16", 
+			"ATOMIC_PROPOSITION", "JAVANAME", "IDENTIFIER", "IDENTIFIER_START", "IDENTIFIER_PART", 
+			"WS"
+		};
+	}
+	public static final String[] ruleNames = makeRuleNames();
 
-	private static final String[] _LITERAL_NAMES = {
-		null, "'('", "')'", "'!'", "'true'", "'false'", "'AX'", "'AG'", "'AF'", 
-		"'AU'", "'EX'", "'EU'", "'EG'", "'EF'", "'&&'", "'||'", "'->'", "'<->'"
-	};
-	private static final String[] _SYMBOLIC_NAMES = {
-		null, null, null, null, null, null, null, null, null, null, null, null, 
-		null, null, null, null, null, null, "ATOMIC_PROPOSITION", "WS"
-	};
+	private static String[] makeLiteralNames() {
+		return new String[] {
+			null, "'('", "')'", "'!'", "'true'", "'false'", "'AX'", "'AG'", "'AF'", 
+			"'AU'", "'EX'", "'EU'", "'EG'", "'EF'", "'&&'", "'||'", "'->'", "'<->'"
+		};
+	}
+	private static final String[] _LITERAL_NAMES = makeLiteralNames();
+	private static String[] makeSymbolicNames() {
+		return new String[] {
+			null, null, null, null, null, null, null, null, null, null, null, null, 
+			null, null, null, null, null, null, "ATOMIC_PROPOSITION", "WS"
+		};
+	}
+	private static final String[] _SYMBOLIC_NAMES = makeSymbolicNames();
 	public static final Vocabulary VOCABULARY = new VocabularyImpl(_LITERAL_NAMES, _SYMBOLIC_NAMES);
 
 	/**
@@ -90,13 +103,16 @@ public class CTLLexer extends Lexer {
 	public String getSerializedATN() { return _serializedATN; }
 
 	@Override
+	public String[] getChannelNames() { return channelNames; }
+
+	@Override
 	public String[] getModeNames() { return modeNames; }
 
 	@Override
 	public ATN getATN() { return _ATN; }
 
 	public static final String _serializedATN =
-		"\3\u0430\ud6d1\u8206\uad2d\u4417\uaef1\u8d80\uaadd\2\25\u0085\b\1\4\2"+
+		"\3\u608b\ua72a\u8133\ub9ed\u417c\u3be7\u7786\u5964\2\25\u0085\b\1\4\2"+
 		"\t\2\4\3\t\3\4\4\t\4\4\5\t\5\4\6\t\6\4\7\t\7\4\b\t\b\4\t\t\t\4\n\t\n\4"+
 		"\13\t\13\4\f\t\f\4\r\t\r\4\16\t\16\4\17\t\17\4\20\t\20\4\21\t\21\4\22"+
 		"\t\22\4\23\t\23\4\24\t\24\4\25\t\25\4\26\t\26\4\27\t\27\4\30\t\30\3\2"+
@@ -212,26 +228,26 @@ public class CTLLexer extends Lexer {
 		"\uaa52\uaa5b\uaa7d\uaa7f\uaab2\uaab2\uaab4\uaab6\uaab9\uaaba\uaac0\uaac1"+
 		"\uaac3\uaac3\uaaed\uaaf1\uaaf7\uaaf8\uabe5\uabec\uabee\uabef\uabf2\uabfb"+
 		"\ufb20\ufb20\ufe02\ufe11\ufe22\ufe31\uff01\uff01\uff12\uff1b\ufffb\ufffd"+
-		"\6\2\13\f\17\17\"\"==\u0084\2\3\3\2\2\2\2\5\3\2\2\2\2\7\3\2\2\2\2\t\3"+
-		"\2\2\2\2\13\3\2\2\2\2\r\3\2\2\2\2\17\3\2\2\2\2\21\3\2\2\2\2\23\3\2\2\2"+
-		"\2\25\3\2\2\2\2\27\3\2\2\2\2\31\3\2\2\2\2\33\3\2\2\2\2\35\3\2\2\2\2\37"+
-		"\3\2\2\2\2!\3\2\2\2\2#\3\2\2\2\2%\3\2\2\2\2/\3\2\2\2\3\61\3\2\2\2\5\63"+
-		"\3\2\2\2\7\65\3\2\2\2\t\67\3\2\2\2\13<\3\2\2\2\rB\3\2\2\2\17E\3\2\2\2"+
-		"\21H\3\2\2\2\23K\3\2\2\2\25N\3\2\2\2\27Q\3\2\2\2\31T\3\2\2\2\33W\3\2\2"+
-		"\2\35Z\3\2\2\2\37]\3\2\2\2!`\3\2\2\2#c\3\2\2\2%g\3\2\2\2\'i\3\2\2\2)p"+
-		"\3\2\2\2+x\3\2\2\2-|\3\2\2\2/\177\3\2\2\2\61\62\7*\2\2\62\4\3\2\2\2\63"+
-		"\64\7+\2\2\64\6\3\2\2\2\65\66\7#\2\2\66\b\3\2\2\2\678\7v\2\289\7t\2\2"+
-		"9:\7w\2\2:;\7g\2\2;\n\3\2\2\2<=\7h\2\2=>\7c\2\2>?\7n\2\2?@\7u\2\2@A\7"+
-		"g\2\2A\f\3\2\2\2BC\7C\2\2CD\7Z\2\2D\16\3\2\2\2EF\7C\2\2FG\7I\2\2G\20\3"+
-		"\2\2\2HI\7C\2\2IJ\7H\2\2J\22\3\2\2\2KL\7C\2\2LM\7W\2\2M\24\3\2\2\2NO\7"+
-		"G\2\2OP\7Z\2\2P\26\3\2\2\2QR\7G\2\2RS\7W\2\2S\30\3\2\2\2TU\7G\2\2UV\7"+
-		"I\2\2V\32\3\2\2\2WX\7G\2\2XY\7H\2\2Y\34\3\2\2\2Z[\7(\2\2[\\\7(\2\2\\\36"+
-		"\3\2\2\2]^\7~\2\2^_\7~\2\2_ \3\2\2\2`a\7/\2\2ab\7@\2\2b\"\3\2\2\2cd\7"+
-		">\2\2de\7/\2\2ef\7@\2\2f$\3\2\2\2gh\5\'\24\2h&\3\2\2\2il\5)\25\2jk\7\60"+
-		"\2\2km\5)\25\2lj\3\2\2\2mn\3\2\2\2nl\3\2\2\2no\3\2\2\2o(\3\2\2\2pt\5+"+
-		"\26\2qs\5-\27\2rq\3\2\2\2sv\3\2\2\2tr\3\2\2\2tu\3\2\2\2u*\3\2\2\2vt\3"+
-		"\2\2\2wy\t\2\2\2xw\3\2\2\2y,\3\2\2\2z}\5+\26\2{}\t\3\2\2|z\3\2\2\2|{\3"+
-		"\2\2\2}.\3\2\2\2~\u0080\t\4\2\2\177~\3\2\2\2\u0080\u0081\3\2\2\2\u0081"+
+		"\6\2\13\f\17\17\"\"==\2\u0084\2\3\3\2\2\2\2\5\3\2\2\2\2\7\3\2\2\2\2\t"+
+		"\3\2\2\2\2\13\3\2\2\2\2\r\3\2\2\2\2\17\3\2\2\2\2\21\3\2\2\2\2\23\3\2\2"+
+		"\2\2\25\3\2\2\2\2\27\3\2\2\2\2\31\3\2\2\2\2\33\3\2\2\2\2\35\3\2\2\2\2"+
+		"\37\3\2\2\2\2!\3\2\2\2\2#\3\2\2\2\2%\3\2\2\2\2/\3\2\2\2\3\61\3\2\2\2\5"+
+		"\63\3\2\2\2\7\65\3\2\2\2\t\67\3\2\2\2\13<\3\2\2\2\rB\3\2\2\2\17E\3\2\2"+
+		"\2\21H\3\2\2\2\23K\3\2\2\2\25N\3\2\2\2\27Q\3\2\2\2\31T\3\2\2\2\33W\3\2"+
+		"\2\2\35Z\3\2\2\2\37]\3\2\2\2!`\3\2\2\2#c\3\2\2\2%g\3\2\2\2\'i\3\2\2\2"+
+		")p\3\2\2\2+x\3\2\2\2-|\3\2\2\2/\177\3\2\2\2\61\62\7*\2\2\62\4\3\2\2\2"+
+		"\63\64\7+\2\2\64\6\3\2\2\2\65\66\7#\2\2\66\b\3\2\2\2\678\7v\2\289\7t\2"+
+		"\29:\7w\2\2:;\7g\2\2;\n\3\2\2\2<=\7h\2\2=>\7c\2\2>?\7n\2\2?@\7u\2\2@A"+
+		"\7g\2\2A\f\3\2\2\2BC\7C\2\2CD\7Z\2\2D\16\3\2\2\2EF\7C\2\2FG\7I\2\2G\20"+
+		"\3\2\2\2HI\7C\2\2IJ\7H\2\2J\22\3\2\2\2KL\7C\2\2LM\7W\2\2M\24\3\2\2\2N"+
+		"O\7G\2\2OP\7Z\2\2P\26\3\2\2\2QR\7G\2\2RS\7W\2\2S\30\3\2\2\2TU\7G\2\2U"+
+		"V\7I\2\2V\32\3\2\2\2WX\7G\2\2XY\7H\2\2Y\34\3\2\2\2Z[\7(\2\2[\\\7(\2\2"+
+		"\\\36\3\2\2\2]^\7~\2\2^_\7~\2\2_ \3\2\2\2`a\7/\2\2ab\7@\2\2b\"\3\2\2\2"+
+		"cd\7>\2\2de\7/\2\2ef\7@\2\2f$\3\2\2\2gh\5\'\24\2h&\3\2\2\2il\5)\25\2j"+
+		"k\7\60\2\2km\5)\25\2lj\3\2\2\2mn\3\2\2\2nl\3\2\2\2no\3\2\2\2o(\3\2\2\2"+
+		"pt\5+\26\2qs\5-\27\2rq\3\2\2\2sv\3\2\2\2tr\3\2\2\2tu\3\2\2\2u*\3\2\2\2"+
+		"vt\3\2\2\2wy\t\2\2\2xw\3\2\2\2y,\3\2\2\2z}\5+\26\2{}\t\3\2\2|z\3\2\2\2"+
+		"|{\3\2\2\2}.\3\2\2\2~\u0080\t\4\2\2\177~\3\2\2\2\u0080\u0081\3\2\2\2\u0081"+
 		"\177\3\2\2\2\u0081\u0082\3\2\2\2\u0082\u0083\3\2\2\2\u0083\u0084\b\30"+
 		"\2\2\u0084\60\3\2\2\2\b\2ntx|\u0081\3\b\2\2";
 	public static final ATN _ATN =

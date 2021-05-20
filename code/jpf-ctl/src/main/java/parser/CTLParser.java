@@ -1,4 +1,4 @@
-// Generated from CTL.g4 by ANTLR 4.5
+// Generated from CTL.g4 by ANTLR 4.9
 
     package parser;
 
@@ -13,7 +13,7 @@ import java.util.ArrayList;
 
 @SuppressWarnings({"all", "warnings", "unchecked", "unused", "cast"})
 public class CTLParser extends Parser {
-	static { RuntimeMetaData.checkVersion("4.5", RuntimeMetaData.VERSION); }
+	static { RuntimeMetaData.checkVersion("4.9", RuntimeMetaData.VERSION); }
 
 	protected static final DFA[] _decisionToDFA;
 	protected static final PredictionContextCache _sharedContextCache =
@@ -24,18 +24,27 @@ public class CTLParser extends Parser {
 		ATOMIC_PROPOSITION=18, WS=19;
 	public static final int
 		RULE_formula = 0, RULE_root = 1;
-	public static final String[] ruleNames = {
-		"formula", "root"
-	};
+	private static String[] makeRuleNames() {
+		return new String[] {
+			"formula", "root"
+		};
+	}
+	public static final String[] ruleNames = makeRuleNames();
 
-	private static final String[] _LITERAL_NAMES = {
-		null, "'('", "')'", "'!'", "'true'", "'false'", "'AX'", "'AG'", "'AF'", 
-		"'AU'", "'EX'", "'EU'", "'EG'", "'EF'", "'&&'", "'||'", "'->'", "'<->'"
-	};
-	private static final String[] _SYMBOLIC_NAMES = {
-		null, null, null, null, null, null, null, null, null, null, null, null, 
-		null, null, null, null, null, null, "ATOMIC_PROPOSITION", "WS"
-	};
+	private static String[] makeLiteralNames() {
+		return new String[] {
+			null, "'('", "')'", "'!'", "'true'", "'false'", "'AX'", "'AG'", "'AF'", 
+			"'AU'", "'EX'", "'EU'", "'EG'", "'EF'", "'&&'", "'||'", "'->'", "'<->'"
+		};
+	}
+	private static final String[] _LITERAL_NAMES = makeLiteralNames();
+	private static String[] makeSymbolicNames() {
+		return new String[] {
+			null, null, null, null, null, null, null, null, null, null, null, null, 
+			null, null, null, null, null, null, "ATOMIC_PROPOSITION", "WS"
+		};
+	}
+	private static final String[] _SYMBOLIC_NAMES = makeSymbolicNames();
 	public static final Vocabulary VOCABULARY = new VocabularyImpl(_LITERAL_NAMES, _SYMBOLIC_NAMES);
 
 	/**
@@ -85,6 +94,7 @@ public class CTLParser extends Parser {
 		super(input);
 		_interp = new ParserATNSimulator(this,_ATN,_decisionToDFA,_sharedContextCache);
 	}
+
 	public static class FormulaContext extends ParserRuleContext {
 		public FormulaContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
@@ -194,6 +204,22 @@ public class CTLParser extends Parser {
 			else return visitor.visitChildren(this);
 		}
 	}
+	public static class FalseContext extends FormulaContext {
+		public FalseContext(FormulaContext ctx) { copyFrom(ctx); }
+		@Override
+		public void enterRule(ParseTreeListener listener) {
+			if ( listener instanceof CTLListener ) ((CTLListener)listener).enterFalse(this);
+		}
+		@Override
+		public void exitRule(ParseTreeListener listener) {
+			if ( listener instanceof CTLListener ) ((CTLListener)listener).exitFalse(this);
+		}
+		@Override
+		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
+			if ( visitor instanceof CTLVisitor ) return ((CTLVisitor<? extends T>)visitor).visitFalse(this);
+			else return visitor.visitChildren(this);
+		}
+	}
 	public static class ExistsEventuallyContext extends FormulaContext {
 		public FormulaContext formula() {
 			return getRuleContext(FormulaContext.class,0);
@@ -210,22 +236,6 @@ public class CTLParser extends Parser {
 		@Override
 		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
 			if ( visitor instanceof CTLVisitor ) return ((CTLVisitor<? extends T>)visitor).visitExistsEventually(this);
-			else return visitor.visitChildren(this);
-		}
-	}
-	public static class FalseContext extends FormulaContext {
-		public FalseContext(FormulaContext ctx) { copyFrom(ctx); }
-		@Override
-		public void enterRule(ParseTreeListener listener) {
-			if ( listener instanceof CTLListener ) ((CTLListener)listener).enterFalse(this);
-		}
-		@Override
-		public void exitRule(ParseTreeListener listener) {
-			if ( listener instanceof CTLListener ) ((CTLListener)listener).exitFalse(this);
-		}
-		@Override
-		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof CTLVisitor ) return ((CTLVisitor<? extends T>)visitor).visitFalse(this);
 			else return visitor.visitChildren(this);
 		}
 	}
@@ -446,96 +456,31 @@ public class CTLParser extends Parser {
 			enterOuterAlt(_localctx, 1);
 			{
 			setState(26);
+			_errHandler.sync(this);
 			switch (_input.LA(1)) {
-			case T__2:
-				{
-				_localctx = new NotContext(_localctx);
-				_ctx = _localctx;
-				_prevctx = _localctx;
-
-				setState(5);
-				match(T__2);
-				setState(6);
-				formula(16);
-				}
-				break;
-			case T__5:
-				{
-				_localctx = new ForAllNextContext(_localctx);
-				_ctx = _localctx;
-				_prevctx = _localctx;
-				setState(7);
-				match(T__5);
-				setState(8);
-				formula(12);
-				}
-				break;
-			case T__6:
-				{
-				_localctx = new ForAllAlwaysContext(_localctx);
-				_ctx = _localctx;
-				_prevctx = _localctx;
-				setState(9);
-				match(T__6);
-				setState(10);
-				formula(11);
-				}
-				break;
-			case T__7:
-				{
-				_localctx = new ForAllEventuallyContext(_localctx);
-				_ctx = _localctx;
-				_prevctx = _localctx;
-				setState(11);
-				match(T__7);
-				setState(12);
-				formula(10);
-				}
-				break;
-			case T__9:
-				{
-				_localctx = new ExistsNextContext(_localctx);
-				_ctx = _localctx;
-				_prevctx = _localctx;
-				setState(13);
-				match(T__9);
-				setState(14);
-				formula(8);
-				}
-				break;
-			case T__11:
-				{
-				_localctx = new ExistsAlwaysContext(_localctx);
-				_ctx = _localctx;
-				_prevctx = _localctx;
-				setState(15);
-				match(T__11);
-				setState(16);
-				formula(6);
-				}
-				break;
-			case T__12:
-				{
-				_localctx = new ExistsEventuallyContext(_localctx);
-				_ctx = _localctx;
-				_prevctx = _localctx;
-				setState(17);
-				match(T__12);
-				setState(18);
-				formula(5);
-				}
-				break;
 			case T__0:
 				{
 				_localctx = new BracketContext(_localctx);
 				_ctx = _localctx;
 				_prevctx = _localctx;
-				setState(19);
+
+				setState(5);
 				match(T__0);
-				setState(20);
+				setState(6);
 				formula(0);
-				setState(21);
+				setState(7);
 				match(T__1);
+				}
+				break;
+			case T__2:
+				{
+				_localctx = new NotContext(_localctx);
+				_ctx = _localctx;
+				_prevctx = _localctx;
+				setState(9);
+				match(T__2);
+				setState(10);
+				formula(16);
 				}
 				break;
 			case T__3:
@@ -543,7 +488,7 @@ public class CTLParser extends Parser {
 				_localctx = new TrueContext(_localctx);
 				_ctx = _localctx;
 				_prevctx = _localctx;
-				setState(23);
+				setState(11);
 				match(T__3);
 				}
 				break;
@@ -552,7 +497,7 @@ public class CTLParser extends Parser {
 				_localctx = new FalseContext(_localctx);
 				_ctx = _localctx;
 				_prevctx = _localctx;
-				setState(24);
+				setState(12);
 				match(T__4);
 				}
 				break;
@@ -561,8 +506,74 @@ public class CTLParser extends Parser {
 				_localctx = new AtomicPropositionContext(_localctx);
 				_ctx = _localctx;
 				_prevctx = _localctx;
-				setState(25);
+				setState(13);
 				match(ATOMIC_PROPOSITION);
+				}
+				break;
+			case T__5:
+				{
+				_localctx = new ForAllNextContext(_localctx);
+				_ctx = _localctx;
+				_prevctx = _localctx;
+				setState(14);
+				match(T__5);
+				setState(15);
+				formula(12);
+				}
+				break;
+			case T__6:
+				{
+				_localctx = new ForAllAlwaysContext(_localctx);
+				_ctx = _localctx;
+				_prevctx = _localctx;
+				setState(16);
+				match(T__6);
+				setState(17);
+				formula(11);
+				}
+				break;
+			case T__7:
+				{
+				_localctx = new ForAllEventuallyContext(_localctx);
+				_ctx = _localctx;
+				_prevctx = _localctx;
+				setState(18);
+				match(T__7);
+				setState(19);
+				formula(10);
+				}
+				break;
+			case T__9:
+				{
+				_localctx = new ExistsNextContext(_localctx);
+				_ctx = _localctx;
+				_prevctx = _localctx;
+				setState(20);
+				match(T__9);
+				setState(21);
+				formula(8);
+				}
+				break;
+			case T__11:
+				{
+				_localctx = new ExistsAlwaysContext(_localctx);
+				_ctx = _localctx;
+				_prevctx = _localctx;
+				setState(22);
+				match(T__11);
+				setState(23);
+				formula(6);
+				}
+				break;
+			case T__12:
+				{
+				_localctx = new ExistsEventuallyContext(_localctx);
+				_ctx = _localctx;
+				_prevctx = _localctx;
+				setState(24);
+				match(T__12);
+				setState(25);
+				formula(5);
 				}
 				break;
 			default:
@@ -578,6 +589,7 @@ public class CTLParser extends Parser {
 					_prevctx = _localctx;
 					{
 					setState(46);
+					_errHandler.sync(this);
 					switch ( getInterpreter().adaptivePredict(_input,1,_ctx) ) {
 					case 1:
 						{
@@ -741,23 +753,23 @@ public class CTLParser extends Parser {
 	}
 
 	public static final String _serializedATN =
-		"\3\u0430\ud6d1\u8206\uad2d\u4417\uaef1\u8d80\uaadd\3\258\4\2\t\2\4\3\t"+
+		"\3\u608b\ua72a\u8133\ub9ed\u417c\u3be7\u7786\u5964\3\258\4\2\t\2\4\3\t"+
 		"\3\3\2\3\2\3\2\3\2\3\2\3\2\3\2\3\2\3\2\3\2\3\2\3\2\3\2\3\2\3\2\3\2\3\2"+
 		"\3\2\3\2\3\2\3\2\3\2\5\2\35\n\2\3\2\3\2\3\2\3\2\3\2\3\2\3\2\3\2\3\2\3"+
 		"\2\3\2\3\2\3\2\3\2\3\2\3\2\3\2\3\2\7\2\61\n\2\f\2\16\2\64\13\2\3\3\3\3"+
-		"\3\3\2\3\2\4\2\4\2\2E\2\34\3\2\2\2\4\65\3\2\2\2\6\7\b\2\1\2\7\b\7\5\2"+
-		"\2\b\35\5\2\2\22\t\n\7\b\2\2\n\35\5\2\2\16\13\f\7\t\2\2\f\35\5\2\2\r\r"+
-		"\16\7\n\2\2\16\35\5\2\2\f\17\20\7\f\2\2\20\35\5\2\2\n\21\22\7\16\2\2\22"+
-		"\35\5\2\2\b\23\24\7\17\2\2\24\35\5\2\2\7\25\26\7\3\2\2\26\27\5\2\2\2\27"+
-		"\30\7\4\2\2\30\35\3\2\2\2\31\35\7\6\2\2\32\35\7\7\2\2\33\35\7\24\2\2\34"+
-		"\6\3\2\2\2\34\t\3\2\2\2\34\13\3\2\2\2\34\r\3\2\2\2\34\17\3\2\2\2\34\21"+
-		"\3\2\2\2\34\23\3\2\2\2\34\25\3\2\2\2\34\31\3\2\2\2\34\32\3\2\2\2\34\33"+
-		"\3\2\2\2\35\62\3\2\2\2\36\37\f\13\2\2\37 \7\13\2\2 \61\5\2\2\13!\"\f\t"+
-		"\2\2\"#\7\r\2\2#\61\5\2\2\t$%\f\6\2\2%&\7\20\2\2&\61\5\2\2\7\'(\f\5\2"+
-		"\2()\7\21\2\2)\61\5\2\2\5*+\f\4\2\2+,\7\22\2\2,\61\5\2\2\4-.\f\3\2\2."+
-		"/\7\23\2\2/\61\5\2\2\3\60\36\3\2\2\2\60!\3\2\2\2\60$\3\2\2\2\60\'\3\2"+
-		"\2\2\60*\3\2\2\2\60-\3\2\2\2\61\64\3\2\2\2\62\60\3\2\2\2\62\63\3\2\2\2"+
-		"\63\3\3\2\2\2\64\62\3\2\2\2\65\66\5\2\2\2\66\5\3\2\2\2\5\34\60\62";
+		"\3\3\2\3\2\4\2\4\2\2\2E\2\34\3\2\2\2\4\65\3\2\2\2\6\7\b\2\1\2\7\b\7\3"+
+		"\2\2\b\t\5\2\2\2\t\n\7\4\2\2\n\35\3\2\2\2\13\f\7\5\2\2\f\35\5\2\2\22\r"+
+		"\35\7\6\2\2\16\35\7\7\2\2\17\35\7\24\2\2\20\21\7\b\2\2\21\35\5\2\2\16"+
+		"\22\23\7\t\2\2\23\35\5\2\2\r\24\25\7\n\2\2\25\35\5\2\2\f\26\27\7\f\2\2"+
+		"\27\35\5\2\2\n\30\31\7\16\2\2\31\35\5\2\2\b\32\33\7\17\2\2\33\35\5\2\2"+
+		"\7\34\6\3\2\2\2\34\13\3\2\2\2\34\r\3\2\2\2\34\16\3\2\2\2\34\17\3\2\2\2"+
+		"\34\20\3\2\2\2\34\22\3\2\2\2\34\24\3\2\2\2\34\26\3\2\2\2\34\30\3\2\2\2"+
+		"\34\32\3\2\2\2\35\62\3\2\2\2\36\37\f\13\2\2\37 \7\13\2\2 \61\5\2\2\13"+
+		"!\"\f\t\2\2\"#\7\r\2\2#\61\5\2\2\t$%\f\6\2\2%&\7\20\2\2&\61\5\2\2\7\'"+
+		"(\f\5\2\2()\7\21\2\2)\61\5\2\2\5*+\f\4\2\2+,\7\22\2\2,\61\5\2\2\4-.\f"+
+		"\3\2\2./\7\23\2\2/\61\5\2\2\3\60\36\3\2\2\2\60!\3\2\2\2\60$\3\2\2\2\60"+
+		"\'\3\2\2\2\60*\3\2\2\2\60-\3\2\2\2\61\64\3\2\2\2\62\60\3\2\2\2\62\63\3"+
+		"\2\2\2\63\3\3\2\2\2\64\62\3\2\2\2\65\66\5\2\2\2\66\5\3\2\2\2\5\34\60\62";
 	public static final ATN _ATN =
 		new ATNDeserializer().deserialize(_serializedATN.toCharArray());
 	static {

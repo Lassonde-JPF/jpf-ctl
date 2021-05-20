@@ -1,8 +1,7 @@
-// Generated from CTL.g4 by ANTLR 4.5
+// Generated from CTL.g4 by ANTLR 4.9
 
     package parser;
 
-import org.antlr.v4.runtime.misc.NotNull;
 import org.antlr.v4.runtime.tree.ParseTreeListener;
 
 /**
@@ -71,18 +70,6 @@ public interface CTLListener extends ParseTreeListener {
 	 */
 	void exitTrue(CTLParser.TrueContext ctx);
 	/**
-	 * Enter a parse tree produced by the {@code ExistsEventually}
-	 * labeled alternative in {@link CTLParser#formula}.
-	 * @param ctx the parse tree
-	 */
-	void enterExistsEventually(CTLParser.ExistsEventuallyContext ctx);
-	/**
-	 * Exit a parse tree produced by the {@code ExistsEventually}
-	 * labeled alternative in {@link CTLParser#formula}.
-	 * @param ctx the parse tree
-	 */
-	void exitExistsEventually(CTLParser.ExistsEventuallyContext ctx);
-	/**
 	 * Enter a parse tree produced by the {@code False}
 	 * labeled alternative in {@link CTLParser#formula}.
 	 * @param ctx the parse tree
@@ -94,6 +81,18 @@ public interface CTLListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	void exitFalse(CTLParser.FalseContext ctx);
+	/**
+	 * Enter a parse tree produced by the {@code ExistsEventually}
+	 * labeled alternative in {@link CTLParser#formula}.
+	 * @param ctx the parse tree
+	 */
+	void enterExistsEventually(CTLParser.ExistsEventuallyContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code ExistsEventually}
+	 * labeled alternative in {@link CTLParser#formula}.
+	 * @param ctx the parse tree
+	 */
+	void exitExistsEventually(CTLParser.ExistsEventuallyContext ctx);
 	/**
 	 * Enter a parse tree produced by the {@code AtomicProposition}
 	 * labeled alternative in {@link CTLParser#formula}.
