@@ -26,6 +26,10 @@ formula
 	| <assoc=right> formula '<->' formula	#Iff
 	;
 
+root 
+	: formula
+	;
+
 /* Atomic propositions */
 
 ATOMIC_PROPOSITION

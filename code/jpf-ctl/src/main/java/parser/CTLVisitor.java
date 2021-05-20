@@ -132,4 +132,10 @@ public interface CTLVisitor<T> extends ParseTreeVisitor<T> {
 	 * @return the visitor result
 	 */
 	T visitExistsNext(CTLParser.ExistsNextContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link CTLParser#root}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitRoot(CTLParser.RootContext ctx);
 }

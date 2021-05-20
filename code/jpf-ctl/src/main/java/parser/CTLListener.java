@@ -214,4 +214,14 @@ public interface CTLListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	void exitExistsNext(CTLParser.ExistsNextContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link CTLParser#root}.
+	 * @param ctx the parse tree
+	 */
+	void enterRoot(CTLParser.RootContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link CTLParser#root}.
+	 * @param ctx the parse tree
+	 */
+	void exitRoot(CTLParser.RootContext ctx);
 }

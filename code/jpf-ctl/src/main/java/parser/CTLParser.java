@@ -23,9 +23,9 @@ public class CTLParser extends Parser {
 		T__9=10, T__10=11, T__11=12, T__12=13, T__13=14, T__14=15, T__15=16, T__16=17, 
 		ATOMIC_PROPOSITION=18, WS=19;
 	public static final int
-		RULE_formula = 0;
+		RULE_formula = 0, RULE_root = 1;
 	public static final String[] ruleNames = {
-		"formula"
+		"formula", "root"
 	};
 
 	private static final String[] _LITERAL_NAMES = {
@@ -445,7 +445,7 @@ public class CTLParser extends Parser {
 			int _alt;
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(24);
+			setState(26);
 			switch (_input.LA(1)) {
 			case T__2:
 				{
@@ -453,9 +453,9 @@ public class CTLParser extends Parser {
 				_ctx = _localctx;
 				_prevctx = _localctx;
 
-				setState(3);
+				setState(5);
 				match(T__2);
-				setState(4);
+				setState(6);
 				formula(16);
 				}
 				break;
@@ -464,9 +464,9 @@ public class CTLParser extends Parser {
 				_localctx = new ForAllNextContext(_localctx);
 				_ctx = _localctx;
 				_prevctx = _localctx;
-				setState(5);
+				setState(7);
 				match(T__5);
-				setState(6);
+				setState(8);
 				formula(12);
 				}
 				break;
@@ -475,9 +475,9 @@ public class CTLParser extends Parser {
 				_localctx = new ForAllAlwaysContext(_localctx);
 				_ctx = _localctx;
 				_prevctx = _localctx;
-				setState(7);
+				setState(9);
 				match(T__6);
-				setState(8);
+				setState(10);
 				formula(11);
 				}
 				break;
@@ -486,9 +486,9 @@ public class CTLParser extends Parser {
 				_localctx = new ForAllEventuallyContext(_localctx);
 				_ctx = _localctx;
 				_prevctx = _localctx;
-				setState(9);
+				setState(11);
 				match(T__7);
-				setState(10);
+				setState(12);
 				formula(10);
 				}
 				break;
@@ -497,9 +497,9 @@ public class CTLParser extends Parser {
 				_localctx = new ExistsNextContext(_localctx);
 				_ctx = _localctx;
 				_prevctx = _localctx;
-				setState(11);
+				setState(13);
 				match(T__9);
-				setState(12);
+				setState(14);
 				formula(8);
 				}
 				break;
@@ -508,9 +508,9 @@ public class CTLParser extends Parser {
 				_localctx = new ExistsAlwaysContext(_localctx);
 				_ctx = _localctx;
 				_prevctx = _localctx;
-				setState(13);
+				setState(15);
 				match(T__11);
-				setState(14);
+				setState(16);
 				formula(6);
 				}
 				break;
@@ -519,9 +519,9 @@ public class CTLParser extends Parser {
 				_localctx = new ExistsEventuallyContext(_localctx);
 				_ctx = _localctx;
 				_prevctx = _localctx;
-				setState(15);
+				setState(17);
 				match(T__12);
-				setState(16);
+				setState(18);
 				formula(5);
 				}
 				break;
@@ -530,11 +530,11 @@ public class CTLParser extends Parser {
 				_localctx = new BracketContext(_localctx);
 				_ctx = _localctx;
 				_prevctx = _localctx;
-				setState(17);
-				match(T__0);
-				setState(18);
-				formula(0);
 				setState(19);
+				match(T__0);
+				setState(20);
+				formula(0);
+				setState(21);
 				match(T__1);
 				}
 				break;
@@ -543,7 +543,7 @@ public class CTLParser extends Parser {
 				_localctx = new TrueContext(_localctx);
 				_ctx = _localctx;
 				_prevctx = _localctx;
-				setState(21);
+				setState(23);
 				match(T__3);
 				}
 				break;
@@ -552,7 +552,7 @@ public class CTLParser extends Parser {
 				_localctx = new FalseContext(_localctx);
 				_ctx = _localctx;
 				_prevctx = _localctx;
-				setState(22);
+				setState(24);
 				match(T__4);
 				}
 				break;
@@ -561,7 +561,7 @@ public class CTLParser extends Parser {
 				_localctx = new AtomicPropositionContext(_localctx);
 				_ctx = _localctx;
 				_prevctx = _localctx;
-				setState(23);
+				setState(25);
 				match(ATOMIC_PROPOSITION);
 				}
 				break;
@@ -569,7 +569,7 @@ public class CTLParser extends Parser {
 				throw new NoViableAltException(this);
 			}
 			_ctx.stop = _input.LT(-1);
-			setState(46);
+			setState(48);
 			_errHandler.sync(this);
 			_alt = getInterpreter().adaptivePredict(_input,2,_ctx);
 			while ( _alt!=2 && _alt!=org.antlr.v4.runtime.atn.ATN.INVALID_ALT_NUMBER ) {
@@ -577,17 +577,17 @@ public class CTLParser extends Parser {
 					if ( _parseListeners!=null ) triggerExitRuleEvent();
 					_prevctx = _localctx;
 					{
-					setState(44);
+					setState(46);
 					switch ( getInterpreter().adaptivePredict(_input,1,_ctx) ) {
 					case 1:
 						{
 						_localctx = new ForAllUntilContext(new FormulaContext(_parentctx, _parentState));
 						pushNewRecursionContext(_localctx, _startState, RULE_formula);
-						setState(26);
-						if (!(precpred(_ctx, 9))) throw new FailedPredicateException(this, "precpred(_ctx, 9)");
-						setState(27);
-						match(T__8);
 						setState(28);
+						if (!(precpred(_ctx, 9))) throw new FailedPredicateException(this, "precpred(_ctx, 9)");
+						setState(29);
+						match(T__8);
+						setState(30);
 						formula(9);
 						}
 						break;
@@ -595,11 +595,11 @@ public class CTLParser extends Parser {
 						{
 						_localctx = new ExistsUntilContext(new FormulaContext(_parentctx, _parentState));
 						pushNewRecursionContext(_localctx, _startState, RULE_formula);
-						setState(29);
-						if (!(precpred(_ctx, 7))) throw new FailedPredicateException(this, "precpred(_ctx, 7)");
-						setState(30);
-						match(T__10);
 						setState(31);
+						if (!(precpred(_ctx, 7))) throw new FailedPredicateException(this, "precpred(_ctx, 7)");
+						setState(32);
+						match(T__10);
+						setState(33);
 						formula(7);
 						}
 						break;
@@ -607,11 +607,11 @@ public class CTLParser extends Parser {
 						{
 						_localctx = new AndContext(new FormulaContext(_parentctx, _parentState));
 						pushNewRecursionContext(_localctx, _startState, RULE_formula);
-						setState(32);
-						if (!(precpred(_ctx, 4))) throw new FailedPredicateException(this, "precpred(_ctx, 4)");
-						setState(33);
-						match(T__13);
 						setState(34);
+						if (!(precpred(_ctx, 4))) throw new FailedPredicateException(this, "precpred(_ctx, 4)");
+						setState(35);
+						match(T__13);
+						setState(36);
 						formula(5);
 						}
 						break;
@@ -619,11 +619,11 @@ public class CTLParser extends Parser {
 						{
 						_localctx = new OrContext(new FormulaContext(_parentctx, _parentState));
 						pushNewRecursionContext(_localctx, _startState, RULE_formula);
-						setState(35);
-						if (!(precpred(_ctx, 3))) throw new FailedPredicateException(this, "precpred(_ctx, 3)");
-						setState(36);
-						match(T__14);
 						setState(37);
+						if (!(precpred(_ctx, 3))) throw new FailedPredicateException(this, "precpred(_ctx, 3)");
+						setState(38);
+						match(T__14);
+						setState(39);
 						formula(3);
 						}
 						break;
@@ -631,11 +631,11 @@ public class CTLParser extends Parser {
 						{
 						_localctx = new ImpliesContext(new FormulaContext(_parentctx, _parentState));
 						pushNewRecursionContext(_localctx, _startState, RULE_formula);
-						setState(38);
-						if (!(precpred(_ctx, 2))) throw new FailedPredicateException(this, "precpred(_ctx, 2)");
-						setState(39);
-						match(T__15);
 						setState(40);
+						if (!(precpred(_ctx, 2))) throw new FailedPredicateException(this, "precpred(_ctx, 2)");
+						setState(41);
+						match(T__15);
+						setState(42);
 						formula(2);
 						}
 						break;
@@ -643,18 +643,18 @@ public class CTLParser extends Parser {
 						{
 						_localctx = new IffContext(new FormulaContext(_parentctx, _parentState));
 						pushNewRecursionContext(_localctx, _startState, RULE_formula);
-						setState(41);
-						if (!(precpred(_ctx, 1))) throw new FailedPredicateException(this, "precpred(_ctx, 1)");
-						setState(42);
-						match(T__16);
 						setState(43);
+						if (!(precpred(_ctx, 1))) throw new FailedPredicateException(this, "precpred(_ctx, 1)");
+						setState(44);
+						match(T__16);
+						setState(45);
 						formula(1);
 						}
 						break;
 					}
 					} 
 				}
-				setState(48);
+				setState(50);
 				_errHandler.sync(this);
 				_alt = getInterpreter().adaptivePredict(_input,2,_ctx);
 			}
@@ -667,6 +667,50 @@ public class CTLParser extends Parser {
 		}
 		finally {
 			unrollRecursionContexts(_parentctx);
+		}
+		return _localctx;
+	}
+
+	public static class RootContext extends ParserRuleContext {
+		public FormulaContext formula() {
+			return getRuleContext(FormulaContext.class,0);
+		}
+		public RootContext(ParserRuleContext parent, int invokingState) {
+			super(parent, invokingState);
+		}
+		@Override public int getRuleIndex() { return RULE_root; }
+		@Override
+		public void enterRule(ParseTreeListener listener) {
+			if ( listener instanceof CTLListener ) ((CTLListener)listener).enterRoot(this);
+		}
+		@Override
+		public void exitRule(ParseTreeListener listener) {
+			if ( listener instanceof CTLListener ) ((CTLListener)listener).exitRoot(this);
+		}
+		@Override
+		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
+			if ( visitor instanceof CTLVisitor ) return ((CTLVisitor<? extends T>)visitor).visitRoot(this);
+			else return visitor.visitChildren(this);
+		}
+	}
+
+	public final RootContext root() throws RecognitionException {
+		RootContext _localctx = new RootContext(_ctx, getState());
+		enterRule(_localctx, 2, RULE_root);
+		try {
+			enterOuterAlt(_localctx, 1);
+			{
+			setState(51);
+			formula(0);
+			}
+		}
+		catch (RecognitionException re) {
+			_localctx.exception = re;
+			_errHandler.reportError(this, re);
+			_errHandler.recover(this, re);
+		}
+		finally {
+			exitRule();
 		}
 		return _localctx;
 	}
@@ -697,22 +741,23 @@ public class CTLParser extends Parser {
 	}
 
 	public static final String _serializedATN =
-		"\3\u0430\ud6d1\u8206\uad2d\u4417\uaef1\u8d80\uaadd\3\25\64\4\2\t\2\3\2"+
-		"\3\2\3\2\3\2\3\2\3\2\3\2\3\2\3\2\3\2\3\2\3\2\3\2\3\2\3\2\3\2\3\2\3\2\3"+
-		"\2\3\2\3\2\3\2\5\2\33\n\2\3\2\3\2\3\2\3\2\3\2\3\2\3\2\3\2\3\2\3\2\3\2"+
-		"\3\2\3\2\3\2\3\2\3\2\3\2\3\2\7\2/\n\2\f\2\16\2\62\13\2\3\2\2\3\2\3\2\2"+
-		"\2B\2\32\3\2\2\2\4\5\b\2\1\2\5\6\7\5\2\2\6\33\5\2\2\22\7\b\7\b\2\2\b\33"+
-		"\5\2\2\16\t\n\7\t\2\2\n\33\5\2\2\r\13\f\7\n\2\2\f\33\5\2\2\f\r\16\7\f"+
-		"\2\2\16\33\5\2\2\n\17\20\7\16\2\2\20\33\5\2\2\b\21\22\7\17\2\2\22\33\5"+
-		"\2\2\7\23\24\7\3\2\2\24\25\5\2\2\2\25\26\7\4\2\2\26\33\3\2\2\2\27\33\7"+
-		"\6\2\2\30\33\7\7\2\2\31\33\7\24\2\2\32\4\3\2\2\2\32\7\3\2\2\2\32\t\3\2"+
-		"\2\2\32\13\3\2\2\2\32\r\3\2\2\2\32\17\3\2\2\2\32\21\3\2\2\2\32\23\3\2"+
-		"\2\2\32\27\3\2\2\2\32\30\3\2\2\2\32\31\3\2\2\2\33\60\3\2\2\2\34\35\f\13"+
-		"\2\2\35\36\7\13\2\2\36/\5\2\2\13\37 \f\t\2\2 !\7\r\2\2!/\5\2\2\t\"#\f"+
-		"\6\2\2#$\7\20\2\2$/\5\2\2\7%&\f\5\2\2&\'\7\21\2\2\'/\5\2\2\5()\f\4\2\2"+
-		")*\7\22\2\2*/\5\2\2\4+,\f\3\2\2,-\7\23\2\2-/\5\2\2\3.\34\3\2\2\2.\37\3"+
-		"\2\2\2.\"\3\2\2\2.%\3\2\2\2.(\3\2\2\2.+\3\2\2\2/\62\3\2\2\2\60.\3\2\2"+
-		"\2\60\61\3\2\2\2\61\3\3\2\2\2\62\60\3\2\2\2\5\32.\60";
+		"\3\u0430\ud6d1\u8206\uad2d\u4417\uaef1\u8d80\uaadd\3\258\4\2\t\2\4\3\t"+
+		"\3\3\2\3\2\3\2\3\2\3\2\3\2\3\2\3\2\3\2\3\2\3\2\3\2\3\2\3\2\3\2\3\2\3\2"+
+		"\3\2\3\2\3\2\3\2\3\2\5\2\35\n\2\3\2\3\2\3\2\3\2\3\2\3\2\3\2\3\2\3\2\3"+
+		"\2\3\2\3\2\3\2\3\2\3\2\3\2\3\2\3\2\7\2\61\n\2\f\2\16\2\64\13\2\3\3\3\3"+
+		"\3\3\2\3\2\4\2\4\2\2E\2\34\3\2\2\2\4\65\3\2\2\2\6\7\b\2\1\2\7\b\7\5\2"+
+		"\2\b\35\5\2\2\22\t\n\7\b\2\2\n\35\5\2\2\16\13\f\7\t\2\2\f\35\5\2\2\r\r"+
+		"\16\7\n\2\2\16\35\5\2\2\f\17\20\7\f\2\2\20\35\5\2\2\n\21\22\7\16\2\2\22"+
+		"\35\5\2\2\b\23\24\7\17\2\2\24\35\5\2\2\7\25\26\7\3\2\2\26\27\5\2\2\2\27"+
+		"\30\7\4\2\2\30\35\3\2\2\2\31\35\7\6\2\2\32\35\7\7\2\2\33\35\7\24\2\2\34"+
+		"\6\3\2\2\2\34\t\3\2\2\2\34\13\3\2\2\2\34\r\3\2\2\2\34\17\3\2\2\2\34\21"+
+		"\3\2\2\2\34\23\3\2\2\2\34\25\3\2\2\2\34\31\3\2\2\2\34\32\3\2\2\2\34\33"+
+		"\3\2\2\2\35\62\3\2\2\2\36\37\f\13\2\2\37 \7\13\2\2 \61\5\2\2\13!\"\f\t"+
+		"\2\2\"#\7\r\2\2#\61\5\2\2\t$%\f\6\2\2%&\7\20\2\2&\61\5\2\2\7\'(\f\5\2"+
+		"\2()\7\21\2\2)\61\5\2\2\5*+\f\4\2\2+,\7\22\2\2,\61\5\2\2\4-.\f\3\2\2."+
+		"/\7\23\2\2/\61\5\2\2\3\60\36\3\2\2\2\60!\3\2\2\2\60$\3\2\2\2\60\'\3\2"+
+		"\2\2\60*\3\2\2\2\60-\3\2\2\2\61\64\3\2\2\2\62\60\3\2\2\2\62\63\3\2\2\2"+
+		"\63\3\3\2\2\2\64\62\3\2\2\2\65\66\5\2\2\2\66\5\3\2\2\2\5\34\60\62";
 	public static final ATN _ATN =
 		new ATNDeserializer().deserialize(_serializedATN.toCharArray());
 	static {
