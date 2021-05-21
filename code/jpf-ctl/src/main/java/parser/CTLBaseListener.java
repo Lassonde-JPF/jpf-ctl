@@ -217,18 +217,6 @@ public class CTLBaseListener implements CTLListener {
 	 * <p>The default implementation does nothing.</p>
 	 */
 	@Override public void exitExistsNext(CTLParser.ExistsNextContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void enterRoot(CTLParser.RootContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void exitRoot(CTLParser.RootContext ctx) { }
 
 	/**
 	 * {@inheritDoc}

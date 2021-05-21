@@ -66,12 +66,12 @@ class GeneratorTest {
 
 	// The following fields will store string representations of every CTL formula
 	//	as defined by the grammar.
-	private final static String ctlTrue1	= "true";
-	private final static String ctlTrue2	= "True";
-	private final static String ctlFalse1	= "false";
-	private final static String ctlFalse2	= "False";
-	private final static String ctlAp		= "java.lang.Exception";
-	private final static String[] atomics	= {ctlTrue1, ctlTrue2, ctlFalse1, ctlFalse2, ctlAp};
+	private final static String ctlTrue	= "true";
+	//private final static String ctlTrue2	= "True"; 
+	private final static String ctlFalse	= "false";
+	//private final static String ctlFalse2	= "False";
+	private final static String ctlAp		= "Integer.BYTES";
+	private final static String[] atomics	= {ctlTrue, ctlFalse, ctlAp};
 	private static ArrayList<String> ctlNot, ctlAnd, ctlOr, ctlImplies, ctlIff;
 	private static ArrayList<String> ctlForAllNext, ctlForAllEventually, ctlForAllAlways, ctlForAllUntil;
 	private static ArrayList<String> ctlExistsNext, ctlExistsEventually, ctlExistsAlways, ctlExistsUntil;
@@ -184,18 +184,12 @@ class GeneratorTest {
 	 */
 	@Test
 	void testVisitTrue() {
-		Formula formula1 = generator.visit(parseCtl(ctlTrue1));
+		Formula formula1 = generator.visit(parseCtl(ctlTrue));
 		assertNotNull(formula1);
 		assertEquals(True.class, formula1.getClass());
-		Formula formula2 = generator.visit(parseCtl(addBrackets(ctlTrue1)));
+		Formula formula2 = generator.visit(parseCtl(addBrackets(ctlTrue)));
 		assertNotNull(formula2);
 		assertEquals(True.class, formula2.getClass());
-		Formula formula3 = generator.visit(parseCtl(ctlTrue2));
-		assertNotNull(formula3);
-		assertEquals(True.class, formula3.getClass());
-		Formula formula4 = generator.visit(parseCtl(addBrackets(ctlTrue2)));
-		assertNotNull(formula4);
-		assertEquals(True.class, formula4.getClass());
 	}
 
 	/**
@@ -204,18 +198,12 @@ class GeneratorTest {
 	 */
 	@Test
 	void testVisitFalse() {
-		Formula formula1 = generator.visit(parseCtl(ctlFalse1));
+		Formula formula1 = generator.visit(parseCtl(ctlFalse));
 		assertNotNull(formula1);
 		assertEquals(False.class, formula1.getClass());
-		Formula formula2 = generator.visit(parseCtl(addBrackets(ctlFalse1)));
+		Formula formula2 = generator.visit(parseCtl(addBrackets(ctlFalse)));
 		assertNotNull(formula2);
 		assertEquals(False.class, formula2.getClass());
-		Formula formula3 = generator.visit(parseCtl(ctlFalse2));
-		assertNotNull(formula3);
-		assertEquals(False.class, formula3.getClass());
-		Formula formula4 = generator.visit(parseCtl(addBrackets(ctlFalse2)));
-		assertNotNull(formula4);
-		assertEquals(False.class, formula4.getClass());		
 	}
 	
 	/**
@@ -226,9 +214,11 @@ class GeneratorTest {
 	@Test
 	void testVisitAtomicProposition() {
 		Formula formula1 = generator.visit(parseCtl(ctlAp));
+		System.out.println("formula1: " + formula1);
 		assertNotNull(formula1);
 		assertEquals(AtomicProposition.class, formula1.getClass());
 		Formula formula2 = generator.visit(parseCtl(addBrackets(ctlAp)));
+		System.out.println("formula2: " + formula2);
 		assertNotNull(formula2);
 		assertEquals(AtomicProposition.class, formula2.getClass());
 	}
@@ -321,12 +311,12 @@ class GeneratorTest {
 	@Test
 	void testVisitForAllNext() {
 		for (String forAllNextFormula : ctlForAllNext) {
-			ForAllNext formula1 = (ForAllNext) generator.visit(parseCtl(forAllNextFormula));
+			Formula formula1 = generator.visit(parseCtl(forAllNextFormula));
 			assertNotNull(formula1);	
 			//assertNotNull(formula1.getInner());
 			assertEquals(ForAllNext.class, formula1.getClass());
 			//assertEquals(Next.class, formula1.getInner().getClass());			
-			ForAllNext formula2 = (ForAllNext) generator.visit(parseCtl(addBrackets(forAllNextFormula)));
+			Formula formula2 = generator.visit(parseCtl(addBrackets(forAllNextFormula)));
 			assertNotNull(formula2);
 			//assertNotNull(formula2.getInner());
 			assertEquals(ForAllNext.class, formula2.getClass());
@@ -501,7 +491,7 @@ class GeneratorTest {
 		CTLLexer lexer = new CTLLexer(input);
 		CommonTokenStream tokens = new CommonTokenStream(lexer);
 		CTLParser parser = new CTLParser(tokens);
-		ParseTree tree = parser.root();
+		ParseTree tree = parser.formula();
 		return tree;
 	}
 }

@@ -26,10 +26,6 @@ formula
 	| <assoc=right> formula '<->' formula	#Iff
 	;
 
-root 
-	: formula
-	;
-
 /* Atomic propositions */
 
 ATOMIC_PROPOSITION
@@ -683,4 +679,4 @@ fragment IDENTIFIER_PART
 
 /* Skip white space */
 
-WS : [ \t\r\n;]+ -> skip ; 
+WS : [\t\r\n;]+ -> skip ; 
