@@ -31,6 +31,7 @@ import org.antlr.v4.runtime.CharStream;
 import org.antlr.v4.runtime.CharStreams;
 import org.antlr.v4.runtime.CommonTokenStream;
 import org.antlr.v4.runtime.tree.ParseTree;
+import org.antlr.v4.runtime.tree.ParseTreeWalker;
 
 //import ctl.Always;
 //import ctl.And;
@@ -67,9 +68,7 @@ class GeneratorTest {
 	// The following fields will store string representations of every CTL formula
 	//	as defined by the grammar.
 	private final static String ctlTrue	= "true";
-	//private final static String ctlTrue2	= "True"; 
 	private final static String ctlFalse	= "false";
-	//private final static String ctlFalse2	= "False";
 	private final static String ctlAp		= "Integer.BYTES";
 	private final static String[] atomics	= {ctlTrue, ctlFalse, ctlAp};
 	private static ArrayList<String> ctlNot, ctlAnd, ctlOr, ctlImplies, ctlIff;
@@ -91,72 +90,72 @@ class GeneratorTest {
 		ctlAnd = new ArrayList<String>();
 		for (String atomic1 : atomics) {
 			for (String atomic2 : atomics) {
-				ctlAnd.add(atomic1 + " && " + atomic2);
+				ctlAnd.add(atomic1 + "&&" + atomic2);
 			}
 		}
 		
 		ctlOr = new ArrayList<String>();
 		for (String atomic1 : atomics) {
 			for (String atomic2 : atomics) {
-				ctlOr.add(atomic1 + " || " + atomic2);
+				ctlOr.add(atomic1 + "||" + atomic2);
 			}
 		}
 		
 		ctlImplies = new ArrayList<String>();
 		for (String atomic1 : atomics) {
 			for (String atomic2 : atomics) {
-				ctlImplies.add(atomic1 + " -> " + atomic2);
+				ctlImplies.add(atomic1 + "->" + atomic2);
 			}
 		}
 		
 		ctlIff = new ArrayList<String>();
 		for (String atomic1 : atomics) {
 			for (String atomic2 : atomics) {
-				ctlIff.add(atomic1 + " <-> " + atomic2);
+				ctlIff.add(atomic1 + "<->" + atomic2);
 			}
 		}
 		
 		ctlForAllNext = new ArrayList<String>();
 		for (String atomic : atomics) {
-			ctlForAllNext.add("A X " + atomic);
+			ctlForAllNext.add("AX " + atomic);
 		}		
 		
 		ctlForAllEventually = new ArrayList<String>();
 		for (String atomic : atomics) {
-			ctlForAllEventually.add("A F " + atomic);
+			ctlForAllEventually.add("AF " + atomic);
 		}
 		
 		ctlForAllAlways = new ArrayList<String>();
 		for (String atomic : atomics) {
-			ctlForAllAlways.add("A G " + atomic);
+			ctlForAllAlways.add("AG " + atomic);
 		}
 		
 		ctlForAllUntil = new ArrayList<String>();
 		for (String atomic1 : atomics) {
 			for (String atomic2 : atomics) {
-				ctlForAllUntil.add("A (" + atomic1 + " U " + atomic2 + ")");
+				ctlForAllUntil.add(atomic1 + " AU " + atomic2);
 			}
 		}		
 		
 		ctlExistsNext = new ArrayList<String>();
 		for (String atomic : atomics) {
-			ctlExistsNext.add("E X " + atomic);
+			ctlExistsNext.add("EX " + atomic);
 		}
 		
 		ctlExistsEventually = new ArrayList<String>();
 		for (String atomic : atomics) {
-			ctlExistsEventually.add("E F " + atomic);
+			ctlExistsEventually.add("EF " + atomic);
 		}
 		
 		ctlExistsAlways = new ArrayList<String>();
 		for (String atomic : atomics) {
-			ctlExistsAlways.add("E G " + atomic);
+			ctlExistsAlways.add("EG " + atomic);
 		}
 		
 		ctlExistsUntil = new ArrayList<String>();
 		for (String atomic1 : atomics) {
 			for (String atomic2 : atomics) {
-				ctlExistsUntil.add("E (" + atomic1 + " U " + atomic2 + ")");
+				ctlExistsUntil.add(atomic1 + " EU " + atomic2);
 			}
 		}		
 		
@@ -214,11 +213,9 @@ class GeneratorTest {
 	@Test
 	void testVisitAtomicProposition() {
 		Formula formula1 = generator.visit(parseCtl(ctlAp));
-		System.out.println("formula1: " + formula1);
 		assertNotNull(formula1);
 		assertEquals(AtomicProposition.class, formula1.getClass());
 		Formula formula2 = generator.visit(parseCtl(addBrackets(ctlAp)));
-		System.out.println("formula2: " + formula2);
 		assertNotNull(formula2);
 		assertEquals(AtomicProposition.class, formula2.getClass());
 	}
@@ -283,7 +280,7 @@ class GeneratorTest {
 			assertEquals(Implies.class, formula1.getClass());
 			Formula formula2 = generator.visit(parseCtl(addBrackets(impliesFormula)));
 			assertNotNull(formula2);
-			assertEquals(Implies.class, formula2.getClass());		
+			assertEquals(Implies.class, formula2.getClass());
 		}
 	}
 	
@@ -311,12 +308,12 @@ class GeneratorTest {
 	@Test
 	void testVisitForAllNext() {
 		for (String forAllNextFormula : ctlForAllNext) {
-			Formula formula1 = generator.visit(parseCtl(forAllNextFormula));
+			ForAllNext formula1 = (ForAllNext) generator.visit(parseCtl(forAllNextFormula));
 			assertNotNull(formula1);	
 			//assertNotNull(formula1.getInner());
 			assertEquals(ForAllNext.class, formula1.getClass());
 			//assertEquals(Next.class, formula1.getInner().getClass());			
-			Formula formula2 = generator.visit(parseCtl(addBrackets(forAllNextFormula)));
+			ForAllNext formula2 = (ForAllNext) generator.visit(parseCtl(addBrackets(forAllNextFormula)));
 			assertNotNull(formula2);
 			//assertNotNull(formula2.getInner());
 			assertEquals(ForAllNext.class, formula2.getClass());
@@ -493,5 +490,21 @@ class GeneratorTest {
 		CTLParser parser = new CTLParser(tokens);
 		ParseTree tree = parser.formula();
 		return tree;
+	}
+	
+	/**
+	 * Prints the Parse Tree of a CTL formula
+	 */
+	private void printCtl(String formula) {
+		System.out.println("String input: " + formula);
+		CharStream input = CharStreams.fromString(formula);
+		CTLLexer lexer = new CTLLexer(input);
+		CommonTokenStream tokens = new CommonTokenStream(lexer);
+		CTLParser parser = new CTLParser(tokens);
+		ParseTree tree = parser.formula();
+	    CTLPrinter listener = new CTLPrinter();
+
+	    ParseTreeWalker walker = new ParseTreeWalker();
+	    walker.walk(listener,tree);
 	}
 }

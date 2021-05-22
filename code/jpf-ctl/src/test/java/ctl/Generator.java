@@ -50,15 +50,6 @@ import parser.CTLParser.TrueContext;
 
 public class Generator extends CTLBaseVisitor<Formula> {
 
-//	/**
-//	 * Visits a root node of the parse tree.
-//	 * @return	The first formula node of the parse tree
-//	 */
-//	@Override
-//	public Formula visitRoot(RootContext context) {
-//		return visit(context.formula());
-//	}
-
 	/**
 	 * Visits a bracket node in the parse tree.
 	 * 
