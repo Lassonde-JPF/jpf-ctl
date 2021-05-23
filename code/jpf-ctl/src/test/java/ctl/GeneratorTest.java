@@ -76,7 +76,10 @@ class GeneratorTest {
 	private static ArrayList<String> ctlForAllNext, ctlForAllEventually, ctlForAllAlways, ctlForAllUntil;
 	private static ArrayList<String> ctlExistsNext, ctlExistsEventually, ctlExistsAlways, ctlExistsUntil;
 
-	private static ArrayList<String> ctlRandom;
+	private static ArrayList<Formula> ctlRandom;
+	private static final int N = 25;
+	private static final int MIN = 1;
+	private static final int MAX = 10;
 
 	private Generator generator;
 
@@ -164,10 +167,10 @@ class GeneratorTest {
 
 		// TODO probably need to swap the ints stream with a java 8 version
 		Random r = new Random();
-		int[] depths = r.ints(10, 1, 5).toArray(); // 10 depth values, ranging from 1 to 5.
-		ctlRandom = new ArrayList<String>();
+		int[] depths = r.ints(N, MIN, MAX).toArray(); // 10 depth values, ranging from 1 to 5.
+		ctlRandom = new ArrayList<Formula>();
 		for (int depth : depths) {
-			ctlRandom.add(Formula.random(depth).toString());
+			ctlRandom.add(Formula.random(depth));
 		}
 	}
 
@@ -485,10 +488,13 @@ class GeneratorTest {
 	 */
 	@Test
 	void testRandom() {
-		for (String randomFormula : ctlRandom) {
-			Formula formula1 = generator.visit(parseCtl(randomFormula));
+		for (Formula randomFormula : ctlRandom) {
+			//Check the string representation can be parsed
+			Formula formula1 = generator.visit(parseCtl(randomFormula.toString()));
 			assertNotNull(formula1);
-			System.out.println("Random Formula: " + formula1);
+			//Check the generated formula is the same as the input formula
+			System.out.println("Expected:\t" + randomFormula.toString() + "\nActual:\t\t" + formula1.toString());
+			assertEquals(randomFormula.toString(), formula1.toString()); //string representation
 		}
 	}
 
