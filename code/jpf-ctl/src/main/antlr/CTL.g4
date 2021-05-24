@@ -15,15 +15,15 @@ formula
 	| 'AX' formula				#ForAllNext
 	| 'AG' formula				#ForAllAlways
 	| 'AF' formula				#ForAllEventually
-	| <assoc=right> formula 'AU' formula	#ForAllUntil
 	| 'EX' formula				#ExistsNext
-	| <assoc=right> formula 'EU' formula	#ExistsUntil
 	| 'EG' formula				#ExistsAlways
 	| 'EF' formula				#ExistsEventually
 	| <assoc=left> formula '&&' formula 	#And
 	| <assoc=right> formula '||' formula	#Or
 	| <assoc=right> formula '->' formula	#Implies
 	| <assoc=right> formula '<->' formula	#Iff
+	| <assoc=right> formula 'AU' formula	#ForAllUntil
+	| <assoc=right> formula 'EU' formula	#ExistsUntil
 	;
 
 /* Atomic propositions */
@@ -679,4 +679,4 @@ fragment IDENTIFIER_PART
 
 /* Skip white space */
 
-WS : [\t\r\n]+ -> skip ; 
+WS : [' '\t\r\n]+ -> skip ; 

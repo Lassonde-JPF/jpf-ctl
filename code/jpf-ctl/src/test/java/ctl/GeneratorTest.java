@@ -77,7 +77,7 @@ class GeneratorTest {
 	private static ArrayList<String> ctlExistsNext, ctlExistsEventually, ctlExistsAlways, ctlExistsUntil;
 
 	private static ArrayList<Formula> ctlRandom;
-	private static final int N = 25;
+	private static final int N = 50;
 	private static final int MIN = 1;
 	private static final int MAX = 10;
 
@@ -485,6 +485,8 @@ class GeneratorTest {
 
 	/**
 	 * Test the Formula.random() method
+	 * 
+	 * TODO: check each subformula has the correct class
 	 */
 	@Test
 	void testRandom() {
@@ -493,7 +495,6 @@ class GeneratorTest {
 			Formula formula1 = generator.visit(parseCtl(randomFormula.toString()));
 			assertNotNull(formula1);
 			//Check the generated formula is the same as the input formula
-			System.out.println("Expected:\t" + randomFormula.toString() + "\nActual:\t\t" + formula1.toString());
 			assertEquals(randomFormula.toString(), formula1.toString()); //string representation
 		}
 	}

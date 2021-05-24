@@ -34,7 +34,7 @@ public class CTLParser extends Parser {
 	private static String[] makeLiteralNames() {
 		return new String[] {
 			null, "'('", "')'", "'!'", "'true'", "'false'", "'AX'", "'AG'", "'AF'", 
-			"'AU'", "'EX'", "'EU'", "'EG'", "'EF'", "'&&'", "'||'", "'->'", "'<->'"
+			"'EX'", "'EG'", "'EF'", "'&&'", "'||'", "'->'", "'<->'", "'AU'", "'EU'"
 		};
 	}
 	private static final String[] _LITERAL_NAMES = makeLiteralNames();
@@ -543,37 +543,37 @@ public class CTLParser extends Parser {
 				formula(10);
 				}
 				break;
-			case T__9:
+			case T__8:
 				{
 				_localctx = new ExistsNextContext(_localctx);
 				_ctx = _localctx;
 				_prevctx = _localctx;
 				setState(18);
-				match(T__9);
+				match(T__8);
 				setState(19);
-				formula(8);
+				formula(9);
 				}
 				break;
-			case T__11:
+			case T__9:
 				{
 				_localctx = new ExistsAlwaysContext(_localctx);
 				_ctx = _localctx;
 				_prevctx = _localctx;
 				setState(20);
-				match(T__11);
+				match(T__9);
 				setState(21);
-				formula(6);
+				formula(8);
 				}
 				break;
-			case T__12:
+			case T__10:
 				{
 				_localctx = new ExistsEventuallyContext(_localctx);
 				_ctx = _localctx;
 				_prevctx = _localctx;
 				setState(22);
-				match(T__12);
+				match(T__10);
 				setState(23);
-				formula(5);
+				formula(7);
 				}
 				break;
 			default:
@@ -593,43 +593,43 @@ public class CTLParser extends Parser {
 					switch ( getInterpreter().adaptivePredict(_input,1,_ctx) ) {
 					case 1:
 						{
-						_localctx = new ForAllUntilContext(new FormulaContext(_parentctx, _parentState));
+						_localctx = new AndContext(new FormulaContext(_parentctx, _parentState));
 						pushNewRecursionContext(_localctx, _startState, RULE_formula);
 						setState(26);
-						if (!(precpred(_ctx, 9))) throw new FailedPredicateException(this, "precpred(_ctx, 9)");
+						if (!(precpred(_ctx, 6))) throw new FailedPredicateException(this, "precpred(_ctx, 6)");
 						setState(27);
-						match(T__8);
+						match(T__11);
 						setState(28);
-						formula(9);
+						formula(7);
 						}
 						break;
 					case 2:
 						{
-						_localctx = new ExistsUntilContext(new FormulaContext(_parentctx, _parentState));
+						_localctx = new OrContext(new FormulaContext(_parentctx, _parentState));
 						pushNewRecursionContext(_localctx, _startState, RULE_formula);
 						setState(29);
-						if (!(precpred(_ctx, 7))) throw new FailedPredicateException(this, "precpred(_ctx, 7)");
+						if (!(precpred(_ctx, 5))) throw new FailedPredicateException(this, "precpred(_ctx, 5)");
 						setState(30);
-						match(T__10);
+						match(T__12);
 						setState(31);
-						formula(7);
+						formula(5);
 						}
 						break;
 					case 3:
 						{
-						_localctx = new AndContext(new FormulaContext(_parentctx, _parentState));
+						_localctx = new ImpliesContext(new FormulaContext(_parentctx, _parentState));
 						pushNewRecursionContext(_localctx, _startState, RULE_formula);
 						setState(32);
 						if (!(precpred(_ctx, 4))) throw new FailedPredicateException(this, "precpred(_ctx, 4)");
 						setState(33);
 						match(T__13);
 						setState(34);
-						formula(5);
+						formula(4);
 						}
 						break;
 					case 4:
 						{
-						_localctx = new OrContext(new FormulaContext(_parentctx, _parentState));
+						_localctx = new IffContext(new FormulaContext(_parentctx, _parentState));
 						pushNewRecursionContext(_localctx, _startState, RULE_formula);
 						setState(35);
 						if (!(precpred(_ctx, 3))) throw new FailedPredicateException(this, "precpred(_ctx, 3)");
@@ -641,7 +641,7 @@ public class CTLParser extends Parser {
 						break;
 					case 5:
 						{
-						_localctx = new ImpliesContext(new FormulaContext(_parentctx, _parentState));
+						_localctx = new ForAllUntilContext(new FormulaContext(_parentctx, _parentState));
 						pushNewRecursionContext(_localctx, _startState, RULE_formula);
 						setState(38);
 						if (!(precpred(_ctx, 2))) throw new FailedPredicateException(this, "precpred(_ctx, 2)");
@@ -653,7 +653,7 @@ public class CTLParser extends Parser {
 						break;
 					case 6:
 						{
-						_localctx = new IffContext(new FormulaContext(_parentctx, _parentState));
+						_localctx = new ExistsUntilContext(new FormulaContext(_parentctx, _parentState));
 						pushNewRecursionContext(_localctx, _startState, RULE_formula);
 						setState(41);
 						if (!(precpred(_ctx, 1))) throw new FailedPredicateException(this, "precpred(_ctx, 1)");
@@ -693,9 +693,9 @@ public class CTLParser extends Parser {
 	private boolean formula_sempred(FormulaContext _localctx, int predIndex) {
 		switch (predIndex) {
 		case 0:
-			return precpred(_ctx, 9);
+			return precpred(_ctx, 6);
 		case 1:
-			return precpred(_ctx, 7);
+			return precpred(_ctx, 5);
 		case 2:
 			return precpred(_ctx, 4);
 		case 3:
@@ -716,15 +716,15 @@ public class CTLParser extends Parser {
 		"\2\2B\2\32\3\2\2\2\4\5\b\2\1\2\5\6\7\3\2\2\6\7\5\2\2\2\7\b\7\4\2\2\b\33"+
 		"\3\2\2\2\t\n\7\5\2\2\n\33\5\2\2\22\13\33\7\6\2\2\f\33\7\7\2\2\r\33\7\24"+
 		"\2\2\16\17\7\b\2\2\17\33\5\2\2\16\20\21\7\t\2\2\21\33\5\2\2\r\22\23\7"+
-		"\n\2\2\23\33\5\2\2\f\24\25\7\f\2\2\25\33\5\2\2\n\26\27\7\16\2\2\27\33"+
-		"\5\2\2\b\30\31\7\17\2\2\31\33\5\2\2\7\32\4\3\2\2\2\32\t\3\2\2\2\32\13"+
-		"\3\2\2\2\32\f\3\2\2\2\32\r\3\2\2\2\32\16\3\2\2\2\32\20\3\2\2\2\32\22\3"+
-		"\2\2\2\32\24\3\2\2\2\32\26\3\2\2\2\32\30\3\2\2\2\33\60\3\2\2\2\34\35\f"+
-		"\13\2\2\35\36\7\13\2\2\36/\5\2\2\13\37 \f\t\2\2 !\7\r\2\2!/\5\2\2\t\""+
-		"#\f\6\2\2#$\7\20\2\2$/\5\2\2\7%&\f\5\2\2&\'\7\21\2\2\'/\5\2\2\5()\f\4"+
-		"\2\2)*\7\22\2\2*/\5\2\2\4+,\f\3\2\2,-\7\23\2\2-/\5\2\2\3.\34\3\2\2\2."+
-		"\37\3\2\2\2.\"\3\2\2\2.%\3\2\2\2.(\3\2\2\2.+\3\2\2\2/\62\3\2\2\2\60.\3"+
-		"\2\2\2\60\61\3\2\2\2\61\3\3\2\2\2\62\60\3\2\2\2\5\32.\60";
+		"\n\2\2\23\33\5\2\2\f\24\25\7\13\2\2\25\33\5\2\2\13\26\27\7\f\2\2\27\33"+
+		"\5\2\2\n\30\31\7\r\2\2\31\33\5\2\2\t\32\4\3\2\2\2\32\t\3\2\2\2\32\13\3"+
+		"\2\2\2\32\f\3\2\2\2\32\r\3\2\2\2\32\16\3\2\2\2\32\20\3\2\2\2\32\22\3\2"+
+		"\2\2\32\24\3\2\2\2\32\26\3\2\2\2\32\30\3\2\2\2\33\60\3\2\2\2\34\35\f\b"+
+		"\2\2\35\36\7\16\2\2\36/\5\2\2\t\37 \f\7\2\2 !\7\17\2\2!/\5\2\2\7\"#\f"+
+		"\6\2\2#$\7\20\2\2$/\5\2\2\6%&\f\5\2\2&\'\7\21\2\2\'/\5\2\2\5()\f\4\2\2"+
+		")*\7\22\2\2*/\5\2\2\4+,\f\3\2\2,-\7\23\2\2-/\5\2\2\3.\34\3\2\2\2.\37\3"+
+		"\2\2\2.\"\3\2\2\2.%\3\2\2\2.(\3\2\2\2.+\3\2\2\2/\62\3\2\2\2\60.\3\2\2"+
+		"\2\60\61\3\2\2\2\61\3\3\2\2\2\62\60\3\2\2\2\5\32.\60";
 	public static final ATN _ATN =
 		new ATNDeserializer().deserialize(_serializedATN.toCharArray());
 	static {
