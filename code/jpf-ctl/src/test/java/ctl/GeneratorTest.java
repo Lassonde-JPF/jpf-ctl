@@ -496,7 +496,33 @@ class GeneratorTest {
 			assertNotNull(formula1);
 			//Check the generated formula is the same as the input formula
 			assertEquals(randomFormula.toString(), formula1.toString()); //string representation
+			assertEquals(formula1.getClass(), randomFormula.getClass());
 		}
+	}
+	/*@Test
+	void testRandom() {
+	    final int CASES = 1000000;
+	    for (int c = 0; c < CASES; c++) {
+	        // generate a random abstract syntax tree
+	        Formula randomFormula = Formula.random();
+	        // obtain the parse tree of the textual representation of the abstract syntax tree
+	        ParseTree tree = parse(randomFormula.toString());
+	        // generate an abstract syntax tree from the parse tree
+	        Formula formula = generator.visit(tree);
+	        assertNotNull(formula);
+	        assertEquals(randomFormula.toString(), formula.toString());
+	    }
+	}*/
+	@Test
+	void testError() {
+		String ctlError = "( true";
+		Formula formula1 = generator.visit(parseCtl(ctlError));
+		//printCtl(ctlError);
+		Formula formula2 = generator.visit(parseCtl(ctlTrue));
+		assertNotNull(formula1);
+		assertNotNull(formula2);
+		assertEquals(formula1, formula2);
+	
 	}
 
 	/**
@@ -521,6 +547,9 @@ class GeneratorTest {
 		CTLLexer lexer = new CTLLexer(input);
 		CommonTokenStream tokens = new CommonTokenStream(lexer);
 		CTLParser parser = new CTLParser(tokens);
+		parser.removeErrorListeners();//remove ConsoleErrorListener
+		
+		parser.addErrorListener(new DialogListener());//add ours
 		ParseTree tree = parser.formula();
 		return tree;
 	}
@@ -540,4 +569,6 @@ class GeneratorTest {
 		ParseTreeWalker walker = new ParseTreeWalker();
 		walker.walk(listener, tree);
 	}
+	
+	
 }
