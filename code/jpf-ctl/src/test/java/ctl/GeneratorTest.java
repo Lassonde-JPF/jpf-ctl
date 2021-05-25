@@ -68,7 +68,7 @@ class GeneratorTest {
 	        // generate an abstract syntax tree from the parse tree
 	        Formula formula = generator.visit(tree);
 	        assertNotNull(formula);
-	        assertEquals(randomFormula.toString(), formula.toString());
+	        assertEquals(randomFormula, formula);
 	    }
 	}
 
