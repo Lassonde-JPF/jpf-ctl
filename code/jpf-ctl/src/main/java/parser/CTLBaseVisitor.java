@@ -132,11 +132,4 @@ public class CTLBaseVisitor<T> extends AbstractParseTreeVisitor<T> implements CT
 	 * {@link #visitChildren} on {@code ctx}.</p>
 	 */
 	@Override public T visitExistsNext(CTLParser.ExistsNextContext ctx) { return visitChildren(ctx); }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation returns the result of calling
-	 * {@link #visitChildren} on {@code ctx}.</p>
-	 */
-	@Override public T visitRoot(CTLParser.RootContext ctx) { return visitChildren(ctx); }
 }
