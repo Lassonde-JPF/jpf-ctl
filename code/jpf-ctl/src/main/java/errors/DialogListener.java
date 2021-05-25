@@ -1,4 +1,4 @@
-package ctl;
+package errors;
 
 import java.awt.Color;
 import java.awt.Container;
@@ -25,11 +25,11 @@ public class DialogListener extends BaseErrorListener {
 	public void syntaxError(Recognizer<?, ?> recognizer, Object offendingSymbol, int line, int charPositionInLine,
 			String msg, RecognitionException e) {
 		// TODO Auto-generated method stub
-		List<String>stack=((CTLParser)recognizer).getRuleInvocationStack();
+		List<String> stack = ((CTLParser) recognizer).getRuleInvocationStack();
 		Collections.reverse(stack);
 		StringBuilder buf = new StringBuilder();
-		buf.append("rulestack:"+stack+"");
-		buf.append("line"+line+":"+charPositionInLine+"at"+offendingSymbol+":"+msg);
+		buf.append("rulestack:" + stack + "");
+		buf.append("line" + line + ":" + charPositionInLine + "at" + offendingSymbol + ":" + msg);
 		JDialog dialog = new JDialog();
 		Container contentPane = dialog.getContentPane();
 		contentPane.add(new JLabel(buf.toString()));
@@ -37,10 +37,8 @@ public class DialogListener extends BaseErrorListener {
 		dialog.setTitle("Syntaxerror");
 		dialog.pack();
 		dialog.setLocationRelativeTo(null);
-		dialog.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);		
+		dialog.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		dialog.setVisible(true);
-		
-		
-		
+
 	}
 }

@@ -680,4 +680,4 @@ fragment IDENTIFIER_PART
 
 /* Skip white space */
 
-WS : [' '\t\r\n]+ -> skip ; 
+WS : [ \t\r\n\u000C]+ -> skip ; 
