@@ -18,12 +18,13 @@ formula
 	| 'EX' formula				#ExistsNext
 	| 'EG' formula				#ExistsAlways
 	| 'EF' formula				#ExistsEventually
-	| <assoc=left> formula '&&' formula 	#And
-	| <assoc=right> formula '||' formula	#Or
-	| <assoc=right> formula '->' formula	#Implies
-	| <assoc=right> formula '<->' formula	#Iff
-	| <assoc=right> formula 'AU' formula	#ForAllUntil
-	| <assoc=right> formula 'EU' formula	#ExistsUntil
+	| formula 'AU'<assoc=right> formula	#ForAllUntil
+	| formula 'EU'<assoc=right> formula	#ExistsUntil
+	| formula '&&'<assoc=left> formula 	#And
+	| formula '||'<assoc=left> formula	#Or
+	| formula '->'<assoc=right> formula	#Implies
+	| formula '<->'<assoc=left> formula	#Iff
+
 	;
 
 /* Atomic propositions */
