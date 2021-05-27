@@ -360,6 +360,34 @@ L(2) & = \{ \mbox{red} \}
 \end{align*}
 \end{itemize} 
 
+\section{JPF Listener that Writes a Partial Transition System to File}
+
+The first objective of this project is to develop a listener for Java PathFinder (JPF) that writes its partial transition system to file.  In \cite[Section~7.3]{B20}, a listener that writes a transition system to file has been developed.  This listener is extended to the setting of partial transition systems.
+
+Consider the following partial transition system.
+\begin{center}
+\begin{tikzpicture}[yscale=0.9]
+\node (start) at (0,3) {};
+\node[rectangle,fill=red!20] (-1) at (1,2.5) {-1};
+\node[rectangle,fill=red!20] (0) at (1,1) {0};
+\node[circle,fill=red!20] (1) at (0,0) {1};
+\node[circle,fill=red!20] (2) at (2,0) {2};
+
+\draw[->] (start)--(-1);
+\draw[->] (-1)--(0);
+\draw[->] (0)--(1);
+\draw[->] (0)--(2);
+\end{tikzpicture}
+\end{center}
+State~-1 is the initial state.  The states -1 and 0 are fully explored, and  states 1 and 2 are not fully explored.  The listener produces a file, the name of which is the name of the system under test with ``.tra'' as suffix (see \cite[Section 7.4]{B20}), with the following content.
+\begin{verbatim}
+-1 -> 0
+0 -> 1
+0 -> 2
+1 2
+\end{verbatim}
+The first three lines describe the transitions.  The last line contains the states that are not fully explored.
+
 \bibliographystyle{plain}
 \bibliography{report}
 
