@@ -28,8 +28,10 @@ class TRAListener implements PartialStateSpacePrinter {
 
         StringJoiner sj = new StringJoiner(" ");
         for (int state : unexploredStates) {
-            sj.add("" + state);
+        	if (state != endState)
+        		sj.add("" + state);
         }
+        
 
         writer.printf(sj.toString());
     }

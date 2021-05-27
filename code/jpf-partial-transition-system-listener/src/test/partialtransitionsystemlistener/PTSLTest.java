@@ -215,16 +215,20 @@ public class PTSLTest extends TestJPF {
                 for (int j = 0; j < depth; j++) {
                     if (r.nextBoolean()) {
                         String tmp = "Old McDonald ";
+                        tmp.length();
                     } else {
                         String tmp = "had a farm, ";
+                        tmp.length();
                     }
                 }
             } else {
                 for (int j = 0; j < depth; j++) {
                     if (r.nextBoolean()) {
                         String tmp = "E-I-";
+                        tmp.length();
                     } else {
                         String tmp = "E-I-O ";
+                        tmp.length();
                     }
                 }
             }
