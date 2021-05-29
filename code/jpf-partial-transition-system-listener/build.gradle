@@ -57,7 +57,7 @@ dependencies {
     implementation files("${jpfCore}/build/jpf.jar")
 
     // Use JUnit test framework
-    testImplementation('junit:junit:4.13')
+    testImplementation('junit:junit:4.12')
 }
 
 apply from: "gradle/source-sets.gradle"
