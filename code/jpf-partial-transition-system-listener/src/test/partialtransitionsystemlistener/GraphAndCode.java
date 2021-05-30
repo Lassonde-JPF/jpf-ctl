@@ -27,9 +27,10 @@ public class GraphAndCode {
 			
 			code.println("package code;");
 			code.println("import java.util.Random;");
+			code.println("import partialtransitionsystemlistener.Graph;");
 			code.println();
-			code.printf("public class %s {%n", fileName);
-			code.println("  public static void main(String[] args) {");
+			code.printf("public class %s implements Graph {%n", fileName);
+			code.println("  public void run() {");
 			code.println("    final Random RANDOM = new Random();");
 			code.println("    boolean done = false;");
 			code.println("    int state = 0;");
