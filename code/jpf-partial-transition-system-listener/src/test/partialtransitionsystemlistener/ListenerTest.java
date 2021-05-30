@@ -11,6 +11,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.Random;
+import java.util.stream.Collectors;
 
 import javax.tools.JavaCompiler;
 import javax.tools.ToolProvider;
@@ -25,34 +26,33 @@ public class ListenerTest extends TestJPF {
 
 	private static String[] properties = new String[] { "+cg.enumerate_random=true",
 			"+listener=partialtransitionsystemlistener.PartialTransitionSystemListener",
-			"+partialtransitionsystemlistener.use_dot=false", "+partialtransitionsystemlistener.max_new_states=" };
+			"+partialtransitionsystemlistener.use_dot=false", "+partialtransitionsystemlistener.max_new_states=", };
 
-	private static final int N = 1;
+	private static String path;
+
+	private static final int N = 2;
 	private static final int MIN_STATES = 1;
 	private static final int MAX_STATES = 30;
-	
-	private static ArrayList<Graph> graphs = new ArrayList<Graph>(N);
 
+	/**
+	 * This method generates `N` random directed graphs, places their .java and .tra
+	 * representations in the /src/test/code/ and /src/test/resources/graph/
+	 * directories, respectively. Moreover, it compiles the .java representation to
+	 * a .class file in the same directory.
+	 */
 	@BeforeClass
 	public static void setup() {
+		path = System.getProperty("user.dir") + "/src/test/";
 		Random r = new Random();
 		for (int i = 0; i < N; i++) {
 			try {
 				// Generate .java file
 				GraphAndCode.generate("Graph" + i, MIN_STATES + r.nextInt(MAX_STATES - MIN_STATES + 1));
-				// Get the path of the file to compile
-				String path = new File("src/test/code/Graph" + i + ".java").getPath();
 				// get the compiler object
 				JavaCompiler compiler = ToolProvider.getSystemJavaCompiler();
 				// Compile .java file into a .class file
-				if (compiler.run(System.in, System.out, System.err, path) == 0) {
-					// Load the compiled class
-					URLClassLoader classLoader = URLClassLoader.newInstance(new URL[] { new File("src/test/").toURI().toURL() });
-					Class<?> graph = Class.forName("code.Graph" + i, true, classLoader);
-					// push an instantiated instance of Graph to the list of graphs
-					graphs.add((Graph) graph.newInstance());
-				} else {
-					System.out.println("There was an error compiling: " + path);
+				if (compiler.run(System.in, System.out, System.err, path + "/code/Graph" + i + ".java") != 0) {
+					System.out.println("There was an error compiling: " + path + "/code/Graph" + i + ".java");
 				}
 			} catch (Exception e) {
 				e.printStackTrace();
@@ -75,14 +75,32 @@ public class ListenerTest extends TestJPF {
 	@Test
 	public void testRandomDigraph() {
 		properties[3] = "+partialtransitionsystemlistener.max_new_states=" + 50;
-		for (Graph g : graphs) {
-			System.out.println("Class: " + g.getClass().toString());
-			if (verifyNoPropertyViolation(properties)) {
-				g.run();
-			} else {
-				assertTrue(true); // replace with assertEquals(.../graph0.tra, out.tra);
+		for (int i = 0; i < N; i++) {
+			try {
+				Class<?> graphClass = Class.forName("code.Graph" + i, true,
+						Thread.currentThread().getContextClassLoader());
+				Graph g = (Graph) graphClass.newInstance();
+				if (verifyNoPropertyViolation(properties)) {
+					g.run();
+				} else {
+					assertTrue(true); // TODO replace with the assertion below when bugs are fixed
+					// assertFilesEqual(path + "/resources/graph/Graph" + i + ".tra", path +
+					// "/partialtransitionsystemlistener.ListenerTest.tra");
+				}
+			} catch (Exception e) {
+				e.printStackTrace();
 			}
 		}
+	}
 
+	private void assertFilesEqual(String actual, String expected) {
+		try {
+			String actualLines = Files.lines(new File(actual).toPath()).collect(Collectors.joining("\n"));
+			String expectedLines = Files.lines(new File(expected).toPath()).collect(Collectors.joining("\n"));
+
+			assertEquals(expectedLines, actualLines);
+		} catch (IOException e) {
+			fail();
+		}
 	}
 }
