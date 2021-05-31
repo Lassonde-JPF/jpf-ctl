@@ -13,7 +13,7 @@ public class MyErrorStrategy extends DefaultErrorStrategy {
 	public void recover(Parser recognizer, RecognitionException e) {
 		// TODO Auto-generated method stub
 		//throw new RuntimeException(e);
-		if(MyErrorListener.error)
+		if(MyErrorListener.hadReservedWordsError)
 		{
 			System.out.print("Error");
 		}

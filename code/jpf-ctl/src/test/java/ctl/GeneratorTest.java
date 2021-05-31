@@ -76,7 +76,7 @@ class GeneratorTest {
 	
 	@Test
 	void testError() {
-		String ctlTrue1	= "( true )";
+		String ctlTrue1	= "( do )";
 		Formula formula1 = generator.visit(parseCtl(ctlTrue1));
 		assertNotNull(formula1);
 		assertEquals(True.class, formula1.getClass());
