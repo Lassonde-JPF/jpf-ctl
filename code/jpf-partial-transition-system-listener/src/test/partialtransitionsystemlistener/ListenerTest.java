@@ -26,11 +26,11 @@ public class ListenerTest extends TestJPF {
 
 	private static String[] properties = new String[] { "+cg.enumerate_random=true",
 			"+listener=partialtransitionsystemlistener.PartialTransitionSystemListener",
-			"+partialtransitionsystemlistener.use_dot=false", "+partialtransitionsystemlistener.max_new_states=", };
+			"+partialtransitionsystemlistener.use_dot=false", "+partialtransitionsystemlistener.max_new_states="};
 
 	private static String path;
 
-	private static final int N = 2;
+	private static final int N = 1;
 	private static final int MIN_STATES = 1;
 	private static final int MAX_STATES = 30;
 
@@ -62,14 +62,15 @@ public class ListenerTest extends TestJPF {
 
 	@AfterClass
 	public static void cleanup() throws IOException {
+		System.out.println("Cleaning Up");
         Files.walk(Paths.get("src/test/code/"))
         .filter(Files::isRegularFile)
         .map(Path::toFile)
         .forEach(File::delete);
-        Files.walk(Paths.get("src/test/resources/graph/"))
-        .filter(Files::isRegularFile)
-        .map(Path::toFile)
-        .forEach(File::delete);
+//        Files.walk(Paths.get("src/test/resources/graph/"))
+//        .filter(Files::isRegularFile)
+//        .map(Path::toFile)
+//        .forEach(File::delete);
 	}
 
 	@Test
@@ -77,8 +78,9 @@ public class ListenerTest extends TestJPF {
 		properties[3] = "+partialtransitionsystemlistener.max_new_states=" + 50;
 		for (int i = 0; i < N; i++) {
 			try {
-				Class<?> graphClass = Class.forName("code.Graph" + i, true,
-						Thread.currentThread().getContextClassLoader());
+				File root = new File(System.getProperty("user.dir") + "/src/test");
+				URLClassLoader classLoader = URLClassLoader.newInstance(new URL[] { root.toURI().toURL() });
+				Class<?> graphClass = Class.forName("code.Graph" + i, true, classLoader);
 				Graph g = (Graph) graphClass.newInstance();
 				if (verifyNoPropertyViolation(properties)) {
 					g.run();
