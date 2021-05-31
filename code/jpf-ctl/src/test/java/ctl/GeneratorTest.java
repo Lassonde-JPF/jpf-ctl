@@ -22,7 +22,9 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import errors.MyErrorStrategy;
 import errors.DialogListener;
+import errors.MyErrorListener;
 
 import org.antlr.v4.runtime.CharStream;
 import org.antlr.v4.runtime.CharStreams;
@@ -58,7 +60,7 @@ class GeneratorTest {
 		generator = new Generator();
 	}
 	
-	@Test
+	/*@Test
 	void testRandom() {
 	    for (int c = 0; c < CASES; c++) {
 	        // generate a random abstract syntax tree
@@ -70,8 +72,19 @@ class GeneratorTest {
 	        assertNotNull(formula);
 	        assertEquals(randomFormula, formula);
 	    }
+	}*/
+	
+	@Test
+	void testError() {
+		String ctlTrue1	= "( true )";
+		Formula formula1 = generator.visit(parseCtl(ctlTrue1));
+		assertNotNull(formula1);
+		assertEquals(True.class, formula1.getClass());
+		String ctlTrue2	= "( for )";
+		Formula formula2 = generator.visit(parseCtl(ctlTrue2));
+		//assertNotNull(formula2);
+		//assertEquals(True.class, formula1.getClass());
 	}
-
 	/**
 	 * Adds outer brackets to a given CTL formula.
 	 * 
@@ -96,7 +109,8 @@ class GeneratorTest {
 		CTLParser parser = new CTLParser(tokens);
 		parser.removeErrorListeners();//remove ConsoleErrorListener
 		
-		parser.addErrorListener(new DialogListener());//add ours
+		parser.addErrorListener(new MyErrorListener());//add ours
+		parser.setErrorHandler(new MyErrorStrategy());
 		ParseTree tree = parser.formula();
 		return tree;
 	}
