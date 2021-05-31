@@ -37,6 +37,9 @@
 \theoremstyle{definition}
 \newtheorem{definition}{Definition}
 
+\usepackage{stmaryrd}
+\newcommand{\satisfaction}[1]{\llbracket #1 \rrbracket}
+
 \begin{document}
 
 \title{}
@@ -170,7 +173,7 @@ AG (java.awt.AWTEvent.consumed
 
 \section{A Lexer and Parser for CTL Formulas}
 
-A lexer and parser for CTL formulas has been developed using ANTLR \cite{P13}.  The above described grammar can be specified in ANTLR format as folows.
+A lexer and parser for CTL formulas have been developed using ANTLR \cite{P13}.  The above described grammar can be specified in ANTLR format as folows.
 \begin{lstlisting}
 formula
   : 'true'				#True
@@ -182,14 +185,14 @@ formula
   | 'AF' formula			#ForAllEventually
   | 'EG' formula			#ExistsAlways
   | 'EF' formula			#ExistsEventually
-  | formula 'AU'<assoc=right> formula   #ForAllUntil
-  | formula 'EU'<assoc=right> formula   #ExistsUntil
-  | formula '&&' formula		#And
-  | formula '| |' formula   		#Or
-  | formula '->'<assoc=right> formula   #Implies
-  | formula '<->' formula		#Iff
+  | formula 'AU' <assoc=right> formula  #ForAllUntil
+  | formula 'EU' <assoc=right> formula  #ExistsUntil
+  | formula '&&' <assoc=left> formula	#And
+  | formula '| |' <assoc=left> formula  #Or
+  | formula '->' <assoc=right> formula  #Implies
+  | formula '<->' <assoc=left> formula	#Iff
 \end{lstlisting}
-The order of the alternatives is consistent with the precedence of the operators (if an operator has higher precedence, then its alternative occurs earlier).  By default, binary operators are left associative.  The operators \lstinline{AU}, \lstinline{EU}, and \lstinline{->} are specified as right associative.  The second column of the above rule contains the labels of the alternatives (see \cite[Section~8.2]{P13}).  We will discuss their role below.
+The order of the alternatives is consistent with the precedence of the operators (if an operator has higher precedence, then its alternative occurs earlier).  The operators \lstinline{AU}, \lstinline{EU}, and \lstinline{->} are specified as right associative.  The other binary operators are left associative.  The second column of the above rule contains the labels of the alternatives (see \cite[Section~8.2]{P13}).  We will discuss their role below.
 
 Recall that the atomic propositions are static attributes.  To specify these, we used relevant snippets of the ANTLR grammar for Java%
 \footnote{See \href{https://github.com/antlr/grammars-v4/tree/master/java/java8}{github.com/antlr/grammars-v4/tree/master/java/java8}.}
@@ -295,7 +298,7 @@ public Formula visitImplies(ImpliesContext context) {
 
 \section{A New Semantics for CTL}
 
-The normal semantics of CTL is described in \cite[Section~6.2.2]{BK08}.  This normal semantics is defined for a transition system $(S, Act, \rightarrow, I, AP, L)$.  Such a transition system is defined in \cite[Definition~2.1]{BK08}  The new semantics considers a partial transition system.  A partial transition system is a tuple $(S, F, Act, \rightarrow, I, AP, L)$, where all components are defined as before and $F \subseteq S$ is a set of fully explored states.  A transition system is called partial because the states $S \setminus F$ are not fully explored yet, that is, these states have transitions that are not part of the transition relation $\rightarrow$.  
+The normal semantics of CTL is described in \cite[Section~6.2.2]{BK08}.  This normal semantics is defined for a transition system $(S, Act, \rightarrow, I, AP, L)$.  Such a transition system is defined in \cite[Definition~2.1]{BK08}.  The new semantics considers a partial transition system.  A partial transition system is a tuple $(S, F, Act, \rightarrow, I, AP, L)$, where all components are defined as before and $F \subseteq S$ is a set of fully explored states.  A transition system is called partial because the states $S \setminus F$ are not fully explored yet, that is, these states have transitions that are not part of the transition relation $\rightarrow$.  
 
 Consider the following partial transition system.
 \begin{center}
@@ -360,6 +363,129 @@ L(2) & = \{ \mbox{red} \}
 \end{align*}
 \end{itemize} 
 
+\textcolor{blue}{We may have to redefine paths.}
+
+The satisfaction relation $\models$ for CTL for ordinary transition systems is defined in \cite[Definition~6.4]{BK08}.  It can be viewed as a function $\satisfaction{\ }$ that maps each CTL formula and state of a transition system to either true of false, that is, for each state formula $\varphi$ and state $s$,
+\[
+s \models \varphi \mbox{ iff } \satisfaction{\varphi}(s) = \mbox{true}.
+\]
+
+To deal with partial transition systems, we extend the range of the function $\satisfaction{\ }$.  Given a formula $\varphi$ and a state $s$, we have that either
+\begin{itemize}
+\item 
+$\satisfaction{\varphi}(s) = \top$: the formula $\varphi$ holds in the state $s$,
+\item
+$\satisfaction{\varphi}(s) = \perp$: the formula $\varphi$ does not hold in the state $s$, or
+\item
+$\satisfaction{\varphi}(s) = \mathord{?}$: we cannot determine whether the formula $\varphi$ holds in the state $s$ since some states, relevant to $\varphi$,  have not been explored.
+\end{itemize}
+
+For example, consider the partial transition system depicted above.  Consider the formula $\forall \nxt \mbox{red}$.  We have that $\satisfaction{\forall \nxt \mbox{red}}(-1) = \top$ since the state $-1$ is fully explored and all its successor states are red.  Furthermore, $\satisfaction{\forall \nxt \mbox{red}}(0) = \perp$ since one of the  successor states of state 0 is not red.  Finally, $\satisfaction{\forall \nxt \mbox{red}}(1) = \mathord{?}$ since the state 1 is not fully explored and it does not have a successor that is not red.
+
+We denote the set of three values, $\top$, $\perp$ and $?$ by $\mathbb{V}$, that is,
+\[
+\mathbb{V} = \{ \top, \perp, \mathord{?} \}.
+\]
+We can extend the usual Boolean operators to $\mathbb{V}$ as follows.  Negation is captured in the following table.
+\[
+\begin{array}{c|c}
+v & \neg v\\\hline
+\top & \perp\\
+\perp & \top\\
+\mathord{?} & \mathord{?}
+\end{array}
+\]
+Conjunction is defined as follows.
+\[
+\begin{array}{cc|ccc}
+\multicolumn{2}{c|}{v \wedge w} & & w &\\
+&& \top & \perp & \mathord{?}\\\hline
+& \top & \top & \perp & \mathord{?}\\
+v & \perp & \perp & \perp & \perp\\
+& \mathord{?} & \mathord{?} & \perp & \mathord{?}
+\end{array}
+\]
+Disjunction is defined as follows.
+\[
+\begin{array}{cc|ccc}
+\multicolumn{2}{c|}{v \vee w} & & w &\\
+&& \top & \perp & \mathord{?}\\\hline
+& \top & \top & \top & \top\\
+v & \perp & \top & \perp & \mathord{?}\\
+& \mathord{?} & \top & \mathord{?} & \mathord{?}
+\end{array}
+\]
+Implication is defined as follows.
+\[
+\begin{array}{cc|ccc}
+\multicolumn{2}{c|}{v \rightarrow w} & & w &\\
+&& \top & \perp & \mathord{?}\\\hline
+& \top &  &  & \\
+v & \perp &  &  & \\
+& \mathord{?} &  &  & 
+\end{array}
+\]
+Equivalence is defined as follows.
+\[
+\begin{array}{cc|ccc}
+\multicolumn{2}{c|}{v \leftrightarrow w} & & w &\\
+&& \top & \perp & \mathord{?}\\\hline
+& \top &  &  & \\
+v & \perp &  &  & \\
+& \mathord{?} &  &  & 
+\end{array}
+\]
+
+We denote the set of CTL formulas by $\mathit{CTL}$.
+
+\begin{definition}
+Let $(S, F, \rightarrow, I, \mathit{AP}, L)$ be a partial transition system.  Let $s \in S$.  The function 
+\[
+\satisfaction{\ } : \mathit{CTL} \to S \to \mathbb{V}
+\] 
+is defined by structural induction on the CTL formula as follows.
+\begin{itemize}
+\item
+$\satisfaction{a}(s) = 
+\left \{
+\begin{array}{ll}
+\top & \mbox{if $a \in L(s)$}\\
+\perp & \mbox{otherwise}
+\end{array}
+\right.$
+\item 
+$\satisfaction{\TRUE}(s) = \top$
+\item 
+$\satisfaction{\FALSE}(s) = \perp$
+\item
+$\satisfaction{\neg \varphi}(s) = \neg \satisfaction{\varphi}(s)$
+\item
+$\satisfaction{\varphi \wedge \psi}(s) = \satisfaction{\varphi}(s) \wedge  \satisfaction{\psi}(s)$
+\item
+$\satisfaction{\varphi \vee \psi}(s) = \satisfaction{\varphi}(s) \vee  \satisfaction{\psi}(s)$
+\item
+$\satisfaction{\varphi \rightarrow \psi}(s) = \satisfaction{\varphi}(s) \rightarrow  \satisfaction{\psi}(s)$
+\item
+$\satisfaction{\varphi \leftrightarrow \psi}(s) = \satisfaction{\varphi}(s) \leftrightarrow  \satisfaction{\psi}(s)$
+\item
+$\satisfaction{\forall \nxt \varphi}(s) = $
+\item
+$\satisfaction{\exists \nxt \varphi}(s) = $
+\item
+$\satisfaction{\forall \varphi \until \psi}(s) = $
+\item
+$\satisfaction{\exists \varphi \until \psi}(s) = $
+\item
+$\satisfaction{\forall \always \varphi}(s) = $
+\item
+$\satisfaction{\exists \always \varphi}(s) = $
+\item
+$\satisfaction{\forall \eventually \varphi}(s) = $
+\item
+$\satisfaction{\exists \eventually \varphi}(s) = $
+\end{itemize}
+\end{definition}
+
 \section{JPF Listener that Writes a Partial Transition System to File}
 
 The first objective of this project is to develop a listener for Java PathFinder (JPF) that writes its partial transition system to file.  In \cite[Section~7.3]{B20}, a listener that writes a transition system to file has been developed.  This listener is extended to the setting of partial transition systems.
@@ -381,12 +507,12 @@ Consider the following partial transition system.
 \end{center}
 State~-1 is the initial state.  The states -1 and 0 are fully explored, and  states 1 and 2 are not fully explored.  The listener produces a file, the name of which is the name of the system under test with ``.tra'' as suffix (see \cite[Section 7.4]{B20}), with the following content.
 \begin{verbatim}
--1 -> 0
-0 -> 1
-0 -> 2
-1 2
+-1 0
+0 1
+0 2
+-1 0
 \end{verbatim}
-The first three lines describe the transitions.  The last line contains the states that are not fully explored.
+The first three lines describe the transitions.  Each line contains the source of the transition followed by the target of the transition.  The last line contains the states that are fully explored.
 
 \bibliographystyle{plain}
 \bibliography{report}
