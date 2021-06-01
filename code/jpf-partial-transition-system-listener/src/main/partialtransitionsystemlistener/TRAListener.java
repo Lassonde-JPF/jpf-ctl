@@ -11,7 +11,7 @@ class TRAListener implements PartialStateSpacePrinter {
 
     @Override
     public void printResult(Map<Integer, Set<Integer>> transitions, PrintWriter writer, Integer endState) {
-        Set<Integer> unexploredStates = new HashSet<>();
+        Set<Integer> unexploredStates = new LinkedHashSet<>();
 
         for (Map.Entry<Integer, Set<Integer>> entry : transitions.entrySet()) {
             int source = entry.getKey();

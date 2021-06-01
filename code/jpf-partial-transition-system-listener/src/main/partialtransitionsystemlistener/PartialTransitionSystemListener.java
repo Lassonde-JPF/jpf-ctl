@@ -12,6 +12,8 @@ import java.io.FileNotFoundException;
 import java.io.PrintWriter;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
 
@@ -76,7 +78,7 @@ public class PartialTransitionSystemListener extends SearchListenerAdapter {
 	 * @param jpf the JPF instance
 	 */
 	public PartialTransitionSystemListener(Config config, JPF jpf) {
-		this.transitions = new HashMap<>();
+		this.transitions = new LinkedHashMap<>();
 
 		this.newStates = 0;
 
@@ -134,7 +136,7 @@ public class PartialTransitionSystemListener extends SearchListenerAdapter {
 		this.source = this.target;
 		this.target = search.getStateId();
 
-		this.transitions.computeIfAbsent(this.source, k -> new HashSet<>()).add(this.target);
+		this.transitions.computeIfAbsent(this.source, k -> new LinkedHashSet<>()).add(this.target);
 
 		if (search.isEndState()) {
 			this.endState = search.getStateId();

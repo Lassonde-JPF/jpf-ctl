@@ -31,8 +31,8 @@ public class ListenerTest extends TestJPF {
 	private static String path;
 
 	private static final int N = 1;
-	private static final int MIN_STATES = 1;
-	private static final int MAX_STATES = 30;
+	private static final int MIN_STATES = 5;
+	private static final int MAX_STATES = 5;
 
 	/**
 	 * This method generates `N` random directed graphs, places their .java and .tra
@@ -62,11 +62,11 @@ public class ListenerTest extends TestJPF {
 
 	@AfterClass
 	public static void cleanup() throws IOException {
-		System.out.println("Cleaning Up");
-        Files.walk(Paths.get("src/test/code/"))
-        .filter(Files::isRegularFile)
-        .map(Path::toFile)
-        .forEach(File::delete);
+//		System.out.println("Cleaning Up");
+//        Files.walk(Paths.get("src/test/code/"))
+//        .filter(Files::isRegularFile)
+//        .map(Path::toFile)
+//        .forEach(File::delete);
 //        Files.walk(Paths.get("src/test/resources/graph/"))
 //        .filter(Files::isRegularFile)
 //        .map(Path::toFile)
@@ -86,8 +86,8 @@ public class ListenerTest extends TestJPF {
 					g.run();
 				} else {
 					assertTrue(true); // TODO replace with the assertion below when bugs are fixed
-					// assertFilesEqual(path + "/resources/graph/Graph" + i + ".tra", path +
-					// "/partialtransitionsystemlistener.ListenerTest.tra");
+					// assertFilesEqual(path + "/resources/graph/Graph" + i + ".tra",
+					// "partialtransitionsystemlistener.ListenerTest.tra");
 				}
 			} catch (Exception e) {
 				e.printStackTrace();
