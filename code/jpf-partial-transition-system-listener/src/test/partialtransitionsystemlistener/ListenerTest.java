@@ -39,10 +39,14 @@ public class ListenerTest extends TestJPF {
 	 * representations in the /src/test/code/ and /src/test/resources/graph/
 	 * directories, respectively. Moreover, it compiles the .java representation to
 	 * a .class file in the same directory.
+	 * @throws IOException 
 	 */
 	@BeforeClass
-	public static void setup() {
+	public static void setup() throws IOException {
 		path = System.getProperty("user.dir") + "/src/test/";
+		Files.createDirectories(Paths.get(path + "/code"));
+		Files.createDirectories(Paths.get(path + "/resources/code"));
+		Files.createDirectories(Paths.get(path + "/resources/graph"));
 		Random r = new Random();
 		for (int i = 0; i < N; i++) {
 			try {
@@ -62,15 +66,19 @@ public class ListenerTest extends TestJPF {
 
 	@AfterClass
 	public static void cleanup() throws IOException {
-//		System.out.println("Cleaning Up");
-//        Files.walk(Paths.get("src/test/code/"))
-//        .filter(Files::isRegularFile)
-//        .map(Path::toFile)
-//        .forEach(File::delete);
-//        Files.walk(Paths.get("src/test/resources/graph/"))
-//        .filter(Files::isRegularFile)
-//        .map(Path::toFile)
-//        .forEach(File::delete);
+		System.out.println("Cleaning Up");
+        Files.walk(Paths.get(path + "/code"))
+        .sorted(Comparator.reverseOrder())
+        .map(Path::toFile)
+        .forEach(File::delete);
+        Files.walk(Paths.get(path + "/resources/code"))
+        .sorted(Comparator.reverseOrder())
+        .map(Path::toFile)
+        .forEach(File::delete);
+        Files.walk(Paths.get(path + "/resources/graph"))
+        .sorted(Comparator.reverseOrder())
+        .map(Path::toFile)
+        .forEach(File::delete);
 	}
 
 	@Test
