@@ -1,6 +1,7 @@
 package partialtransitionsystemlistener;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.file.*;
 import java.util.Comparator;
@@ -14,20 +15,6 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 import gov.nasa.jpf.util.test.TestJPF;
-
-/*
-    Possible way to determine which states should be left out:
-    Based on the created Digraph and the max_new_states property...
-
-    Formula: S_Not_Explored <- S(Digraph) \ S(DFS(Digraph, max_new_states))
-    Where, S(F) is States of the digraph F
-    and, DFS(F, i) is states of the digraph 'F' explored when performing a DFS for 'i' iterations
-
-    This could then be converted to a dot file somehow, or used in another way.
-
-    Might be better *not* to test dot output and instead check if last line of text output
-    satisfies the above formula
- */
 
 public class PTSLTest extends TestJPF {
 
@@ -72,7 +59,13 @@ public class PTSLTest extends TestJPF {
 			if (verifyNoPropertyViolation(properties)) {
 				TSCustom(e.getKey(), e.getValue());
 			} else {
-				assertFilesEqual(fileName, "");
+				try {
+					PartialTransitionSystem pts = new PartialTransitionSystem(fileName);
+					System.out.println(pts.toString());
+					assertNotNull(pts);
+				} catch (FileNotFoundException e1) {
+					fail();
+				}
 			}
 		}
 	}
