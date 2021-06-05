@@ -94,12 +94,8 @@ public class PTSLTest extends TestJPF {
 	private void assertPartialTransitionSystemCorrectness() {
 		if (partialTransitionSystems.size() > 1) {
 			try {
-				// TODO probably don't need to check *all* of the previous transition systems ->
-				// just i-1 may suffice.
-				for (int i = 0; i < partialTransitionSystems.size(); i++) {
-					for (int j = 0; j < i; j++) {
-						partialTransitionSystems.get(i).extend(partialTransitionSystems.get(j));
-					}
+				for (int i = 1; i < partialTransitionSystems.size(); i++) {
+					partialTransitionSystems.get(i).extend(partialTransitionSystems.get(i-1));
 				}
 			} catch (PartialTransitionSystemException e) {
 				e.printStackTrace();
