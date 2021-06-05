@@ -4,7 +4,11 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.file.*;
+import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Random;
 import java.util.TreeMap;
@@ -22,11 +26,9 @@ public class PTSLTest extends TestJPF {
 
 	private static String path;
 
-	public static final int N = 10;
-	public static final int MIN = 1;
-	public static final int MAX = 5;
+	private static final int N = 7;
 
-	public static TreeMap<Integer, Integer> dimentions;
+	private List<PartialTransitionSystem> partialTransitionSystems;
 
 	private static String[] properties = new String[] { "+cg.enumerate_random=true",
 			"+listener=partialtransitionsystemlistener.PartialTransitionSystemListener",
@@ -36,11 +38,6 @@ public class PTSLTest extends TestJPF {
 	public static void setUpBeforeClass() throws IOException {
 		path = System.getProperty("user.dir") + "/src/test/resources/";
 		Files.createDirectories(Paths.get(path + "/tmp"));
-		dimentions = new TreeMap<Integer, Integer>();
-		Random r = new Random();
-		for (int i = 0; i < N; i++) {
-			dimentions.put(i, MIN + r.nextInt(MAX - MIN + 1));
-		}
 	}
 
 	@AfterClass
@@ -54,60 +51,51 @@ public class PTSLTest extends TestJPF {
 
 	@Test
 	public void TSCustom1a() {
-		properties[3] = "+partialtransitionsystemlistener.max_new_states=" + 100;
-		for (Entry<Integer, Integer> e : dimentions.entrySet()) {
+		partialTransitionSystems = new ArrayList<PartialTransitionSystem>();
+		for (int i = 0; i < N; i++) {
+			properties[3] = "+partialtransitionsystemlistener.max_new_states=" + (i+1);
 			if (verifyNoPropertyViolation(properties)) {
-				TSCustom(e.getKey(), e.getValue());
+				Random r = new Random();
+				int state = 0;
+				if (r.nextBoolean()) {
+					if (r.nextBoolean()) {
+						state = 1;
+					} else {
+						state = 2;
+					}
+				} else {
+					if (r.nextBoolean()) {
+						state = 3;
+					} else {
+						state = 4;
+					}
+				}
+				System.out.println("State: " + state);
 			} else {
 				try {
-					PartialTransitionSystem pts = new PartialTransitionSystem(fileName);
-					System.out.println(pts.toString());
-					assertNotNull(pts);
-				} catch (FileNotFoundException e1) {
+					partialTransitionSystems.add(new PartialTransitionSystem(fileName));
+					assertPartialTransitionSystemCorrectness();
+				} catch (FileNotFoundException e) {
+					e.printStackTrace();
 					fail();
 				}
 			}
 		}
 	}
 
-	public void TSCustom(Integer width, Integer depth) {
-		Random r = new Random();
-
-		for (int i = 0; i < width; i++) {
-			if (r.nextBoolean()) {
-				for (int j = 0; j < depth; j++) {
-					if (r.nextBoolean()) {
-						String tmp = "Old McDonald ";
-						tmp.length();
-					} else {
-						String tmp = "had a farm, ";
-						tmp.length();
+	private void assertPartialTransitionSystemCorrectness() {
+		if (partialTransitionSystems.size() > 1) {
+			try {
+				for (int i = 0; i < partialTransitionSystems.size(); i++) {
+					for (int j = 0; j < i; j++) {
+						partialTransitionSystems.get(i).extend(partialTransitionSystems.get(j));
 					}
 				}
-			} else {
-				for (int j = 0; j < depth; j++) {
-					if (r.nextBoolean()) {
-						String tmp = "E-I-";
-						tmp.length();
-					} else {
-						String tmp = "E-I-O ";
-						tmp.length();
-					}
-				}
+			} catch (PartialTransitionSystemException e) {
+				e.printStackTrace();
+				fail();
 			}
 		}
-	}
 
-	private void assertFilesEqual(String actual, String expected) {
-		try {
-			String actualLines = Files.lines(new File(actual).toPath()).collect(Collectors.joining("\n"));
-			// String expectedLines = Files.lines(new
-			// File(expected).toPath()).collect(Collectors.joining("\n"));
-
-			// assertEquals(expectedLines, actualLines);
-			assertNotNull(actualLines);
-		} catch (IOException e) {
-			fail();
-		}
 	}
 }
