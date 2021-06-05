@@ -13,8 +13,10 @@ import java.util.Map.Entry;
 import java.util.Random;
 import java.util.TreeMap;
 import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 import org.junit.AfterClass;
+import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
@@ -27,15 +29,14 @@ public class PTSLTest extends TestJPF {
 	private static String path;
 
 	private static final int N = 16;
-
-	private static final int MIN_DEPTH = 1;
-	private static final int MAX_DEPTH = 5;
-	private static final int MIN_WIDTH = 1;
-	private static final int MAX_WIDTH = 5;
+	private static final int MIN_NODES = 1;
+	private static final int MAX_NODES = 10;
+	private static final int MAX_EDGES = 3;
 
 	private List<PartialTransitionSystem> partialTransitionSystems;
 
-	private static String[] properties = new String[] { "+cg.enumerate_random=true",
+	private static String[] properties = new String[] {
+			"+nhandler.spec.delegate=partialtransitionsystemlistener.PTSLTest.TransitionSystem",
 			"+listener=partialtransitionsystemlistener.PartialTransitionSystemListener",
 			"+partialtransitionsystemlistener.use_dot=false", "+partialtransitionsystemlistener.max_new_states=" };
 
@@ -58,12 +59,23 @@ public class PTSLTest extends TestJPF {
 	public void PartialTransitionSystemExtendTest() {
 		partialTransitionSystems = new ArrayList<PartialTransitionSystem>();
 		Random r = new Random();
-		int depth = MIN_DEPTH + r.nextInt(MAX_DEPTH - MIN_DEPTH + 1);
-		int width = MIN_WIDTH + r.nextInt(MAX_WIDTH - MIN_WIDTH + 1);
+		final Map<Integer, List<Integer>> graph = TransitionSystem();
+
 		for (int i = 0; i < N; i++) {
-			properties[3] = "+partialtransitionsystemlistener.max_new_states=" + (int) Math.pow(2, (i+1));
+			properties[properties.length - 1] = "+partialtransitionsystemlistener.max_new_states="
+					+ (int) Math.pow(2, (i + 1));
 			if (verifyNoPropertyViolation(properties)) {
-				TransitionSystem(depth, width);
+				int state = 0;
+				boolean done = false;
+				while (!done) {
+					// System.out.println("Current State: " + state);
+					List<Integer> successors = graph.get(state);
+					if (successors.isEmpty() || (successors.size() == 1 && successors.get(0) == state)) {
+						done = true;
+					} else {
+						state = successors.get(r.nextInt(successors.size()));
+					}
+				}
 			} else {
 				try {
 					partialTransitionSystems.add(new PartialTransitionSystem(fileName));
@@ -76,32 +88,33 @@ public class PTSLTest extends TestJPF {
 		}
 	}
 
-	public int TransitionSystem(int depth, int width) {
+	private Map<Integer, List<Integer>> TransitionSystem() {
 		Random r = new Random();
-		int state = 0;
-		for (int i = 0; i < depth; i++) {
-			for (int j = 0; j < width; j++) {
-				if (r.nextBoolean()) {
-					state += (j + i);
-				} else {
-					state -= (j + i);
-				}
-			}
-		}
-		return state;
+		// Determine the depth of the tree
+		int nodes = MIN_NODES + r.nextInt(MAX_NODES - MIN_NODES + 1);
+		// Generate empty graph structure
+		Map<Integer, List<Integer>> graph = new LinkedHashMap<Integer, List<Integer>>(nodes);
+		// Begin graph generation
+		IntStream.range(0, nodes).forEach(value -> {
+			graph.computeIfAbsent(value, k -> new ArrayList<Integer>()).addAll(
+					r.ints(0, nodes).distinct().limit(r.nextInt(MAX_EDGES + 1)).boxed().collect(Collectors.toList()));
+		});
+		System.out.println(graph);
+		return graph;
 	}
 
 	private void assertPartialTransitionSystemCorrectness() {
 		if (partialTransitionSystems.size() > 1) {
 			try {
 				for (int i = 1; i < partialTransitionSystems.size(); i++) {
-					partialTransitionSystems.get(i).extend(partialTransitionSystems.get(i-1));
+					partialTransitionSystems.get(i).extend(partialTransitionSystems.get(i - 1));
 				}
 			} catch (PartialTransitionSystemException e) {
 				e.printStackTrace();
 				fail();
 			}
+		} else {
+			assertNotNull(partialTransitionSystems.get(0));
 		}
-
 	}
 }
