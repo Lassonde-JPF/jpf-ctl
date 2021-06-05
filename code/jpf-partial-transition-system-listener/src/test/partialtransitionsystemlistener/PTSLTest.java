@@ -26,7 +26,12 @@ public class PTSLTest extends TestJPF {
 
 	private static String path;
 
-	private static final int N = 7;
+	private static final int N = 16;
+
+	private static final int MIN_DEPTH = 1;
+	private static final int MAX_DEPTH = 5;
+	private static final int MIN_WIDTH = 1;
+	private static final int MAX_WIDTH = 5;
 
 	private List<PartialTransitionSystem> partialTransitionSystems;
 
@@ -52,25 +57,13 @@ public class PTSLTest extends TestJPF {
 	@Test
 	public void PartialTransitionSystemExtendTest() {
 		partialTransitionSystems = new ArrayList<PartialTransitionSystem>();
+		Random r = new Random();
+		int depth = MIN_DEPTH + r.nextInt(MAX_DEPTH - MIN_DEPTH + 1);
+		int width = MIN_WIDTH + r.nextInt(MAX_WIDTH - MIN_WIDTH + 1);
 		for (int i = 0; i < N; i++) {
-			properties[3] = "+partialtransitionsystemlistener.max_new_states=" + (i+1);
+			properties[3] = "+partialtransitionsystemlistener.max_new_states=" + (int) Math.pow(2, (i+1));
 			if (verifyNoPropertyViolation(properties)) {
-				Random r = new Random();
-				int state = 0;
-				if (r.nextBoolean()) {
-					if (r.nextBoolean()) {
-						state = 1;
-					} else {
-						state = 2;
-					}
-				} else {
-					if (r.nextBoolean()) {
-						state = 3;
-					} else {
-						state = 4;
-					}
-				}
-				System.out.println("State: " + state);
+				TransitionSystem(depth, width);
 			} else {
 				try {
 					partialTransitionSystems.add(new PartialTransitionSystem(fileName));
@@ -83,10 +76,26 @@ public class PTSLTest extends TestJPF {
 		}
 	}
 
+	public int TransitionSystem(int depth, int width) {
+		Random r = new Random();
+		int state = 0;
+		for (int i = 0; i < depth; i++) {
+			for (int j = 0; j < width; j++) {
+				if (r.nextBoolean()) {
+					state += (j + i);
+				} else {
+					state -= (j + i);
+				}
+			}
+		}
+		return state;
+	}
+
 	private void assertPartialTransitionSystemCorrectness() {
 		if (partialTransitionSystems.size() > 1) {
 			try {
-				//TODO probably don't need to check *all* of the previous transition systems -> just i-1 may suffice.
+				// TODO probably don't need to check *all* of the previous transition systems ->
+				// just i-1 may suffice.
 				for (int i = 0; i < partialTransitionSystems.size(); i++) {
 					for (int j = 0; j < i; j++) {
 						partialTransitionSystems.get(i).extend(partialTransitionSystems.get(j));
