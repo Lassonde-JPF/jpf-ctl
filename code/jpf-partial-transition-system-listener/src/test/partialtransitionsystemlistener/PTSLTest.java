@@ -50,7 +50,7 @@ public class PTSLTest extends TestJPF {
 	}
 
 	@Test
-	public void TSCustom1a() {
+	public void PartialTransitionSystemExtendTest() {
 		partialTransitionSystems = new ArrayList<PartialTransitionSystem>();
 		for (int i = 0; i < N; i++) {
 			properties[3] = "+partialtransitionsystemlistener.max_new_states=" + (i+1);
@@ -86,6 +86,7 @@ public class PTSLTest extends TestJPF {
 	private void assertPartialTransitionSystemCorrectness() {
 		if (partialTransitionSystems.size() > 1) {
 			try {
+				//TODO probably don't need to check *all* of the previous transition systems -> just i-1 may suffice.
 				for (int i = 0; i < partialTransitionSystems.size(); i++) {
 					for (int j = 0; j < i; j++) {
 						partialTransitionSystems.get(i).extend(partialTransitionSystems.get(j));
