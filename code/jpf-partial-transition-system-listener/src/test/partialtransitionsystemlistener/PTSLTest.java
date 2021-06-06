@@ -28,7 +28,7 @@ public class PTSLTest extends TestJPF {
 
 	private static String path;
 
-	private static final int N = 16;
+	private static final int N = 2;
 	private static final int MIN_NODES = 1;
 	private static final int MAX_NODES = 10;
 	private static final int MAX_EDGES = 3;

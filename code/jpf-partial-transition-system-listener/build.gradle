@@ -46,6 +46,17 @@ if (!jpfCoreExists) {
     throw new GradleException("${userHome}/.jpf/site.properties points to the jpf-core installation at ${jpfCore} but that directory does not exist")
 }
 
+// find jpf-nhandler
+ext.jpfNHandlerExists = false
+ext.jpfNHandler = siteProperties.getProperty("jpf-nhandler")
+if (jpfNHandler != null) {
+    jpfNHandler = jpfNHandler.replace('${user.home}', userHome)
+    jpfNHandlerExists = new File(jpfNHandler).exists()
+}
+if (!jpfNHandlerExists) {
+    throw new GradleException("${userHome}/.jpf/site.properties points to the jpf-nhandler installation at ${jpfNHandler} but that directory does not exist")
+}
+
 dependencies {
     // This dependency is exported to consumers, that is to say found on their compile classpath.
     api 'org.apache.commons:commons-math3:3.6.1'
