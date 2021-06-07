@@ -5,18 +5,15 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
-import java.util.stream.Collectors;
-import java.util.stream.IntStream;
 
 public class Graph {
 
 	private static final long seed = System.currentTimeMillis();
-	private Map<Integer, List<Integer>> graph;
-
-	public Graph(int nodes, int maxEdges) {
+	
+	public static Map<Integer, List<Integer>> random(int nodes, int maxEdges) {
 		Random r = new Random(seed);
 		// Generate empty graph structure
-		graph = new LinkedHashMap<Integer, List<Integer>>(nodes);
+		Map<Integer, List<Integer>> graph = new LinkedHashMap<Integer, List<Integer>>(nodes);
 		// Begin graph generation
 		double probability = Math.log(nodes) / nodes;
 		for (int i = 0; i < nodes; i++) {
@@ -27,21 +24,6 @@ public class Graph {
 				}
 			}
 		}
-		System.out.println(graph);
-	}
-
-	public void run() {
-		int state = 0;
-		boolean done = false;
-		Random r = new Random();
-		while (!done) {
-			// System.out.println("Current State: " + state);
-			List<Integer> successors = graph.get(state);
-			if (successors.isEmpty()) {
-				done = true;
-			} else {
-				state = successors.get(r.nextInt(successors.size()));
-			}
-		}
+		return graph;
 	}
 }
