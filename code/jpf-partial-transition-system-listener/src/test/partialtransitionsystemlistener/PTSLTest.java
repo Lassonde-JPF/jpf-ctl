@@ -59,27 +59,29 @@ public class PTSLTest extends TestJPF {
 	 * for a given set of `max_new_states` values, the resulting partial transition
 	 * systems all satisfy the properties defined in the PartialTransitionSystem
 	 * class.
+	 * 
+	 * @throws FileNotFoundException
 	 */
 	@Test
-	public void PartialTransitionSystemExtendTest() {
+	public void PartialTransitionSystemExtendTest() throws FileNotFoundException {
 		final Map<Integer, List<Integer>> graph = Graph.random(NODES, MAX_EDGES);
 		for (int i = 0; i < N; i++) {
 			properties[properties.length - 1] = max_new_states
 					+ (USE_LOG_APPROXIMATION ? (int) Math.pow(2, (i + 1)) : (i + 1));
 			if (verifyNoPropertyViolation(properties)) {
-				this.traverseGraph(graph);
+				traverseGraph(graph);
 			} else {
-				try {
-					partialTransitionSystems.add(new PartialTransitionSystem(fileName));
-					assertPartialTransitionSystemCorrectness();
-				} catch (FileNotFoundException e) {
-					e.printStackTrace();
-					fail();
-				}
+				assertPartialTransitionSystemCorrectness(new PartialTransitionSystem(fileName));
 			}
 		}
 	}
 
+	/**
+	 * Traverses the given graph in such a way that JPF will explore all possible
+	 * paths when provided with the property `cg.enumerate_random = true`
+	 * 
+	 * @param graph - the given graph to traverse
+	 */
 	public void traverseGraph(Map<Integer, List<Integer>> graph) {
 		int state = 0;
 		boolean done = false;
@@ -94,14 +96,20 @@ public class PTSLTest extends TestJPF {
 		}
 	}
 
-	private void assertPartialTransitionSystemCorrectness() {
-		try {
-			for (int i = 1; i < partialTransitionSystems.size(); i++) {
-				partialTransitionSystems.get(i).extend(partialTransitionSystems.get(i - 1));
+	/**
+	 * Asserts that for the given partial transition system `pts` all previous
+	 * partial transition systems satisfy the properties defined in the
+	 * PartialTransitionSystem class.
+	 */
+	private void assertPartialTransitionSystemCorrectness(PartialTransitionSystem pts) {
+		partialTransitionSystems.forEach(other -> {
+			try {
+				pts.extend(other);
+			} catch (PartialTransitionSystemException e) {
+				e.printStackTrace();
+				fail();
 			}
-		} catch (Exception e) {
-			e.printStackTrace();
-			fail();
-		}
+		});
+		partialTransitionSystems.add(pts);
 	}
 }
