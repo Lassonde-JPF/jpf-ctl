@@ -975,8 +975,7 @@ public class PrecedenceTest {
 		{
 			Formula first = Formula.random();
 			Formula second = Formula.random();
-			Formula third = Formula.random();
-
+		
 			// ! A || B =  ((!A) || B )
 			// combine the three
 			Formula expected = new Or(new Not(first), second);
