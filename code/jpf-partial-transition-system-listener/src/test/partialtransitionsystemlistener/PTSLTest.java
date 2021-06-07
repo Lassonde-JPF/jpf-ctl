@@ -20,7 +20,6 @@ public class PTSLTest extends TestJPF {
 
 	// Attributes relating to listener output and root directory
 	private static final String fileName = PTSLTest.class.getName() + ".tra";
-	private static String path;
 
 	// Set to true to use log approximation for max_new_states property or false to
 	// iterate every possible PTS
@@ -41,16 +40,6 @@ public class PTSLTest extends TestJPF {
 																								// max_new_states
 	};
 	private final String max_new_states = "+partialtransitionsystemlistener.max_new_states=";
-
-	/**
-	 * Sets up this class before all tests. Initializes the `path` property.
-	 * 
-	 * @throws IOException
-	 */
-	@BeforeClass
-	public static void setUpBeforeClass() throws IOException {
-		path = System.getProperty("user.dir") + "/src/test/resources/";
-	}
 
 	/**
 	 * Removes the .tra file after tests have been completed
