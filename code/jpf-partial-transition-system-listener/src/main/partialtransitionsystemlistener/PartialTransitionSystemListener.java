@@ -54,7 +54,7 @@ import java.util.Set;
 @JPFOptions({
 		@JPFOption(type = "Int", key = "partialtransitionsystemlistener.max_new_states", defaultValue = "0",
 				comment = "maximum states for listener"),
-		@JPFOption(type = "Boolean", key = "partialtransitionsystemlistener.use_dot", defaultValue = "true",
+		@JPFOption(type = "Boolean", key = "partialtransitionsystemlistener.use_dot", defaultValue = "false",
 				comment = "If `true`, the generated file uses DOT notation; else, uses TRA notation."),
 })
 public class PartialTransitionSystemListener extends SearchListenerAdapter {
@@ -87,7 +87,7 @@ public class PartialTransitionSystemListener extends SearchListenerAdapter {
 		this.endState = -1;
 
 		this.maxNewStates = config.getInt(CONFIG_PREFIX + ".max_new_states", 0);
-		boolean useDOTFormat = config.getBoolean(CONFIG_PREFIX + ".use_dot", true);
+		boolean useDOTFormat = config.getBoolean(CONFIG_PREFIX + ".use_dot", false);
 		this.stateSpacePrinter = useDOTFormat ? new DOTListener() : new TRAListener();
 
 		this.vm = jpf.getVM();
