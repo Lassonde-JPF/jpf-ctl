@@ -19,17 +19,20 @@ public class PTSLTest extends TestJPF {
 
 	private static String path;
 
-	private static final int N = 15;
+	private static final boolean USE_LOG_APPROXIMATION = true;
+
+	private static final int NODES = 100;
+	private static final int MAX_EDGES = (int) Math.ceil(Math.log(NODES) / Math.log(2));
+	private static final int N = USE_LOG_APPROXIMATION ? (int) Math.ceil(Math.log(NODES * MAX_EDGES + 1) / Math.log(2))
+			: NODES * MAX_EDGES + 1;
 
 	private List<PartialTransitionSystem> partialTransitionSystems = new ArrayList<PartialTransitionSystem>();
 
-	private static String[] properties = new String[] {
-			"+cg.enumerate_random=true",
-			"+listener+=,partialtransitionsystemlistener.PartialTransitionSystemListener",
-			""
+	private static String[] properties = new String[] { "+cg.enumerate_random=true",
+			"+listener+=,partialtransitionsystemlistener.PartialTransitionSystemListener", "" // dummy property for
+																								// max_new_states
 	};
 	private final String max_new_states = "+partialtransitionsystemlistener.max_new_states=";
-	private int value = 0;
 
 	@BeforeClass
 	public static void setUpBeforeClass() throws IOException {
@@ -39,19 +42,19 @@ public class PTSLTest extends TestJPF {
 
 	@AfterClass
 	public static void afterAll() throws IOException {
-//		File dottyFile = new File(fileName);
-//		if (!dottyFile.delete()) {
-//			System.err.println("File: " + dottyFile.getName() + " was not deleted");
-//		}
-		Files.walk(Paths.get	(path + "tmp/")).sorted(Comparator.reverseOrder()).map(Path::toFile).forEach(File::delete);
+		File dottyFile = new File(fileName);
+		if (!dottyFile.delete()) {
+			System.err.println("File: " + dottyFile.getName() + " was not deleted");
+		}
+		Files.walk(Paths.get(path + "tmp/")).sorted(Comparator.reverseOrder()).map(Path::toFile).forEach(File::delete);
 	}
 
 	@Test
 	public void PartialTransitionSystemExtendTest() {
-		final Graph graph = new Graph();
+		final Graph graph = new Graph(NODES, MAX_EDGES);
 		for (int i = 0; i < N; i++) {
-			value = (int) Math.pow(2, (i + 1));
-			properties[properties.length - 1] = max_new_states + value;
+			properties[properties.length - 1] = max_new_states
+					+ (USE_LOG_APPROXIMATION ? (int) Math.pow(2, (i + 1)) : (i + 1));
 			if (verifyNoPropertyViolation(properties)) {
 				graph.run();
 			} else {
