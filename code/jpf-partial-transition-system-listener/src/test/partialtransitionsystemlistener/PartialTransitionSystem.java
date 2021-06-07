@@ -11,7 +11,7 @@ import java.util.Set;
 
 /**
  * 
- * @author
+ * @author Franck van Breugel
  */
 public class PartialTransitionSystem {
 
@@ -89,6 +89,7 @@ public class PartialTransitionSystem {
 	 * @throws PartialTransitionSystemException
 	 */
 	public void extend(PartialTransitionSystem other) throws PartialTransitionSystemException {
+		
 		for (Transition transition : other.transitions) {
 			if (!this.transitions.contains(transition)) {
 				throw new PartialTransitionSystemException(
