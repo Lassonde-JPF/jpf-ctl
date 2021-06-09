@@ -29,7 +29,7 @@ dependencies {
 	testImplementation('org.junit.jupiter:junit-jupiter')
 	
     // use ANTLR version 4
-    antlr "org.antlr:antlr4:4.9" 
+    antlr "org.antlr:antlr4:4.9.2" 
 }
 
 generateGrammarSource {

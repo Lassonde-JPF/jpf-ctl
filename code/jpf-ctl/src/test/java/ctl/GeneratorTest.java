@@ -186,18 +186,19 @@ class GeneratorTest {
 	}*/
 	
 	
-	@Test
+	/*@Test
 	void testReservedWordsError() {
 		String ctl1	= "( for.x -> new.while )   ";		
 		Formula formula1 = generator.visit(parseCtl(ctl1));
 		
 		assertNotNull(formula1);
 		
-	}
+	}*/
+
 	
 	@Test
 	void testOperatorError() {
-		String ctl1	= "( for.x | new.while )   ";		
+		String ctl1	= "( for.new | new.while )   ";		
 		Formula formula1 = generator.visit(parseCtl(ctl1));
 		
 		assertNotNull(formula1);

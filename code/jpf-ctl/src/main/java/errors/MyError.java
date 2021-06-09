@@ -2,6 +2,7 @@ package errors;
 
 import java.util.HashSet;
 
+import org.antlr.v4.runtime.BaseErrorListener;
 import org.antlr.v4.runtime.CharStream;
 import org.antlr.v4.runtime.CharStreams;
 
@@ -9,6 +10,7 @@ public class MyError {
 
 	HashSet<String> reservedWordsSet = new HashSet<>();
 	HashSet<String> operatorsSet = new HashSet<>();
+	static int line = 0;
 
 	public MyError() {
 		// adding Java reserve words to the hash set
@@ -70,19 +72,24 @@ public class MyError {
 	}
 
 	public CharStream errorCheckAndRecover(CharStream input) {
+		line++;
 		StringBuilder result = new StringBuilder();
 		String inputString = input.toString();
 		String[] lines = inputString.split(" ");
 		int size = lines.length;
+		int index = 0;
 		boolean hasError = false;
 		System.out.println("Initial input: " + inputString);
 
 		for (int i = 0; i < size; i++) {
+			
 			//check and recover if the input formula missing the operators '&' or '|'
 			if (operatorsSet.contains(lines[i])) {
+				hasError = true;
 				
-				System.err.println(
-						"Syntax Error! " + lines[i] + " is a wrong operator!!!");
+				underLineError(inputString, index, lines[i] );
+				//System.err.println(
+						//"Syntax Error! " + lines[i] + " is a wrong operator!!!");
 						
 				result.append(lines[i]);	
 			}
@@ -95,19 +102,28 @@ public class MyError {
 
 					if (reservedWordsSet.contains(substrings[j])) {
 						hasError = true;
-						System.err.println(
-								"Syntax Error! " + substrings[j] + " is a reserve word in the Java Language!!!");
+						  
+						underLineError(inputString, index,substrings[j] );
+						//System.err.println(
+							//	"Syntax Error! " + substrings[j] + " is a reserve word in the Java Language!!!");
 						substrings[j] = substrings[j].toUpperCase();
 					}
 					result.append(substrings[j]);
 					if (j == 0)
-						result.append(".");
+					{
+						result.append(".");	
+						
+					}
+					index += substrings[j].length() + 1;					
 				}
-
-			} else {
-				result.append(lines[i]);		
+			} else 
+			{				
+				result.append(lines[i]);	
+				index += lines[i].length() + 1;
 			}
+			
 			result.append(" ");
+			
 		}		
 		if(hasError)
 		{
@@ -116,5 +132,14 @@ public class MyError {
 		
 		return CharStreams.fromString(result.toString());
 	}
+	
+	private void underLineError(String errorLine, int charPositionInLine, String errorWord )
+	{
+		System.err.println("line "+ line +":"+ (charPositionInLine + 1) +" token recognition error at: '"+ errorWord + " '");
+		System.err.println(errorLine);
+		for(int i=0; i<charPositionInLine; i++)
+			System.err.print(" ");
 
+		System.err.println("^");
+	}
 }
