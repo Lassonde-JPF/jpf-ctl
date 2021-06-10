@@ -186,24 +186,24 @@ class GeneratorTest {
 	}*/
 	
 	
-	/*@Test
-	void testReservedWordsError() {
-		String ctl1	= "( for.x -> new.while )   ";		
-		Formula formula1 = generator.visit(parseCtl(ctl1));
-		
-		assertNotNull(formula1);
-		
-	}*/
-
-	
 	@Test
-	void testOperatorError() {
-		String ctl1	= "( for.new | new.while )   ";		
+	void testReservedWordsError() {
+		String ctl1	= "( f.x & new.while )   ";		
 		Formula formula1 = generator.visit(parseCtl(ctl1));
 		
 		assertNotNull(formula1);
 		
 	}
+
+	
+	/*@Test
+	void testOperatorError() {
+		String ctl1	= "( for && for.x )   ";		
+		Formula formula1 = generator.visit(parseCtl(ctl1));
+		
+		assertNotNull(formula1);
+		
+	}*/
 	
 	/**
 	 * Tests the {@code visitTrue} method. It ensures that the method returns
@@ -286,9 +286,9 @@ class GeneratorTest {
 		CTLLexer lexer = new CTLLexer(input);
 		CommonTokenStream tokens = new CommonTokenStream(lexer);
 		CTLParser parser = new CTLParser(tokens);
-		//parser.removeErrorListeners();//remove ConsoleErrorListener
+		parser.removeErrorListeners();//remove ConsoleErrorListener
 		
-		//parser.addErrorListener(new MyErrorListener());//add ours
+		parser.addErrorListener(new MyErrorListener());//add ours
 		//parser.setErrorHandler(new MyErrorStrategy());
 		
 		ParseTree tree = parser.formula();

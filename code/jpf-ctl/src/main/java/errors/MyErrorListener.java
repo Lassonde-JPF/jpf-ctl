@@ -78,7 +78,7 @@ public class MyErrorListener extends BaseErrorListener {
 	public void syntaxError(Recognizer<?, ?> recognizer, Object offendingSymbol, int line, int charPositionInLine,
 			String msg, RecognitionException e) {
 
-		
+
 		 /*List<String> stack = ((CTLParser) recognizer).getRuleInvocationStack();
 		 Collections.reverse(stack); System.err.println("line" + line + ":" +
 		 charPositionInLine + "at" + offendingSymbol + ":" + msg);
@@ -89,7 +89,7 @@ public class MyErrorListener extends BaseErrorListener {
 		 System.err.println("Rule Stack:" + stack);*/
 		 
 		//reservedWordsError(recognizer, (Token) offendingSymbol, line, charPositionInLine);
-		//System.err.println("line"+line+":"+charPositionInLine+" "+msg);
+		System.err.println("line "+line+":"+charPositionInLine+" "+msg);
 		underlineError(recognizer, (Token) offendingSymbol, line, charPositionInLine);
 	}
 
@@ -134,9 +134,10 @@ public class MyErrorListener extends BaseErrorListener {
 	{
 		CommonTokenStream tokens = (CommonTokenStream) recognizer.getInputStream();
 		String input = tokens.getTokenSource().getInputStream().toString();
-		String[] lines = input.split("\n");
-		String errorLine=lines[line-1];
+		String[] lines = input.split("/n");
+		String errorLine = lines[line-1];
 		System.err.println(errorLine);
+		
 		for(int i=0; i<charPositionInLine; i++)
 			System.err.print(" ");
 		

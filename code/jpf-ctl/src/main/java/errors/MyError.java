@@ -10,6 +10,7 @@ public class MyError {
 
 	HashSet<String> reservedWordsSet = new HashSet<>();
 	HashSet<String> operatorsSet = new HashSet<>();
+	ConsoleWriter cWriter = new ConsoleWriter();
 	static int line = 0;
 
 	public MyError() {
@@ -72,6 +73,7 @@ public class MyError {
 	}
 
 	public CharStream errorCheckAndRecover(CharStream input) {
+		//System.setErr(System.out);
 		line++;
 		StringBuilder result = new StringBuilder();
 		String inputString = input.toString();
@@ -79,7 +81,7 @@ public class MyError {
 		int size = lines.length;
 		int index = 0;
 		boolean hasError = false;
-		System.out.println("Initial input: " + inputString);
+		cWriter.printlnout("Initial input: " + inputString);
 
 		for (int i = 0; i < size; i++) {
 			
@@ -88,9 +90,7 @@ public class MyError {
 				hasError = true;
 				
 				underLineError(inputString, index, lines[i] );
-				//System.err.println(
-						//"Syntax Error! " + lines[i] + " is a wrong operator!!!");
-						
+
 				result.append(lines[i]);	
 			}
 			//check and recover if the input formula contains any Java reserve word
@@ -104,8 +104,6 @@ public class MyError {
 						hasError = true;
 						  
 						underLineError(inputString, index,substrings[j] );
-						//System.err.println(
-							//	"Syntax Error! " + substrings[j] + " is a reserve word in the Java Language!!!");
 						substrings[j] = substrings[j].toUpperCase();
 					}
 					result.append(substrings[j]);
@@ -127,19 +125,19 @@ public class MyError {
 		}		
 		if(hasError)
 		{
-			System.out.println("Recovered input: " + result.toString());
+			cWriter.printlnout("Recovered input: " + result.toString());
 		}
-		
 		return CharStreams.fromString(result.toString());
 	}
 	
 	private void underLineError(String errorLine, int charPositionInLine, String errorWord )
 	{
-		System.err.println("line "+ line +":"+ (charPositionInLine + 1) +" token recognition error at: '"+ errorWord + " '");
-		System.err.println(errorLine);
+		cWriter.printlnerr("line "+ line +":"+ (charPositionInLine + 1) +" token recognition error at: '"+ errorWord + " '");
+		cWriter.printlnerr(errorLine);
+	
 		for(int i=0; i<charPositionInLine; i++)
-			System.err.print(" ");
+			cWriter.printerr(" ");
 
-		System.err.println("^");
+		cWriter.printlnerr("^");
 	}
 }
