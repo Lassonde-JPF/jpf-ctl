@@ -9,6 +9,7 @@ import java.util.Map;
 import java.util.Random;
 
 import org.junit.AfterClass;
+import org.junit.Before;
 import org.junit.Test;
 
 import gov.nasa.jpf.util.test.TestJPF;
@@ -24,12 +25,12 @@ public class PTSLTest extends TestJPF {
 
 	// Attributes relating to graph generation
 	private static final int NODES = 100;
-	private static final int MAX_EDGES = (int) Math.ceil(Math.log(NODES) / Math.log(2));
+	private static final int MAX_EDGES = NODES;
 	private static final int N = USE_LOG_APPROXIMATION ? (int) Math.ceil(Math.log(NODES * MAX_EDGES + 1) / Math.log(2))
 			: NODES * MAX_EDGES + 1;
 
 	// List to hold partial transition systems after each run of JPF
-	private List<PartialTransitionSystem> partialTransitionSystems = new ArrayList<PartialTransitionSystem>();
+	private List<PartialTransitionSystem> partialTransitionSystems;
 
 	// Properties to apply to jpf
 	private static String[] properties = new String[] { "+cg.enumerate_random=true",
@@ -50,6 +51,11 @@ public class PTSLTest extends TestJPF {
 			System.err.println("File: " + dottyFile.getName() + " was not deleted");
 		}
 	}
+	
+	@Before
+	public void beforeEach() {
+		partialTransitionSystems = new ArrayList<PartialTransitionSystem>();
+	}
 
 	/**
 	 * Tests a given graph with the PartialTransitionSystemListener and checks that
@@ -61,7 +67,7 @@ public class PTSLTest extends TestJPF {
 	 */
 	@Test
 	public void PartialTransitionSystemExtendTest() throws FileNotFoundException {
-		final Map<Integer, List<Integer>> graph = Graph.random(NODES, MAX_EDGES);
+		final Map<Integer, List<Integer>> graph = Graph.random(NODES);
 		for (int i = 0; i < N; i++) {
 			properties[properties.length - 1] = max_new_states
 					+ (USE_LOG_APPROXIMATION ? (int) Math.pow(2, (i + 1)) : (i + 1));
@@ -70,6 +76,74 @@ public class PTSLTest extends TestJPF {
 			} else {
 				assertPartialTransitionSystemCorrectness(new PartialTransitionSystem(fileName));
 			}
+		}
+	}
+
+	@Test
+	public void knownTransitionSystemTest() throws FileNotFoundException {
+		properties[properties.length - 1] = max_new_states + 3;
+		if (verifyNoPropertyViolation(properties)) {
+			Random random = new Random();
+			int state = 0;
+			switch (random.nextInt(5)) {
+			case 0:
+				state = 1;
+				switch (random.nextInt(2)) {
+				case 0:
+					state = 11;
+					break;
+				case 1:
+					state = 12;
+					break;
+				}
+				break;
+			case 1:
+				state = 2;
+				switch (random.nextInt(2)) {
+				case 0:
+					state = 21;
+					break;
+				case 1:
+					state = 22;
+					break;
+				}
+				break;
+			case 2:
+				state = 3;
+				switch (random.nextInt(2)) {
+				case 0:
+					state = 31;
+					break;
+				case 1:
+					state = 32;
+					break;
+				}
+				break;
+			case 3:
+				state = 4;
+				switch (random.nextInt(2)) {
+				case 0:
+					state = 41;
+					break;
+				case 1:
+					state = 42;
+					break;
+				}
+				break;
+			case 4:
+				state = 5;
+				switch (random.nextInt(2)) {
+				case 0:
+					state = 51;
+					break;
+				case 1:
+					state = 52;
+					break;
+				}
+				break;
+			}
+		} else {
+			assertPartialTransitionSystemCorrectness(new PartialTransitionSystem(fileName));
 		}
 	}
 

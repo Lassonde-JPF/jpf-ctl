@@ -12,8 +12,7 @@ class DOTListener implements PartialStateSpacePrinter {
     }
 
     @Override
-    public void printResult(Map<Integer, Set<Integer>> transitions, PrintWriter writer, Integer endState) {
-        final Set<Integer> unexploredStates = new HashSet<>();
+    public void printResult(Map<Integer, Set<Integer>> transitions, Set<Integer> unexploredStates, PrintWriter writer) {
         final Set<Integer> allNodes = new HashSet<>();
 
         writer.println("digraph statespace {");
@@ -27,10 +26,6 @@ class DOTListener implements PartialStateSpacePrinter {
             allNodes.add(source);
 
             for (int target : targets) {
-                if (!transitions.containsKey(target)) {
-                    unexploredStates.add(target);
-                }
-
                 if (!allNodes.contains(target)) {
                     writer.printf("%d [fillcolor=green]%n", target);
                 }
@@ -42,10 +37,6 @@ class DOTListener implements PartialStateSpacePrinter {
         }
 
         for (int i : unexploredStates) {
-            if (endState == i) {
-                continue;
-            }
-
             writer.printf("%d [fillcolor=red]%n", i);
         }
 

@@ -5,26 +5,19 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
-/**
- * Wrapper class for the static method `random` which generates a random
- * digraph.
- * 
- * @author Matthew Walker
- */
-public class Graph {
 
-	// Seed used for generating the random graph; needs to be explicitly set to keep
-	// the graph the same between subsequent JPF calls
+import gov.nasa.jpf.annotation.MJI;
+import gov.nasa.jpf.vm.MJIEnv;
+import gov.nasa.jpf.vm.NativePeer;
+import nhandler.conversion.ConversionException;
+import nhandler.conversion.jvm2jpf.JVM2JPFConverter;
+
+public class JPF_partialtransitionsystemlistener_Graph extends NativePeer {
 	private static final long seed = System.currentTimeMillis();
-
-	/**
-	 * Generates a random digraph in the form of a `Map<Integer, List<Integer>>`
-	 * 
-	 * @param nodes    - the number of nodes the graph should contain
-	 * @param maxEdges - the maximum number of edges per node
-	 * @return Map<Integer, List<Integer>> - the generated graph
-	 */
-	public static Map<Integer, List<Integer>> random(int nodes) {
+	
+	@MJI
+    public static int random__ID__Ljava_util_Map_2(MJIEnv env, int dummy, int nodes) throws ConversionException {
+        // invoke Graph.random(number, probability)
 		Random r = new Random(seed);
 		// Generate empty graph structure
 		Map<Integer, List<Integer>> graph = new LinkedHashMap<Integer, List<Integer>>(nodes);
@@ -41,6 +34,7 @@ public class Graph {
 				}
 			}
 		}
-		return graph;
-	}
+        // represent graph in JPF and return its index
+        return JVM2JPFConverter.obtainJPFObj(graph, env);
+    }
 }
