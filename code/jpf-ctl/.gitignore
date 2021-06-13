@@ -5,4 +5,6 @@
 build
 
 #ignore generated antlr files
-code//jpf-ctl//src//main//java
+code/jpf-ctl/src/main/java/ctl
+code/jpf-ctl/src/main/java/errors
+code/jpf-ctl/src/main/java/parser
