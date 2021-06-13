@@ -3,3 +3,6 @@
 
 # Ignore Gradle build output directory
 build
+
+#ignore generated antlr files
+dir_to_ignore/src/main/java/parser
