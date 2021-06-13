@@ -9,7 +9,7 @@ import java.util.Random;
  * Wrapper class for the static method `random` which generates a random
  * digraph.
  * 
- * @author Matthew Walker
+ * @author Matthew Walker, Franck van Breugel
  */
 public class Graph {
 
@@ -20,8 +20,7 @@ public class Graph {
 	/**
 	 * Generates a random digraph in the form of a `Map<Integer, List<Integer>>`
 	 * 
-	 * @param nodes    - the number of nodes the graph should contain
-	 * @param maxEdges - the maximum number of edges per node
+	 * @param nodes - the number of nodes the graph should contain
 	 * @return Map<Integer, List<Integer>> - the generated graph
 	 */
 	public static Map<Integer, List<Integer>> random(int nodes) {

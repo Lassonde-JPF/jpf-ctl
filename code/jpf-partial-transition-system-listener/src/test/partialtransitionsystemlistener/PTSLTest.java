@@ -14,6 +14,13 @@ import org.junit.Test;
 
 import gov.nasa.jpf.util.test.TestJPF;
 
+/**
+ * Test class responsible for testing the correctness of the
+ * PartialTransitionSystemListener.
+ * 
+ * @author mattw
+ *
+ */
 public class PTSLTest extends TestJPF {
 
 	// Attributes relating to listener output and root directory
@@ -34,9 +41,7 @@ public class PTSLTest extends TestJPF {
 
 	// Properties to apply to jpf
 	private static String[] properties = new String[] { "+cg.enumerate_random=true",
-			"+listener+=,partialtransitionsystemlistener.PartialTransitionSystemListener", "" // dummy property for
-																								// max_new_states
-	};
+			"+listener+=,partialtransitionsystemlistener.PartialTransitionSystemListener", "" };
 	private final String max_new_states = "+partialtransitionsystemlistener.max_new_states=";
 
 	/**
@@ -51,17 +56,21 @@ public class PTSLTest extends TestJPF {
 			System.err.println("File: " + dottyFile.getName() + " was not deleted");
 		}
 	}
-	
+
+	/**
+	 * Initializes (essentially resets) the list of partial transition systems
+	 * generated from the output of the listener before each new test.
+	 */
 	@Before
 	public void beforeEach() {
 		partialTransitionSystems = new ArrayList<PartialTransitionSystem>();
 	}
 
 	/**
-	 * Tests a given graph with the PartialTransitionSystemListener and checks that
-	 * for a given set of `max_new_states` values, the resulting partial transition
-	 * systems all satisfy the properties defined in the PartialTransitionSystem
-	 * class.
+	 * Tests a given, random graph with the PartialTransitionSystemListener and
+	 * checks that for a given set of `max_new_states` values, the resulting partial
+	 * transition systems all satisfy the properties defined in the
+	 * PartialTransitionSystem class.
 	 * 
 	 * @throws FileNotFoundException
 	 */
@@ -79,6 +88,12 @@ public class PTSLTest extends TestJPF {
 		}
 	}
 
+	/**
+	 * Tests a single, known, partial transition system against the output of the
+	 * PartialTransitionSystemListener.
+	 * 
+	 * @throws FileNotFoundException
+	 */
 	@Test
 	public void knownTransitionSystemTest() throws FileNotFoundException {
 		properties[properties.length - 1] = max_new_states + 3;
@@ -170,7 +185,12 @@ public class PTSLTest extends TestJPF {
 	/**
 	 * Asserts that for the given partial transition system `pts` all previous
 	 * partial transition systems satisfy the properties defined in the
-	 * PartialTransitionSystem class.
+	 * PartialTransitionSystem class via the PartialTransitionSystem.extend method.
+	 * 
+	 * Moreover, after/if the assertion passes, the PartialTransisitonSystem pts is
+	 * added to the list of current partial transition systems.
+	 * 
+	 * @param pts - the partial transition system to assert
 	 */
 	private void assertPartialTransitionSystemCorrectness(PartialTransitionSystem pts) {
 		partialTransitionSystems.forEach(other -> {

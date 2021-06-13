@@ -11,20 +11,25 @@ import java.util.Set;
 
 /**
  * 
+ * A class which represents a partial transition system.
+ * 
  * @author Franck van Breugel
  */
 public class PartialTransitionSystem {
 
 	/**
-	 * 
+	 * A class which represents a transition between two states.
 	 */
 	private class Transition {
 		private int source;
 		private int target;
 
 		/**
-		 * @param source
-		 * @param target
+		 * 
+		 * Initializes this transition with the given source and target nodes.
+		 * 
+		 * @param source - the source node of this transition
+		 * @param target - the target node of this transition
 		 */
 		public Transition(int source, int target) {
 			this.source = source;
@@ -59,7 +64,11 @@ public class PartialTransitionSystem {
 
 	/**
 	 * 
-	 * @param name
+	 * Initializes this PartialTransitionSystem using a file built from the
+	 * PartialTransitionSystemListener.
+	 * 
+	 * @param name - the name of the file to build this PartialTransitionSystem
+	 *             with.
 	 * @throws FileNotFoundException
 	 */
 	public PartialTransitionSystem(String name) throws FileNotFoundException {
@@ -85,11 +94,24 @@ public class PartialTransitionSystem {
 
 	/**
 	 * 
-	 * @param other
+	 * Checks that `this` PartialTransitionSystem extends some `other`
+	 * PartialTransitionSystem object.
+	 * 
+	 * @implNote A PartialTransitionSystem (A) extends another (B) iff, </br>
+	 *           1. All transitions of B are in A </br>
+	 *           2. All states that are fully explored in A are also fully explored
+	 *           in B </br>
+	 *           3. All states that are not fully explored in B are also not fully
+	 *           explored in A </br>
+	 *           4. All states that are fully explored in the A are not the source
+	 *           of a new transition in B
+	 * 
+	 * 
+	 * @param other - the other PartialTransitionSystem object to check against
 	 * @throws PartialTransitionSystemException
 	 */
 	public void extend(PartialTransitionSystem other) throws PartialTransitionSystemException {
-		
+
 		for (Transition transition : other.transitions) {
 			if (!this.transitions.contains(transition)) {
 				throw new PartialTransitionSystemException(

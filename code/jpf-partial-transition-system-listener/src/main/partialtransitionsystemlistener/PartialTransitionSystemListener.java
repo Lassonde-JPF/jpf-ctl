@@ -16,6 +16,7 @@ import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
+import java.util.StringJoiner;
 import java.util.TreeSet;
 
 /**
@@ -44,31 +45,20 @@ import java.util.TreeSet;
  * <td>{@code 0}</td>
  * <td>The maximum amount of allowed states for this listener</td>
  * </tr>
- * <tr>
- * <td>{@code use_dot}</td>
- * <td>{@code Boolean}</td>
- * <td>{@code true}</td>
- * <td>If `true`, the generated file uses DOT notation; else, uses TRA
- * notation.</td>
- * </tr>
  * </table>
  *
  * @see gov.nasa.jpf.JPFListener
  *
  * @author Richard Robinson [Implementation, Testing, Documentation]
  * @author Matt Walker [Implementation, Testing, Documentation]
- * @author Allen Kaplan [Documentation]
- * @author Akin Adewale [Documentation]
  */
 @JPFOptions({
-		@JPFOption(type = "Int", key = "partialtransitionsystemlistener.max_new_states", defaultValue = "0", comment = "maximum states for listener"),
-		@JPFOption(type = "Boolean", key = "partialtransitionsystemlistener.use_dot", defaultValue = "false", comment = "If `true`, the generated file uses DOT notation; else, uses TRA notation."), })
+		@JPFOption(type = "Int", key = "partialtransitionsystemlistener.max_new_states", defaultValue = "0", comment = "maximum states for listener") })
 public class PartialTransitionSystemListener extends SearchListenerAdapter {
 	private final static String CONFIG_PREFIX = "partialtransitionsystemlistener";
 
 	private final Map<Integer, Set<Integer>> transitions;
 	private final Set<Integer> unexploredStates;
-	private final PartialStateSpacePrinter stateSpacePrinter;
 	private final VM vm;
 	private final int maxNewStates;
 
@@ -94,8 +84,6 @@ public class PartialTransitionSystemListener extends SearchListenerAdapter {
 		this.target = -1;
 
 		this.maxNewStates = config.getInt(CONFIG_PREFIX + ".max_new_states", 0);
-		boolean useDOTFormat = config.getBoolean(CONFIG_PREFIX + ".use_dot", false);
-		this.stateSpacePrinter = useDOTFormat ? new DOTListener() : new TRAListener();
 
 		this.vm = jpf.getVM();
 	}
@@ -105,13 +93,12 @@ public class PartialTransitionSystemListener extends SearchListenerAdapter {
 	 *
 	 * @implNote Creates and instantiates a {@code PrintWriter} to be used for
 	 *           output. The path of the outputted file is the SUT name of the VM
-	 *           concatenated with either {@code .dot} or {@code .tra}, depending on
-	 *           the configuration.
+	 *           concatenated with {@code .tra}.
 	 *
 	 * @param search the Search instance
 	 */
 	public void searchStarted(Search search) {
-		String name = stateSpacePrinter.getFileName(search.getVM().getSUTName());
+		String name = search.getVM().getSUTName() + ".tra";
 		try {
 			this.writer = new PrintWriter(name);
 		} catch (FileNotFoundException e) {
@@ -126,9 +113,7 @@ public class PartialTransitionSystemListener extends SearchListenerAdapter {
 	 * @implNote The output is not processed in this method. Instead, the method
 	 *           adds the source and the target to a private MultiMap field (a map
 	 *           whose keys are the source states and whose values are a list of all
-	 *           the targets reached from the source). This is done to allow for
-	 *           customization of the output formatting / processing by the
-	 *           designated {@code PartialStateSpacePrinter}.
+	 *           the targets reached from the source).
 	 *
 	 *           <p>
 	 *           </p>
@@ -150,7 +135,7 @@ public class PartialTransitionSystemListener extends SearchListenerAdapter {
 		if (search.isNewState()) {
 			unexploredStates.add(this.target);
 		}
-		
+
 		if (search.isEndState()) {
 			unexploredStates.remove(this.target);
 		}
@@ -172,15 +157,28 @@ public class PartialTransitionSystemListener extends SearchListenerAdapter {
 	/**
 	 * Invoked when the search has finished.
 	 *
-	 * @implNote This method delegates the output processing to the internal
-	 *           {@code PartialStateSpacePrinter} field. After, the {@code writer}
-	 *           is closed.
+	 * @implNote This method prints a formatted version of the transitions recorded
+	 *           in the stateAdvanced method as well as the set of unexplored
+	 *           states.
 	 *
-	 * @param search the Search instance
+	 * @param search - the Search instance
 	 */
 	public void searchFinished(Search search) {
-		this.stateSpacePrinter.printResult(transitions, unexploredStates, writer);
-		this.writer.close();
+		for (Map.Entry<Integer, Set<Integer>> entry : transitions.entrySet()) {
+			int source = entry.getKey();
+			Set<Integer> targets = entry.getValue();
+
+			for (int target : targets) {
+				writer.printf("%d -> %d%n", source, target);
+			}
+		}
+
+		StringJoiner sj = new StringJoiner(" ");
+		for (int state : unexploredStates) {
+			sj.add("" + state);
+		}
+
+		writer.printf(sj.toString());
 	}
 
 	@Override
@@ -193,6 +191,14 @@ public class PartialTransitionSystemListener extends SearchListenerAdapter {
 		this.target = search.getStateId();
 	}
 
+	/**
+	 * Invoked when a state is processed
+	 * 
+	 * @implNote When `search.getStateId()` has been processed by JPF, it is removed
+	 *           from the set of unexploredStates.
+	 * 
+	 * @param search - the Search instance
+	 */
 	@Override
 	public void stateProcessed(Search search) {
 		unexploredStates.remove(search.getStateId());
