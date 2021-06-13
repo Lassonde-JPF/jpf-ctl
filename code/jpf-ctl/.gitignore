@@ -5,4 +5,4 @@
 build
 
 #ignore generated antlr files
-dir_to_ignore/src/main/java
+dir_to_ignore/src/main/java/.*
