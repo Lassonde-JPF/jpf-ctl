@@ -1,18 +1,29 @@
 package errors;
 
 import java.util.HashSet;
-
-import org.antlr.v4.runtime.BaseErrorListener;
 import org.antlr.v4.runtime.CharStream;
 import org.antlr.v4.runtime.CharStreams;
 
+/**
+ * A class to verify the input formula and recover it
+ * 
+ * @author Anto Nanah Ji
+ *
+ */
 public class MyError {
-
+	// Hash set of Java reserved words
 	HashSet<String> reservedWordsSet = new HashSet<>();
+	// Hash set of operators 
 	HashSet<String> operatorsSet = new HashSet<>();
+	// Synchronized err and out prints
 	ConsoleWriter cWriter = new ConsoleWriter();
-	static int line = 0;
+	// number of input line
+	static int inputLineNum = 0;
 
+	/**
+	 *  Inserts the Java reserved words into the reservedWordsSet Hash set.
+	 *  It also inserts the missing operators '&' and '|' into operatorsSet Hash set.
+	 */
 	public MyError() {
 		// adding Java reserve words to the hash set
 		reservedWordsSet.add("abstract");
@@ -71,15 +82,22 @@ public class MyError {
 		operatorsSet.add("&");
 		operatorsSet.add("|");
 	}
-
+	
+	/**
+	 * This method verifies the input formula if it contains any Java reserved words.
+	 * It also checks if the input contains '&' or '|' characters.
+	 * Finally, it recovers from the errors and returns the recovered input.
+	 * 
+	 * @param input - the input formula.
+	 * @return recovered input if there is an error, the input formal otherwise. 
+	 */
 	public CharStream errorCheckAndRecover(CharStream input) {
-		//System.setErr(System.out);
-		line++;
-		StringBuilder result = new StringBuilder();
+		inputLineNum++;									//input line number
+		StringBuilder result = new StringBuilder();		//the recovered input
 		String inputString = input.toString();
 		String[] lines = inputString.split(" ");
 		int size = lines.length;
-		int index = 0;
+		int index = 0;									//the error character index in the input string
 		boolean hasError = false;
 		cWriter.printlnout("Initial input: " + inputString);
 
@@ -88,7 +106,7 @@ public class MyError {
 			//check and recover if the input formula missing the operators '&' or '|'
 			if (operatorsSet.contains(lines[i])) {
 				hasError = true;
-				
+				//call underLineError method to print the error message
 				underLineError(inputString, index, lines[i] );
 
 				result.append(lines[i]);	
@@ -102,15 +120,14 @@ public class MyError {
 
 					if (reservedWordsSet.contains(substrings[j])) {
 						hasError = true;
-						  
+						//call underLineError method to print the error message 
 						underLineError(inputString, index,substrings[j] );
 						substrings[j] = substrings[j].toUpperCase();
 					}
 					result.append(substrings[j]);
 					if (j == 0)
 					{
-						result.append(".");	
-						
+						result.append(".");							
 					}
 					index += substrings[j].length() + 1;					
 				}
@@ -118,10 +135,8 @@ public class MyError {
 			{				
 				result.append(lines[i]);	
 				index += lines[i].length() + 1;
-			}
-			
-			result.append(" ");
-			
+			}			
+			result.append(" ");			
 		}		
 		if(hasError)
 		{
@@ -130,11 +145,20 @@ public class MyError {
 		return CharStreams.fromString(result.toString());
 	}
 	
-	private void underLineError(String errorLine, int charPositionInLine, String errorWord )
+	/**
+	 * This method prints the error messages on the console.
+	 * It also underlines the error location in the input.
+	 * 
+	 * @param errorLine	- input formula that contains error.
+	 * @param charPositionInLine - error location in the input.
+	 * @param errorChar - reserved word or operator used in the input.
+	 */
+	private void underLineError(String errorLine, int charPositionInLine, String errorChar )
 	{
-		cWriter.printlnerr("line "+ line +":"+ (charPositionInLine + 1) +" token recognition error at: '"+ errorWord + " '");
+		cWriter.printlnerr("line "+ inputLineNum +":"+ (charPositionInLine + 1) +" token recognition error at: '"+ errorChar + " '");
 		cWriter.printlnerr(errorLine);
-	
+		
+		//To underlines the error location
 		for(int i=0; i<charPositionInLine; i++)
 			cWriter.printerr(" ");
 

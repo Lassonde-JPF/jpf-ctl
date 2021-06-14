@@ -188,7 +188,7 @@ class GeneratorTest {
 	
 	@Test
 	void testReservedWordsError() {
-		String ctl1	= "( f.x & new.while )   ";		
+		String ctl1	= "( for.x & new.while )   ";		
 		Formula formula1 = generator.visit(parseCtl(ctl1));
 		
 		assertNotNull(formula1);
