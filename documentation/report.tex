@@ -31,7 +31,7 @@
 \newcommand{\AU}{\mathbin{\mbox{\lstinline{AU}}}}
 \newcommand{\EU}{\mathbin{\mbox{\lstinline{EU}}}}
 
-\lstset{basicstyle=\ttfamily}
+\lstset{basicstyle=\ttfamily,mathescape=true}
 
 \usepackage{amsthm}
 \theoremstyle{definition}
@@ -176,27 +176,29 @@ AG (java.awt.AWTEvent.consumed
 A lexer and parser for CTL formulas have been developed using ANTLR \cite{P13}.  The above described grammar can be specified in ANTLR format as folows.
 \begin{lstlisting}
 formula
-  : 'true'				#True
-  | 'false'				#False
+  : '(' formula ')'			#Bracket
   | ATOMIC_PROPOSITION			#AtomicProposition
-  | '(' formula ')'			#Bracket
+  | 'true'				#True
+  | 'false'				#False
   | '!' formula				#Not
   | 'AG' formula			#ForAllAlways
   | 'AF' formula			#ForAllEventually
   | 'EG' formula			#ExistsAlways
   | 'EF' formula			#ExistsEventually
-  | formula 'AU' <assoc=right> formula  #ForAllUntil
-  | formula 'EU' <assoc=right> formula  #ExistsUntil
-  | formula '&&' <assoc=left> formula	#And
-  | formula '| |' <assoc=left> formula  #Or
-  | formula '->' <assoc=right> formula  #Implies
-  | formula '<->' <assoc=left> formula	#Iff
+  | <assoc=right> formula 'AU' formula  #ForAllUntil
+  | <assoc=right> formula 'EU' formula  #ExistsUntil
+  | <assoc=left> formula '&&' formula	#And
+  | <assoc=left> formula '| |' formula  #Or
+  | <assoc=right> formula '->' formula  #Implies
+  | <assoc=left> formula '<->' formula	#Iff
 \end{lstlisting}
 The order of the alternatives is consistent with the precedence of the operators (if an operator has higher precedence, then its alternative occurs earlier).  The operators \lstinline{AU}, \lstinline{EU}, and \lstinline{->} are specified as right associative.  The other binary operators are left associative.  The second column of the above rule contains the labels of the alternatives (see \cite[Section~8.2]{P13}).  We will discuss their role below.
 
+Assume that $a$, $b$, and $c$ are atomic propositions.  The formula \lstinline{$a$ AU $b$ AU $c$} is equivalent to \lstinline{$a$ AU ($b$ AU $c$)} since \lstinline{AU} is right associative.  The formula \lstinline{$a$ AU $b$ EU $c$} is equivalent to \lstinline{($a$ AU $b$) EU $c$} since \lstinline{AU} binds stronger than \lstinline{EU}.  For the same reason, the formula \lstinline{$a$ EU $b$ AU $c$} is equivalent to \lstinline{$a$ AU ($b$ EU $c$)}.
+
 Recall that the atomic propositions are static attributes.  To specify these, we used relevant snippets of the ANTLR grammar for Java%
 \footnote{See \href{https://github.com/antlr/grammars-v4/tree/master/java/java8}{github.com/antlr/grammars-v4/tree/master/java/java8}.}
-Whitespace, that is, spaces, tabs, and returns are skipped.
+Whitespace, that is, spaces, tabs, form feeds, and returns are skipped.
 
 \textcolor{blue}{Later, we add here a discussion of error handling.}
 
@@ -280,13 +282,23 @@ Formula formula =
 
 To implement this translation, we use the visitor design pattern.  ANTLR supports this design pattern (see \cite[Section~7.3]{P13}).  From the CTL grammar, ANTLR generates a \lstinline{CTLVisitor} interface.  This interface contains a visit method for each alternative.  For example, for the alternative labelled \lstinline{ExistsAlways}, the interface contains the method \lstinline{visitExistsAlways}.
 
-ANTLR also generates the \lstinline{CTLBaseVisitor} class.  This adapter class provides a default implementation for all the methods of the \lstinline{CTLVisitor} interface.  We implement our translation by extending this class and overriding methods.  For example, when we visit a node of the parse tree corresponding to the alternative labelled \lstinline{Implies}, we first visit the left child and obtain the \lstinline{Formula} object corresponding to the translation of the parse tree rooted at that left child.  Next, we visit the right child and obtain the \lstinline{Formula} object for the parse tree rooted at that right child.  Finally, we create an \lstinline{Implies} object from those two \lstinline{Formula} objects.
+ANTLR also generates the \lstinline{CTLBaseVisitor} class.  This adapter class provides a default implementation for all the methods of the \lstinline{CTLVisitor} interface.  We implement our translation by extending this class and overriding methods.  For example, when we visit a node of the parse tree corresponding to the alternative labelled \lstinline{And}, we first visit the left child and obtain the \lstinline{Formula} object corresponding to the translation of the parse tree rooted at that left child.  Next, we visit the right child and obtain the \lstinline{Formula} object for the parse tree rooted at that right child.  Finally, we create an \lstinline{And} object from those two \lstinline{Formula} objects.
 
 \begin{lstlisting}
 @Override
-public Formula visitImplies(ImpliesContext context) {
+public Formula visitAnd(AndContext context) {
   Formula left = (Formula) visit(context.formula(0));
   Formula right = (Formula) visit(context.formula(1));
+  return new And(left, right);
+}
+\end{lstlisting}
+
+Since the implication operator is right associative, in the \lstinline{visitImplies} method we visit the right child first.
+\begin{lstlisting}
+@Override
+public Formula visitImplies(ImpliesContext context) {
+  Formula right = (Formula) visit(context.formula(1));
+  Formula left = (Formula) visit(context.formula(0));
   return new Implies(left, right);
 }
 \end{lstlisting}
