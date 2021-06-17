@@ -23,6 +23,10 @@
 grammar CTL;
 import JavaNames;
 
+@header {
+package parser;
+}
+
 /* Formulas */
 
 formula

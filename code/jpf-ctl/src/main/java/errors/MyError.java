@@ -137,12 +137,16 @@ public class MyError {
 				index += lines[i].length() + 1;
 			}			
 			result.append(" ");			
-		}		
+		}	
+		
+		//if there is error return the recovered input
 		if(hasError)
 		{
 			cWriter.printlnout("Recovered input: " + result.toString());
+			return CharStreams.fromString(result.toString());
 		}
-		return CharStreams.fromString(result.toString());
+		
+		return input;		
 	}
 	
 	/**
