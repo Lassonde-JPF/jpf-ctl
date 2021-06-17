@@ -35,6 +35,7 @@ dependencies {
 generateGrammarSource {
     
     arguments += ["-visitor"]
+    includes = ["src/main/antlr/JavaNames.g4"]
 
     // Keep a copy of generated sources
     doLast {

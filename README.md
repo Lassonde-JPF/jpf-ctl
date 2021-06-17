@@ -67,6 +67,7 @@
 * [Java](https://www.java.com/en/)
 * [JPF](https://github.com/javapathfinder)
 * [ANTLR4](https://www.antlr.org/)
+* [Gradle](https://gradle.org/)
 
 ## Documentation
 [Documentation](/documentation/report.pdf)
