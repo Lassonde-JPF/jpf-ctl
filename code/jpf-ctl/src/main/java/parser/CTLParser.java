@@ -1,4 +1,4 @@
-// Generated from CTL.g4 by ANTLR 4.9
+// Generated from CTL.g4 by ANTLR 4.9.2
 
     package parser;
 
@@ -13,7 +13,7 @@ import java.util.ArrayList;
 
 @SuppressWarnings({"all", "warnings", "unchecked", "unused", "cast"})
 public class CTLParser extends Parser {
-	static { RuntimeMetaData.checkVersion("4.9", RuntimeMetaData.VERSION); }
+	static { RuntimeMetaData.checkVersion("4.9.2", RuntimeMetaData.VERSION); }
 
 	protected static final DFA[] _decisionToDFA;
 	protected static final PredictionContextCache _sharedContextCache =
@@ -600,7 +600,7 @@ public class CTLParser extends Parser {
 						setState(27);
 						match(T__11);
 						setState(28);
-						formula(7);
+						formula(6);
 						}
 						break;
 					case 2:
@@ -612,7 +612,7 @@ public class CTLParser extends Parser {
 						setState(30);
 						match(T__12);
 						setState(31);
-						formula(6);
+						formula(5);
 						}
 						break;
 					case 3:
@@ -648,7 +648,7 @@ public class CTLParser extends Parser {
 						setState(39);
 						match(T__15);
 						setState(40);
-						formula(3);
+						formula(2);
 						}
 						break;
 					case 6:
@@ -720,9 +720,9 @@ public class CTLParser extends Parser {
 		"\5\2\2\n\30\31\7\r\2\2\31\33\5\2\2\t\32\4\3\2\2\2\32\t\3\2\2\2\32\13\3"+
 		"\2\2\2\32\f\3\2\2\2\32\r\3\2\2\2\32\16\3\2\2\2\32\20\3\2\2\2\32\22\3\2"+
 		"\2\2\32\24\3\2\2\2\32\26\3\2\2\2\32\30\3\2\2\2\33\60\3\2\2\2\34\35\f\b"+
-		"\2\2\35\36\7\16\2\2\36/\5\2\2\t\37 \f\7\2\2 !\7\17\2\2!/\5\2\2\b\"#\f"+
+		"\2\2\35\36\7\16\2\2\36/\5\2\2\b\37 \f\7\2\2 !\7\17\2\2!/\5\2\2\7\"#\f"+
 		"\6\2\2#$\7\20\2\2$/\5\2\2\7%&\f\5\2\2&\'\7\21\2\2\'/\5\2\2\6()\f\4\2\2"+
-		")*\7\22\2\2*/\5\2\2\5+,\f\3\2\2,-\7\23\2\2-/\5\2\2\4.\34\3\2\2\2.\37\3"+
+		")*\7\22\2\2*/\5\2\2\4+,\f\3\2\2,-\7\23\2\2-/\5\2\2\4.\34\3\2\2\2.\37\3"+
 		"\2\2\2.\"\3\2\2\2.%\3\2\2\2.(\3\2\2\2.+\3\2\2\2/\62\3\2\2\2\60.\3\2\2"+
 		"\2\60\61\3\2\2\2\61\3\3\2\2\2\62\60\3\2\2\2\5\32.\60";
 	public static final ATN _ATN =
