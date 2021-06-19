@@ -310,7 +310,7 @@ public Formula visitImplies(ImpliesContext context) {
 
 \section{A New Semantics for CTL}
 
-The normal semantics of CTL is described in \cite[Section~6.2.2]{BK08}.  This normal semantics is defined for a transition system $(S, Act, \rightarrow, I, AP, L)$.  Such a transition system is defined in \cite[Definition~2.1]{BK08}.  The new semantics considers a partial transition system.  A partial transition system is a tuple $(S, F, Act, \rightarrow, I, AP, L)$, where all components are defined as before and $F \subseteq S$ is a set of fully explored states.  A transition system is called partial because the states $S \setminus F$ are not fully explored yet, that is, these states have transitions that are not part of the transition relation $\rightarrow$.  
+The normal semantics of CTL is described in \cite[Section~6.2.2]{BK08}.  This normal semantics is defined for a transition system $(S, Act, \rightarrow, I, AP, L)$.  Such a transition system is defined in \cite[Definition~2.1]{BK08}.  The new semantics considers a partial transition system.  A partial transition system is a tuple $(S, F, Act, \rightarrow, I, AP, L)$, where all components are defined as before and $F \subseteq S$ is a set of fully explored states.  A transition system is called partial because the states $S \setminus F$ are not fully explored yet, that is, these states \emph{have} transitions that are not part of the transition relation $\rightarrow$.  
 
 Consider the following partial transition system.
 \begin{center}
@@ -497,6 +497,103 @@ $\satisfaction{\forall \eventually \varphi}(s) = $
 $\satisfaction{\exists \eventually \varphi}(s) = $
 \end{itemize}
 \end{definition}
+
+We first consider the formula $\forall \nxt \varphi$, where $\varphi$ is some arbitrary formula.  Assume that the state~$s_0$ is fully explored.  In that case,
+\[
+\satisfaction{\forall \nxt \varphi}(s_0) = \left \{
+\begin{array}{ll}
+\top & \mbox{if $\satisfaction{\varphi}(s_1) = \top$ for all $s_0 \rightarrow s_1$}\\
+\perp & \mbox{if $\satisfaction{\varphi}(s_1) = \perp$ for some $s_0 \rightarrow s_1$}\\
+? & \mbox{otherwise.}
+\end{array}
+\right .
+\]
+The above is equivalent to
+\[
+\satisfaction{\forall \nxt \varphi}(s_0) = \bigwedge \{\, \satisfaction{\varphi}(s_1) \mid s_0 \rightarrow s_1 \,\}.
+\]
+Note that $\bigwedge \emptyset = \top$.
+
+Next, assume that the state~$s_0$ is not fully explored.  Recall that state~$s_0$ has outgoing transitions, but those have not been explored yet.  We distinguish three cases.
+\begin{itemize}
+\item 
+None of outgoing transitions of state~$s_0$ have been explored yet.  Let us first consider the case that $\varphi$ is $\TRUE$.  In that case, $\satisfaction{\forall \nxt \TRUE}(s_0) = \top$ because every state satisfies $\TRUE$.  Similarly, we have that $\satisfaction{\forall \nxt (\TRUE \vee \FALSE)}(s_0) = \top$.  To capture all these cases, we use the notion of equivalence of CTL formulas, denoted $\equiv$ (see \cite[Definition~6.12]{BK08}).  If $\varphi \equiv \TRUE$ then $\satisfaction{\forall \nxt \varphi}(s_0) = \top$.
+
+Next, let us consider the case that $\varphi$ is $\FALSE$.  No state satisfies $\FALSE$.  Hence, $\satisfaction{\forall \nxt \FALSE}(s_0) = \perp$.  More generally, $\varphi \equiv \FALSE$ then $\satisfaction{\forall \nxt \varphi}(s_0) = \perp$.
+
+Otherwise, $\varphi \not\equiv \TRUE$ and $\varphi \not\equiv \FALSE$.  The former implies that there exists a transition system with initial state $s_{\TRUE}$ such that $s_{\TRUE} \not\models \varphi$ and the latter implies that there exists a transition system with initial state $s_{\FALSE}$ such that $s_{\FALSE} \models \varphi$.  State~$s_0$ has at least one outgoing transition.  We do not know anything about the target state of that transition (it could be $s_{\TRUE}$ or $s_{\FALSE}$ or any other state), we do not know that value of $\satisfaction{\forall \nxt \varphi}(s_0)$.
+
+Combining the above, we arrive at
+\[
+\satisfaction{\forall \nxt \varphi}(s_0) = \left \{
+\begin{array}{ll}
+\top & \mbox{if $\varphi \equiv \TRUE$}\\
+\perp & \mbox{if $\varphi \equiv \FALSE$}\\
+? & \mbox{otherwise.}
+\end{array}
+\right .
+\]
+\item
+State~$s_0$ has a single explored outgoing transition to state~$s_1$.  State~$s_0$ has more outgoing transitions, but those have not been explored yet.   As in the previous case, if  $\varphi \equiv \TRUE$ then $\satisfaction{\forall \nxt \varphi}(s_0) = \top$, and if $\varphi \equiv \FALSE$ then $\satisfaction{\forall \nxt \varphi}(s_0) = \perp$.
+
+Now let us consider state $s_1$ and formula $\varphi$.  If $\satisfaction{\varphi}(s_1) = \perp$, we can conclude that $\satisfaction{\forall \nxt \varphi}(s_0) = \perp$.  In case $\satisfaction{\varphi}(s_1)\not= \perp$, we obtain no additional information about $\satisfaction{\forall \nxt \varphi}(s_0)$.
+
+Combining the above, we arrive at
+\[
+\satisfaction{\forall \nxt \varphi}(s_0) = \left \{
+\begin{array}{ll}
+\top & \mbox{if $\varphi \equiv \TRUE$}\\
+\perp & \mbox{if $\varphi \equiv \FALSE$ or $\satisfaction{\varphi}(s_1) = \perp$}\\
+? & \mbox{otherwise.}
+\end{array}
+\right .
+\]
+Note that $\satisfaction{\varphi}(s_1) = \perp$ if $\varphi \equiv \FALSE$.  Hence, we can simplify the above to
+\[
+\satisfaction{\forall \nxt \varphi}(s_0) = \left \{
+\begin{array}{ll}
+\top & \mbox{if $\varphi \equiv \TRUE$}\\
+\perp & \mbox{if $\satisfaction{\varphi}(s_1) = \perp$}\\
+? & \mbox{otherwise.}
+\end{array}
+\right .
+\]
+\item
+State~$s_0$ has explored outgoing transitions to state~$s_1$ and $s_2$.  State~$s_0$ has more outgoing transitions, but those have not been explored yet.   As in the previous cases, if  $\varphi \equiv \TRUE$ then $\satisfaction{\forall \nxt \varphi}(s_0) = \top$, and if $\varphi \equiv \FALSE$ then $\satisfaction{\forall \nxt \varphi}(s_0) = \perp$. 
+
+Now let us consider state~$s_1$ and $s_2$.  If $\satisfaction{\varphi}(s_1) = \perp$ or $\satisfaction{\varphi}(s_2) = \perp$, we can conclude that $\satisfaction{\forall \nxt \varphi}(s_0) = \perp$.  In case $\satisfaction{\varphi}(s_1)\not= \perp$ and $\satisfaction{\varphi}(s_2)\not= \perp$, we obtain no additional information about $\satisfaction{\forall \nxt \varphi}(s_0)$.  Therefore,
+\[
+\satisfaction{\forall \nxt \varphi}(s_0) = \left \{
+\begin{array}{ll}
+\top & \mbox{if $\varphi \equiv \TRUE$}\\
+\perp & \mbox{if $\varphi \equiv \FALSE$ or $\satisfaction{\varphi}(s_1) = \perp$ or $\satisfaction{\varphi}(s_2) = \perp$}\\
+? & \mbox{otherwise.}
+\end{array}
+\right .
+\]
+This can be simplified to
+\[
+\satisfaction{\forall \nxt \varphi}(s_0) = \left \{
+\begin{array}{ll}
+\top & \mbox{if $\varphi \equiv \TRUE$}\\
+\perp & \mbox{if $\satisfaction{\varphi}(s_1) = \perp$ or $\satisfaction{\varphi}(s_2) = \perp$}\\
+? & \mbox{otherwise.}
+\end{array}
+\right .
+\]
+\end{itemize}
+The above three cases can be generalized as follows.
+\[
+\satisfaction{\forall \nxt \varphi}(s_0) = \left \{
+\begin{array}{ll}
+\top & \mbox{if $\varphi \equiv \TRUE$}\\
+\perp & \mbox{if $\varphi \equiv \FALSE$ or $\satisfaction{\varphi}(s_1) = \perp$ for some $s_0 \rightarrow s_1$}\\
+? & \mbox{otherwise.}
+\end{array}
+\right .
+\]
+
+\textcolor{blue}{Next, let us consider the formula $\exists \nxt \varphi$.}
 
 \section{JPF Listener that Writes a Partial Transition System to File}
 
