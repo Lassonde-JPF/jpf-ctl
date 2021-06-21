@@ -593,11 +593,112 @@ The above three cases can be generalized as follows.
 \right .
 \]
 
-\textcolor{blue}{Next, let us consider the formula $\exists \nxt \varphi$.}
+Next, let us consider the formula $\exists \nxt \varphi$, where $\varphi$ is some arbitary formula.  Assume that the state~$s_0$ is fully explored.  In that case,
+\[
+\satisfaction{\exists \nxt \varphi}(s_0) = \left \{
+\begin{array}{ll}
+\top & \mbox{if $\satisfaction{\varphi}(s_1) = \top$ for some $s_0 \rightarrow s_1$}\\
+\perp & \mbox{if $\satisfaction{\varphi}(s_1) = \perp$ for all $s_0 \rightarrow s_1$}\\
+? & \mbox{otherwise.}
+\end{array}
+\right .
+\]
+The above is equivalent to
+\[
+\satisfaction{\exists \nxt \varphi}(s_0) = \bigvee \{\, \satisfaction{\varphi}(s_1) \mid s_0 \rightarrow s_1 \,\}.
+\]
+Note that $\bigvee \emptyset = \perp$.
+
+Next, assume that the state~$s_0$ is not fully explored.  Recall that state~$s_0$ has outgoing transitions, but those have not been explored yet.  We distinguish three cases.
+\begin{itemize}
+\item 
+None of outgoing transitions of state~$s_0$ have been explored yet.  Let us first consider the case that $\varphi$ is $\TRUE$.  In that case, $\satisfaction{\exists \nxt \TRUE}(s_0) = \top$ because state~$s_0$ has outgoing transitions and every state satisfies $\TRUE$.  More generally, if $\varphi \equiv \TRUE$ then $\satisfaction{\exists \nxt \varphi}(s_0) = \top$.
+
+Next, let us consider the case that $\varphi$ is $\FALSE$.  No state satisfies $\FALSE$.  Hence, $\satisfaction{\exists \nxt \FALSE}(s_0) = \perp$.  More generally, $\varphi \equiv \FALSE$ then $\satisfaction{\exists \nxt \varphi}(s_0) = \perp$.
+
+Otherwise, $\varphi \not\equiv \TRUE$ and $\varphi \not\equiv \FALSE$.  The former implies that there exists a transition system with initial state $s_{\TRUE}$ such that $s_{\TRUE} \not\models \varphi$ and the latter implies that there exists a transition system with initial state $s_{\FALSE}$ such that $s_{\FALSE} \models \varphi$.  State~$s_0$ has at least one outgoing transition.  We do not know anything about the target state of that transition (it could be $s_{\TRUE}$ or $s_{\FALSE}$ or any other state), we do not know that value of $\satisfaction{\exists \nxt \varphi}(s_0)$.
+
+Combining the above, we arrive at
+\[
+\satisfaction{\exists \nxt \varphi}(s_0) = \left \{
+\begin{array}{ll}
+\top & \mbox{if $\varphi \equiv \TRUE$}\\
+\perp & \mbox{if $\varphi \equiv \FALSE$}\\
+? & \mbox{otherwise.}
+\end{array}
+\right .
+\]
+\item
+State~$s_0$ has a single explored outgoing transition to state~$s_1$.  State~$s_0$ has more outgoing transitions, but those have not been explored yet.   As in the previous case, if  $\varphi \equiv \TRUE$ then $\satisfaction{\exists \nxt \varphi}(s_0) = \top$, and if $\varphi \equiv \FALSE$ then $\satisfaction{\exists \nxt \varphi}(s_0) = \perp$.
+
+Now let us consider state $s_1$ and formula $\varphi$.  If $\satisfaction{\varphi}(s_1) = \top$, we can conclude that $\satisfaction{\exists \nxt \varphi}(s_0) = \top$.  In case $\satisfaction{\varphi}(s_1)\not= \top$, we obtain no additional information about $\satisfaction{\exists \nxt \varphi}(s_0)$.
+
+Combining the above, we arrive at
+\[
+\satisfaction{\exists \nxt \varphi}(s_0) = \left \{
+\begin{array}{ll}
+\top & \mbox{if $\varphi \equiv \TRUE$ or $\satisfaction{\varphi}(s_1) = \top$}\\
+\perp & \mbox{if $\varphi \equiv \FALSE$}\\
+? & \mbox{otherwise.}
+\end{array}
+\right .
+\]
+Note that $\satisfaction{\varphi}(s_1) = \top$ if $\varphi \equiv \TRUE$.  Hence, we can simplify the above to
+\[
+\satisfaction{\exists \nxt \varphi}(s_0) = \left \{
+\begin{array}{ll}
+\top & \mbox{if $\satisfaction{\varphi}(s_1) = \top$}\\
+\perp & \mbox{if $\varphi \equiv \FALSE$}\\
+? & \mbox{otherwise.}
+\end{array}
+\right .
+\]
+\item
+State~$s_0$ has explored outgoing transitions to state~$s_1$ and $s_2$.  State~$s_0$ has more outgoing transitions, but those have not been explored yet.   As in the previous cases, if  $\varphi \equiv \TRUE$ then $\satisfaction{\exists \nxt \varphi}(s_0) = \top$, and if $\varphi \equiv \FALSE$ then $\satisfaction{\exists \nxt \varphi}(s_0) = \perp$. 
+
+Now let us consider state~$s_1$ and $s_2$.  If $\satisfaction{\varphi}(s_1) = \top$ or $\satisfaction{\varphi}(s_2) = \top$, we can conclude that $\satisfaction{\exists \nxt \varphi}(s_0) = \top$.  In case $\satisfaction{\varphi}(s_1)\not= \top$ and $\satisfaction{\varphi}(s_2)\not= \top$, we obtain no additional information about $\satisfaction{\exists \nxt \varphi}(s_0)$.  Therefore,
+\[
+\satisfaction{\exists \nxt \varphi}(s_0) = \left \{
+\begin{array}{ll}
+\top & \mbox{if $\varphi \equiv \TRUE$ or $\satisfaction{\varphi}(s_1) = \top$ or $\satisfaction{\varphi}(s_2) = \top$}\\
+\perp & \mbox{if $\varphi \equiv \FALSE$}\\
+? & \mbox{otherwise.}
+\end{array}
+\right .
+\]
+This can be simplified to
+\[
+\satisfaction{\exists \nxt \varphi}(s_0) = \left \{
+\begin{array}{ll}
+\top & \mbox{if $\satisfaction{\varphi}(s_1) = \top$ or $\satisfaction{\varphi}(s_2) = \top$}\\
+\perp & \mbox{if $\varphi \equiv \FALSE$}\\
+? & \mbox{otherwise.}
+\end{array}
+\right .
+\]
+\end{itemize}
+The above three cases can be generalized as follows.
+\[
+\satisfaction{\exists \nxt \varphi}(s_0) = \left \{
+\begin{array}{ll}
+\top & \mbox{if $\varphi \equiv \TRUE$ or $\satisfaction{\varphi}(s_1) = \top$ for some $s_0 \rightarrow s_1$}\\
+\perp & \mbox{if $\varphi \equiv \FALSE$}\\
+? & \mbox{otherwise.}
+\end{array}
+\right .
+\]
+
+
+
+
+
+
+
+\textcolor{blue}{Next, let us consider the formulas $\forall \always \varphi$ and $\exists \always \varphi$.}
 
 \section{JPF Listener that Writes a Partial Transition System to File}
 
-The first objective of this project is to develop a listener for Java PathFinder (JPF) that writes its partial transition system to file.  In \cite[Section~7.3]{B20}, a listener that writes a transition system to file has been developed.  This listener is extended to the setting of partial transition systems.
+A listener for Java PathFinder (JPF) writes its partial transition system to file.  In \cite[Section~7.3]{B20}, a listener that writes a transition system to file has been developed.  This listener is extended to the setting of partial transition systems.
 
 Consider the following partial transition system.
 \begin{center}
@@ -616,12 +717,12 @@ Consider the following partial transition system.
 \end{center}
 State~-1 is the initial state.  The states -1 and 0 are fully explored, and  states 1 and 2 are not fully explored.  The listener produces a file, the name of which is the name of the system under test with ``.tra'' as suffix (see \cite[Section 7.4]{B20}), with the following content.
 \begin{verbatim}
--1 0
-0 1
-0 2
--1 0
+-1 -> 0
+0 -> 1
+0 -> 2
+1 2
 \end{verbatim}
-The first three lines describe the transitions.  Each line contains the source of the transition followed by the target of the transition.  The last line contains the states that are fully explored.
+The first three lines describe the transitions.  Each line contains the source of the transition followed by the target of the transition.  The last line contains the states that are not fully explored yet.
 
 \bibliographystyle{plain}
 \bibliography{report}
