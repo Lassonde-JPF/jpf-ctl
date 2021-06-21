@@ -70,21 +70,33 @@
 * [Gradle](https://gradle.org/)
 
 ## Documentation
-[Documentation](/documentation/report.pdf)
+
+Documentation for the jpf-ctl project can be found within the `/documentation` directory; however, the PDF version can be directly accessed using the following 
+[link](/documentation/report.pdf)
 
 <!-- GETTING STARTED -->
 ## Getting Started
 
-<< how to use / setup >>
+jpf-ctl is an extension for the Java Pathfinder program (accessible [here](https://github.com/javapathfinder/jpf-core)) and as such, is to be setup using the following normal steps for using a jpf extension. 
 
 ### Prerequisites
 
-<<any prerequisite installations go here>>
+Depending on your desired use cases the number of prerequisites for using jpf-ctl can widely vary. Therefore, the following section will be divided based on whether you wish to _use_ jpf-ctl or _develop_ with jpf-ctl.
+
+#### Normal Usage
 
 * npm
   ```sh
   npm install npm@latest -g
   ```
+
+#### Development
+The following prerequisites are required to develop with jpf-ctl and are required _in addition to_ the normal usage requirements defined above
+
+* **[ANTLR4 (4.9.2)](https://github.com/antlr/antlr4/blob/master/doc/getting-started.md)** <br/>
+  Used for developing/defining the grammar of CTL which jpf-ctl uses as properties to model check
+* **[jpf-nhandler](https://github.com/javapathfinder/jpf-nhandler)** <br/>
+  Used for testing the jpf-partial-transition-system-listener, specifically, to setup testing environments outside of JPF
 
 ### Installation
 
