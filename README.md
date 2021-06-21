@@ -131,11 +131,11 @@ Distributed under the GNU General Public License v3. See `LICENSE` for more info
 The following contacts are responsible for the development and management of the jpf-ctl project
 
 ### Development Team
-**Franck van Breugel** - _Software Engineer_ - [franck-van-breugel](https://github.com/franck-van-breugel)
-**Matt Walker** - _Software Engineer_ - [matthewwalk](https://github.com/matthewwalk)
-**Anto Nanah Ji** - _title_ - [antoNanahJi](https://github.com/antoNanahJi)
-**Parssa Khazra** - _title_ - [ParssaKhazra](https://github.com/ParssaKhazra)
-**Hongru Wang** - _title_ - [HongruWang](https://github.com/HongruWang-123)
+**Franck van Breugel** - _Software Engineer_ - [franck-van-breugel](https://github.com/franck-van-breugel) <br/>
+**Matt Walker** - _Software Engineer_ - [matthewwalk](https://github.com/matthewwalk)<br/>
+**Anto Nanah Ji** - _title_ - [antoNanahJi](https://github.com/antoNanahJi)<br/>
+**Parssa Khazra** - _title_ - [ParssaKhazra](https://github.com/ParssaKhazra)<br/>
+**Hongru Wang** - _title_ - [HongruWang](https://github.com/HongruWang-123)<br/>
 
 <!-- ACKNOWLEDGEMENTS -->
 ## Acknowledgements
