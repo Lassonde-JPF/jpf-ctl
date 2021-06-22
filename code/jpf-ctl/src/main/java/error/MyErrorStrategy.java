@@ -1,4 +1,4 @@
-package errors;
+package error;
 
 import org.antlr.v4.runtime.DefaultErrorStrategy;
 import org.antlr.v4.runtime.Parser;

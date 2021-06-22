@@ -1,4 +1,4 @@
-package errors;
+package error;
 
 import java.util.HashSet;
 import org.antlr.v4.runtime.CharStream;

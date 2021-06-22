@@ -1,4 +1,4 @@
-package errors;
+package error;
 
 /**
  * A class to print the console errors and messages in synchronized way.

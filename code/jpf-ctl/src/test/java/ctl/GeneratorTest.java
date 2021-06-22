@@ -30,9 +30,9 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import errors.MyErrorStrategy;
-import errors.MyError;
-import errors.MyErrorListener;
+import error.MyError;
+import error.MyErrorListener;
+import error.MyErrorStrategy;
 
 import org.antlr.v4.runtime.CharStream;
 import org.antlr.v4.runtime.CharStreams;

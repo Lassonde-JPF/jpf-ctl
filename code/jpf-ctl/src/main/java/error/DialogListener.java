@@ -1,4 +1,4 @@
-package errors;
+package error;
 
 import java.awt.Color;
 import java.awt.Container;
