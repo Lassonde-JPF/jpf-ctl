@@ -26,4 +26,11 @@
 		<nature>org.eclipse.buildship.core.gradleprojectnature</nature>
 		<nature>org.eclipse.xtext.ui.shared.xtextNature</nature>
 	</natures>
+	<linkedResources>
+		<link>
+			<name>main</name>
+			<type>2</type>
+			<location>C:/Users/mattw/Documents/GitHub/jpf-ctl-extension/code/jpf-ctl/build/generated-src/antlr/main</location>
+		</link>
+	</linkedResources>
 </projectDescription>

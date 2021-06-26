@@ -17,26 +17,24 @@
 
 package ctl;
 
-import parser.CTLBaseVisitor;
-import parser.CTLParser.AndContext;
-import parser.CTLParser.AtomicPropositionContext;
-import parser.CTLParser.BracketContext;
-import parser.CTLParser.ExistsAlwaysContext;
-import parser.CTLParser.ExistsEventuallyContext;
-import parser.CTLParser.ExistsNextContext;
-import parser.CTLParser.ExistsUntilContext;
-import parser.CTLParser.FalseContext;
-import parser.CTLParser.ForAllAlwaysContext;
-import parser.CTLParser.ForAllEventuallyContext;
-import parser.CTLParser.ForAllNextContext;
-import parser.CTLParser.ForAllUntilContext;
-import parser.CTLParser.IffContext;
-import parser.CTLParser.ImpliesContext;
-import parser.CTLParser.NotContext;
-import parser.CTLParser.OrContext;
-//import parser.CTLParser.RootContext;
-import parser.CTLParser.FormulaContext;
-import parser.CTLParser.TrueContext;
+import org.ctl.*;
+import org.ctl.CTLParser.AndContext;
+import org.ctl.CTLParser.AtomicPropositionContext;
+import org.ctl.CTLParser.BracketContext;
+import org.ctl.CTLParser.ExistsAlwaysContext;
+import org.ctl.CTLParser.ExistsEventuallyContext;
+import org.ctl.CTLParser.ExistsNextContext;
+import org.ctl.CTLParser.ExistsUntilContext;
+import org.ctl.CTLParser.FalseContext;
+import org.ctl.CTLParser.ForAllAlwaysContext;
+import org.ctl.CTLParser.ForAllEventuallyContext;
+import org.ctl.CTLParser.ForAllNextContext;
+import org.ctl.CTLParser.ForAllUntilContext;
+import org.ctl.CTLParser.IffContext;
+import org.ctl.CTLParser.ImpliesContext;
+import org.ctl.CTLParser.NotContext;
+import org.ctl.CTLParser.OrContext;
+import org.ctl.CTLParser.TrueContext;
 
 /**
  * Generates an abstract syntax tree from a parse tree.
