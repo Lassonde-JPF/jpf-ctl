@@ -432,9 +432,9 @@ Implication is defined as follows.
 \begin{array}{cc|ccc}
 \multicolumn{2}{c|}{v \rightarrow w} & & w &\\
 && \top & \perp & \mathord{?}\\\hline
-& \top &  &  & \\
-v & \perp &  &  & \\
-& \mathord{?} &  &  & 
+& \top & \top & \perp & ?\\
+v & \perp & \top & \top & \top\\
+& \mathord{?} & \top & \perp & ?
 \end{array}
 \]
 Equivalence is defined as follows.
@@ -442,90 +442,187 @@ Equivalence is defined as follows.
 \begin{array}{cc|ccc}
 \multicolumn{2}{c|}{v \leftrightarrow w} & & w &\\
 && \top & \perp & \mathord{?}\\\hline
-& \top &  &  & \\
-v & \perp &  &  & \\
-& \mathord{?} &  &  & 
+& \top & \top & \perp & ?\\
+v & \perp & \perp & \top & ?\\
+& \mathord{?} & ? & \perp & ?
 \end{array}
 \]
 
-We denote the set of CTL formulas by $\mathit{CTL}$.
+\color{red}
+We denote the set of CTL formulas by $\mathit{CTL}$.  Instead of defining the new semantics of CTL as
+\[
+\mathit{CTL} \to S \to \mathbb{V}
+\] 
+we use
+\[
+\mathit{CTL} \to (2^S)^3.
+\] 
+We use $2^S$ to denote the powerset of $S$.  Hence, for each CTL formula we define the following three sets of states:
+\begin{align*}
+\mathit{Sat}(\varphi) & = \{\, s \in S \mid \satisfaction{\varphi}(s) = \top \,\}\\
+\mathit{Unsat}(\varphi) & = \{\, s \in S \mid \satisfaction{\varphi}(s) = \perp \,\}\\
+\mathit{Unknown}(\varphi) & = \{\, s \in S \mid \satisfaction{\varphi}(s) = ? \,\}
+\end{align*}
+\color{black}
 
 \begin{definition}
-Let $(S, F, \rightarrow, I, \mathit{AP}, L)$ be a partial transition system.  Let $s \in S$.  The function 
+Let $(S, F, \rightarrow, I, \mathit{AP}, L)$ be a partial transition system.  The function 
 \[
-\satisfaction{\ } : \mathit{CTL} \to S \to \mathbb{V}
+(\mathit{Sat}, \mathit{Unsat}, \mathit{Unknown}) : \mathit{CTL} \to (2^S)^3
 \] 
 is defined by structural induction on the CTL formula as follows.
 \begin{itemize}
 \item
-$\satisfaction{a}(s) = 
+\begin{align*}
+\mathit{Sat}(a) & = \{\, s \in S \mid a \in L(s) \,\}\\
+\mathit{Unsat}(a) & = \{\, s \in S \mid a \not\in L(s) \,\}\\
+\mathit{Unknown}(a) & = \emptyset
+\end{align*}
+\item 
+\begin{align*}
+\mathit{Sat}(\TRUE) & = S\\
+\mathit{Unsat}(\TRUE) & = \emptyset\\
+\mathit{Unknown}(\TRUE) & = \emptyset
+\end{align*}
+\item 
+\begin{align*}
+\mathit{Sat}(\FALSE) & = \emptyset\\
+\mathit{Unsat}(\FALSE) & = S\\
+\mathit{Unknown}(\FALSE) & = \emptyset 
+\end{align*}
+\item
+\begin{align*}
+\mathit{Sat}(\neg \varphi) & = \mathit{Unsat}(\varphi)\\
+\mathit{Unsat}(\neg \varphi) & = \mathit{Sat}(\varphi)\\
+\mathit{Unknown}(\neg \varphi) & = \mathit{Unknown}(\varphi)
+\end{align*}
+\item
+\begin{align*}
+\mathit{Sat}(\varphi \wedge \psi) & = \mathit{Sat}(\varphi) \cap \mathit{Sat}(\psi)\\
+\mathit{Unsat}(\varphi \wedge \psi) & = \mathit{Unsat}(\varphi) \cup \mathit{Unsat}(\psi)\\
+\mathit{Unknown}(\varphi \wedge \psi) & = S \setminus (\mathit{Sat}(\varphi \wedge \psi) \cup \mathit{Unsat}(\varphi \wedge \psi))
+\end{align*}
+\item
+\begin{align*}
+\mathit{Sat}(\varphi \vee \psi) & = \mathit{Sat}(\varphi) \cup \mathit{Sat}(\psi)\\
+\mathit{Unsat}(\varphi \vee \psi) & = \mathit{Unsat}(\varphi) \cap \mathit{Unsat}(\psi)\\
+\mathit{Unknown}(\varphi \vee \psi) & = S \setminus (\mathit{Sat}(\varphi \vee \psi) \cup \mathit{Unsat}(\varphi \vee \psi))
+\end{align*}
+\item
+\begin{align*}
+\mathit{Sat}(\varphi \rightarrow \psi) & = \mathit{Unsat}(\varphi) \cup \mathit{Sat}(\psi)\\
+\mathit{Unsat}(\varphi \rightarrow \psi) & = \mathit{Unsat}(\varphi) \setminus \mathit{Unsat}(\psi)\\
+\mathit{Unknown}(\varphi \rightarrow \psi) & = S \setminus (\mathit{Sat}(\varphi \rightarrow \psi) \cup \mathit{Unsat}(\varphi \rightarrow \psi))
+\end{align*}
+\item
+\begin{align*}
+\mathit{Sat}(\varphi \leftrightarrow \psi) & = \\
+\mathit{Unsat}(\varphi \leftrightarrow \psi) & = \\
+\mathit{Unknown}(\varphi \leftrightarrow \psi) & = 
+\end{align*}
+\item
+\begin{align*}
+\mathit{Sat}(\forall \nxt \varphi) & = 
 \left \{
 \begin{array}{ll}
-\top & \mbox{if $a \in L(s)$}\\
-\perp & \mbox{otherwise}
+S & \mbox{if $\varphi \equiv \TRUE$}\\
+\{\, s \in F \mid \mathit{post}(s) \subseteq \mathit{Sat}(\varphi) \,\} & \mbox{otherwise}
 \end{array}
-\right.$
-\item 
-$\satisfaction{\TRUE}(s) = \top$
-\item 
-$\satisfaction{\FALSE}(s) = \perp$
+\right .\\
+\mathit{Unsat}(\forall \nxt \varphi) & = 
+\left \{
+\begin{array}{ll}
+(S \setminus F) \cup \{\, s \in F \mid \mathit{post}(s) \not= \emptyset \,\}& \mbox{if $\varphi \equiv \FALSE$}\\
+\{\, s \in S \mid \mathit{post}(s) \cap \mathit{Unsat}(\varphi) \not= \emptyset \,\} & \mbox{otherwise}
+\end{array}
+\right .\\
+\mathit{Unknown}(\forall \nxt \varphi) & = S \setminus (\mathit{Sat}(\forall \nxt \varphi) \cup \mathit{Unsat}(\forall \nxt \varphi))
+\end{align*}
 \item
-$\satisfaction{\neg \varphi}(s) = \neg \satisfaction{\varphi}(s)$
+\begin{align*}
+\mathit{Sat}(\exists \nxt \varphi) & = 
+\left \{
+\begin{array}{ll}
+S \setminus F \cup \{\, s \in F \mid \mathit{post}(s) \not= \emptyset \,\} & \mbox{if $\varphi \equiv \TRUE$}\\
+\{\, s \in S \mid \mathit{post}(s) \cap \mathit{Sat}(\varphi) \not= \emptyset \,\} & \mbox{otherwise}
+\end{array}
+\right .\\
+\mathit{Unsat}(\exists \nxt \varphi) & = 
+\left \{
+\begin{array}{ll}
+S & \mbox{if $\varphi \equiv \FALSE$}\\
+\{\, s \in F \mid \mathit{post}(s) \subseteq \mathit{Unsat}(\varphi) \,\} & \mbox{otherwise}
+\end{array}
+\right .\\
+\mathit{Unknown}(\exists \nxt \varphi) & = S \setminus (\mathit{Sat}(\exists \nxt \varphi) \cup \mathit{Unsat}(\exists \nxt \varphi))
+\end{align*}
 \item
-$\satisfaction{\varphi \wedge \psi}(s) = \satisfaction{\varphi}(s) \wedge  \satisfaction{\psi}(s)$
+\begin{align*}
+\mathit{Sat}(\forall \varphi \until \psi) & = \\
+\mathit{Unsat}(\forall \varphi \until \psi) & = \\
+\mathit{Unknown}(\forall \varphi \until \psi) & = 
+\end{align*}
 \item
-$\satisfaction{\varphi \vee \psi}(s) = \satisfaction{\varphi}(s) \vee  \satisfaction{\psi}(s)$
+\begin{align*}
+\mathit{Sat}(\exists \varphi \until \psi) & = \\
+\mathit{Unsat}(\exists \varphi \until \psi) & = \\
+\mathit{Unknown}(\exists \varphi \until \psi) & = 
+\end{align*}
 \item
-$\satisfaction{\varphi \rightarrow \psi}(s) = \satisfaction{\varphi}(s) \rightarrow  \satisfaction{\psi}(s)$
+\begin{align*}
+\mathit{Sat}(\forall \always \varphi) & = \\
+\mathit{Unsat}(\forall \always \varphi) & = \\
+\mathit{Unknown}(\forall \always \varphi) & = 
+\end{align*}
 \item
-$\satisfaction{\varphi \leftrightarrow \psi}(s) = \satisfaction{\varphi}(s) \leftrightarrow  \satisfaction{\psi}(s)$
+\begin{align*}
+\mathit{Sat}(\exists \always \varphi) & = \\
+\mathit{Unsat}(\exists \always \varphi) & = \\
+\mathit{Unknown}(\exists \always \varphi) & = 
+\end{align*}
 \item
-$\satisfaction{\forall \nxt \varphi}(s) = $
+\begin{align*}
+\mathit{Sat}(\forall \eventually \varphi) & = \\
+\mathit{Unsat}(\forall \eventually \varphi) & = \\
+\mathit{Unknown}(\forall \eventually \varphi) & = 
+\end{align*}
 \item
-$\satisfaction{\exists \nxt \varphi}(s) = $
-\item
-$\satisfaction{\forall \varphi \until \psi}(s) = $
-\item
-$\satisfaction{\exists \varphi \until \psi}(s) = $
-\item
-$\satisfaction{\forall \always \varphi}(s) = $
-\item
-$\satisfaction{\exists \always \varphi}(s) = $
-\item
-$\satisfaction{\forall \eventually \varphi}(s) = $
-\item
-$\satisfaction{\exists \eventually \varphi}(s) = $
+\begin{align*}
+\mathit{Sat}(\exists \eventually \varphi) & = \\
+\mathit{Unsat}(\exists \eventually \varphi) & = \\
+\mathit{Unknown}(\exists \eventually \varphi) & = 
+\end{align*}
 \end{itemize}
 \end{definition}
 
-We first consider the formula $\forall \nxt \varphi$, where $\varphi$ is some arbitrary formula.  Assume that the state~$s_0$ is fully explored.  In that case,
+We first consider the formula $\forall \nxt \varphi$, where $\varphi$ is some arbitrary formula.  Assume that the state~$s$ is fully explored.  In that case,
 \[
-\satisfaction{\forall \nxt \varphi}(s_0) = \left \{
+\satisfaction{\forall \nxt \varphi}(s) = \left \{
 \begin{array}{ll}
-\top & \mbox{if $\satisfaction{\varphi}(s_1) = \top$ for all $s_0 \rightarrow s_1$}\\
-\perp & \mbox{if $\satisfaction{\varphi}(s_1) = \perp$ for some $s_0 \rightarrow s_1$}\\
+\top & \mbox{if $\satisfaction{\varphi}(s') = \top$ for all $s \rightarrow s'$}\\
+\perp & \mbox{if $\satisfaction{\varphi}(s') = \perp$ for some $s \rightarrow s'$}\\
 ? & \mbox{otherwise.}
 \end{array}
 \right .
 \]
 The above is equivalent to
 \[
-\satisfaction{\forall \nxt \varphi}(s_0) = \bigwedge \{\, \satisfaction{\varphi}(s_1) \mid s_0 \rightarrow s_1 \,\}.
+\satisfaction{\forall \nxt \varphi}(s) = \bigwedge \{\, \satisfaction{\varphi}(s') \mid s \rightarrow s' \,\}.
 \]
 Note that $\bigwedge \emptyset = \top$.
 
-Next, assume that the state~$s_0$ is not fully explored.  Recall that state~$s_0$ has outgoing transitions, but those have not been explored yet.  We distinguish three cases.
+Next, assume that the state~$s$ is not fully explored.  Recall that state~$s$ has outgoing transitions, but those have not been explored yet.  We distinguish three cases.
 \begin{itemize}
 \item 
-None of outgoing transitions of state~$s_0$ have been explored yet.  Let us first consider the case that $\varphi$ is $\TRUE$.  In that case, $\satisfaction{\forall \nxt \TRUE}(s_0) = \top$ because every state satisfies $\TRUE$.  Similarly, we have that $\satisfaction{\forall \nxt (\TRUE \vee \FALSE)}(s_0) = \top$.  To capture all these cases, we use the notion of equivalence of CTL formulas, denoted $\equiv$ (see \cite[Definition~6.12]{BK08}).  If $\varphi \equiv \TRUE$ then $\satisfaction{\forall \nxt \varphi}(s_0) = \top$.
+None of outgoing transitions of state~$s$ have been explored yet.  Let us first consider the case that $\varphi$ is $\TRUE$.  In that case, $\satisfaction{\forall \nxt \TRUE}(s) = \top$ because every state satisfies $\TRUE$.  Similarly, we have that $\satisfaction{\forall \nxt (\TRUE \vee \FALSE)}(s) = \top$.  To capture all these cases, we use the notion of equivalence of CTL formulas, denoted $\equiv$ (see \cite[Definition~6.12]{BK08}).  If $\varphi \equiv \TRUE$ then $\satisfaction{\forall \nxt \varphi}(s) = \top$.
 
-Next, let us consider the case that $\varphi$ is $\FALSE$.  No state satisfies $\FALSE$.  Hence, $\satisfaction{\forall \nxt \FALSE}(s_0) = \perp$.  More generally, $\varphi \equiv \FALSE$ then $\satisfaction{\forall \nxt \varphi}(s_0) = \perp$.
+Next, let us consider the case that $\varphi$ is $\FALSE$.  No state satisfies $\FALSE$.  Hence, $\satisfaction{\forall \nxt \FALSE}(s) = \perp$.  More generally, $\varphi \equiv \FALSE$ then $\satisfaction{\forall \nxt \varphi}(s) = \perp$.
 
-Otherwise, $\varphi \not\equiv \TRUE$ and $\varphi \not\equiv \FALSE$.  The former implies that there exists a transition system with initial state $s_{\TRUE}$ such that $s_{\TRUE} \not\models \varphi$ and the latter implies that there exists a transition system with initial state $s_{\FALSE}$ such that $s_{\FALSE} \models \varphi$.  State~$s_0$ has at least one outgoing transition.  We do not know anything about the target state of that transition (it could be $s_{\TRUE}$ or $s_{\FALSE}$ or any other state), we do not know that value of $\satisfaction{\forall \nxt \varphi}(s_0)$.
+Otherwise, $\varphi \not\equiv \TRUE$ and $\varphi \not\equiv \FALSE$.  The former implies that there exists a transition system with initial state $s_{\TRUE}$ such that $s_{\TRUE} \not\models \varphi$ and the latter implies that there exists a transition system with initial state $s_{\FALSE}$ such that $s_{\FALSE} \models \varphi$.  State~$s_0$ has at least one outgoing transition.  We do not know anything about the target state of that transition (it could be $s_{\TRUE}$ or $s_{\FALSE}$ or any other state), we do not know that value of $\satisfaction{\forall \nxt \varphi}(s)$.
 
 Combining the above, we arrive at
 \[
-\satisfaction{\forall \nxt \varphi}(s_0) = \left \{
+\satisfaction{\forall \nxt \varphi}(s) = \left \{
 \begin{array}{ll}
 \top & \mbox{if $\varphi \equiv \TRUE$}\\
 \perp & \mbox{if $\varphi \equiv \FALSE$}\\
@@ -534,13 +631,13 @@ Combining the above, we arrive at
 \right .
 \]
 \item
-State~$s_0$ has a single explored outgoing transition to state~$s_1$.  State~$s_0$ has more outgoing transitions, but those have not been explored yet.   As in the previous case, if  $\varphi \equiv \TRUE$ then $\satisfaction{\forall \nxt \varphi}(s_0) = \top$, and if $\varphi \equiv \FALSE$ then $\satisfaction{\forall \nxt \varphi}(s_0) = \perp$.
+State~$s$ has a single explored outgoing transition to state~$s_1$.  State~$s$ has more outgoing transitions, but those have not been explored yet.   As in the previous case, if  $\varphi \equiv \TRUE$ then $\satisfaction{\forall \nxt \varphi}(s) = \top$, and if $\varphi \equiv \FALSE$ then $\satisfaction{\forall \nxt \varphi}(s) = \perp$.
 
-Now let us consider state $s_1$ and formula $\varphi$.  If $\satisfaction{\varphi}(s_1) = \perp$, we can conclude that $\satisfaction{\forall \nxt \varphi}(s_0) = \perp$.  In case $\satisfaction{\varphi}(s_1)\not= \perp$, we obtain no additional information about $\satisfaction{\forall \nxt \varphi}(s_0)$.
+Now let us consider state $s_1$ and formula $\varphi$.  If $\satisfaction{\varphi}(s_1) = \perp$, we can conclude that $\satisfaction{\forall \nxt \varphi}(s) = \perp$.  In case $\satisfaction{\varphi}(s) \not= \perp$, we obtain no additional information about $\satisfaction{\forall \nxt \varphi}(s)$.
 
 Combining the above, we arrive at
 \[
-\satisfaction{\forall \nxt \varphi}(s_0) = \left \{
+\satisfaction{\forall \nxt \varphi}(s) = \left \{
 \begin{array}{ll}
 \top & \mbox{if $\varphi \equiv \TRUE$}\\
 \perp & \mbox{if $\varphi \equiv \FALSE$ or $\satisfaction{\varphi}(s_1) = \perp$}\\
@@ -550,7 +647,7 @@ Combining the above, we arrive at
 \]
 Note that $\satisfaction{\varphi}(s_1) = \perp$ if $\varphi \equiv \FALSE$.  Hence, we can simplify the above to
 \[
-\satisfaction{\forall \nxt \varphi}(s_0) = \left \{
+\satisfaction{\forall \nxt \varphi}(s) = \left \{
 \begin{array}{ll}
 \top & \mbox{if $\varphi \equiv \TRUE$}\\
 \perp & \mbox{if $\satisfaction{\varphi}(s_1) = \perp$}\\
@@ -559,11 +656,11 @@ Note that $\satisfaction{\varphi}(s_1) = \perp$ if $\varphi \equiv \FALSE$.  Hen
 \right .
 \]
 \item
-State~$s_0$ has explored outgoing transitions to state~$s_1$ and $s_2$.  State~$s_0$ has more outgoing transitions, but those have not been explored yet.   As in the previous cases, if  $\varphi \equiv \TRUE$ then $\satisfaction{\forall \nxt \varphi}(s_0) = \top$, and if $\varphi \equiv \FALSE$ then $\satisfaction{\forall \nxt \varphi}(s_0) = \perp$. 
+State~$s$ has explored outgoing transitions to state~$s_1$ and $s_2$.  State~$s$ has more outgoing transitions, but those have not been explored yet.   As in the previous cases, if  $\varphi \equiv \TRUE$ then $\satisfaction{\forall \nxt \varphi}(s) = \top$, and if $\varphi \equiv \FALSE$ then $\satisfaction{\forall \nxt \varphi}(s) = \perp$. 
 
-Now let us consider state~$s_1$ and $s_2$.  If $\satisfaction{\varphi}(s_1) = \perp$ or $\satisfaction{\varphi}(s_2) = \perp$, we can conclude that $\satisfaction{\forall \nxt \varphi}(s_0) = \perp$.  In case $\satisfaction{\varphi}(s_1)\not= \perp$ and $\satisfaction{\varphi}(s_2)\not= \perp$, we obtain no additional information about $\satisfaction{\forall \nxt \varphi}(s_0)$.  Therefore,
+Now let us consider state~$s_1$ and $s_2$.  If $\satisfaction{\varphi}(s_1) = \perp$ or $\satisfaction{\varphi}(s_2) = \perp$, we can conclude that $\satisfaction{\forall \nxt \varphi}(s) = \perp$.  In case $\satisfaction{\varphi}(s_1)\not= \perp$ and $\satisfaction{\varphi}(s_2)\not= \perp$, we obtain no additional information about $\satisfaction{\forall \nxt \varphi}(s)$.  Therefore,
 \[
-\satisfaction{\forall \nxt \varphi}(s_0) = \left \{
+\satisfaction{\forall \nxt \varphi}(s) = \left \{
 \begin{array}{ll}
 \top & \mbox{if $\varphi \equiv \TRUE$}\\
 \perp & \mbox{if $\varphi \equiv \FALSE$ or $\satisfaction{\varphi}(s_1) = \perp$ or $\satisfaction{\varphi}(s_2) = \perp$}\\
@@ -573,7 +670,7 @@ Now let us consider state~$s_1$ and $s_2$.  If $\satisfaction{\varphi}(s_1) = \p
 \]
 This can be simplified to
 \[
-\satisfaction{\forall \nxt \varphi}(s_0) = \left \{
+\satisfaction{\forall \nxt \varphi}(s) = \left \{
 \begin{array}{ll}
 \top & \mbox{if $\varphi \equiv \TRUE$}\\
 \perp & \mbox{if $\satisfaction{\varphi}(s_1) = \perp$ or $\satisfaction{\varphi}(s_2) = \perp$}\\
@@ -584,43 +681,68 @@ This can be simplified to
 \end{itemize}
 The above three cases can be generalized as follows.
 \[
-\satisfaction{\forall \nxt \varphi}(s_0) = \left \{
+\satisfaction{\forall \nxt \varphi}(s) = \left \{
 \begin{array}{ll}
 \top & \mbox{if $\varphi \equiv \TRUE$}\\
-\perp & \mbox{if $\varphi \equiv \FALSE$ or $\satisfaction{\varphi}(s_1) = \perp$ for some $s_0 \rightarrow s_1$}\\
+\perp & \mbox{if $\varphi \equiv \FALSE$ or $\satisfaction{\varphi}(s') = \perp$ for some $s \rightarrow s'$}\\
 ? & \mbox{otherwise.}
 \end{array}
 \right .
 \]
 
-Next, let us consider the formula $\exists \nxt \varphi$, where $\varphi$ is some arbitary formula.  Assume that the state~$s_0$ is fully explored.  In that case,
-\[
-\satisfaction{\exists \nxt \varphi}(s_0) = \left \{
+\color{red}
+This can be reformulated as follows.
+\begin{align*}
+\mathit{Sat}(\forall \nxt \varphi) & = 
+\left \{
 \begin{array}{ll}
-\top & \mbox{if $\satisfaction{\varphi}(s_1) = \top$ for some $s_0 \rightarrow s_1$}\\
-\perp & \mbox{if $\satisfaction{\varphi}(s_1) = \perp$ for all $s_0 \rightarrow s_1$}\\
+S & \mbox{if $\varphi \equiv \TRUE$}\\
+\{\, s \in F \mid \mathit{post}(s) \subseteq \mathit{Sat}(\varphi) \,\} & \mbox{otherwise}
+\end{array}
+\right .\\
+\mathit{Unsat}(\forall \nxt \varphi) & = 
+\left \{
+\begin{array}{ll}
+(S \setminus F) \cup \{\, s \in F \mid \mathit{post}(s) \not= \emptyset \,\}& \mbox{if $\varphi \equiv \FALSE$}\\
+\{\, s \in S \mid \mathit{post}(s) \cap \mathit{Unsat}(\varphi) \not= \emptyset \,\} & \mbox{otherwise}
+\end{array}
+\right .\\
+\mathit{Unknown}(\forall \nxt \varphi) & = S \setminus (\mathit{Sat}(\forall \nxt \varphi) \cup \mathit{Unsat}(\forall \nxt \varphi))
+\end{align*}
+In the above characterization we use
+\[
+\mathit{post}(s) = \{\, s' \in S \mid s \rightarrow s' \,\}.
+\]
+\color{black}
+
+Next, let us consider the formula $\exists \nxt \varphi$, where $\varphi$ is some arbitary formula.  Assume that the state~$s$ is fully explored.  In that case,
+\[
+\satisfaction{\exists \nxt \varphi}(s) = \left \{
+\begin{array}{ll}
+\top & \mbox{if $\satisfaction{\varphi}(s') = \top$ for some $s \rightarrow s'$}\\
+\perp & \mbox{if $\satisfaction{\varphi}(s') = \perp$ for all $s \rightarrow s'$}\\
 ? & \mbox{otherwise.}
 \end{array}
 \right .
 \]
 The above is equivalent to
 \[
-\satisfaction{\exists \nxt \varphi}(s_0) = \bigvee \{\, \satisfaction{\varphi}(s_1) \mid s_0 \rightarrow s_1 \,\}.
+\satisfaction{\exists \nxt \varphi}(s) = \bigvee \{\, \satisfaction{\varphi}(s') \mid s \rightarrow s' \,\}.
 \]
 Note that $\bigvee \emptyset = \perp$.
 
-Next, assume that the state~$s_0$ is not fully explored.  Recall that state~$s_0$ has outgoing transitions, but those have not been explored yet.  We distinguish three cases.
+Next, assume that the state~$s$ is not fully explored.  Recall that state~$s$ has outgoing transitions, but those have not been explored yet.  We distinguish three cases.
 \begin{itemize}
 \item 
-None of outgoing transitions of state~$s_0$ have been explored yet.  Let us first consider the case that $\varphi$ is $\TRUE$.  In that case, $\satisfaction{\exists \nxt \TRUE}(s_0) = \top$ because state~$s_0$ has outgoing transitions and every state satisfies $\TRUE$.  More generally, if $\varphi \equiv \TRUE$ then $\satisfaction{\exists \nxt \varphi}(s_0) = \top$.
+None of outgoing transitions of state~$s$ have been explored yet.  Let us first consider the case that $\varphi$ is $\TRUE$.  In that case, $\satisfaction{\exists \nxt \TRUE}(s) = \top$ because state~$s$ has outgoing transitions and every state satisfies $\TRUE$.  More generally, if $\varphi \equiv \TRUE$ then $\satisfaction{\exists \nxt \varphi}(s) = \top$.
 
-Next, let us consider the case that $\varphi$ is $\FALSE$.  No state satisfies $\FALSE$.  Hence, $\satisfaction{\exists \nxt \FALSE}(s_0) = \perp$.  More generally, $\varphi \equiv \FALSE$ then $\satisfaction{\exists \nxt \varphi}(s_0) = \perp$.
+Next, let us consider the case that $\varphi$ is $\FALSE$.  No state satisfies $\FALSE$.  Hence, $\satisfaction{\exists \nxt \FALSE}(s) = \perp$.  More generally, $\varphi \equiv \FALSE$ then $\satisfaction{\exists \nxt \varphi}(s) = \perp$.
 
-Otherwise, $\varphi \not\equiv \TRUE$ and $\varphi \not\equiv \FALSE$.  The former implies that there exists a transition system with initial state $s_{\TRUE}$ such that $s_{\TRUE} \not\models \varphi$ and the latter implies that there exists a transition system with initial state $s_{\FALSE}$ such that $s_{\FALSE} \models \varphi$.  State~$s_0$ has at least one outgoing transition.  We do not know anything about the target state of that transition (it could be $s_{\TRUE}$ or $s_{\FALSE}$ or any other state), we do not know that value of $\satisfaction{\exists \nxt \varphi}(s_0)$.
+Otherwise, $\varphi \not\equiv \TRUE$ and $\varphi \not\equiv \FALSE$.  The former implies that there exists a transition system with initial state $s_{\TRUE}$ such that $s_{\TRUE} \not\models \varphi$ and the latter implies that there exists a transition system with initial state $s_{\FALSE}$ such that $s_{\FALSE} \models \varphi$.  State~$s$ has at least one outgoing transition.  We do not know anything about the target state of that transition (it could be $s_{\TRUE}$ or $s_{\FALSE}$ or any other state), we do not know that value of $\satisfaction{\exists \nxt \varphi}(s)$.
 
 Combining the above, we arrive at
 \[
-\satisfaction{\exists \nxt \varphi}(s_0) = \left \{
+\satisfaction{\exists \nxt \varphi}(s) = \left \{
 \begin{array}{ll}
 \top & \mbox{if $\varphi \equiv \TRUE$}\\
 \perp & \mbox{if $\varphi \equiv \FALSE$}\\
@@ -629,13 +751,13 @@ Combining the above, we arrive at
 \right .
 \]
 \item
-State~$s_0$ has a single explored outgoing transition to state~$s_1$.  State~$s_0$ has more outgoing transitions, but those have not been explored yet.   As in the previous case, if  $\varphi \equiv \TRUE$ then $\satisfaction{\exists \nxt \varphi}(s_0) = \top$, and if $\varphi \equiv \FALSE$ then $\satisfaction{\exists \nxt \varphi}(s_0) = \perp$.
+State~$s$ has a single explored outgoing transition to state~$s_1$.  State~$s$ has more outgoing transitions, but those have not been explored yet.   As in the previous case, if  $\varphi \equiv \TRUE$ then $\satisfaction{\exists \nxt \varphi}(s) = \top$, and if $\varphi \equiv \FALSE$ then $\satisfaction{\exists \nxt \varphi}(s) = \perp$.
 
-Now let us consider state $s_1$ and formula $\varphi$.  If $\satisfaction{\varphi}(s_1) = \top$, we can conclude that $\satisfaction{\exists \nxt \varphi}(s_0) = \top$.  In case $\satisfaction{\varphi}(s_1)\not= \top$, we obtain no additional information about $\satisfaction{\exists \nxt \varphi}(s_0)$.
+Now let us consider state $s_1$ and formula $\varphi$.  If $\satisfaction{\varphi}(s_1) = \top$, we can conclude that $\satisfaction{\exists \nxt \varphi}(s) = \top$.  In case $\satisfaction{\varphi}(s_1)\not= \top$, we obtain no additional information about $\satisfaction{\exists \nxt \varphi}(s)$.
 
 Combining the above, we arrive at
 \[
-\satisfaction{\exists \nxt \varphi}(s_0) = \left \{
+\satisfaction{\exists \nxt \varphi}(s) = \left \{
 \begin{array}{ll}
 \top & \mbox{if $\varphi \equiv \TRUE$ or $\satisfaction{\varphi}(s_1) = \top$}\\
 \perp & \mbox{if $\varphi \equiv \FALSE$}\\
@@ -645,7 +767,7 @@ Combining the above, we arrive at
 \]
 Note that $\satisfaction{\varphi}(s_1) = \top$ if $\varphi \equiv \TRUE$.  Hence, we can simplify the above to
 \[
-\satisfaction{\exists \nxt \varphi}(s_0) = \left \{
+\satisfaction{\exists \nxt \varphi}(s) = \left \{
 \begin{array}{ll}
 \top & \mbox{if $\satisfaction{\varphi}(s_1) = \top$}\\
 \perp & \mbox{if $\varphi \equiv \FALSE$}\\
@@ -654,11 +776,11 @@ Note that $\satisfaction{\varphi}(s_1) = \top$ if $\varphi \equiv \TRUE$.  Hence
 \right .
 \]
 \item
-State~$s_0$ has explored outgoing transitions to state~$s_1$ and $s_2$.  State~$s_0$ has more outgoing transitions, but those have not been explored yet.   As in the previous cases, if  $\varphi \equiv \TRUE$ then $\satisfaction{\exists \nxt \varphi}(s_0) = \top$, and if $\varphi \equiv \FALSE$ then $\satisfaction{\exists \nxt \varphi}(s_0) = \perp$. 
+State~$s$ has explored outgoing transitions to state~$s_1$ and $s_2$.  State~$s$ has more outgoing transitions, but those have not been explored yet.   As in the previous cases, if  $\varphi \equiv \TRUE$ then $\satisfaction{\exists \nxt \varphi}(s) = \top$, and if $\varphi \equiv \FALSE$ then $\satisfaction{\exists \nxt \varphi}(s) = \perp$. 
 
-Now let us consider state~$s_1$ and $s_2$.  If $\satisfaction{\varphi}(s_1) = \top$ or $\satisfaction{\varphi}(s_2) = \top$, we can conclude that $\satisfaction{\exists \nxt \varphi}(s_0) = \top$.  In case $\satisfaction{\varphi}(s_1)\not= \top$ and $\satisfaction{\varphi}(s_2)\not= \top$, we obtain no additional information about $\satisfaction{\exists \nxt \varphi}(s_0)$.  Therefore,
+Now let us consider state~$s_1$ and $s_2$.  If $\satisfaction{\varphi}(s_1) = \top$ or $\satisfaction{\varphi}(s_2) = \top$, we can conclude that $\satisfaction{\exists \nxt \varphi}(s) = \top$.  In case $\satisfaction{\varphi}(s_1)\not= \top$ and $\satisfaction{\varphi}(s_2)\not= \top$, we obtain no additional information about $\satisfaction{\exists \nxt \varphi}(s)$.  Therefore,
 \[
-\satisfaction{\exists \nxt \varphi}(s_0) = \left \{
+\satisfaction{\exists \nxt \varphi}(s) = \left \{
 \begin{array}{ll}
 \top & \mbox{if $\varphi \equiv \TRUE$ or $\satisfaction{\varphi}(s_1) = \top$ or $\satisfaction{\varphi}(s_2) = \top$}\\
 \perp & \mbox{if $\varphi \equiv \FALSE$}\\
@@ -668,7 +790,7 @@ Now let us consider state~$s_1$ and $s_2$.  If $\satisfaction{\varphi}(s_1) = \t
 \]
 This can be simplified to
 \[
-\satisfaction{\exists \nxt \varphi}(s_0) = \left \{
+\satisfaction{\exists \nxt \varphi}(s) = \left \{
 \begin{array}{ll}
 \top & \mbox{if $\satisfaction{\varphi}(s_1) = \top$ or $\satisfaction{\varphi}(s_2) = \top$}\\
 \perp & \mbox{if $\varphi \equiv \FALSE$}\\
@@ -679,22 +801,200 @@ This can be simplified to
 \end{itemize}
 The above three cases can be generalized as follows.
 \[
-\satisfaction{\exists \nxt \varphi}(s_0) = \left \{
+\satisfaction{\exists \nxt \varphi}(s) = \left \{
 \begin{array}{ll}
-\top & \mbox{if $\varphi \equiv \TRUE$ or $\satisfaction{\varphi}(s_1) = \top$ for some $s_0 \rightarrow s_1$}\\
+\top & \mbox{if $\varphi \equiv \TRUE$ or $\satisfaction{\varphi}(s') = \top$ for some $s \rightarrow s'$}\\
 \perp & \mbox{if $\varphi \equiv \FALSE$}\\
 ? & \mbox{otherwise.}
 \end{array}
 \right .
 \]
 
+\color{red}
+This can be reformulated as follows.
+\begin{align*}
+\mathit{Sat}(\exists \nxt \varphi) & = 
+\left \{
+\begin{array}{ll}
+S \setminus F \cup \{\, s \in F \mid \mathit{post}(s) \not= \emptyset \,\} & \mbox{if $\varphi \equiv \TRUE$}\\
+\{\, s \in S \mid \mathit{post}(s) \cap \mathit{Sat}(\varphi) \not= \emptyset \,\} & \mbox{otherwise}
+\end{array}
+\right .\\
+\mathit{Unsat}(\exists \nxt \varphi) & = 
+\left \{
+\begin{array}{ll}
+S & \mbox{if $\varphi \equiv \FALSE$}\\
+\{\, s \in F \mid \mathit{post}(s) \subseteq \mathit{Unsat}(\varphi) \,\} & \mbox{otherwise}
+\end{array}
+\right .\\
+\mathit{Unknown}(\exists \nxt \varphi) & = S \setminus (\mathit{Sat}(\exists \nxt \varphi) \cup \mathit{Unsat}(\exists \nxt \varphi))
+\end{align*}
 
+Next, let us consider the formulas $\forall \always \varphi$.  Assume that the state $s$ is fully explored.  Then 
+\[
+\satisfaction{\forall \always \varphi}(s) = \left \{
+\begin{array}{ll}
+\top & \mbox{if $\satisfaction{\varphi}(s) = \top$ and $\satisfaction{\forall \always \varphi}(s') = \top$ for all $s \rightarrow s'$}\\
+\perp & \mbox{if $\satisfaction{\varphi}(s) = \perp$ or $\satisfaction{\forall \always \varphi}(s') = \perp$ for some $s \rightarrow s'$}\\
+? & \mbox{otherwise.}
+\end{array}
+\right .
+\]
 
+Next, assume that the state $s$ is not fully explored.  Recall that state~$s$ has outgoing transitions, but those have not been explored yet.  We distinguish three cases.
+\begin{itemize}
+\item 
+None of outgoing transitions of state~$s$ have been explored yet.  Let us first consider the case that $\varphi$ is $\TRUE$.  In that case, $\satisfaction{\forall \always \TRUE}(s) = \top$ because each (reachable) state satisfies $\TRUE$.
 
+Next, let us consider the case that $\varphi$ is $\FALSE$.  No state satisfies $\FALSE$.  Hence, $\satisfaction{\forall \always \FALSE}(s) = \perp$.  More generally, $\varphi \equiv \FALSE$ then $\satisfaction{\forall \always \varphi}(s) = \perp$.
 
+If $\satisfaction{\varphi}(s) = \perp$, there exists a state reachable from state~$s$ that does not satisfy $\varphi$ and, hence, $\satisfaction{\forall \always \varphi}(s) = \perp$.
 
+Otherwise, $\varphi \not\equiv \TRUE$ and $\varphi \not\equiv \FALSE$.  The former implies that there exists a transition system with initial state $s_{\TRUE}$ such that $s_{\TRUE} \not\models \varphi$ and the latter implies that there exists a transition system with initial state $s_{\FALSE}$ such that $s_{\FALSE} \models \varphi$.  Hence, $\satisfaction{\forall \always \varphi}(s) = ?$.
 
-\textcolor{blue}{Next, let us consider the formulas $\forall \always \varphi$ and $\exists \always \varphi$.}
+Combining the above, we arrive at
+\[
+\satisfaction{\forall \always \varphi}(s) = \left \{
+\begin{array}{ll}
+\top & \mbox{if $\varphi \equiv \TRUE$}\\
+\perp & \mbox{if $\varphi \equiv \FALSE$ or $\satisfaction{\varphi}(s) = \perp$}\\
+? & \mbox{otherwise.}
+\end{array}
+\right .
+\]
+This can be further simplified to
+\[
+\satisfaction{\forall \always \varphi}(s) = \left \{
+\begin{array}{ll}
+\top & \mbox{if $\varphi \equiv \TRUE$}\\
+\perp & \mbox{if $\satisfaction{\varphi}(s) = \perp$}\\
+? & \mbox{otherwise.}
+\end{array}
+\right .
+\]
+\item
+State~$s$ has a single explored outgoing transition to state~$s_1$.  State~$s$ has more outgoing transitions, but those have not been explored yet.   As in the previous case, if  $\varphi \equiv \TRUE$ then $\satisfaction{\forall \always \varphi}(s) = \top$, and if $\varphi \equiv \FALSE$ then $\satisfaction{\forall \always \varphi}(s) = \perp$.
+
+If $\satisfaction{\varphi}(s) = \perp$, there exists a state reachable from state~$s$ that does not satisfy $\varphi$ and, hence, $\satisfaction{\forall \always \varphi}(s) = \perp$.
+
+Now let us consider state $s_1$.  If $\satisfaction{\forall \always \varphi}(s_1) = \perp$, we can conclude that $\satisfaction{\forall \always \varphi}(s) = \perp$.  In case $\satisfaction{\forall \always \varphi}(s_1)\not= \perp$, we obtain no additional information about $\satisfaction{\forall \always \varphi}(s)$.
+
+Combining the above, we arrive at
+\[
+\satisfaction{\forall \always \varphi}(s) = \left \{
+\begin{array}{ll}
+\top & \mbox{if $\varphi \equiv \TRUE$}\\
+\perp & \mbox{if $\varphi \equiv \FALSE$ or $\satisfaction{\varphi}(s) = \perp$ or $\satisfaction{\forall \always \varphi}(s_1) = \perp$}\\
+? & \mbox{otherwise.}
+\end{array}
+\right .
+\]
+This can be further simplified to
+\[
+\satisfaction{\forall \always \varphi}(s) = \left \{
+\begin{array}{ll}
+\top & \mbox{if $\varphi \equiv \TRUE$}\\
+\perp & \mbox{if $\satisfaction{\varphi}(s) = \perp$ or $\satisfaction{\forall \always \varphi}(s_1) = \perp$}\\
+? & \mbox{otherwise.}
+\end{array}
+\right .
+\]
+\item
+State~$s$ has explored outgoing transitions to state~$s_1$ and $s_2$.  State~$s$ has more outgoing transitions, but those have not been explored yet.   As in the previous cases, if  $\varphi \equiv \TRUE$ then $\satisfaction{\forall \always \varphi}(s) = \top$, and if $\varphi \equiv \FALSE$ then $\satisfaction{\forall \always \varphi}(s) = \perp$. 
+
+If $\satisfaction{\varphi}(s) = \perp$, there exists a state reachable from state~$s$ that does not satisfy $\varphi$ and, hence, $\satisfaction{\forall \always \varphi}(s) = \perp$.
+
+Now let us consider state~$s_1$ and $s_2$.  If $\satisfaction{\forall \always \varphi}(s_1) = \perp$, we can conclude that $\satisfaction{\forall \always \varphi}(s) = \perp$.  Similarly, if $\satisfaction{\forall \always \varphi}(s_2) = \perp$, then $\satisfaction{\forall \always \varphi}(s) = \perp$.  Otherwise, we obtain no additional information about $\satisfaction{\forall \always \varphi}(s)$.  Therefore,
+\[
+\satisfaction{\forall \always \varphi}(s) = \left \{
+\begin{array}{ll}
+\top & \mbox{if $\varphi \equiv \TRUE$}\\
+\perp & \mbox{if $\varphi \equiv \FALSE$ or $\satisfaction{\varphi}(s) = \perp$ or $\satisfaction{\forall \always \varphi}(s_1) = \perp$ or $\satisfaction{\forall \always \varphi}(s_2) = \perp$}\\
+? & \mbox{otherwise.}
+\end{array}
+\right .
+\]
+This can be further simplified to
+\[
+\satisfaction{\forall \always \varphi}(s) = \left \{
+\begin{array}{ll}
+\top & \mbox{if $\varphi \equiv \TRUE$}\\
+\perp & \mbox{if $\satisfaction{\varphi}(s) = \perp$ or $\satisfaction{\forall \always \varphi}(s_1) = \perp$ or $\satisfaction{\forall \always \varphi}(s_2) = \perp$}\\
+? & \mbox{otherwise.}
+\end{array}
+\right .
+\]
+\end{itemize}
+The above three cases can be generalized as follows.
+\[
+\satisfaction{\forall \always \varphi}(s) = \left \{
+\begin{array}{ll}
+\top & \mbox{if $\varphi \equiv \TRUE$}\\
+\perp & \mbox{if $\satisfaction{\varphi}(s) = \perp$ or $\satisfaction{\forall \always \varphi}(s') = \perp$ for some $s \rightarrow s'$}\\
+? & \mbox{otherwise.}
+\end{array}
+\right .
+\]
+
+Now consider that case that state~$s$ is not fully explored and transitions to itself and assume that $\varphi \not\equiv \FALSE$ and $\satisfaction{\varphi}(s) \not= \perp$.  Then $\satisfaction{\forall \always \varphi}(s) = \perp$ if $\satisfaction{\forall \always \varphi}(s) = \perp$.  To demonstrate that $\satisfaction{\forall \always \varphi}$ can be defined so that it satisfies the above equation, we will rely on the Knaster-Tarski fixed-point theorem \cite{K,T}.
+
+Let us first reformulate the above in terms of $\mathit{Sat}$, $\mathit{Unsat}$, and $\mathit{Unknown}$.  
+\begin{align*}
+\mathit{Sat}(\forall \always \varphi) & = 
+\left \{
+\begin{array}{ll}
+S & \mbox{if $\varphi \equiv \TRUE$}\\
+\{\, s \in F \mid s \in \mathit{Sat}(\varphi) \wedge \mathit{post}(s) \subseteq \mathit{Sat}(\forall \always \varphi) \,\} & \mbox{otherwise}
+\end{array}
+\right .\\
+\mathit{Unsat}(\forall \always \varphi) & = 
+\left \{
+\begin{array}{ll}
+(S \setminus F) \cup \{\, s \in F \mid \mathit{post}(s) \not= \emptyset \,\} & \mbox{if $\varphi \equiv \FALSE$}\\
+\{\, s \in S \mid s \in \mathit{Unsat}(\varphi) \vee \mathit{post}(s) \cap \mathit{Unsat}(\varphi) \not= \emptyset \,\} & \mbox{otherwise}
+\end{array}
+\right .\\
+\mathit{Unknown}(\forall \always \varphi) & = S \setminus (\mathit{Sat}(\exists \nxt \varphi) \cup \mathit{Unsat}(\exists \nxt \varphi))
+\end{align*}
+
+To address the above observed circularity, we start with ordering sets of states, that is, the elements of $2^S$.  Clearly, we have that for all $U$, $V$, $W \in 2^S$,
+\begin{itemize}
+\item 
+$U \subseteq U$,
+\item
+if $U \subseteq V$ and $V \subseteq U$ then $U = V$, and
+\item
+if $U \subseteq V$ and $V \subseteq W$ then $U \subseteq W$.
+\end{itemize}
+
+The set $2^S$ and the order $\subseteq$ form a complete lattice (see, for example, \cite{}).  Given a CTL formula~$\varphi$, with $\varphi \not\equiv \TRUE$, the function
+\[
+\mathcal{F}_{\varphi} : 2^S \to 2^S
+\]
+is defined by
+\[
+\mathcal{F}_{\varphi}(U) = \{\, s \in F \mid s \in \mathit{Sat}(\varphi) \wedge \mathit{post}(s) \subseteq U \,\}.
+\]
+
+Next, we show that the function $\mathcal{F}_{\varphi}$ is monotone, that is, for all $U$, $V \in 2^S$, if $U \subseteq V$ then $\mathcal{F}_{\varphi}(U) \subseteq \mathcal{F}_{\varphi}(V)$.  Let $U$, $V \in 2^S$ and assume that $U \subseteq V$.  Let $s \in \mathcal{F}_{\varphi}(U)$. To conclude that $\mathcal{F}_{\varphi}(U) \subseteq \mathcal{F}_{\varphi}(V)$, it remains to show that $s \in \mathcal{F}_{\varphi}(V)$.  Since $s \in \mathcal{F}_{\varphi}(U)$, we have that $s \in F$, $s \in \mathit{Sat}(\varphi)$, and $\mathit{post}(s) \subseteq U$.  Since $U \subseteq V$, we can conclude that $\mathit{post}(s) \subseteq V$.  Hence, $s \in \mathcal{F}_{\varphi}(V)$.
+
+According to the Knaster-Tarski theorem, a monotone function on a complete lattice has a greatest fixed-point.  As we already observed above, the set $2^S $ with the order $\subseteq$ is a complete lattice.  Furthermore, we have shown that the function $\mathcal{F}_{\varphi}$ is monotone.  Hence, $\mathcal{F}_{\varphi}$ has a greatest fixed point.  A set $U \in 2^S$ is a fixed-point of $\mathcal{F}_{\varphi}$ if $\mathcal{F}_{\varphi}(U) = U$.  A set $U \in 2^S$ is a greatest fixed-point of $\mathcal{F}_{\varphi}$ if $U$ is a fixed-point of $\mathcal{F}_{\varphi}$ and for every fixed-point $V$ of $\mathcal{F}_{\varphi}$ we have that $V \subseteq U$.  We define $\mathit{Sat}(\forall \always \varphi)$ as the greatest fixed-point of $\mathcal{F}_{\varphi}$.
+
+Since the set $2^S$ is finite, the Knaster-Tarski fixed point theorem also suggests an algorithm to compute the greatest fixed-point of $\mathcal{F}_{\varphi}$ since this greatest fixed point is equal to
+\[
+\bigcap \{\, U \in 2^S \mid U \subseteq \mathcal{F}_{\varphi}(U) \,\}.
+\]
+Hence, we can compute $\mathit{Sat}(\forall \always \varphi)$ as follows.
+\begin{lstlisting}
+$U = S$
+repeat
+  $U_{old} = U$
+  $U = \{\, s \in F \mid s \in \mathit{Sat}(\varphi) \wedge \mathit{post}(s) \subseteq U \,\}$
+until $U_{old} = U$
+\end{lstlisting}
+\color{black}
+
+\textcolor{blue}{Similarly, we might be able to characterize $\mathit{Unsat}(\forall \always \varphi)$ as a least fixed-point.}
 
 \section{JPF Listener that Writes a Partial Transition System to File}
 
