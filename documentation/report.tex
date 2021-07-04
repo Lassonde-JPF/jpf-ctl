@@ -34,8 +34,12 @@
 \lstset{basicstyle=\ttfamily,mathescape=true}
 
 \usepackage{amsthm}
+\newtheorem{theorem}{Theorem}
+\newtheorem{proposition}{Proposition}
 \theoremstyle{definition}
 \newtheorem{definition}{Definition}
+
+\newcommand{\comment}[1]{\hspace{2em}[\mbox{#1}]}
 
 \usepackage{stmaryrd}
 \newcommand{\satisfaction}[1]{\llbracket #1 \rrbracket}
@@ -192,8 +196,9 @@ formula
   | <assoc=right> formula '->' formula  #Implies
   | <assoc=left> formula '<->' formula	#Iff
 \end{lstlisting}
-The order of the alternatives is consistent with the precedence of the operators (if an operator has higher precedence, then its alternative occurs earlier).  The operators \lstinline{AU}, \lstinline{EU}, and \lstinline{->} are specified as right associative.  The other binary operators are left associative.  The second column of the above rule contains the labels of the alternatives (see \cite[Section~8.2]{P13}).  We will discuss their role below.
+The operators \lstinline{AU}, \lstinline{EU}, and \lstinline{->} are specified as right associative.  The other binary operators are left associative.  The second column of the above rule contains the labels of the alternatives (see \cite[Section~8.2]{P13}).  We will discuss their role below.
 
+The order of the alternatives is consistent with the precedence of the operators (if an operator has higher precedence, then its alternative occurs earlier).  \textcolor{red}{As a consequence, we had to order the operators \lstinline{AU} and \lstinline{EU}.  We gave \lstinline{AU} higher precedence than \lstinline{EU}.}
 Assume that $a$, $b$, and $c$ are atomic propositions.  The formula \lstinline{$a$ AU $b$ AU $c$} is equivalent to \lstinline{$a$ AU ($b$ AU $c$)} since \lstinline{AU} is right associative.  The formula \lstinline{$a$ AU $b$ EU $c$} is equivalent to \lstinline{($a$ AU $b$) EU $c$} since \lstinline{AU} binds stronger than \lstinline{EU}.  For the same reason, the formula \lstinline{$a$ EU $b$ AU $c$} is equivalent to \lstinline{$a$ AU ($b$ EU $c$)}.
 
 Recall that the atomic propositions are static attributes.  To specify these, we used relevant snippets of the ANTLR grammar for Java%
@@ -353,7 +358,7 @@ a \emph{labelling function} $L : S \to 2^{\mathit{AP}}$.
 \end{itemize}
 \end{definition}
 
-The difference between a partial transition system and an ordinary transition system is the set $F$ of fully explored states.  Since the set $\mathit{Act}$ of actions does not play in the remainder, we will drop it from the definition and simplify the transition relation to $\mathord{\rightarrow} \subseteq S \times S$. The partial transition system depicted in the introduction can be formally defined as $(S, F, \rightarrow, I, \mathit{AP}, L)$ where
+The difference between a partial transition system and an ordinary transition system is the set $F$ of fully explored states.  Since the set $\mathit{Act}$ of actions does not play in the remainder, we will drop it from the definition and simplify the transition relation to $\mathord{\rightarrow} \subseteq S \times S$. The partial transition system depicted above can be formally defined as $(S, F, \rightarrow, I, \mathit{AP}, L)$ where
 \begin{itemize}
 \item 
 $S = \{ -1, 0, 1, 2 \}$,
@@ -375,8 +380,68 @@ L(2) & = \{ \mbox{red} \}
 \end{align*}
 \end{itemize} 
 
-\textcolor{blue}{We may have to redefine paths.}
+\color{red}
+Due to the presence of unexplored states, we also revisit the definition of paths.  We fix a set $\mathcal{S}$ and we assume that for each partial transition system we have that $S \subseteq \mathcal{S}$.  We denote the set of nonempty and finite sequences of states in $\mathcal{S}$ by $\mathcal{S}^*$, the set of infinite sequences of states in $\mathcal{S}$ by $\mathcal{S}^{\omega}$, and the set of nonempty finite and infinite sequences of states in $\mathcal{S}$ by $\mathcal{S}^{\infty}$.
 
+\begin{definition}
+Let $(S, F, \rightarrow, I, \mathit{AP}, L)$ be a partial transition system.
+\begin{itemize}
+\item 
+The nonempty and finite sequence $s_0 s_1 \ldots s_n$ in $\mathcal{S}^*$, where $n \geq 0$, is a path if $s_i \rightarrow s_{i+1}$ for all $0 \leq i < n$ and $s_n \not\rightarrow$ and $s_n \in F$.
+\item 
+The infinite sequence $s_0 s_1 \ldots$ in $\mathcal{S}^{\omega}$ is a path if $s_i \rightarrow s_{i+1}$ for all $i \geq 0$. 
+\end{itemize}
+\end{definition}
+
+Note that we require that the final state of a finite path is fully explored.
+
+\begin{definition}
+Let $(S, F, \rightarrow, I, \mathit{AP}, L)$ be a partial transition system.
+\begin{itemize}
+\item 
+The nonempty and finite sequence $s_0 s_1 \ldots s_n s_{n+1} \ldots s_{n+m}$ in $\mathcal{S}^*$, where $n \geq 0$ and $m \geq 1$, is a potential path if $s_i \rightarrow s_{i+1}$ for all $0 \leq i < n$ and $s_n \not\in F$ and $s_n \not\rightarrow s_{n+1}$.
+\item 
+The infinite sequence $s_0 s_1 \ldots s_n s_{n+1} \ldots$ in $\mathcal{S}^{\omega}$, where $n \geq 0$, is a potential path if $s_i \rightarrow s_{i+1}$ for all $0 \leq i < n$ and $s_n \not\in F$ and $s_n \not\rightarrow s_{n+1}$.
+\end{itemize}
+\end{definition}
+
+In the first case, the sequence $s_0 s_1 \ldots s_n s_{n+1} \ldots s_{n+m}$ consists of two parts: $s_0 s_1 \ldots s_n$ traverses the explored part of the partial transition system, whereas $s_{n+1} \ldots s_{n+m}$ traverses the unexplored part.  Note that we require that $s_n \not\rightarrow s_{n+1}$: otherwise $s_{n+1}$ would belong to the explored part.  Similarly, the sequence $s_0 s_1 \ldots s_n s_{n+1} \ldots$ consists of the parts $s_0 s_1 \ldots s_n$ and $s_{n+1} \ldots$.  
+
+We denote the set of potential paths that start in state $s$ by $\mathit{PPaths}(s)$.  We denote the set of (actual) paths that start in state $s$ by $\mathit{APaths}(s)$.  We denote the set of all paths that start in state $s$ by $\mathit{Paths}(s)$.
+
+Consider the following partial transition system.
+\begin{center}
+\begin{tikzpicture}[yscale=0.9]
+\node (start) at (0,3) {};
+\node[rectangle,fill=red!20] (-1) at (1,2.5) {-1};
+\node[circle,fill=red!20] (0) at (1,1) {0};
+\node[circle,fill=blue!20] (1) at (0,0) {1};
+\node[rectangle,fill=red!20] (2) at (2,0) {2};
+
+\draw[->] (start)--(-1);
+\draw[->] (-1)--(0);
+\draw[->] (0)--(1);
+\draw[->] (0)--(2);
+\end{tikzpicture}
+\end{center}
+We have that
+\begin{align*}
+\mathit{APaths}(-1) & = \{ -1\ 0\ 2 \}\\
+\mathit{PPaths}(-1) & = \{\, -1\ 0\ \pi \mid \pi[0] \not\in \{ 1, 2 \} \wedge \pi \in S^{\infty} \,\} \cup \{\, -1\ 0\ 1\ \pi \mid \pi \in S^{\infty} \,\}
+\end{align*}
+Since state 0 is not fully explored yet, we know that this state has more outgoing transitions than the two depicted in the above diagram.  All the potential paths starting with $-1\ 0$ do not start with either $-1\ 0\ 1$ or $-1\ 0\ 2$.  Since state 1 is not fully explored, it is not a final state and, as a result, the sequence $-1\ 0\ 1$ is \emph{not} a potential path.
+
+A partial transition system in which all states are fully explored, that is, an ordinary transition system, has no potential paths.
+
+\begin{proposition}
+\label{proposition:no-potential-paths}
+If $F= S$ then $\mathit{PPAths}(s) = \emptyset$ for all $s \in S$.
+\end{proposition}
+\begin{proof}
+Immediate from the definition of potential paths.
+\end{proof}
+
+\color{black}
 The satisfaction relation $\models$ for CTL for ordinary transition systems is defined in \cite[Definition~6.4]{BK08}.  It can be viewed as a function $\satisfaction{\ }$ that maps each CTL formula and state of a transition system to either true of false, that is, for each state formula $\varphi$ and state $s$,
 \[
 s \models \varphi \mbox{ iff } \satisfaction{\varphi}(s) = \mbox{true}.
@@ -449,28 +514,225 @@ v & \perp & \perp & \top & ?\\
 \]
 
 \color{red}
-We denote the set of CTL formulas by $\mathit{CTL}$.  Instead of defining the new semantics of CTL as
+We denote the length of a (potential) path $\pi$ by $|\pi|$.  If the (potential) path $\pi$ is infinite, then $|\pi| = \omega$.  We denote the set of CTL formulas by $\mathit{CTL}$.
+
+\begin{definition}
+Let $(S, F, \rightarrow, I, \mathit{AP}, L)$ be a partial transition system.  The function 
 \[
-\mathit{CTL} \to S \to \mathbb{V}
+\satisfaction{\ } : \mathit{CTL} \to S \to \mathbb{V}
 \] 
-we use
+is defined by structural induction on the CTL formula as follows.
+\begin{itemize}
+\item 
+$\satisfaction{a}(s) = \left \{
+\begin{array}{ll}
+\top & \mbox{if $a \in L(s)$}\\
+\perp & \mbox{otherwise}
+\end{array}\right .
+$
+\item 
+$\satisfaction{\TRUE}(s) = \top$ 
+\item 
+$\satisfaction{\FALSE}(s) = \perp$ 
+\item 
+$\satisfaction{\neg \varphi}(s) = \neg \satisfaction{\varphi}(s)$ 
+\item 
+$\satisfaction{\varphi \wedge \psi}(s) = \satisfaction{\varphi}(s) \wedge \satisfaction{\psi}(s)$ 
+\item 
+$\satisfaction{\varphi \vee \psi}(s) = \satisfaction{\varphi}(s) \vee \satisfaction{\psi}(s)$ 
+\item 
+$\satisfaction{\varphi \rightarrow \psi}(s) = \satisfaction{\varphi}(s) \rightarrow \satisfaction{\psi}(s)$ 
+\item 
+$\satisfaction{\varphi \leftrightarrow \psi}(s) = \satisfaction{\varphi}(s) \leftrightarrow \satisfaction{\psi}(s)$ 
+\item
+$\satisfaction{\forall \nxt \varphi}(s) = \left \{
+\begin{array}{ll}
+\top & \mbox{if $\satisfaction{\varphi}(\pi[1]) = \top$ for all $\pi \in \mathit{Paths}(s)$ with $|\pi| > 1$}\\
+\perp & \mbox{if $\satisfaction{\varphi}(\pi[1]) = \perp$ for some $\pi \in \mathit{APaths}(s)$ with $|\pi| > 1$}\\
+? & \mbox{otherwise}
+\end{array}
+\right .
+$
+\item
+$\satisfaction{\exists \nxt \varphi}(s) = \left \{
+\begin{array}{ll}
+\top & \mbox{if $\satisfaction{\varphi}(\pi[1]) = \top$ for some $\pi \in \mathit{APaths}(s)$ with $|\pi| > 1$}\\
+\perp & \mbox{if $\satisfaction{\varphi}(\pi[1]) = \perp$ for all $\pi \in \mathit{Paths}(s)$ with $|\pi| > 1$}\\
+? & \mbox{otherwise}
+\end{array}
+\right .
+$
+\item
+$\satisfaction{\forall \always \varphi}(s) = \left \{
+\begin{array}{ll}
+\top & \mbox{if $\satisfaction{\varphi}(\pi[i]) = \top$ for all $\pi \in \mathit{Paths}(s)$ and $0 \leq i < |\pi|$}\\
+\perp & \mbox{if $\satisfaction{\varphi}(\pi[i]) = \perp$ for some $\pi \in \mathit{APaths}(s)$ and $0 \leq i < |\pi|$}\\
+? & \mbox{otherwise}
+\end{array}
+\right .
+$
+\item
+$\satisfaction{\exists \always \varphi}(s) = \left \{
+\begin{array}{ll}
+\top & \mbox{if $\satisfaction{\varphi}(\pi[i]) = \top$ for some $\pi \in \mathit{APaths}(s)$ and for all $0 \leq i < |\pi|$}\\
+\perp & \mbox{if $\satisfaction{\varphi}(\pi[i]) = \perp$ for all $\pi \in \mathit{Paths}(s)$ and for some $0 \leq i < |\pi|$}\\
+? & \mbox{otherwise}
+\end{array}
+\right .
+$
+\item
+$\satisfaction{\forall \eventually \varphi}(s) = \left \{
+\begin{array}{ll}
+\top & \mbox{if $\satisfaction{\varphi}(\pi[i]) = \top$ for all $\pi \in \mathit{Paths}(s)$ and for some $0 \leq i < |\pi|$}\\
+\perp & \mbox{if $\satisfaction{\varphi}(\pi[i]) = \perp$ for some $\pi \in \mathit{APaths}(s)$ and for all $0 \leq i < |\pi|$}\\
+? & \mbox{otherwise}
+\end{array}
+\right .
+$
+\item
+$\satisfaction{\exists \eventually \varphi}(s) = \left \{
+\begin{array}{ll}
+\top & \mbox{if $\satisfaction{\varphi}(\pi[i]) = \top$ for some $\pi \in \mathit{APaths}(s)$ and $0 \leq i < |\pi|$}\\
+\perp & \mbox{if $\satisfaction{\varphi}(\pi[i]) = \perp$ for all $\pi \in \mathit{Paths}(s)$ and $0 \leq i < |\pi|$}\\
+? & \mbox{otherwise}
+\end{array}
+\right .
+$
+\item
+$\satisfaction{\forall \varphi \until \psi}(s) = $ \textcolor{blue}{details still need to be added here.}
+\item
+$\satisfaction{\exists \varphi \until \psi}(s) = $ \textcolor{blue}{details still need to be added here.}
+\end{itemize}
+\end{definition}
+
+For a partial transition system in which all states are fully explored, that is, an ordinary transition system, $\satisfaction{\ }$ corresponds to $\models$ as defined in \cite[Definition~6.4]{BK08} adjusted to deal with finite paths as follows:
+\begin{itemize}
+\item 
+$s \models \forall \nxt \varphi$ iff for all $\pi \in \mathit{APaths}(s)$ with $|\pi| > 1$, $\pi[1] \models \varphi$ 
+\item
+$s \models \exists \nxt \varphi$ iff for some $\pi \in \mathit{APaths}(s)$ with $|\pi| > 1$, $\pi[1] \models \varphi$
+\item 
+$s \models \forall \varphi \until \psi$ iff for all $\pi \in \mathit{APaths}(s)$, there exists $0 \leq j < |\pi|$ such that $\pi[j] \models \psi$ and for all $0 \leq k < j$, $\pi[j] \models \varphi$
+\item
+$s \models \exists \varphi \until \psi$ iff for some $\pi \in \mathit{APaths}(s)$, there exists $0 \leq j < |\pi|$ such that $\pi[j] \models \psi$ and for all $0 \leq k < j$, $\pi[j] \models \varphi$
+\end{itemize}
+
+\begin{proposition}
+If $F = S$, for all $\varphi \in \mathit{CTL}$ and $s \in S$, 
+\begin{itemize}
+\item
+$\satisfaction{\varphi}(s) = \top$ iff $s \models \varphi$, and
+\item
+$\satisfaction{\varphi}(s) = \perp$ iff $s \not\models \varphi$.
+\end{itemize}
+\end{proposition}
+\begin{proof}
+Let $s \in S$.  We prove this proposition by structural induction on $\varphi$.  We distinguish the following cases.
+\begin{itemize}
+\item 
+For the CTL formula $a$ we have that
 \[
-\mathit{CTL} \to (2^S)^3.
-\] 
-We use $2^S$ to denote the powerset of $S$.  Hence, for each CTL formula we define the following three sets of states:
+\satisfaction{a}(s) = \top \mbox{ iff } a \in L(s) \mbox{ iff } s \models a
+\]
+and
+\[
+\satisfaction{a}(s) = \perp \mbox{ iff } a \not\in L(s) \mbox{ iff } s \not\models a.
+\]
+\item
+For the CTL formula $\neg \varphi$ we have that
+\begin{align*}
+& \satisfaction{\neg \varphi}(s) = \top\\
+\mbox{iff } & \satisfaction{\varphi}(s) = \perp\\
+\mbox{iff } & s \not\models \varphi 
+\comment{by induction}\\
+\mbox{iff } & s \models \neg \varphi 
+\end{align*}
+and
+\begin{align*}
+& \satisfaction{\neg \varphi}(s) = \perp\\
+\mbox{iff } & \satisfaction{\varphi}(s) = \top\\
+\mbox{iff } & s \models \varphi 
+\comment{by induction}\\
+\mbox{iff } & s \not\models \neg \varphi 
+\end{align*}
+\item
+For the CTL formula $\varphi \wedge \psi$ we have that
+\begin{align*}
+& \satisfaction{\varphi \wedge \psi}(s) = \top\\
+\mbox{iff } & \satisfaction{\varphi}(s) = \top \mbox{ and } \satisfaction{\psi}(s) = \top\\
+\mbox{iff } & s \models \varphi \mbox{ and }  s \models \psi
+\comment{by induction}\\
+\mbox{iff } & s \models \varphi \wedge \psi
+\end{align*}
+and
+\begin{align*}
+& \satisfaction{\varphi \wedge \psi}(s) = \perp\\
+\mbox{iff } & \satisfaction{\varphi}(s) = \perp \mbox{ or } \satisfaction{\psi}(s) = \perp\\
+\mbox{iff } & s \not\models \varphi \mbox{ or } s \not\models \psi
+\comment{by induction}\\
+\mbox{iff } & s \not\models \varphi \wedge \psi
+\end{align*}
+\item
+For the CTL formula $\forall \nxt \varphi$ we have that
+\begin{align*}
+& \satisfaction{\forall \nxt \varphi}(s) = \top\\
+\mbox{iff } & \mbox{for all } \pi \in \mathit{Paths}(s) \mbox{ with } |\pi| > 1, \satisfaction{\varphi}(\pi[1]) = \top\\
+\mbox{iff } & \mbox{for all } \pi \in \mathit{APaths}(s) \mbox{ with } |\pi| > 1, \satisfaction{\varphi}(\pi[1]) = \top
+\comment{Proposition~\ref{proposition:no-potential-paths}}\\
+\mbox{iff } & \mbox{for all } \pi \in \mathit{APaths}(s) \mbox{ with } |\pi| > 1, \pi[1] \models \varphi
+\comment{by induction}\\
+\mbox{iff } & s \models \forall \nxt \varphi
+\end{align*}
+and
+\begin{align*}
+& \satisfaction{\forall \nxt \varphi}(s) = \perp\\
+\mbox{iff } & \mbox{for some } \pi \in \mathit{APaths}(s) \mbox{ with } |\pi| > 1, \satisfaction{\varphi}(\pi[1]) = \perp\\
+\mbox{iff } & \mbox{for some } \pi \in \mathit{APaths}(s) \mbox{ with } |\pi| > 1, \pi[1] \not\models \varphi
+\comment{by induction}\\
+\mbox{iff } & s \not\models \forall \nxt \varphi
+\end{align*}
+\item
+For the CTL formula $\exists \nxt \varphi$ we have that
+\begin{align*}
+& \satisfaction{\exists \nxt \varphi}(s) = \top\\
+\mbox{iff } & \mbox{for some } \pi \in \mathit{APaths}(s) \mbox{ with } |\pi| > 1, \satisfaction{\varphi}(\pi[1]) = \top\\
+\mbox{iff } & \mbox{for some } \pi \in \mathit{APaths}(s) \mbox{ with } |\pi| > 1, \pi[1] \models \varphi
+\comment{by induction}\\
+\mbox{iff } & s \models \exists \nxt \varphi
+\end{align*}
+and
+\begin{align*}
+& \satisfaction{\exists \nxt \varphi}(s) = \perp\\
+\mbox{iff } & \mbox{for all } \pi \in \mathit{Paths}(s) \mbox{ with } |\pi| > 1, \satisfaction{\varphi}(\pi[1]) = \perp\\
+\mbox{iff } & \mbox{for all } \pi \in \mathit{APaths}(s) \mbox{ with } |\pi| > 1, \satisfaction{\varphi}(\pi[1]) = \perp
+\comment{Proposition~\ref{proposition:no-potential-paths}}\\
+\mbox{iff } & \mbox{for all } \pi \in \mathit{APaths}(s) \mbox{ with } |\pi| > 1, \pi[1] \not\models \varphi
+\comment{by induction}\\
+\mbox{iff } & s \not\models \exists \nxt \varphi
+\end{align*}
+\item
+For the CTL formula $\forall \varphi \until \psi$ we have that \textcolor{blue}{details still need to be added here.}
+\item
+For the CTL formula $\exists \varphi \until \psi$ we have that
+\textcolor{blue}{details still need to be added here.}
+\end{itemize}
+\end{proof}
+
+\color{black}
+We use $2^S$ to denote the powerset of $S$.  For each CTL formula we define the following three sets of states.
+
+\begin{definition}
+Let $\varphi$ be a CTL formula.  Then
 \begin{align*}
 \mathit{Sat}(\varphi) & = \{\, s \in S \mid \satisfaction{\varphi}(s) = \top \,\}\\
 \mathit{Unsat}(\varphi) & = \{\, s \in S \mid \satisfaction{\varphi}(s) = \perp \,\}\\
 \mathit{Unknown}(\varphi) & = \{\, s \in S \mid \satisfaction{\varphi}(s) = ? \,\}
 \end{align*}
+\end{definition}
 \color{black}
 
-\begin{definition}
-Let $(S, F, \rightarrow, I, \mathit{AP}, L)$ be a partial transition system.  The function 
-\[
-(\mathit{Sat}, \mathit{Unsat}, \mathit{Unknown}) : \mathit{CTL} \to (2^S)^3
-\] 
-is defined by structural induction on the CTL formula as follows.
+\begin{theorem}
+Let $(S, F, \rightarrow, I, \mathit{AP}, L)$ be a partial transition system.  For all $a \in \mathit{AP}$ and $\varphi$, $\psi \in \mathit{CTL}$,
 \begin{itemize}
 \item
 \begin{align*}
@@ -593,7 +855,24 @@ S & \mbox{if $\varphi \equiv \FALSE$}\\
 \mathit{Unknown}(\exists \eventually \varphi) & = 
 \end{align*}
 \end{itemize}
-\end{definition}
+\end{theorem}
+\color{red}
+\begin{proof}
+The first eight cases follow immediately from the definitions.  For example, for the case $\varphi \wedge \psi$ we have that
+\begin{align*}
+\mathit{Sat}(\varphi \wedge \psi) 
+& = \{\, s \in S \mid \satisfaction{\varphi \wedge \psi}(s) = \top \,\}\\
+& = \{\, s \in S \mid \satisfaction{\varphi}(s) = \top \wedge \satisfaction{\psi}(s) = \top \,\}\\
+& = \{\, s \in S \mid \satisfaction{\varphi}(s) = \top \,\} \cap \{\, s \in S \mid \satisfaction{\psi}(s) = \top \,\}\\
+& = \mathit{Sat}(\varphi) \cap \mathit{Sat}(\psi)
+\end{align*}
+\begin{itemize}
+\item 
+\textcolor{blue}{The remaining cases still need to be done.}
+\end{itemize}
+
+\end{proof}
+\color{black}
 
 We first consider the formula $\forall \nxt \varphi$, where $\varphi$ is some arbitrary formula.  Assume that the state~$s$ is fully explored.  In that case,
 \[
@@ -690,7 +969,6 @@ The above three cases can be generalized as follows.
 \right .
 \]
 
-\color{red}
 This can be reformulated as follows.
 \begin{align*}
 \mathit{Sat}(\forall \nxt \varphi) & = 
@@ -713,7 +991,6 @@ In the above characterization we use
 \[
 \mathit{post}(s) = \{\, s' \in S \mid s \rightarrow s' \,\}.
 \]
-\color{black}
 
 Next, let us consider the formula $\exists \nxt \varphi$, where $\varphi$ is some arbitary formula.  Assume that the state~$s$ is fully explored.  In that case,
 \[
@@ -810,7 +1087,6 @@ The above three cases can be generalized as follows.
 \right .
 \]
 
-\color{red}
 This can be reformulated as follows.
 \begin{align*}
 \mathit{Sat}(\exists \nxt \varphi) & = 
@@ -936,7 +1212,7 @@ The above three cases can be generalized as follows.
 \right .
 \]
 
-Now consider that case that state~$s$ is not fully explored and transitions to itself and assume that $\varphi \not\equiv \FALSE$ and $\satisfaction{\varphi}(s) \not= \perp$.  Then $\satisfaction{\forall \always \varphi}(s) = \perp$ if $\satisfaction{\forall \always \varphi}(s) = \perp$.  To demonstrate that $\satisfaction{\forall \always \varphi}$ can be defined so that it satisfies the above equation, we will rely on the Knaster-Tarski fixed-point theorem \cite{K,T}.
+Now consider that case that state~$s$ is not fully explored and transitions to itself and assume that $\varphi \not\equiv \FALSE$ and $\satisfaction{\varphi}(s) \not= \perp$.  Then $\satisfaction{\forall \always \varphi}(s) = \perp$ if $\satisfaction{\forall \always \varphi}(s) = \perp$.  To demonstrate that $\satisfaction{\forall \always \varphi}$ can be defined so that it satisfies the above equation, we will rely on the Knaster-Tarski fixed-point theorem \cite{K28,T55}.
 
 Let us first reformulate the above in terms of $\mathit{Sat}$, $\mathit{Unsat}$, and $\mathit{Unknown}$.  
 \begin{align*}
@@ -951,10 +1227,10 @@ S & \mbox{if $\varphi \equiv \TRUE$}\\
 \left \{
 \begin{array}{ll}
 (S \setminus F) \cup \{\, s \in F \mid \mathit{post}(s) \not= \emptyset \,\} & \mbox{if $\varphi \equiv \FALSE$}\\
-\{\, s \in S \mid s \in \mathit{Unsat}(\varphi) \vee \mathit{post}(s) \cap \mathit{Unsat}(\varphi) \not= \emptyset \,\} & \mbox{otherwise}
+\{\, s \in S \mid s \in \mathit{Unsat}(\varphi) \vee \mathit{post}(s) \cap \mathit{Unsat}(\forall \always \varphi) \not= \emptyset \,\} & \mbox{otherwise}
 \end{array}
 \right .\\
-\mathit{Unknown}(\forall \always \varphi) & = S \setminus (\mathit{Sat}(\exists \nxt \varphi) \cup \mathit{Unsat}(\exists \nxt \varphi))
+\mathit{Unknown}(\forall \always \varphi) & = S \setminus (\mathit{Sat}(\forall \always \varphi) \cup \mathit{Unsat}(\forall \always \varphi))
 \end{align*}
 
 To address the above observed circularity, we start with ordering sets of states, that is, the elements of $2^S$.  Clearly, we have that for all $U$, $V$, $W \in 2^S$,
@@ -967,7 +1243,7 @@ if $U \subseteq V$ and $V \subseteq U$ then $U = V$, and
 if $U \subseteq V$ and $V \subseteq W$ then $U \subseteq W$.
 \end{itemize}
 
-The set $2^S$ and the order $\subseteq$ form a complete lattice (see, for example, \cite{}).  Given a CTL formula~$\varphi$, with $\varphi \not\equiv \TRUE$, the function
+The set $2^S$ and the order $\subseteq$ form a complete lattice (see, for example, \cite[Section~6.1]{CGP99}).  Given a CTL formula~$\varphi$, with $\varphi \not\equiv \TRUE$, the function
 \[
 \mathcal{F}_{\varphi} : 2^S \to 2^S
 \]
@@ -982,9 +1258,9 @@ According to the Knaster-Tarski theorem, a monotone function on a complete latti
 
 Since the set $2^S$ is finite, the Knaster-Tarski fixed point theorem also suggests an algorithm to compute the greatest fixed-point of $\mathcal{F}_{\varphi}$ since this greatest fixed point is equal to
 \[
-\bigcap \{\, U \in 2^S \mid U \subseteq \mathcal{F}_{\varphi}(U) \,\}.
+\bigcup \{\, U \in 2^S \mid U \subseteq \mathcal{F}_{\varphi}(U) \,\}.
 \]
-Hence, we can compute $\mathit{Sat}(\forall \always \varphi)$ as follows.
+According to, for example, \cite[Section~6.2]{CGP99}, we can compute $\mathit{Sat}(\forall \always \varphi)$ as follows.
 \begin{lstlisting}
 $U = S$
 repeat
@@ -992,6 +1268,67 @@ repeat
   $U = \{\, s \in F \mid s \in \mathit{Sat}(\varphi) \wedge \mathit{post}(s) \subseteq U \,\}$
 until $U_{old} = U$
 \end{lstlisting}
+
+\color{red}
+Given a CTL formula~$\varphi$, with $\varphi \not\equiv \FALSE$, the function
+\[
+\mathcal{G}_{\varphi} : 2^S \to 2^S
+\]
+is defined by
+\[
+\mathcal{G}_{\varphi}(U) = \{\, s \in S \mid s \in \mathit{Unsat}(\varphi) \wedge \mathit{post}(s) \cap U \not= \emptyset \,\}.
+\]
+
+Next, we show that the function $\mathcal{G}_{\varphi}$ is monotone, that is, for all $U$, $V \in 2^S$, if $U \subseteq V$ then $\mathcal{G}_{\varphi}(U) \subseteq \mathcal{G}_{\varphi}(V)$.  Let $U$, $V \in 2^S$ and assume that $U \subseteq V$.  Let $s \in \mathcal{G}_{\varphi}(U)$. To conclude that $\mathcal{G}_{\varphi}(U) \subseteq \mathcal{G}_{\varphi}(V)$, it remains to show that $s \in \mathcal{G}_{\varphi}(V)$.  Since $s \in \mathcal{G}_{\varphi}(U)$, we have that $s \in S$, $s \in \mathit{Unsat}(\varphi)$ and $\mathit{post}(s) \cap U \not= \emptyset$.  Since $U \subseteq V$, we can conclude that $\mathit{post}(s) \cap V \not= \emptyset$.  Hence, $s \in \mathcal{G}_{\varphi}(V)$.
+
+According to the Knaster-Tarski theorem, a monotone function on a complete lattice has a least fixed-point.  Since the set $2^S$ is finite, the Knaster-Tarski fixed point theorem also suggests an algorithm to compute the least fixed-point of $\mathcal{G}_{\varphi}$ since this least fixed point is equal to
+\[
+\bigcap \{\, U \in 2^S \mid \mathcal{G}_{\varphi}(U) \subseteq U \,\}.
+\]
+According to, for example, \cite[Section~6.2]{CGP99}, we can compute $\mathit{Unsat}(\forall \always \varphi)$ as follows.
+\begin{lstlisting}
+$U = \emptyset$
+repeat
+  $U_{old} = U$
+  $U = \{\, s \in S \mid s \in \mathit{Sat}(\varphi) \wedge \mathit{post}(s) \cap U \not= \emptyset \,\}$
+until $U_{old} = U$
+\end{lstlisting}
+
+Next, let us consider the formulas $\exists \always \varphi$.  Assume that the state $s$ is fully explored.  Then 
+\[
+\satisfaction{\exists \always \varphi}(s) = \left \{
+\begin{array}{ll}
+\top & \mbox{if $\satisfaction{\varphi}(s) = \top$ and ($s \not\rightarrow$ or $\satisfaction{\exists \always \varphi}(s') = \top$ for some $s \rightarrow s'$)}\\
+\perp & \mbox{if $\satisfaction{\varphi}(s) = \perp$ or ($s \rightarrow$ and $\satisfaction{\exists \always \varphi}(s') = \perp$ for all $s \rightarrow s'$)}\\
+? & \mbox{otherwise.}
+\end{array}
+\right .
+\]
+
+Next, assume that the state $s$ is not fully explored.  Then
+\[
+\satisfaction{\exists \always \varphi}(s) = \left \{
+\begin{array}{ll}
+\top & \mbox{if $\varphi \equiv \TRUE$ or ($\satisfaction{\varphi}(s) = \top$ and $\satisfaction{\exists \always \varphi}(s') = \top$ for some $s \rightarrow s'$)}\\
+\perp & \mbox{if $\satisfaction{\varphi}(s) = \perp$}\\
+? & \mbox{otherwise.}
+\end{array}
+\right .
+\]
+
+Let us first reformulate the above in terms of $\mathit{Sat}$, $\mathit{Unsat}$, and $\mathit{Unknown}$.  
+\begin{align*}
+\mathit{Sat}(\exists \always \varphi) = & 
+\{\, s \in S \mid s \in \mathit{Sat}(\varphi) \wedge \mathit{post}(s) \cap \mathit{Sat}(\exists \always \varphi) \not= \emptyset \,\} \cup\\
+& \{\, s \in F \mid s \in \mathit{Sat}(\varphi) \wedge \mathit{post}(s) = \emptyset \,\}\\
+\mathit{Unsat}(\exists \always \varphi) = & 
+\mathit{Unsat}(\varphi) \cup \{\, s \in F \mid \emptyset \not= \mathit{post}(s) \subseteq \mathit{Unsat}(\varphi) \,\}\\
+\mathit{Unknown}(\exists \always \varphi) = & S \setminus (\mathit{Sat}(\exists \always \varphi) \cup \mathit{Unsat}(\exists \always \varphi))
+\end{align*}
+
+The set $\mathit{Sat}(\exists \always \varphi)$ can be defined as a greatest fixed-point.  
+%The set $\mathit{Unsat}(\exists \always \varphi)$ can be defined as a ??? fixed-point.
+
 \color{black}
 
 \textcolor{blue}{Similarly, we might be able to characterize $\mathit{Unsat}(\forall \always \varphi)$ as a least fixed-point.}
