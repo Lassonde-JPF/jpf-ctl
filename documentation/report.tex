@@ -321,10 +321,10 @@ Consider the following partial transition system.
 \begin{center}
 \begin{tikzpicture}[yscale=0.9]
 \node (start) at (0,3) {};
-\node[rectangle,fill=red!20] (-1) at (1,2.5) {-1};
-\node[rectangle,fill=red!20] (0) at (1,1) {0};
-\node[circle,fill=blue!20] (1) at (0,0) {1};
-\node[circle,fill=red!20] (2) at (2,0) {2};
+\node[circle,fill=red!20] (-1) at (1,2.5) {-1};
+\node[circle,fill=red!20] (0) at (1,1) {0};
+\node[rectangle,fill=blue!20] (1) at (0,0) {1};
+\node[rectangle,fill=red!20] (2) at (2,0) {2};
 
 \draw[->] (start)--(-1);
 \draw[->] (-1)--(0);
@@ -413,10 +413,10 @@ Consider the following partial transition system.
 \begin{center}
 \begin{tikzpicture}[yscale=0.9]
 \node (start) at (0,3) {};
-\node[rectangle,fill=red!20] (-1) at (1,2.5) {-1};
-\node[circle,fill=red!20] (0) at (1,1) {0};
-\node[circle,fill=blue!20] (1) at (0,0) {1};
-\node[rectangle,fill=red!20] (2) at (2,0) {2};
+\node[circle,fill=red!20] (-1) at (1,2.5) {-1};
+\node[rectangle,fill=red!20] (0) at (1,1) {0};
+\node[rectangle,fill=blue!20] (1) at (0,0) {1};
+\node[circle,fill=red!20] (2) at (2,0) {2};
 
 \draw[->] (start)--(-1);
 \draw[->] (-1)--(0);
@@ -719,14 +719,14 @@ For the CTL formula $\exists \varphi \until \psi$ we have that
 \end{proof}
 
 \color{black}
-We use $2^S$ to denote the powerset of $S$.  For each CTL formula we define the following three sets of states.
+We use $2^S$ to denote the powerset of $S$.  For each CTL formula we define the following two sets of states.
 
 \begin{definition}
 Let $\varphi$ be a CTL formula.  Then
 \begin{align*}
 \mathit{Sat}(\varphi) & = \{\, s \in S \mid \satisfaction{\varphi}(s) = \top \,\}\\
-\mathit{Unsat}(\varphi) & = \{\, s \in S \mid \satisfaction{\varphi}(s) = \perp \,\}\\
-\mathit{Unknown}(\varphi) & = \{\, s \in S \mid \satisfaction{\varphi}(s) = ? \,\}
+\mathit{Unsat}(\varphi) & = \{\, s \in S \mid \satisfaction{\varphi}(s) = \perp \,\}
+%\mathit{Unknown}(\varphi) & = \{\, s \in S \mid \satisfaction{\varphi}(s) = ? \,\}
 \end{align*}
 \end{definition}
 \color{black}
@@ -737,50 +737,50 @@ Let $(S, F, \rightarrow, I, \mathit{AP}, L)$ be a partial transition system.  Fo
 \item
 \begin{align*}
 \mathit{Sat}(a) & = \{\, s \in S \mid a \in L(s) \,\}\\
-\mathit{Unsat}(a) & = \{\, s \in S \mid a \not\in L(s) \,\}\\
-\mathit{Unknown}(a) & = \emptyset
+\mathit{Unsat}(a) & = \{\, s \in S \mid a \not\in L(s) \,\}
+%\mathit{Unknown}(a) & = \emptyset
 \end{align*}
 \item 
 \begin{align*}
 \mathit{Sat}(\TRUE) & = S\\
-\mathit{Unsat}(\TRUE) & = \emptyset\\
-\mathit{Unknown}(\TRUE) & = \emptyset
+\mathit{Unsat}(\TRUE) & = \emptyset
+%\mathit{Unknown}(\TRUE) & = \emptyset
 \end{align*}
 \item 
 \begin{align*}
 \mathit{Sat}(\FALSE) & = \emptyset\\
-\mathit{Unsat}(\FALSE) & = S\\
-\mathit{Unknown}(\FALSE) & = \emptyset 
+\mathit{Unsat}(\FALSE) & = S\
+%\mathit{Unknown}(\FALSE) & = \emptyset 
 \end{align*}
 \item
 \begin{align*}
 \mathit{Sat}(\neg \varphi) & = \mathit{Unsat}(\varphi)\\
-\mathit{Unsat}(\neg \varphi) & = \mathit{Sat}(\varphi)\\
-\mathit{Unknown}(\neg \varphi) & = \mathit{Unknown}(\varphi)
+\mathit{Unsat}(\neg \varphi) & = \mathit{Sat}(\varphi)
+%\mathit{Unknown}(\neg \varphi) & = \mathit{Unknown}(\varphi)
 \end{align*}
 \item
 \begin{align*}
 \mathit{Sat}(\varphi \wedge \psi) & = \mathit{Sat}(\varphi) \cap \mathit{Sat}(\psi)\\
-\mathit{Unsat}(\varphi \wedge \psi) & = \mathit{Unsat}(\varphi) \cup \mathit{Unsat}(\psi)\\
-\mathit{Unknown}(\varphi \wedge \psi) & = S \setminus (\mathit{Sat}(\varphi \wedge \psi) \cup \mathit{Unsat}(\varphi \wedge \psi))
+\mathit{Unsat}(\varphi \wedge \psi) & = \mathit{Unsat}(\varphi) \cup \mathit{Unsat}(\psi)
+%\mathit{Unknown}(\varphi \wedge \psi) & = S \setminus (\mathit{Sat}(\varphi \wedge \psi) \cup \mathit{Unsat}(\varphi \wedge \psi))
 \end{align*}
 \item
 \begin{align*}
 \mathit{Sat}(\varphi \vee \psi) & = \mathit{Sat}(\varphi) \cup \mathit{Sat}(\psi)\\
-\mathit{Unsat}(\varphi \vee \psi) & = \mathit{Unsat}(\varphi) \cap \mathit{Unsat}(\psi)\\
-\mathit{Unknown}(\varphi \vee \psi) & = S \setminus (\mathit{Sat}(\varphi \vee \psi) \cup \mathit{Unsat}(\varphi \vee \psi))
+\mathit{Unsat}(\varphi \vee \psi) & = \mathit{Unsat}(\varphi) \cap \mathit{Unsat}(\psi)
+%\mathit{Unknown}(\varphi \vee \psi) & = S \setminus (\mathit{Sat}(\varphi \vee \psi) \cup \mathit{Unsat}(\varphi \vee \psi))
 \end{align*}
 \item
 \begin{align*}
 \mathit{Sat}(\varphi \rightarrow \psi) & = \mathit{Unsat}(\varphi) \cup \mathit{Sat}(\psi)\\
-\mathit{Unsat}(\varphi \rightarrow \psi) & = \mathit{Unsat}(\varphi) \setminus \mathit{Unsat}(\psi)\\
-\mathit{Unknown}(\varphi \rightarrow \psi) & = S \setminus (\mathit{Sat}(\varphi \rightarrow \psi) \cup \mathit{Unsat}(\varphi \rightarrow \psi))
+\mathit{Unsat}(\varphi \rightarrow \psi) & = \mathit{Unsat}(\varphi) \setminus \mathit{Unsat}(\psi)
+%\mathit{Unknown}(\varphi \rightarrow \psi) & = S \setminus (\mathit{Sat}(\varphi \rightarrow \psi) \cup \mathit{Unsat}(\varphi \rightarrow \psi))
 \end{align*}
 \item
 \begin{align*}
 \mathit{Sat}(\varphi \leftrightarrow \psi) & = \\
-\mathit{Unsat}(\varphi \leftrightarrow \psi) & = \\
-\mathit{Unknown}(\varphi \leftrightarrow \psi) & = 
+\mathit{Unsat}(\varphi \leftrightarrow \psi) & = 
+%\mathit{Unknown}(\varphi \leftrightarrow \psi) & = 
 \end{align*}
 \item
 \begin{align*}
@@ -797,8 +797,8 @@ S & \mbox{if $\varphi \equiv \TRUE$}\\
 (S \setminus F) \cup \{\, s \in F \mid \mathit{post}(s) \not= \emptyset \,\}& \mbox{if $\varphi \equiv \FALSE$}\\
 \{\, s \in S \mid \mathit{post}(s) \cap \mathit{Unsat}(\varphi) \not= \emptyset \,\} & \mbox{otherwise}
 \end{array}
-\right .\\
-\mathit{Unknown}(\forall \nxt \varphi) & = S \setminus (\mathit{Sat}(\forall \nxt \varphi) \cup \mathit{Unsat}(\forall \nxt \varphi))
+\right .
+%\mathit{Unknown}(\forall \nxt \varphi) & = S \setminus (\mathit{Sat}(\forall \nxt \varphi) \cup \mathit{Unsat}(\forall \nxt \varphi))
 \end{align*}
 \item
 \begin{align*}
@@ -815,44 +815,44 @@ S \setminus F \cup \{\, s \in F \mid \mathit{post}(s) \not= \emptyset \,\} & \mb
 S & \mbox{if $\varphi \equiv \FALSE$}\\
 \{\, s \in F \mid \mathit{post}(s) \subseteq \mathit{Unsat}(\varphi) \,\} & \mbox{otherwise}
 \end{array}
-\right .\\
-\mathit{Unknown}(\exists \nxt \varphi) & = S \setminus (\mathit{Sat}(\exists \nxt \varphi) \cup \mathit{Unsat}(\exists \nxt \varphi))
+\right .
+%\mathit{Unknown}(\exists \nxt \varphi) & = S \setminus (\mathit{Sat}(\exists \nxt \varphi) \cup \mathit{Unsat}(\exists \nxt \varphi))
 \end{align*}
 \item
 \begin{align*}
 \mathit{Sat}(\forall \varphi \until \psi) & = \\
-\mathit{Unsat}(\forall \varphi \until \psi) & = \\
-\mathit{Unknown}(\forall \varphi \until \psi) & = 
+\mathit{Unsat}(\forall \varphi \until \psi) & = 
+%\mathit{Unknown}(\forall \varphi \until \psi) & = 
 \end{align*}
 \item
 \begin{align*}
 \mathit{Sat}(\exists \varphi \until \psi) & = \\
-\mathit{Unsat}(\exists \varphi \until \psi) & = \\
-\mathit{Unknown}(\exists \varphi \until \psi) & = 
+\mathit{Unsat}(\exists \varphi \until \psi) & = 
+%\mathit{Unknown}(\exists \varphi \until \psi) & = 
 \end{align*}
 \item
 \begin{align*}
 \mathit{Sat}(\forall \always \varphi) & = \\
-\mathit{Unsat}(\forall \always \varphi) & = \\
-\mathit{Unknown}(\forall \always \varphi) & = 
+\mathit{Unsat}(\forall \always \varphi) & = 
+%\mathit{Unknown}(\forall \always \varphi) & = 
 \end{align*}
 \item
 \begin{align*}
 \mathit{Sat}(\exists \always \varphi) & = \\
-\mathit{Unsat}(\exists \always \varphi) & = \\
-\mathit{Unknown}(\exists \always \varphi) & = 
+\mathit{Unsat}(\exists \always \varphi) & = 
+%\mathit{Unknown}(\exists \always \varphi) & = 
 \end{align*}
 \item
 \begin{align*}
 \mathit{Sat}(\forall \eventually \varphi) & = \\
-\mathit{Unsat}(\forall \eventually \varphi) & = \\
-\mathit{Unknown}(\forall \eventually \varphi) & = 
+\mathit{Unsat}(\forall \eventually \varphi) & = 
+%\mathit{Unknown}(\forall \eventually \varphi) & = 
 \end{align*}
 \item
 \begin{align*}
 \mathit{Sat}(\exists \eventually \varphi) & = \\
-\mathit{Unsat}(\exists \eventually \varphi) & = \\
-\mathit{Unknown}(\exists \eventually \varphi) & = 
+\mathit{Unsat}(\exists \eventually \varphi) & = 
+%\mathit{Unknown}(\exists \eventually \varphi) & = 
 \end{align*}
 \end{itemize}
 \end{theorem}
@@ -862,9 +862,17 @@ The first eight cases follow immediately from the definitions.  For example, for
 \begin{align*}
 \mathit{Sat}(\varphi \wedge \psi) 
 & = \{\, s \in S \mid \satisfaction{\varphi \wedge \psi}(s) = \top \,\}\\
-& = \{\, s \in S \mid \satisfaction{\varphi}(s) = \top \wedge \satisfaction{\psi}(s) = \top \,\}\\
+& = \{\, s \in S \mid \satisfaction{\varphi}(s) = \top \mbox{ and } \satisfaction{\psi}(s) = \top \,\}\\
 & = \{\, s \in S \mid \satisfaction{\varphi}(s) = \top \,\} \cap \{\, s \in S \mid \satisfaction{\psi}(s) = \top \,\}\\
 & = \mathit{Sat}(\varphi) \cap \mathit{Sat}(\psi)
+\end{align*}
+and
+\begin{align*}
+\mathit{Unsat}(\varphi \wedge \psi) 
+& = \{\, s \in S \mid \satisfaction{\varphi \wedge \psi}(s) = \perp \,\}\\
+& = \{\, s \in S \mid \satisfaction{\varphi}(s) = \perp \mbox{ or } \satisfaction{\psi}(s) = \perp \,\}\\
+& = \{\, s \in S \mid \satisfaction{\varphi}(s) = \perp \,\} \cup \{\, s \in S \mid \satisfaction{\psi}(s) = \perp \,\}\\
+& = \mathit{Unsat}(\varphi) \cup \mathit{Unsat}(\psi)
 \end{align*}
 \begin{itemize}
 \item 
@@ -1290,7 +1298,7 @@ According to, for example, \cite[Section~6.2]{CGP99}, we can compute $\mathit{Un
 $U = \emptyset$
 repeat
   $U_{old} = U$
-  $U = \{\, s \in S \mid s \in \mathit{Sat}(\varphi) \wedge \mathit{post}(s) \cap U \not= \emptyset \,\}$
+  $U = \{\, s \in S \mid s \in \mathit{Unsat}(\varphi) \wedge \mathit{post}(s) \cap U \not= \emptyset \,\}$
 until $U_{old} = U$
 \end{lstlisting}
 
