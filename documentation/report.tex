@@ -198,8 +198,7 @@ formula
 \end{lstlisting}
 The operators \lstinline{AU}, \lstinline{EU}, and \lstinline{->} are specified as right associative.  The other binary operators are left associative.  The second column of the above rule contains the labels of the alternatives (see \cite[Section~8.2]{P13}).  We will discuss their role below.
 
-The order of the alternatives is consistent with the precedence of the operators (if an operator has higher precedence, then its alternative occurs earlier).  \textcolor{red}{As a consequence, we had to order the operators \lstinline{AU} and \lstinline{EU}.  We gave \lstinline{AU} higher precedence than \lstinline{EU}.}
-Assume that $a$, $b$, and $c$ are atomic propositions.  The formula \lstinline{$a$ AU $b$ AU $c$} is equivalent to \lstinline{$a$ AU ($b$ AU $c$)} since \lstinline{AU} is right associative.  The formula \lstinline{$a$ AU $b$ EU $c$} is equivalent to \lstinline{($a$ AU $b$) EU $c$} since \lstinline{AU} binds stronger than \lstinline{EU}.  For the same reason, the formula \lstinline{$a$ EU $b$ AU $c$} is equivalent to \lstinline{$a$ AU ($b$ EU $c$)}.
+The order of the alternatives is consistent with the precedence of the operators (if an operator has higher precedence, then its alternative occurs earlier).  As a consequence, we had to order the operators \lstinline{AU} and \lstinline{EU}.  We gave \lstinline{AU} higher precedence than \lstinline{EU}.  Assume that $a$, $b$, and $c$ are atomic propositions.  The formula \lstinline{$a$ AU $b$ AU $c$} is equivalent to \lstinline{$a$ AU ($b$ AU $c$)} since \lstinline{AU} is right associative.  The formula \lstinline{$a$ AU $b$ EU $c$} is equivalent to \lstinline{($a$ AU $b$) EU $c$} since \lstinline{AU} binds stronger than \lstinline{EU}.  For the same reason, the formula \lstinline{$a$ EU $b$ AU $c$} is equivalent to \lstinline{$a$ AU ($b$ EU $c$)}.
 
 Recall that the atomic propositions are static attributes.  To specify these, we used relevant snippets of the ANTLR grammar for Java%
 \footnote{See \href{https://github.com/antlr/grammars-v4/tree/master/java/java8}{github.com/antlr/grammars-v4/tree/master/java/java8}.}
@@ -380,7 +379,6 @@ L(2) & = \{ \mbox{red} \}
 \end{align*}
 \end{itemize} 
 
-\color{red}
 Due to the presence of unexplored states, we also revisit the definition of paths.  We fix a set $\mathcal{S}$ and we assume that for each partial transition system we have that $S \subseteq \mathcal{S}$.  We denote the set of nonempty and finite sequences of states in $\mathcal{S}$ by $\mathcal{S}^*$, the set of infinite sequences of states in $\mathcal{S}$ by $\mathcal{S}^{\omega}$, and the set of nonempty finite and infinite sequences of states in $\mathcal{S}$ by $\mathcal{S}^{\infty}$.
 
 \begin{definition}
@@ -441,7 +439,6 @@ If $F= S$ then $\mathit{PPAths}(s) = \emptyset$ for all $s \in S$.
 Immediate from the definition of potential paths.
 \end{proof}
 
-\color{black}
 The satisfaction relation $\models$ for CTL for ordinary transition systems is defined in \cite[Definition~6.4]{BK08}.  It can be viewed as a function $\satisfaction{\ }$ that maps each CTL formula and state of a transition system to either true of false, that is, for each state formula $\varphi$ and state $s$,
 \[
 s \models \varphi \mbox{ iff } \satisfaction{\varphi}(s) = \mbox{true}.
@@ -513,7 +510,6 @@ v & \perp & \perp & \top & ?\\
 \end{array}
 \]
 
-\color{red}
 We denote the length of a (potential) path $\pi$ by $|\pi|$.  If the (potential) path $\pi$ is infinite, then $|\pi| = \omega$.  We denote the set of CTL formulas by $\mathit{CTL}$.
 
 \begin{definition}
@@ -718,6 +714,16 @@ For the CTL formula $\exists \varphi \until \psi$ we have that
 \end{itemize}
 \end{proof}
 
+\color{red}
+Next, we define equivalence of CTL formulas.
+
+\begin{definition}
+For CTL formulas $\varphi$ and $\psi$, 
+\[
+\varphi \equiv \psi \mbox{ if } \satisfaction{\varphi}(s) = \satisfaction{\psi}(s) \mbox{ for all transition systems and } s \in S.
+\]
+\end{definition}
+
 \color{black}
 We use $2^S$ to denote the powerset of $S$.  For each CTL formula we define the following two sets of states.
 
@@ -794,7 +800,7 @@ S & \mbox{if $\varphi \equiv \TRUE$}\\
 \mathit{Unsat}(\forall \nxt \varphi) & = 
 \left \{
 \begin{array}{ll}
-(S \setminus F) \cup \{\, s \in F \mid \mathit{post}(s) \not= \emptyset \,\}& \mbox{if $\varphi \equiv \FALSE$}\\
+(S \setminus F) \cup \{\, s \in F \mid \mathit{post}(s) \not= \emptyset \,\} & \mbox{if $\varphi \equiv \FALSE$}\\
 \{\, s \in S \mid \mathit{post}(s) \cap \mathit{Unsat}(\varphi) \not= \emptyset \,\} & \mbox{otherwise}
 \end{array}
 \right .
@@ -856,7 +862,6 @@ S & \mbox{if $\varphi \equiv \FALSE$}\\
 \end{align*}
 \end{itemize}
 \end{theorem}
-\color{red}
 \begin{proof}
 The first eight cases follow immediately from the definitions.  For example, for the case $\varphi \wedge \psi$ we have that
 \begin{align*}
@@ -876,11 +881,67 @@ and
 \end{align*}
 \begin{itemize}
 \item 
-\textcolor{blue}{The remaining cases still need to be done.}
+\color{red}
+Consider the CTL formula $\forall \nxt \varphi$.  For $\mathit{Sat}$, we distinguish two cases.
+\begin{itemize}
+\item 
+Assume that $\varphi \equiv \TRUE$.  Then
+\begin{align*}
+\mathit{Sat}(\forall \nxt \varphi)
+& = \{\, s \in S \mid \satisfaction{\forall \nxt \varphi}(s) = \top \,\}\\
+& = \{\, s \in S \mid \satisfaction{\varphi}(\pi[1]) = \top \mbox{ for all } \pi \in \mathit{Paths}(s) \mbox{ with } |\pi| > 1 \,\}\\
+& = \{\, s \in S \mid \satisfaction{\TRUE}(\pi[1]) = \top \mbox{ for all } \pi \in \mathit{Paths}(s) \mbox{ with } |\pi| > 1 \,\}
+\comment{$\varphi \equiv \TRUE$}\\
+& = S
+\end{align*}
+\item
+Otherwise, $\varphi \not\equiv \TRUE$.  Then there exists $s_{\perp} \in \mathcal{S} \setminus S$ such that $\satisfaction{\varphi}(s_{\perp}) \not= \top$.  We distinguish two cases.
+\begin{itemize}
+\item 
+Assume that $s \in S \setminus F$.  Then $s s_{\perp} \in \mathit{PPaths}(s)$.  Since $\satisfaction{\varphi}((s s_{\perp})[1]) = \satisfaction{\varphi}(s_{\perp}) \not= \top$, we can conclude that $\satisfaction{\varphi}(\pi[1]) \not= \top$ for some $\pi \in \mathit{Paths}(s)$ with $|\pi| > 1$.  
+\item
+Assume $s \in F$.  Then $\mathit{post(s)} = \{\, \pi[1] \mid \pi \in \mathit{Paths}(s) \mbox{ with } |\pi| > 1\,\}$.
+\end{itemize}
+From the above, we can conclude that
+\begin{align*}
+\mathit{Sat}(\forall \nxt \varphi)
+= & \{\, s \in S \mid \satisfaction{\forall \nxt \varphi}(s) = \top \,\}\\
+= & \{\, s \in S \mid \satisfaction{\varphi}(\pi[1]) = \top \mbox{ for all } \pi \in \mathit{Paths}(s) \mbox{ with } |\pi| > 1 \,\}\\
+= & \{\, s \in S \setminus F \mid \satisfaction{\varphi}(\pi[1]) = \top \mbox{ for all } \pi \in \mathit{Paths}(s) \mbox{ with } |\pi| > 1 \,\} \cup\\
+& \{\, s \in F \mid \satisfaction{\varphi}(\pi[1]) = \top \mbox{ for all } \pi \in \mathit{Paths}(s) \mbox{ with } |\pi| > 1 \,\}\\
+= & \emptyset \cup
+\{\, s \in F \mid \satisfaction{\varphi}(s') = \top \mbox{ for all } s' \in \mathit{post}(s) \,\}\\
+= & \{\, s \in F \mid \mathit{post}(s) \subseteq \mathit{Sat}(\varphi) \,\}
+\end{align*}
+\end{itemize}
+For $\mathit{Unsat}$, we distinguish two cases.
+\begin{itemize}
+\item 
+Assume that $\varphi \equiv \FALSE$.  Then
+\begin{align*}
+\mathit{Unsat}(\forall \nxt \varphi)
+& = \{\, s \in S \mid \satisfaction{\forall \nxt \varphi}(s) = \perp \,\}\\
+& = \{\, s \in S \mid \satisfaction{\varphi}(\pi[1]) = \perp \mbox{ for some } \pi \in \mathit{APaths}(s) \mbox{ with } |\pi| > 1 \,\}\\
+& = \{\, s \in S \mid \satisfaction{\FALSE}(\pi[1]) = \perp \mbox{ for some } \pi \in \mathit{APaths}(s) \mbox{ with } |\pi| > 1 \,\}\\
+& \comment{$\varphi \equiv \FALSE$}\\
+& = \{\, s \in S \mid \mbox{ there exists } \pi \in \mathit{APaths}(s) \mbox{ with } |\pi| > 1 \,\}\\
+& = (S \setminus F) \cup \{\, s \in F \mid \mathit{post}(s) \not= \emptyset \,\}
+\end{align*}
+\item
+Otherwise, 
+\begin{align*}
+\mathit{Unsat}(\forall \nxt \varphi)
+= & \{\, s \in S \mid \satisfaction{\forall \nxt \varphi}(s) = \perp \,\}\\
+= & \{\, s \in S \mid \satisfaction{\varphi}(\pi[1]) = \perp \mbox{ for some } \pi \in \mathit{APaths}(s) \mbox{ with } |\pi| > 1 \,\}\\
+= & \{\, s \in S \mid \satisfaction{\varphi}(s') = \perp \mbox{ for some } s' \in \mathit{post}(s) \,\}\\
+= & \{\, s \in S \mid \mathit{post}(s) \cap \mathit{Unsat}(\varphi) \not= \emptyset \,\}
+\end{align*}
+\end{itemize}
+
+\textcolor{blue}{Who wants to try $\exists \nxt \varphi$?}
 \end{itemize}
 
 \end{proof}
-\color{black}
 
 We first consider the formula $\forall \nxt \varphi$, where $\varphi$ is some arbitrary formula.  Assume that the state~$s$ is fully explored.  In that case,
 \[
@@ -1277,7 +1338,6 @@ repeat
 until $U_{old} = U$
 \end{lstlisting}
 
-\color{red}
 Given a CTL formula~$\varphi$, with $\varphi \not\equiv \FALSE$, the function
 \[
 \mathcal{G}_{\varphi} : 2^S \to 2^S
