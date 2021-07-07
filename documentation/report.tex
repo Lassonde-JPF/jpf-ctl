@@ -5,6 +5,7 @@
 \usepackage{hyperref}
 \usepackage{listings}
 \usepackage{amsmath}
+\usepackage[dvipsnames]{xcolor}
 \usepackage{tikz}
 \usetikzlibrary{automata}
 \usepackage{tikz-uml}
@@ -382,6 +383,7 @@ L(2) & = \{ \mbox{red} \}
 Due to the presence of unexplored states, we also revisit the definition of paths.  We fix a set $\mathcal{S}$ and we assume that for each partial transition system we have that $S \subseteq \mathcal{S}$.  We denote the set of nonempty and finite sequences of states in $\mathcal{S}$ by $\mathcal{S}^*$, the set of infinite sequences of states in $\mathcal{S}$ by $\mathcal{S}^{\omega}$, and the set of nonempty finite and infinite sequences of states in $\mathcal{S}$ by $\mathcal{S}^{\infty}$.
 
 \begin{definition}
+\label{definition:complete-path}
 Let $(S, F, \rightarrow, I, \mathit{AP}, L)$ be a partial transition system.
 \begin{itemize}
 \item 
@@ -392,6 +394,21 @@ The infinite sequence $s_0 s_1 \ldots$ in $\mathcal{S}^{\omega}$ is a path if $s
 \end{definition}
 
 Note that we require that the final state of a finite path is fully explored.
+
+\color{Green}
+\begin{definition}
+\label{definition:partial-path}
+Let $(S, F, \rightarrow, I, \mathit{AP}, L)$ be a partial transition system.
+\begin{itemize}
+\item 
+The nonempty and finite sequence $s_0 s_1 \ldots s_n$ in $\mathcal{S}^*$, where $n \geq 0$, is a partial path if $s_i \rightarrow s_{i+1}$ for all $0 \leq i < n$.
+\end{itemize}
+\end{definition}
+
+We denote the set of (actual) paths defined in Definition~\ref{definition:complete-path} and \ref{definition:partial-path} that start in state $s$ by $\mathit{APaths}(s)$.  
+
+
+\color{black}
 
 \begin{definition}
 Let $(S, F, \rightarrow, I, \mathit{AP}, L)$ be a partial transition system.
@@ -405,7 +422,7 @@ The infinite sequence $s_0 s_1 \ldots s_n s_{n+1} \ldots$ in $\mathcal{S}^{\omeg
 
 In the first case, the sequence $s_0 s_1 \ldots s_n s_{n+1} \ldots s_{n+m}$ consists of two parts: $s_0 s_1 \ldots s_n$ traverses the explored part of the partial transition system, whereas $s_{n+1} \ldots s_{n+m}$ traverses the unexplored part.  Note that we require that $s_n \not\rightarrow s_{n+1}$: otherwise $s_{n+1}$ would belong to the explored part.  Similarly, the sequence $s_0 s_1 \ldots s_n s_{n+1} \ldots$ consists of the parts $s_0 s_1 \ldots s_n$ and $s_{n+1} \ldots$.  
 
-We denote the set of potential paths that start in state $s$ by $\mathit{PPaths}(s)$.  We denote the set of (actual) paths that start in state $s$ by $\mathit{APaths}(s)$.  We denote the set of all paths that start in state $s$ by $\mathit{Paths}(s)$.
+We denote the set of potential paths that start in state $s$ by $\mathit{PPaths}(s)$.  We denote the set of all paths that start in state $s$ by $\mathit{Paths}(s)$.
 
 Consider the following partial transition system.
 \begin{center}
@@ -424,7 +441,7 @@ Consider the following partial transition system.
 \end{center}
 We have that
 \begin{align*}
-\mathit{APaths}(-1) & = \{ -1\ 0\ 2 \}\\
+\mathit{APaths}(-1) & = \{ -1, -1\ 0, -1\ 0\ 1, -1\ 0\ 2 \}\\
 \mathit{PPaths}(-1) & = \{\, -1\ 0\ \pi \mid \pi[0] \not\in \{ 1, 2 \} \wedge \pi \in S^{\infty} \,\} \cup \{\, -1\ 0\ 1\ \pi \mid \pi \in S^{\infty} \,\}
 \end{align*}
 Since state 0 is not fully explored yet, we know that this state has more outgoing transitions than the two depicted in the above diagram.  All the potential paths starting with $-1\ 0$ do not start with either $-1\ 0\ 1$ or $-1\ 0\ 2$.  Since state 1 is not fully explored, it is not a final state and, as a result, the sequence $-1\ 0\ 1$ is \emph{not} a potential path.
@@ -797,13 +814,8 @@ S & \mbox{if $\varphi \equiv \TRUE$}\\
 \{\, s \in F \mid \mathit{post}(s) \subseteq \mathit{Sat}(\varphi) \,\} & \mbox{otherwise}
 \end{array}
 \right .\\
-\mathit{Unsat}(\forall \nxt \varphi) & = 
-\left \{
-\begin{array}{ll}
-(S \setminus F) \cup \{\, s \in F \mid \mathit{post}(s) \not= \emptyset \,\} & \mbox{if $\varphi \equiv \FALSE$}\\
-\{\, s \in S \mid \mathit{post}(s) \cap \mathit{Unsat}(\varphi) \not= \emptyset \,\} & \mbox{otherwise}
-\end{array}
-\right .
+\textcolor{Green}{\mathit{Unsat}(\forall \nxt \varphi)} & \textcolor{Green}{= 
+\{\, s \in S \mid \mathit{post}(s) \cap \mathit{Unsat}(\varphi) \not= \emptyset \,\}}
 %\mathit{Unknown}(\forall \nxt \varphi) & = S \setminus (\mathit{Sat}(\forall \nxt \varphi) \cup \mathit{Unsat}(\forall \nxt \varphi))
 \end{align*}
 \item
@@ -815,13 +827,8 @@ S \setminus F \cup \{\, s \in F \mid \mathit{post}(s) \not= \emptyset \,\} & \mb
 \{\, s \in S \mid \mathit{post}(s) \cap \mathit{Sat}(\varphi) \not= \emptyset \,\} & \mbox{otherwise}
 \end{array}
 \right .\\
-\mathit{Unsat}(\exists \nxt \varphi) & = 
-\left \{
-\begin{array}{ll}
-S & \mbox{if $\varphi \equiv \FALSE$}\\
-\{\, s \in F \mid \mathit{post}(s) \subseteq \mathit{Unsat}(\varphi) \,\} & \mbox{otherwise}
-\end{array}
-\right .
+\textcolor{Green}{\mathit{Unsat}(\exists \nxt \varphi)} & \textcolor{Green}{= 
+\{\, s \in F \mid \mathit{post}(s) \subseteq \mathit{Unsat}(\varphi) \,\}}
 %\mathit{Unknown}(\exists \nxt \varphi) & = S \setminus (\mathit{Sat}(\exists \nxt \varphi) \cup \mathit{Unsat}(\exists \nxt \varphi))
 \end{align*}
 \item
@@ -837,11 +844,21 @@ S & \mbox{if $\varphi \equiv \FALSE$}\\
 %\mathit{Unknown}(\exists \varphi \until \psi) & = 
 \end{align*}
 \item
-\begin{align*}
-\mathit{Sat}(\forall \always \varphi) & = \\
-\mathit{Unsat}(\forall \always \varphi) & = 
-%\mathit{Unknown}(\forall \always \varphi) & = 
-\end{align*}
+$\mathit{Sat}(\forall \always \varphi)$ is the largest $U \subseteq S$ satisfying
+\[
+U \subseteq 
+\left \{
+\begin{array}{ll}
+S & \mbox{if $\varphi \equiv \TRUE$}\\
+\{\, s \in F \mid s \in \mathit{Sat}(\varphi) \mbox{ and } \mathit{post}(s) \subseteq U \,\} & \mbox{otherwise}
+\end{array}
+\right .
+\]
+$\mathit{Unsat}(\forall \always \varphi)$ is the smallest $V \subseteq S$ satisfying
+\[
+V \supseteq 
+\{\, s \in S \mid s \in \mathit{Unsat}(\varphi) \mbox{ or } \mathit{post}(s) \cap V \not= \emptyset \,\} 
+\]
 \item
 \begin{align*}
 \mathit{Sat}(\exists \always \varphi) & = \\
@@ -914,21 +931,8 @@ From the above, we can conclude that
 = & \{\, s \in F \mid \mathit{post}(s) \subseteq \mathit{Sat}(\varphi) \,\}
 \end{align*}
 \end{itemize}
-For $\mathit{Unsat}$, we distinguish two cases.
-\begin{itemize}
-\item 
-Assume that $\varphi \equiv \FALSE$.  Then
-\begin{align*}
-\mathit{Unsat}(\forall \nxt \varphi)
-& = \{\, s \in S \mid \satisfaction{\forall \nxt \varphi}(s) = \perp \,\}\\
-& = \{\, s \in S \mid \satisfaction{\varphi}(\pi[1]) = \perp \mbox{ for some } \pi \in \mathit{APaths}(s) \mbox{ with } |\pi| > 1 \,\}\\
-& = \{\, s \in S \mid \satisfaction{\FALSE}(\pi[1]) = \perp \mbox{ for some } \pi \in \mathit{APaths}(s) \mbox{ with } |\pi| > 1 \,\}\\
-& \comment{$\varphi \equiv \FALSE$}\\
-& = \{\, s \in S \mid \mbox{ there exists } \pi \in \mathit{APaths}(s) \mbox{ with } |\pi| > 1 \,\}\\
-& = (S \setminus F) \cup \{\, s \in F \mid \mathit{post}(s) \not= \emptyset \,\}
-\end{align*}
-\item
-Otherwise, 
+\color{Green}
+Next, we consider $\mathit{Unsat}$.
 \begin{align*}
 \mathit{Unsat}(\forall \nxt \varphi)
 = & \{\, s \in S \mid \satisfaction{\forall \nxt \varphi}(s) = \perp \,\}\\
@@ -936,11 +940,98 @@ Otherwise,
 = & \{\, s \in S \mid \satisfaction{\varphi}(s') = \perp \mbox{ for some } s' \in \mathit{post}(s) \,\}\\
 = & \{\, s \in S \mid \mathit{post}(s) \cap \mathit{Unsat}(\varphi) \not= \emptyset \,\}
 \end{align*}
-\end{itemize}
-
+\color{blue}
+\item
 \textcolor{blue}{Who wants to try $\exists \nxt \varphi$?}
+\color{Green}
+\item
+Consider the CTL formula $\forall \always \varphi$.  We first focus on $\mathit{Sat}$.
+
+Given the CTL formula~$\varphi$, the function
+\[
+\mathcal{F}_{\varphi} : 2^S \to 2^S
+\]
+is defined by
+\[
+\mathcal{F}_{\varphi}(U) = \left \{
+\begin{array}{ll}
+S & \mbox{if $\varphi \equiv \TRUE$}\\
+\{\, s \in F \mid s \in \mathit{Sat}(\varphi) \mbox{ and } \mathit{post}(s) \subseteq U \,\}  & \mbox{otherwise}
+\end{array}
+\right .
+\]
+
+Next, we show that the function $\mathcal{F}_{\varphi}$ is monotone, that is, for all $U$, $V \in 2^S$, if $U \subseteq V$ then $\mathcal{F}_{\varphi}(U) \subseteq \mathcal{F}_{\varphi}(V)$.  Let $U$, $V \in 2^S$ and assume that $U \subseteq V$.  Obviously, $\mathcal{F}_{\varphi}(U) \subseteq \mathcal{F}_{\varphi}(V)$ if $\varphi \equiv \TRUE$.  Otherwise, let $s \in \mathcal{F}_{\varphi}(U)$. To conclude that $\mathcal{F}_{\varphi}(U) \subseteq \mathcal{F}_{\varphi}(V)$, it remains to show that $s \in \mathcal{F}_{\varphi}(V)$.  Since $s \in \mathcal{F}_{\varphi}(U)$, we have that $s \in F$, $s \in \mathit{Sat}(\varphi)$, and $\mathit{post}(s) \subseteq U$.  Since $U \subseteq V$, we can conclude that $\mathit{post}(s) \subseteq V$.  Hence, $s \in \mathcal{F}_{\varphi}(V)$.  From the Knaster-Tarski theorem we can conclude that there exists a largest $U \subseteq S$ satisfying $U \subseteq \mathcal{F}_{\varphi}(U)$.
+
+We distinguish two cases.
+\begin{itemize}
+\item 
+Assume that $\varphi \equiv \TRUE$.  Then
+\begin{align*}
+\mathit{Sat}(\forall \always \varphi)
+& = \{\, s \in S \mid \satisfaction{\forall \always \varphi}(s) = \top \,\}\\
+& = \{\, s \in S \mid \satisfaction{\varphi}(\pi[i]) = \top \mbox{ for all } \pi \in \mathit{Paths}(s) \mbox{ and } 0 \leq i < |\pi| \,\}\\
+& = \{\, s \in S \mid \satisfaction{\TRUE}(\pi[i]) = \top \mbox{ for all } \pi \in \mathit{Paths}(s) \mbox{ and } 0 \leq i < |\pi| \,\}
+\comment{$\varphi \equiv \TRUE$}\\
+& = S
+\end{align*}
+\item
+Otherwise, $\varphi \not\equiv \TRUE$.  Then there exists $s_{\perp} \in \mathcal{S} \setminus S$ such that $\satisfaction{\varphi}(s_{\perp}) \not= \top$.  We distinguish two cases.
+\begin{itemize}
+\item 
+Assume that $s \in S \setminus F$.  Then $s s_{\perp} \in \mathit{PPaths}(s)$.  Since $\satisfaction{\varphi}((s s_{\perp})[1]) = \satisfaction{\varphi}(s_{\perp}) \not= \top$, we can conclude that $\satisfaction{\varphi}(\pi[1]) \not= \top$ for some $\pi \in \mathit{Paths}(s)$ with $|\pi| > 1$.  
+\item
+Assume $s \in F$.  Then $\mathit{Paths(s)} = \{\, s \pi \mid s' \in \mathit{post}(s) \mbox{ and } \pi \in \mathit{Paths}(s') \,\}$.
+\end{itemize}
+From the above we can conclude that
+\begin{align*}
+\mathit{Sat}(\forall \always \varphi)
+= & \{\, s \in S \mid \satisfaction{\forall \always \varphi}(s) = \top \,\}\\
+= & \{\, s \in S \mid \satisfaction{\varphi}(\pi[i]) = \top \mbox{ for all } \pi \in \mathit{Paths}(s) \mbox{ and } 0 \leq i < |\pi| \,\}\\
+= & \{\, s \in S \setminus F \mid \satisfaction{\varphi}(\pi[i]) = \top \mbox{ for all } \pi \in \mathit{Paths}(s) \mbox{ and } 0 \leq i < |\pi| \,\} \cup\\
+= & \{\, s \in F \mid \satisfaction{\varphi}(\pi[i]) = \top \mbox{ for all } \pi \in \mathit{Paths}(s) \mbox{ and } 0 \leq i < |\pi| \,\}\\
+= & \emptyset \cup \{\, s \in F \mid \satisfaction{\varphi}((s \pi)[i]) = \top  \mbox{ for all } s' \in \mathit{post}(s) \mbox{ and } \pi \in \mathit{Paths}(s') \mbox{ and } 0 \leq i < |\pi| \,\}\\
+= & \{\, s \in F \mid \satisfaction{\varphi}(s) = \top \mbox{ and } \satisfaction{\varphi}(\pi[i]) = \top  \mbox{ for all } s' \in \mathit{post}(s) \mbox{ and } \pi \in \mathit{Paths}(s') \mbox{ and } 0 \leq i < |\pi| \,\}\\
+= & \{\, s \in F \mid s \in \mathit{Sat}(\varphi) \mbox{ and } s' \in \mathit{Sat}(\forall \always \varphi) \mbox{ for all } s' \in \mathit{post}(s) \,\}\\
+= & \{\, s \in F \mid s \in \mathit{Sat}(\varphi) \mbox{ and } \mathit{post}(s) \subseteq \mathit{Sat}(\forall \always \varphi) \,\}
+\end{align*}
 \end{itemize}
 
+Let $U \subseteq S$ satisfying $U \subseteq \mathcal{F}_{\varphi}(U)$.  It remains to show that $U \subseteq \mathit{Sat}(\forall \always \varphi)$.  We distinguish two cases.
+\begin{itemize}
+\item 
+If $\varphi \equiv \TRUE$ then $U \subseteq \mathcal{F}_{\varphi}(U) = S = \mathit{Sat}(\forall \always \varphi)$.
+\item
+Otherwise, $\varphi \not\equiv \TRUE$.  Towards a contradiction, assume that $s \in U$ and $s \not\in \mathit{Sat}(\forall \always \varphi)$.  Then $\satisfaction{\forall \always \varphi}(s) \not= \top$.  Hence, there exists $\pi \in \mathit{Paths}(s)$ and $0 \leq i < |\pi|$ such that $\satisfaction{\varphi}(\pi[i]) \not= \top$.  Next, we show that $\pi[j] \in U$ for all $0 \leq j \leq i$ by induction on $j$.  In the base case $j = 0$, we have that $\pi[0] = s \in U$.  Assume that $j > 0$.  By induction, $\pi[j-1] \in U$.  Since $U \subseteq \mathcal{F}_{\varphi}(U)$, we have that $\pi[j-1] \in F$ and $\mathit{post}(\pi[j-1]) \subseteq U$.  Hence, $\pi[j] \in U$.  Since $\pi[i] \in U$ and $U \subseteq \mathcal{F}_{\varphi}(U)$, we can conclude that $\pi[i] \in \mathit{Sat}(\varphi)$, which contradicts $\satisfaction{\varphi}(\pi[i]) \not= \top$.
+\end{itemize}
+
+Next, we focus on $\mathit{Unsat}$.  Given the CTL formula~$\varphi$, the function
+\[
+\mathcal{G}_{\varphi} : 2^S \to 2^S
+\]
+is defined by
+\[
+\mathcal{G}_{\varphi}(V) = 
+\{\, s \in S \mid s \in \mathit{Unsat}(\varphi) \mbox{ or } \mathit{post}(s) \cap V \not= \emptyset \,\} 
+\]
+
+Next, we show that the function $\mathcal{G}_{\varphi}$ is monotone, that is, for all $U$, $V \in 2^S$, if $U \subseteq V$ then $\mathcal{G}_{\varphi}(U) \subseteq \mathcal{G}_{\varphi}(V)$.  Let $U$, $V \in 2^S$ and assume that $U \subseteq V$.  Let $s \in \mathcal{G}_{\varphi}(U)$. To conclude that $\mathcal{G}_{\varphi}(U) \subseteq \mathcal{G}_{\varphi}(V)$, it remains to show that $s \in \mathcal{G}_{\varphi}(V)$.  Since $s \in \mathcal{G}_{\varphi}(U)$, we have that $s \in S$, $s \in \mathit{Unsat}(\varphi)$ or $\mathit{post}(s) \cap U \not= \emptyset$.  Since $U \subseteq V$, we can conclude that $\mathit{post}(s) \cap V \not= \emptyset$.  Hence, $s \in \mathcal{G}_{\varphi}(V)$.  From the Knaster-Tarski theorem we can conclude that there exists a smallest $V \subseteq S$ satisfying $V \supseteq \mathcal{F}_{\varphi}(V)$.
+
+Since $\mathit{APaths}(s) = \{ s \} \cup \{\, s \pi \mid s' \in \mathit{post}(s) \mbox{ and } \pi \in \mathit{APaths}(s') \,\}$, we have that
+\begin{align*}
+\mathit{Unsat}(\forall \always \varphi)
+= & \{\, s \in S \mid \satisfaction{\forall \always \varphi}(s) = \perp \,\}\\
+= & \{\, s \in S \mid \satisfaction{\varphi}(\pi[i]) = \perp \mbox{ for some } \pi \in \mathit{APaths}(s) \mbox{ and } 0 \leq i < |\pi| \,\}\\
+= & \{\, s \in S \mid \satisfaction{\varphi}(s) = \perp \mbox{ or } \satisfaction{\varphi}(\pi[i]) = \perp \mbox{ for some } s' \in \mathit{post}(s) \mbox{ and } \pi \in \mathit{APaths}(s') \mbox{ and } 0 \leq i < |\pi| \,\}\\
+= & \{\, s \in S \mid s \in \mathit{Unsat}(\varphi) \mbox{ or } \mathit{post}(s) \cap \mathit{Unsat}(\forall \always \varphi) \not= \emptyset \,\}
+\end{align*}
+
+Let $V \subseteq S$ satisfying $V \supseteq \mathcal{G}_{\varphi}(V)$.  It remains to show that $V \supseteq \mathit{Unsat}(\forall \always \varphi)$.  Towards a contradiction, assume that $s \in \mathit{Unsat}(\forall \always \varphi)$ and $s \not\in V$.  Then $\satisfaction{\varphi}(\pi[i]) = \perp$  for some $\pi \in \mathit{APaths}(s)$ and $0 \leq i < |\pi|$.  A few more details need to be added (soon).
+
+\color{blue}
+\item
+Who wants to try $\exists \always \varphi$?
+\end{itemize}
 \end{proof}
 
 We first consider the formula $\forall \nxt \varphi$, where $\varphi$ is some arbitrary formula.  Assume that the state~$s$ is fully explored.  In that case,
