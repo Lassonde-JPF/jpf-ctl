@@ -27,7 +27,8 @@ import org.antlr.v4.runtime.tree.ParseTree;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import error.DialogListener;
+import error.CTLErrorListener;
+
 import org.ctl.CTLLexer;
 import org.ctl.CTLParser;
 
@@ -1620,7 +1621,7 @@ public class PrecedenceTest {
 		CTLParser parser = new CTLParser(tokens);
 		parser.removeErrorListeners();//remove ConsoleErrorListener
 
-		parser.addErrorListener(new DialogListener());//add ours
+		parser.addErrorListener(new CTLErrorListener());//add ours
 		ParseTree tree = parser.formula();
 		return tree;
 	}

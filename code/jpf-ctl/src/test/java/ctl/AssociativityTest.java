@@ -29,7 +29,7 @@ import org.ctl.CTLParser;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import error.DialogListener;
+import error.CTLErrorListener;
 
 /**
  * Tests that the binary operators are left or right associative.
@@ -206,7 +206,7 @@ public class AssociativityTest {
 		CTLParser parser = new CTLParser(tokens);
 		parser.removeErrorListeners();// remove ConsoleErrorListener
 
-		parser.addErrorListener(new DialogListener());// add ours
+		parser.addErrorListener(new CTLErrorListener());// add ours
 		ParseTree tree = parser.formula();
 		return tree;
 	}
