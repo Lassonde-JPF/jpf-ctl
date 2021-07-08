@@ -32,14 +32,14 @@ import org.junit.jupiter.api.Test;
 
 import error.MyError;
 import error.MyErrorListener;
-import error.MyErrorStrategy;
+import error.MyCTLListener;
 
 import org.antlr.v4.runtime.CharStream;
 import org.antlr.v4.runtime.CharStreams;
 import org.antlr.v4.runtime.CommonTokenStream;
 import org.antlr.v4.runtime.atn.PredictionMode;
 import org.antlr.v4.runtime.tree.ParseTree;
-
+import org.antlr.v4.runtime.tree.ParseTreeWalker;
 
 import parser.CTLLexer;
 import parser.CTLParser;
@@ -187,10 +187,16 @@ class GeneratorTest {
 	
 	
 	@Test
-	void testReservedWordsError() {
-		String ctl1	= "( for.x & new.while )   ";		
-		Formula formula1 = generator.visit(parseCtl(ctl1));
+	void testFieldExistsError() {
+		String ctl1	= "new.for.f.x && java.lang.Integer.MIN_VALUE";	
+		ParseTree tree = parseCtl(ctl1);
+		Formula formula1 = generator.visit(tree);
 		
+		
+		ParseTreeWalker walker = new ParseTreeWalker();
+		MyCTLListener listener = new MyCTLListener();
+		
+		walker.walk(listener, tree);
 		assertNotNull(formula1);
 		
 	}
@@ -282,7 +288,9 @@ class GeneratorTest {
 		CharStream input = CharStreams.fromString(formula);
 		MyError error = new MyError();
 		input =  error.errorCheckAndRecover(input);
-
+		
+		
+		
 		CTLLexer lexer = new CTLLexer(input);
 		CommonTokenStream tokens = new CommonTokenStream(lexer);
 		CTLParser parser = new CTLParser(tokens);
@@ -292,6 +300,9 @@ class GeneratorTest {
 		//parser.setErrorHandler(new MyErrorStrategy());
 		
 		ParseTree tree = parser.formula();
+		
+		
+
 		return tree;
 	}
 	

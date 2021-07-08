@@ -20,6 +20,7 @@ public class MyError {
 	// number of input line
 	static int inputLineNum = 0;
 
+
 	/**
 	 *  Inserts the Java reserved words into the reservedWordsSet Hash set.
 	 *  It also inserts the missing operators '&' and '|' into operatorsSet Hash set.
@@ -107,7 +108,7 @@ public class MyError {
 			if (operatorsSet.contains(lines[i])) {
 				hasError = true;
 				//call underLineError method to print the error message
-				underLineError(inputString, index, lines[i] );
+				underLineError(inputString, index, " token recognition error at: '"+ lines[i] + " '" );
 
 				result.append(lines[i]);	
 			}
@@ -115,22 +116,26 @@ public class MyError {
 			if (lines[i].contains(".")) {
 
 				String[] substrings = lines[i].split("[.]");
-
+				FieldExists(lines[i],inputString, index);
+				
+				
 				for (int j = 0; j < substrings.length; j++) {
 
 					if (reservedWordsSet.contains(substrings[j])) {
 						hasError = true;
 						//call underLineError method to print the error message 
-						underLineError(inputString, index,substrings[j] );
+						underLineError(inputString, index," token recognition error at: '"+ substrings[j] + " '" );
 						substrings[j] = substrings[j].toUpperCase();
 					}
 					result.append(substrings[j]);
-					if (j == 0)
+					if (j < substrings.length - 1)
 					{
 						result.append(".");							
 					}
 					index += substrings[j].length() + 1;					
 				}
+				
+				
 			} else 
 			{				
 				result.append(lines[i]);	
@@ -149,6 +154,26 @@ public class MyError {
 		return input;		
 	}
 	
+	private void FieldExists(String atomicProposition, String inputString, int errCharIndex )
+	{
+		int indexOfLastDot = atomicProposition.lastIndexOf(".");
+        String className = atomicProposition.substring(0, indexOfLastDot);
+        String fieldName = atomicProposition.substring(indexOfLastDot + 1);
+        
+		try {
+           Class.forName(className).getDeclaredField(fieldName);
+ 
+        } catch (ClassNotFoundException e) { 
+
+        	underLineError(inputString, errCharIndex," Class '"+ className + " ' cannot be found" );
+        	System.exit(1);
+        } catch (NoSuchFieldException | SecurityException e) {     
+      
+        	underLineError(inputString, errCharIndex," Class '"+ className + " ' cannot be found" );
+        	System.exit(1);
+        }
+	}
+	
 	/**
 	 * This method prints the error messages on the console.
 	 * It also underlines the error location in the input.
@@ -157,11 +182,10 @@ public class MyError {
 	 * @param charPositionInLine - error location in the input.
 	 * @param errorChar - reserved word or operator used in the input.
 	 */
-	private void underLineError(String errorLine, int charPositionInLine, String errorChar )
+	private void underLineError(String errorLine, int charPositionInLine, String errorMsg )
 	{
-		cWriter.printlnerr("line "+ inputLineNum +":"+ (charPositionInLine + 1) +" token recognition error at: '"+ errorChar + " '");
+		cWriter.printlnerr("line "+ inputLineNum +":"+ (charPositionInLine + 1) + errorMsg);
 		cWriter.printlnerr(errorLine);
-		
 		//To underlines the error location
 		for(int i=0; i<charPositionInLine; i++)
 			cWriter.printerr(" ");
