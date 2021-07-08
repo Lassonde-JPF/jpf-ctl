@@ -19,7 +19,7 @@ public class MyError {
 	ConsoleWriter cWriter = new ConsoleWriter();
 	// number of input line
 	static int inputLineNum = 0;
-
+	boolean fieldNotExist = false;
 
 	/**
 	 *  Inserts the Java reserved words into the reservedWordsSet Hash set.
@@ -144,6 +144,11 @@ public class MyError {
 			result.append(" ");			
 		}	
 		
+		//if there is class not found error then terminate
+		if(fieldNotExist)
+		{
+			System.exit(1);
+		}
 		//if there is error return the recovered input
 		if(hasError)
 		{
@@ -164,13 +169,13 @@ public class MyError {
            Class.forName(className).getDeclaredField(fieldName);
  
         } catch (ClassNotFoundException e) { 
-
+        	fieldNotExist = true;
         	underLineError(inputString, errCharIndex," Class '"+ className + " ' cannot be found" );
-        	System.exit(1);
+        	
         } catch (NoSuchFieldException | SecurityException e) {     
-      
-        	underLineError(inputString, errCharIndex," Class '"+ className + " ' cannot be found" );
-        	System.exit(1);
+        	fieldNotExist = true;
+        	underLineError(inputString, errCharIndex + indexOfLastDot + 1," Field '"+ fieldName + " ' cannot be found" );
+        	
         }
 	}
 	

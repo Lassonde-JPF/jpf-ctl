@@ -23,6 +23,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import java.util.ArrayList;
 import java.util.Random;
 import java.util.stream.IntStream;
+import java.lang.Boolean;
 
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
@@ -188,7 +189,7 @@ class GeneratorTest {
 	
 	@Test
 	void testFieldExistsError() {
-		String ctl1	= "new.for.f.x && java.lang.Integer.MIN_VALUE";	
+		String ctl1	= " f.x  && java.lang.Boolean.s ";	
 		ParseTree tree = parseCtl(ctl1);
 		Formula formula1 = generator.visit(tree);
 		
