@@ -57,7 +57,7 @@ public class CTLError {
 		int size = lines.length;
 		int index = 0; // the error character index in the input string
 		boolean hasError = false;
-		cWriter.printlnout("Initial input: " + inputString);
+		//cWriter.printlnout("Initial input: " + inputString);
 
 		for (int i = 0; i < size; i++) {
 
@@ -73,7 +73,7 @@ public class CTLError {
 			if (lines[i].contains(".")) {
 
 				String[] substrings = lines[i].split("[.]");
-				FieldExists(lines[i], inputString, index);
+				//FieldExists(lines[i], inputString, index);
 
 				for (int j = 0; j < substrings.length; j++) {
 
@@ -104,7 +104,7 @@ public class CTLError {
 
 		// if there is error return the recovered input
 		if (hasError) {
-			cWriter.printlnout("Recovered input: " + result.toString());
+			cWriter.printout("\nRecovered input: " + result.toString());
 			return CharStreams.fromString(result.toString());
 		}
 
@@ -140,12 +140,13 @@ public class CTLError {
 	 * @param errorChar          - reserved word or operator used in the input.
 	 */
 	private void underLineError(String errorLine, int charPositionInLine, String errorMsg) {
-		cWriter.printlnerr("line " + inputLineNum + ":" + (charPositionInLine + 1) + errorMsg);
-		cWriter.printlnerr(errorLine);
+		cWriter.printerr("\nline " + inputLineNum + ":" + (charPositionInLine + 1) + errorMsg);
+		cWriter.printerr("\n" + errorLine);
+		cWriter.printerr("\n");
 		// To underlines the error location
 		for (int i = 0; i < charPositionInLine; i++)
 			cWriter.printerr(" ");
 
-		cWriter.printlnerr("^");
+		cWriter.printerr("^");
 	}
 }

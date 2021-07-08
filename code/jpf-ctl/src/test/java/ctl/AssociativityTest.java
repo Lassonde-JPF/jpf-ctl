@@ -29,7 +29,7 @@ import org.ctl.CTLParser;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import error.CTLErrorListener;
+import error.CTLError;
 
 /**
  * Tests that the binary operators are left or right associative.
@@ -199,15 +199,18 @@ public class AssociativityTest {
 	 * @param ctlFormula
 	 * @return The ParseTree representation of the given CTL formula
 	 */
-	private ParseTree parseCtl(String formula) {
+	private ParseTree parseCtl(String formula) 
+	{
 		CharStream input = CharStreams.fromString(formula);
+		CTLError error = new CTLError();
+		input = error.errorCheckAndRecover(input);
+
 		CTLLexer lexer = new CTLLexer(input);
 		CommonTokenStream tokens = new CommonTokenStream(lexer);
 		CTLParser parser = new CTLParser(tokens);
-		parser.removeErrorListeners();// remove ConsoleErrorListener
-
-		parser.addErrorListener(new CTLErrorListener());// add ours
+		
 		ParseTree tree = parser.formula();
+
 		return tree;
 	}
 }
