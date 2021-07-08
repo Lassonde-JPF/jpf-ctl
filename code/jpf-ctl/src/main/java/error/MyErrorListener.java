@@ -25,7 +25,7 @@ public class MyErrorListener extends BaseErrorListener {
 		underlineError(recognizer, (Token) offendingSymbol, line, charPositionInLine);
 	}
 
-	protected void underlineError(Recognizer recognizer, Token offendingToken, int line, int charPositionInLine)
+	protected void underlineError(Recognizer<?, ?> recognizer, Token offendingToken, int line, int charPositionInLine)
 	{
 		CommonTokenStream tokens = (CommonTokenStream) recognizer.getInputStream();
 		String input = tokens.getTokenSource().getInputStream().toString();

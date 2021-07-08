@@ -35,20 +35,10 @@ dependencies {
 generateGrammarSource {
     
     arguments += ["-visitor"]
-    includes = ["src/main/antlr/JavaNames.g4"]
-
-    // Keep a copy of generated sources
-    doLast {
-        println "Copying generated grammar lexer/parser files to main directory."
-        copy {
-            from "${buildDir}/generated-src/antlr/main"
-            into "src/main/java/parser"
-        }
-        println "Deleting generated-src/antlr directory."
-        delete "${buildDir}/generated-src/antlr"
-    }
+    
 }
-
+/*
 clean.doLast {
     file('generated-src').deleteDir()
 }
+*/

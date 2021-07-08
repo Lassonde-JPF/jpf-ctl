@@ -17,12 +17,11 @@
 
 package ctl;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import java.util.ArrayList;
 import java.util.Random;
-import java.util.stream.IntStream;
 
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
@@ -32,17 +31,14 @@ import org.junit.jupiter.api.Test;
 
 import error.MyError;
 import error.MyErrorListener;
-import error.MyErrorStrategy;
 
 import org.antlr.v4.runtime.CharStream;
 import org.antlr.v4.runtime.CharStreams;
 import org.antlr.v4.runtime.CommonTokenStream;
-import org.antlr.v4.runtime.atn.PredictionMode;
 import org.antlr.v4.runtime.tree.ParseTree;
 
 
-import parser.CTLLexer;
-import parser.CTLParser;
+import org.ctl.*;
 
 /**
  * 
@@ -57,9 +53,9 @@ import parser.CTLParser;
 
 class GeneratorTest {
 	private final static String ctlTrue1	= "true";
-	private final static String ctlTrue2	= "True";
+	//private final static String ctlTrue2	= "True";
 	private final static String ctlFalse1	= "false";
-	private final static String ctlFalse2	= "False";
+	//private final static String ctlFalse2	= "False";
 	private final static String ctlAp		= "java.lang.Exception";
 	private final static String[] atomics	= {ctlTrue1, ctlFalse1,  ctlAp};
 	private static ArrayList<String> ctlNot, ctlAnd, ctlOr, ctlImplies, ctlIff;
@@ -68,7 +64,7 @@ class GeneratorTest {
 	
 	private Generator generator;
 	
-	private static final int CASES = 1000000;
+	//private static final int CASES = 1000000;
 	
 	@BeforeAll
 	static void setUpBeforeClass() throws Exception {
@@ -224,12 +220,12 @@ class GeneratorTest {
 	 */
 	@Test
 	void testVisitAnd() {
-		for (String andFormula : ctlAnd) {
+	//	for (String andFormula : ctlAnd) {
 			//Formula formula1 = generator.visit(parseCtl(andFormula));
 			//assertNotNull(formula1);
 			//assertEquals(And.class, formula1.getClass());
 				
-		}
+	//	}
 	}
 	
 	/**
@@ -239,11 +235,11 @@ class GeneratorTest {
 	 */
 	@Test
 	void testVisitForAllNext() {
-		for (String forAllNextFormula : ctlForAllNext) {
+	//	for (String forAllNextFormula : ctlForAllNext) {
 			//ForAllNext formula1 = (ForAllNext) generator.visit(parseCtl(forAllNextFormula));
 			//assertNotNull(formula1);	
 			//assertEquals(ForAllNext.class, formula1.getClass());
-		}
+	//	}
 	}
 	
 	/**
@@ -253,11 +249,11 @@ class GeneratorTest {
 	 */
 	@Test
 	void testVisitForAllUntil() {
-		for (String forAllUntilFormula : ctlForAllUntil) {
+	//	for (String forAllUntilFormula : ctlForAllUntil) {
 			//ForAllUntil formula1 = (ForAllUntil) generator.visit(parseCtl(forAllUntilFormula));
 			//assertNotNull(formula1);	
 			//assertEquals(ForAllUntil.class, formula1.getClass());
-		}
+	//	}
 	}
 	
 	/**
@@ -266,9 +262,9 @@ class GeneratorTest {
 	 * @param ctlFormula
 	 * @return A string representation of the CTL formula with extra outer brackets
 	 */
-	private String addBrackets(String ctlFormula) {
-		return "(" + ctlFormula + ")";
-	}
+	//private String addBrackets(String ctlFormula) {
+	//	return "(" + ctlFormula + ")";
+	//}
 
 	/**
 	 * 
