@@ -27,9 +27,9 @@ import org.antlr.v4.runtime.tree.ParseTree;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import errors.DialogListener;
-import parser.CTLLexer;
-import parser.CTLParser;
+import error.DialogListener;
+import org.ctl.CTLLexer;
+import org.ctl.CTLParser;
 
 /**
  * Tests that the precedence of operators.

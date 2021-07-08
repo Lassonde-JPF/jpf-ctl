@@ -37,8 +37,14 @@ generateGrammarSource {
     arguments += ["-visitor"]
     
 }
-/*
-clean.doLast {
-    file('generated-src').deleteDir()
+
+task compile {
+    group = "jpf-ctl build"
+    description = "Compiles all jpf-ctl sources."
+
+    dependsOn compileTestJava
 }
-*/
+
+test {
+
+}
