@@ -29,9 +29,9 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import error.MyError;
-import error.MyErrorListener;
-import error.MyCTLListener;
+import error.CTLError;
+import error.CTLErrorListener;
+import error.CTLListener;
 
 import org.antlr.v4.runtime.CharStream;
 import org.antlr.v4.runtime.CharStreams;
@@ -283,7 +283,7 @@ class GeneratorTest {
 	 */
 	private ParseTree parseCtl(String formula) {
 		CharStream input = CharStreams.fromString(formula);
-		MyError error = new MyError();
+		CTLError error = new CTLError();
 		input =  error.errorCheckAndRecover(input);
 		
 		
@@ -293,7 +293,7 @@ class GeneratorTest {
 		CTLParser parser = new CTLParser(tokens);
 		parser.removeErrorListeners();//remove ConsoleErrorListener
 		
-		parser.addErrorListener(new MyErrorListener());//add ours
+		parser.addErrorListener(new CTLErrorListener());//add ours
 		//parser.setErrorHandler(new MyErrorStrategy());
 		
 		ParseTree tree = parser.formula();
