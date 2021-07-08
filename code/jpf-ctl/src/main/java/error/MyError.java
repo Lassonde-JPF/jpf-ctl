@@ -150,14 +150,16 @@ public class MyError {
 		}	
 		
 		//if there is field not found error then terminate
-		if(fieldNotExist || hasError)
+		if(fieldNotExist )
 		{
 			cWriter.printerr( outputErrMsg.toString() );
+			return null;
 			
 		}
 		//if there is error print message on the console and return the recovered input
 		if(hasError)
 		{
+			cWriter.printerr( outputErrMsg.toString() );
 			cWriter.printout("Initial   input: " + inputString + "\n" + "Recovered input: " + recovedInput.toString() + "\n");
 			
 			return CharStreams.fromString(recovedInput.toString());

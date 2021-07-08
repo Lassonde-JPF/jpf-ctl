@@ -28,32 +28,34 @@ public class CTLErrorTest {
 	
 	
 	@Test
-	void testFieldExistsError() {
+	void testFieldExists() {
 		String ctl1	= " java.lang.Integer.MAX_VALUE  && java.lang.Integer.MAX_VALUE ";	
 		ParseTree tree = parseCtl(ctl1);
-		Formula formula1 = generator.visit(tree);
-		
-		
-		//ParseTreeWalker walker = new ParseTreeWalker();
-		// listener = new MyCTLListener();
-		
-		//walker.walk(listener, tree);
-		assertNotNull(formula1);		
+		Formula formula1 = generatorVisit(tree);
+		assertNotNull(formula1);
+	}
+	
+	@Test
+	void testFieldExistsError() {
+		String ctl1	= " f.c  && k.c ";	
+		ParseTree tree = parseCtl(ctl1);
+		Formula formula1 = generatorVisit(tree);
+		assertNull(formula1);		
 	}
 
 	@Test
 	void testOperatorError() {
-		String ctl1	= "( C.f1 & C.f2 )   ";		
-		Formula formula1 = generator.visit(parseCtl(ctl1));
-		
+		String ctl1	= "( C.f1 & C.f2 )   ";	
+		ParseTree tree = parseCtl(ctl1);
+		Formula formula1 = generatorVisit(tree);
 		assertNotNull(formula1);
-		
+
 	}
 	
 	@Test
 	void testReservedWordsError() {
 		String ctl1	= "( C.for || new.while )   ";		
-		Formula formula1 = generator.visit(parseCtl(ctl1));
+		Formula formula1 = generatorVisit(parseCtl(ctl1));
 		
 		assertNotNull(formula1);
 		
@@ -72,6 +74,9 @@ public class CTLErrorTest {
 		MyError error = new MyError();
 		input =  error.errorCheckAndRecover(input);
 		
+		if(input == null)
+			return null;
+		
 		CTLLexer lexer = new CTLLexer(input);
 		CommonTokenStream tokens = new CommonTokenStream(lexer);
 		CTLParser parser = new CTLParser(tokens);
@@ -82,7 +87,12 @@ public class CTLErrorTest {
 		return tree;
 	}
 	
-
+	private Formula generatorVisit(ParseTree tree)
+	{
+		if(tree == null)
+			return null;
+		return generator.visit(tree);
+	}
 	
 }
 
