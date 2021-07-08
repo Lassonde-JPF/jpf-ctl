@@ -1,7 +1,7 @@
 package error;
 
-import parser.CTLBaseListener;
-import parser.CTLParser.AtomicPropositionContext;
+import org.ctl.CTLBaseListener;
+import org.ctl.CTLParser.AtomicPropositionContext;
 
 public class MyCTLListener  extends CTLBaseListener{
 	
