@@ -20,7 +20,8 @@ public class MyError {
 	// Number of input line
 	static int inputLineNum = 0;
 	// To verify if the fields exists in the user input
-	boolean fieldNotExist = false;
+	public boolean fieldNotExist = false;
+
 
 	/**
 	 *  Inserts the Java reserved words into the reservedWordsSet Hash set.
@@ -94,30 +95,32 @@ public class MyError {
 	 * @return recovered input if there is an error, the input formal otherwise. 
 	 */
 	public CharStream errorCheckAndRecover(CharStream input) {
+
 		inputLineNum++;									//input line number
-		StringBuilder result = new StringBuilder();		//the recovered input
+		StringBuilder recovedInput = new StringBuilder();		//the recovered input
+		StringBuilder outputErrMsg = new StringBuilder();		//the output message
 		String inputString = input.toString();
 		String[] lines = inputString.split(" ");
 		int size = lines.length;
 		int index = 0;									//the error character index in the input string
 		boolean hasError = false;
-		cWriter.printlnout("Initial input: " + inputString);
 
+		
 		for (int i = 0; i < size; i++) {
 			
 			//check and recover if the input formula missing the operators '&' or '|'
 			if (operatorsSet.contains(lines[i])) {
 				hasError = true;
 				//call underLineError method to print the error message
-				underLineError(inputString, index, " token recognition error at: '"+ lines[i] + " '" );
+				underLineError(outputErrMsg, inputString, index, " token recognition error at: '"+ lines[i] + " '" );
 
-				result.append(lines[i]);	
+				recovedInput.append(lines[i]);	
 			}
 			//check and recover if the input formula contains any Java reserve word
 			if (lines[i].contains(".")) {
 				
 				//check if the fields in the input exist
-				FieldExists(lines[i],inputString, index);
+				FieldExists(outputErrMsg,lines[i],inputString, index);
 				
 				String[] substrings = lines[i].split("[.]");
 			
@@ -126,13 +129,13 @@ public class MyError {
 					if (reservedWordsSet.contains(substrings[j])) {
 						hasError = true;
 						//call underLineError method to print the error message 
-						underLineError(inputString, index," token recognition error at: '"+ substrings[j] + " '" );
+						underLineError(outputErrMsg, inputString, index," token recognition error at: '"+ substrings[j] + " '" );
 						substrings[j] = substrings[j].toUpperCase();
 					}
-					result.append(substrings[j]);
+					recovedInput.append(substrings[j]);
 					if (j < substrings.length - 1)
 					{
-						result.append(".");							
+						recovedInput.append(".");							
 					}
 					index += substrings[j].length() + 1;					
 				}
@@ -140,22 +143,24 @@ public class MyError {
 				
 			} else 
 			{				
-				result.append(lines[i]);	
+				recovedInput.append(lines[i]);	
 				index += lines[i].length() + 1;
 			}			
-			result.append(" ");			
+			recovedInput.append(" ");			
 		}	
 		
 		//if there is field not found error then terminate
-		if(fieldNotExist)
+		if(fieldNotExist || hasError)
 		{
-			System.exit(1);
+			cWriter.printerr( outputErrMsg.toString() );
+			
 		}
-		//if there is error return the recovered input
+		//if there is error print message on the console and return the recovered input
 		if(hasError)
 		{
-			cWriter.printlnout("Recovered input: " + result.toString());
-			return CharStreams.fromString(result.toString());
+			cWriter.printout("Initial   input: " + inputString + "\n" + "Recovered input: " + recovedInput.toString() + "\n");
+			
+			return CharStreams.fromString(recovedInput.toString());
 		}
 		
 		return input;		
@@ -170,7 +175,7 @@ public class MyError {
 	 * @param errCharIndex - error location in the input. 
 	 * 
 	 */
-	private void FieldExists(String atomicProposition, String inputString, int errCharIndex )
+	private void FieldExists(StringBuilder outputErrMsg,String atomicProposition, String inputString, int errCharIndex )
 	{
 		int indexOfLastDot = atomicProposition.lastIndexOf(".");
         String className = atomicProposition.substring(0, indexOfLastDot);
@@ -181,11 +186,11 @@ public class MyError {
  
         } catch (ClassNotFoundException e) { 
         	fieldNotExist = true;
-        	underLineError(inputString, errCharIndex," Class '"+ className + " ' cannot be found" );
+        	underLineError(outputErrMsg,inputString, errCharIndex," Class '"+ className + " ' cannot be found" );
         	
         } catch (NoSuchFieldException | SecurityException e) {     
         	fieldNotExist = true;
-        	underLineError(inputString, errCharIndex + indexOfLastDot + 1," Field '"+ fieldName + " ' cannot be found" );
+        	underLineError(outputErrMsg,inputString, errCharIndex + indexOfLastDot + 1," Field '"+ fieldName + " ' cannot be found" );
         	
         }
 	}
@@ -198,14 +203,14 @@ public class MyError {
 	 * @param charPositionInLine - error location in the input.
 	 * @param errorMsg - error message.
 	 */
-	private void underLineError(String errorLine, int charPositionInLine, String errorMsg )
+	private void underLineError(StringBuilder outputErrMsg, String errorLine, int charPositionInLine, String errorMsg )
 	{
-		cWriter.printlnerr("line "+ inputLineNum +":"+ (charPositionInLine + 1) + errorMsg);
-		cWriter.printlnerr(errorLine);
+		outputErrMsg.append("\nline "+ inputLineNum +":"+ (charPositionInLine + 1) + errorMsg + "\n");
+		outputErrMsg.append(errorLine+ "\n");
 		//To underlines the error location
 		for(int i=0; i<charPositionInLine; i++)
-			cWriter.printerr(" ");
-
-		cWriter.printlnerr("^");
+			outputErrMsg.append(" ");
+		
+		outputErrMsg.append("^"+ "\n");
 	}
 }
