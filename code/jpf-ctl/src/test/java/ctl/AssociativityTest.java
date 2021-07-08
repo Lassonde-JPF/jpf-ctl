@@ -27,9 +27,7 @@ import org.antlr.v4.runtime.tree.ParseTree;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import errors.DialogListener;
-import parser.CTLLexer;
-import parser.CTLParser;
+import error.DialogListener;
 
 /**
  * Tests that the binary operators are left or right associative.
