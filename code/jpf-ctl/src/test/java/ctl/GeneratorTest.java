@@ -19,6 +19,7 @@ package ctl;
 
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 import java.util.ArrayList;
 import java.util.Random;
@@ -31,7 +32,6 @@ import org.junit.jupiter.api.Test;
 
 import error.CTLError;
 import error.CTLErrorListener;
-import error.CTLListener;
 
 import org.antlr.v4.runtime.CharStream;
 import org.antlr.v4.runtime.CharStreams;
@@ -183,20 +183,15 @@ class GeneratorTest {
 	}*/
 	
 	//TODO fails
-//	@Test
-//	void testFieldExistsError() {
-//		String ctl1	= "new.for.f.x && java.lang.Integer.MIN_VALUE";	
-//		ParseTree tree = parseCtl(ctl1);
-//		Formula formula1 = generator.visit(tree);
-//		
-//		
-//		ParseTreeWalker walker = new ParseTreeWalker();
-//		MyCTLListener listener = new MyCTLListener();
-//		
-//		walker.walk(listener, tree);
-//		assertNotNull(formula1);
-//		
-//	}
+	@Test
+	void testFieldExistsError() {
+		String ctl1	= "new.for.f.x && java.lang.Integer.MIN_VALUE";	
+		ParseTree tree = parseCtl(ctl1);
+		Formula formula1 = generator.visit(tree);
+
+		assertNull(formula1);
+		
+	}
 
 	
 	/*@Test
