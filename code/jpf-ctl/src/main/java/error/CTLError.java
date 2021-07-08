@@ -1,5 +1,6 @@
 package error;
 
+import java.util.Arrays;
 import java.util.HashSet;
 import org.antlr.v4.runtime.CharStream;
 import org.antlr.v4.runtime.CharStreams;
@@ -19,6 +20,8 @@ public class CTLError {
 	ConsoleWriter cWriter = new ConsoleWriter();
 	// number of input line
 	static int inputLineNum = 0;
+	// To verify if the fields exists in the user input
+	boolean fieldNotExist = false;
 
 	/**
 	 * Inserts the Java reserved words into the reservedWordsSet Hash set. It also
@@ -26,56 +29,12 @@ public class CTLError {
 	 */
 	public CTLError() {
 		// adding Java reserve words to the hash set
-		reservedWordsSet.add("abstract");
-		reservedWordsSet.add("assert");
-		reservedWordsSet.add("boolean");
-		reservedWordsSet.add("break");
-		reservedWordsSet.add("byte");
-		reservedWordsSet.add("case");
-		reservedWordsSet.add("catch");
-		reservedWordsSet.add("char");
-		reservedWordsSet.add("class");
-		reservedWordsSet.add("const");
-		reservedWordsSet.add("continue");
-		reservedWordsSet.add("default");
-		reservedWordsSet.add("do");
-		reservedWordsSet.add("double");
-		reservedWordsSet.add("else");
-		reservedWordsSet.add("enum");
-		reservedWordsSet.add("extends");
-		reservedWordsSet.add("final");
-		reservedWordsSet.add("finally");
-		reservedWordsSet.add("float");
-		reservedWordsSet.add("for");
-		reservedWordsSet.add("if");
-		reservedWordsSet.add("goto");
-		reservedWordsSet.add("implements");
-		reservedWordsSet.add("import");
-		reservedWordsSet.add("instanceof");
-		reservedWordsSet.add("int");
-		reservedWordsSet.add("interface");
-		reservedWordsSet.add("long");
-		reservedWordsSet.add("native");
-		reservedWordsSet.add("new");
-		reservedWordsSet.add("package");
-		reservedWordsSet.add("private");
-		reservedWordsSet.add("protected");
-		reservedWordsSet.add("public");
-		reservedWordsSet.add("return");
-		reservedWordsSet.add("short");
-		reservedWordsSet.add("static");
-		reservedWordsSet.add("strictfp");
-		reservedWordsSet.add("super");
-		reservedWordsSet.add("switch");
-		reservedWordsSet.add("synchronized");
-		reservedWordsSet.add("this");
-		reservedWordsSet.add("throw");
-		reservedWordsSet.add("throws");
-		reservedWordsSet.add("transient");
-		reservedWordsSet.add("try");
-		reservedWordsSet.add("void");
-		reservedWordsSet.add("volatile");
-		reservedWordsSet.add("while");
+		reservedWordsSet.addAll(Arrays.asList(new String[] { "abstract", "assert", "boolean", "break", "byte", "case",
+				"catch", "char", "class", "const", "continue", "default", "do", "double", "else", "enum", "extends",
+				"final", "finally", "float", "for", "if", "goto", "implements", "import", "instanceof", "int",
+				"interface", "long", "native", "new", "package", "private", "protected", "public", "return", "short",
+				"static", "strictfp", "super", "switch", "synchronized", "this", "throw", "throws", "transient", "try",
+				"void", "volatile", "while" }));
 
 		// adding missing operators to the hash set
 		operatorsSet.add("&");
@@ -138,6 +97,11 @@ public class CTLError {
 			result.append(" ");
 		}
 
+		// if there is field not found error then terminate
+		if (fieldNotExist) {
+			System.exit(1);
+		}
+
 		// if there is error return the recovered input
 		if (hasError) {
 			cWriter.printlnout("Recovered input: " + result.toString());
@@ -155,10 +119,15 @@ public class CTLError {
 		try {
 			Class.forName(className).getDeclaredField(fieldName);
 
-		} catch (ClassNotFoundException | NoSuchFieldException | SecurityException e) {
-
+		} catch (ClassNotFoundException e) {
+			fieldNotExist = true;
 			underLineError(inputString, errCharIndex, " Class '" + className + " ' cannot be found");
-			System.exit(1);
+
+		} catch (NoSuchFieldException | SecurityException e) {
+			fieldNotExist = true;
+			underLineError(inputString, errCharIndex + indexOfLastDot + 1,
+					" Field '" + fieldName + " ' cannot be found");
+
 		}
 	}
 
