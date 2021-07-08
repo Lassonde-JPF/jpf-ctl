@@ -17,8 +17,9 @@ public class MyError {
 	HashSet<String> operatorsSet = new HashSet<>();
 	// Synchronized err and out prints
 	ConsoleWriter cWriter = new ConsoleWriter();
-	// number of input line
+	// Number of input line
 	static int inputLineNum = 0;
+	// To verify if the fields exists in the user input
 	boolean fieldNotExist = false;
 
 	/**
@@ -114,11 +115,12 @@ public class MyError {
 			}
 			//check and recover if the input formula contains any Java reserve word
 			if (lines[i].contains(".")) {
-
-				String[] substrings = lines[i].split("[.]");
+				
+				//check if the fields in the input exist
 				FieldExists(lines[i],inputString, index);
 				
-				
+				String[] substrings = lines[i].split("[.]");
+			
 				for (int j = 0; j < substrings.length; j++) {
 
 					if (reservedWordsSet.contains(substrings[j])) {
@@ -144,7 +146,7 @@ public class MyError {
 			result.append(" ");			
 		}	
 		
-		//if there is class not found error then terminate
+		//if there is field not found error then terminate
 		if(fieldNotExist)
 		{
 			System.exit(1);
@@ -159,6 +161,15 @@ public class MyError {
 		return input;		
 	}
 	
+	/**
+	 * This method verifies if the input fields exists 
+	 * If not, it will print the error messages on the console
+	 * 
+	 * @param atomicProposition - atomic proposition to verify if its fields exist 
+	 * @param inputString - input formula.
+	 * @param errCharIndex - error location in the input. 
+	 * 
+	 */
 	private void FieldExists(String atomicProposition, String inputString, int errCharIndex )
 	{
 		int indexOfLastDot = atomicProposition.lastIndexOf(".");
@@ -185,7 +196,7 @@ public class MyError {
 	 * 
 	 * @param errorLine	- input formula that contains error.
 	 * @param charPositionInLine - error location in the input.
-	 * @param errorChar - reserved word or operator used in the input.
+	 * @param errorMsg - error message.
 	 */
 	private void underLineError(String errorLine, int charPositionInLine, String errorMsg )
 	{

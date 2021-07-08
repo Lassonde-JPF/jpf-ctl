@@ -19,6 +19,7 @@ package ctl;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 import java.util.ArrayList;
 import java.util.Random;
@@ -194,12 +195,11 @@ class GeneratorTest {
 		Formula formula1 = generator.visit(tree);
 		
 		
-		ParseTreeWalker walker = new ParseTreeWalker();
-		MyCTLListener listener = new MyCTLListener();
+		//ParseTreeWalker walker = new ParseTreeWalker();
+		// listener = new MyCTLListener();
 		
-		walker.walk(listener, tree);
-		assertNotNull(formula1);
-		
+		//walker.walk(listener, tree);
+		assertNull(formula1);		
 	}
 
 	
