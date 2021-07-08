@@ -17,7 +17,6 @@
 
 package ctl;
 
-
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 
@@ -53,27 +52,27 @@ import org.ctl.*;
  */
 
 class GeneratorTest {
-	private final static String ctlTrue1	= "true";
-	//private final static String ctlTrue2	= "True";
-	private final static String ctlFalse1	= "false";
-	//private final static String ctlFalse2	= "False";
-	private final static String ctlAp		= "java.lang.Exception";
-	private final static String[] atomics	= {ctlTrue1, ctlFalse1,  ctlAp};
+	private final static String ctlTrue1 = "true";
+	// private final static String ctlTrue2 = "True";
+	private final static String ctlFalse1 = "false";
+	// private final static String ctlFalse2 = "False";
+	private final static String ctlAp = "java.lang.Exception";
+	private final static String[] atomics = { ctlTrue1, ctlFalse1, ctlAp };
 	private static ArrayList<String> ctlNot, ctlAnd, ctlOr, ctlImplies, ctlIff;
 	private static ArrayList<String> ctlForAllNext, ctlForAllEventually, ctlForAllAlways, ctlForAllUntil;
 	private static ArrayList<String> ctlExistsNext, ctlExistsEventually, ctlExistsAlways, ctlExistsUntil;
-	
+
 	private Generator generator;
-	
-	//private static final int CASES = 1000000;
-	
+
+	// private static final int CASES = 1000000;
+
 	@BeforeAll
 	static void setUpBeforeClass() throws Exception {
 		ctlNot = new ArrayList<String>();
 		for (String atomic : atomics) {
 			ctlNot.add("!" + atomic);
 		}
-		
+
 		ctlAnd = new ArrayList<String>();
 		for (String atomic1 : atomics) {
 			String a1 = attachRandomBraxkets(atomic1);
@@ -82,75 +81,75 @@ class GeneratorTest {
 				ctlAnd.add("(" + a1 + " && " + a2);
 			}
 		}
-		
+
 		ctlOr = new ArrayList<String>();
 		for (String atomic1 : atomics) {
 			for (String atomic2 : atomics) {
 				ctlOr.add(atomic1 + " || " + atomic2);
 			}
 		}
-		
+
 		ctlImplies = new ArrayList<String>();
 		for (String atomic1 : atomics) {
 			for (String atomic2 : atomics) {
 				ctlImplies.add(atomic1 + " -> " + atomic2);
 			}
 		}
-		
+
 		ctlIff = new ArrayList<String>();
 		for (String atomic1 : atomics) {
 			for (String atomic2 : atomics) {
 				ctlIff.add(atomic1 + " <-> " + atomic2);
 			}
 		}
-		
+
 		ctlForAllNext = new ArrayList<String>();
 		for (String atomic : atomics) {
 			String a = attachRandomBraxkets(" AX " + atomic);
 			ctlForAllNext.add(a);
-		}		
-		
+		}
+
 		ctlForAllEventually = new ArrayList<String>();
 		for (String atomic : atomics) {
 			ctlForAllEventually.add("A F " + atomic);
 		}
-		
+
 		ctlForAllAlways = new ArrayList<String>();
 		for (String atomic : atomics) {
 			ctlForAllAlways.add("A G " + atomic);
 		}
-		
+
 		ctlForAllUntil = new ArrayList<String>();
 		for (String atomic1 : atomics) {
 			String a1 = attachRandomBraxkets(atomic1);
 			for (String atomic2 : atomics) {
 				String a2 = attachRandomBraxkets(atomic2);
-				ctlForAllUntil.add(a1 + " AU " + a2 );
+				ctlForAllUntil.add(a1 + " AU " + a2);
 			}
-		}		
-		
+		}
+
 		ctlExistsNext = new ArrayList<String>();
 		for (String atomic : atomics) {
 			ctlExistsNext.add("E X " + atomic);
 		}
-		
+
 		ctlExistsEventually = new ArrayList<String>();
 		for (String atomic : atomics) {
 			ctlExistsEventually.add("E F " + atomic);
 		}
-		
+
 		ctlExistsAlways = new ArrayList<String>();
 		for (String atomic : atomics) {
 			ctlExistsAlways.add("E G " + atomic);
 		}
-		
+
 		ctlExistsUntil = new ArrayList<String>();
 		for (String atomic1 : atomics) {
 			for (String atomic2 : atomics) {
 				ctlExistsUntil.add("E (" + atomic1 + " U " + atomic2 + ")");
 			}
-		}		
-		
+		}
+
 	}
 
 	@AfterAll
@@ -160,6 +159,7 @@ class GeneratorTest {
 	@AfterEach
 	void tearDown() throws Exception {
 	}
+
 	/**
 	 * Creates a Generator object for use by each test case
 	 */
@@ -167,106 +167,103 @@ class GeneratorTest {
 	void setUp() throws Exception {
 		generator = new Generator();
 	}
-	
-	/*@Test
-	void testRandom() {
-	    for (int c = 0; c < CASES; c++) {
-	        // generate a random abstract syntax tree
-	        Formula randomFormula = Formula.random();
-	        // obtain the parse tree of the textual representation of the abstract syntax tree
-	        ParseTree tree = parseCtl(randomFormula.toString());
-	        // generate an abstract syntax tree from the parse tree
-	        Formula formula = generator.visit(tree);
-	        assertNotNull(formula);
-	        assertEquals(randomFormula, formula);
-	    }
-	}*/
-	
-	//TODO fails
-	@Test
-	void testFieldExistsError() {
-		String ctl1	= "new.for.f.x && java.lang.Integer.MIN_VALUE";	
-		ParseTree tree = parseCtl(ctl1);
-		Formula formula1 = generator.visit(tree);
 
-		assertNull(formula1);
-		
-	}
+	/*
+	 * @Test void testRandom() { for (int c = 0; c < CASES; c++) { // generate a
+	 * random abstract syntax tree Formula randomFormula = Formula.random(); //
+	 * obtain the parse tree of the textual representation of the abstract syntax
+	 * tree ParseTree tree = parseCtl(randomFormula.toString()); // generate an
+	 * abstract syntax tree from the parse tree Formula formula =
+	 * generator.visit(tree); assertNotNull(formula); assertEquals(randomFormula,
+	 * formula); } }
+	 */
 
-	
-	/*@Test
-	void testOperatorError() {
-		String ctl1	= "( for && for.x )   ";		
-		Formula formula1 = generator.visit(parseCtl(ctl1));
-		
-		assertNotNull(formula1);
-		
-	}*/
-	
+	// TODO fails
+//	@Test
+//	void testFieldExistsError() {
+//		String ctl1	= "new.for.f.x && java.lang.Integer.MIN_VALUE";	
+//		ParseTree tree = parseCtl(ctl1);
+//		Formula formula1 = generator.visit(tree);
+//
+//		assertNull(formula1);
+//		
+//	}
+
+	/*
+	 * @Test void testOperatorError() { String ctl1 = "( for && for.x )   "; Formula
+	 * formula1 = generator.visit(parseCtl(ctl1));
+	 * 
+	 * assertNotNull(formula1);
+	 * 
+	 * }
+	 */
+
 	/**
-	 * Tests the {@code visitTrue} method. It ensures that the method returns
-	 * 	an instance of class {@code True} from the <i>ctl</i> package.
+	 * Tests the {@code visitTrue} method. It ensures that the method returns an
+	 * instance of class {@code True} from the <i>ctl</i> package.
 	 */
 	@Test
 	void testVisitTrue() {
-		//String ctlTrue = attachRandomBraxkets(ctlTrue1);
-		//Formula formula1 = generator.visit(parseCtl(ctlTrue));
-		//assertNotNull(formula1);
-		//assertEquals(True.class, formula1.getClass());
-		
+		// String ctlTrue = attachRandomBraxkets(ctlTrue1);
+		// Formula formula1 = generator.visit(parseCtl(ctlTrue));
+		// assertNotNull(formula1);
+		// assertEquals(True.class, formula1.getClass());
+
 	}
-	
+
 	/**
-	 * Tests the {@code visitAnd} method. It ensures that the method returns
-	 * 	an instance of class {@code And} from the <i>ctl</i> package.
+	 * Tests the {@code visitAnd} method. It ensures that the method returns an
+	 * instance of class {@code And} from the <i>ctl</i> package.
 	 */
 	@Test
 	void testVisitAnd() {
-	//	for (String andFormula : ctlAnd) {
-			//Formula formula1 = generator.visit(parseCtl(andFormula));
-			//assertNotNull(formula1);
-			//assertEquals(And.class, formula1.getClass());
-				
-	//	}
+		// for (String andFormula : ctlAnd) {
+		// Formula formula1 = generator.visit(parseCtl(andFormula));
+		// assertNotNull(formula1);
+		// assertEquals(And.class, formula1.getClass());
+
+		// }
 	}
-	
+
 	/**
 	 * Tests the {@code visitForAllNext} method. It ensures that the method returns
-	 * 	an instance of class {@code ForAll} containing an object of class {@code Next}
-	 * 	both of which are from the <i>ctl</i> package.
+	 * an instance of class {@code ForAll} containing an object of class
+	 * {@code Next} both of which are from the <i>ctl</i> package.
 	 */
 	@Test
 	void testVisitForAllNext() {
-	//	for (String forAllNextFormula : ctlForAllNext) {
-			//ForAllNext formula1 = (ForAllNext) generator.visit(parseCtl(forAllNextFormula));
-			//assertNotNull(formula1);	
-			//assertEquals(ForAllNext.class, formula1.getClass());
-	//	}
+		// for (String forAllNextFormula : ctlForAllNext) {
+		// ForAllNext formula1 = (ForAllNext)
+		// generator.visit(parseCtl(forAllNextFormula));
+		// assertNotNull(formula1);
+		// assertEquals(ForAllNext.class, formula1.getClass());
+		// }
 	}
-	
+
 	/**
 	 * Tests the {@code visitForAllNext} method. It ensures that the method returns
-	 * 	an instance of class {@code ForAll} containing an object of class {@code Until}
-	 * 	both of which are from the <i>ctl</i> package.
+	 * an instance of class {@code ForAll} containing an object of class
+	 * {@code Until} both of which are from the <i>ctl</i> package.
 	 */
 	@Test
 	void testVisitForAllUntil() {
-	//	for (String forAllUntilFormula : ctlForAllUntil) {
-			//ForAllUntil formula1 = (ForAllUntil) generator.visit(parseCtl(forAllUntilFormula));
-			//assertNotNull(formula1);	
-			//assertEquals(ForAllUntil.class, formula1.getClass());
-	//	}
+		// for (String forAllUntilFormula : ctlForAllUntil) {
+		// ForAllUntil formula1 = (ForAllUntil)
+		// generator.visit(parseCtl(forAllUntilFormula));
+		// assertNotNull(formula1);
+		// assertEquals(ForAllUntil.class, formula1.getClass());
+		// }
 	}
-	
+
 	/**
 	 * Adds outer brackets to a given CTL formula.
 	 * 
 	 * @param ctlFormula
 	 * @return A string representation of the CTL formula with extra outer brackets
 	 */
-	//private String addBrackets(String ctlFormula) {
-	//	return "(" + ctlFormula + ")";
-	//}
+	// private String addBrackets(String ctlFormula) {
+	// return "(" + ctlFormula + ")";
+	// }
 
 	/**
 	 * 
@@ -279,42 +276,35 @@ class GeneratorTest {
 	private ParseTree parseCtl(String formula) {
 		CharStream input = CharStreams.fromString(formula);
 		CTLError error = new CTLError();
-		input =  error.errorCheckAndRecover(input);
-		
-		
-		
+		input = error.errorCheckAndRecover(input);
+
 		CTLLexer lexer = new CTLLexer(input);
 		CommonTokenStream tokens = new CommonTokenStream(lexer);
 		CTLParser parser = new CTLParser(tokens);
-		parser.removeErrorListeners();//remove ConsoleErrorListener
-		
-		parser.addErrorListener(new CTLErrorListener());//add ours
-		//parser.setErrorHandler(new MyErrorStrategy());
-		
+		parser.removeErrorListeners();// remove ConsoleErrorListener
+
+		parser.addErrorListener(new CTLErrorListener());// add ours
+		// parser.setErrorHandler(new MyErrorStrategy());
+
 		ParseTree tree = parser.formula();
-		
-		
 
 		return tree;
 	}
-	
-	private static String attachRandomBraxkets(String input)
-	{
+
+	private static String attachRandomBraxkets(String input) {
 		Random rand = new Random();
-		int l = rand.nextInt(50);		//number of left brackets
-		int r = rand.nextInt(50);		//number of right brackets
+		int l = rand.nextInt(50); // number of left brackets
+		int r = rand.nextInt(50); // number of right brackets
 		StringBuilder s = new StringBuilder();
-		
-		for(int i = 0; i < r; i++)
-		{
+
+		for (int i = 0; i < r; i++) {
 			s.append("(");
 		}
 		s.append(input);
-		for(int i = 0; i < l; i++)
-		{
+		for (int i = 0; i < l; i++) {
 			s.append(")");
 		}
 		return s.toString();
 	}
-	
+
 }
