@@ -53,16 +53,27 @@ public class Generator extends CTLBaseVisitor<Formula> {
 	 * 
 	 * @return The formula node contained within the brackets
 	 */
+	
+	/**
+	 * Visits the given Bracket node in the parse tree and returns the abstract syntax
+	 * tree corresponding to the subtree of the parse tree rooted at the Bracket node.
+	 * 
+	 * @param context a node in the syntax tree that corresponds to the Bracket
+	 * @return A {@code Formula} instance that represents abstract syntax tree corresponding 
+	 * to the formula within the brackets 
+	 */
 	@Override
 	public Formula visitBracket(BracketContext context) {
 		return visit(context.formula());
 	}
 
 	/**
-	 * Visits the subformula node of a ForAllAlways node in the parse tree. 
+	 * Visits the given ForAllAlways node in the parse tree and returns the abstract syntax
+	 * tree corresponding to the subtree of the parse tree rooted at the ForAllAlways node.
 	 * 
-	 * @return	A {@code ForAll} instance of an {@code Always} instance of the
-	 * 			inner subformula
+	 * @param context a node in the syntax tree that corresponds to the ForAllAlways alternative
+	 * @return A {@code ForAllAlways} instance that represents abstract syntax tree corresponding 
+	 * to the subtree of the parse tree rooted {@code context}
 	 */
 	@Override
 	public Formula visitForAllAlways(ForAllAlwaysContext context) {
@@ -70,11 +81,15 @@ public class Generator extends CTLBaseVisitor<Formula> {
 		return new ForAllAlways(formula);
 	}
 
+	
 	/**
-	 * Visits the left and right subformula nodes of an Or node in the parse tree. 
+	 * Visits the left and right sub trees of the given Or node in the parse tree and returns
+	 *  an Or instance containing the left and right abstract syntax trees 
 	 * 
-	 * @return	An {@code Or} instance containing the left and right subformulas
-	 */
+	 * @param context a node in the syntax tree that corresponds to the Or 
+	 * @return A {@code Or} instance that represents abstract syntax tree corresponding 
+	 * to the left and right subtree of the parse tree rooted {@code context}
+	 */	
 	@Override
 	public Formula visitOr(OrContext context) {
 		Formula left = (Formula) visit(context.formula(0));
@@ -82,10 +97,15 @@ public class Generator extends CTLBaseVisitor<Formula> {
 		return new Or(left, right);
 	}
 
+
 	/**
-	 * Visits the left and right subformula nodes of an Iff node in the parse tree.
-	 *  
-	 * @return	An {@code Iff} instance containing the left and right subformulas
+	 * Visits the left and right subtrees of the given Iff node in the parse tree 
+	 * and returns an Iff object containing the abstract syntax trees corresponding 
+	 * to the left and right subtrees of the parse tree rooted at the Iff node.
+	 * 
+	 * @param context a node in the syntax tree that corresponds to the Iff alternative
+	 * @return A {@code Iff} instance that represents the abstract syntax tree corresponding 
+	 * to the left and right subtrees of the parse tree rooted {@code context}
 	 */
 	@Override
 	public Formula visitIff(IffContext context) {
@@ -94,10 +114,12 @@ public class Generator extends CTLBaseVisitor<Formula> {
 		return new Iff(left, right);
 	}
 
+
 	/**
-	 * Visits a True terminal node in the parse tree.
+	 * Visits the given True Terminal node in the parse tree 
 	 * 
-	 * @return	A {@code True} instance
+	 * @param context a node in the syntax tree that corresponds to the True alternative
+	 * @return A {@code True} instance 
 	 */
 	@Override
 	public Formula visitTrue(TrueContext context) {
@@ -105,20 +127,24 @@ public class Generator extends CTLBaseVisitor<Formula> {
 	}
 
 	/**
-	 * Visits a False terminal node in the parse tree.
+	 * Visits the given False Terminal node in the parse tree 
 	 * 
-	 * @return	A {@code False} instance
-	 */
+	 * @param context a node in the syntax tree that corresponds to the False alternative
+	 * @return A {@code False} instance 
+	 */	
 	@Override
 	public Formula visitFalse(FalseContext context) {
 		return new False();
 	}
 
+
 	/**
-	 * Visits the subformula node of an ExistsEventually node in the parse tree.
-	 *  
-	 * @return	An {@code Exists} instance of an {@code Eventually} instance of the
-	 * 			inner subformula
+	 * Visits the given ExistsEventually node in the parse tree and returns the abstract syntax
+	 * tree corresponding to the subtree of the parse tree rooted at the ExistsEventually node.
+	 * 
+	 * @param context a node in the syntax tree that corresponds to the ExistsEventually alternative
+	 * @return A {@code ExistsEventually} instance that represents abstract syntax tree corresponding 
+	 * to the subtree of the parse tree rooted {@code context}
 	 */
 	@Override
 	public Formula visitExistsEventually(ExistsEventuallyContext context) {
@@ -126,22 +152,26 @@ public class Generator extends CTLBaseVisitor<Formula> {
 		return new ExistsEventually(formula);
 	}
 
+
 	/**
-	 * Visits an AtomicProposition terminal node in the parse tree.
+	 * Visits the given AtomicProposition Terminal node in the parse tree and return the context of atomic proposition 
 	 * 
-	 * @return	An {@code AtomicProposition} instance containing a string representation
-	 * 			of an atomic proposition as defined by the grammar
-	 */
+	 * @param context a node in the syntax tree that corresponds to the AtomicProposition alternative
+	 * @return A {@code AtomicProposition} instance containing a string representation of an atomic proposition as defined by the grammar
+	 */	
 	@Override
 	public Formula visitAtomicProposition(AtomicPropositionContext context) {
 		return new AtomicProposition(context.ATOMIC_PROPOSITION().toString());
 	}
 
+	
 	/**
-	 * Visits the subformula node of a ForAllEventually node in the parse tree.
-	 *  
-	 * @return	A {@code ForAll} instance of an {@code Eventually} instance of the
-	 * 			inner subformula
+	 * Visits the given ForAllEventually node in the parse tree and returns the abstract syntax
+	 * tree corresponding to the subtree of the parse tree rooted at the ForAllEventually node.
+	 * 
+	 * @param context a node in the syntax tree that corresponds to the ForAllEventually alternative
+	 * @return A {@code ForAllEventually} instance that represents abstract syntax tree corresponding 
+	 * to the subtree of the parse tree rooted {@code context}
 	 */
 	@Override
 	public Formula visitForAllEventually(ForAllEventuallyContext context) {
@@ -150,9 +180,12 @@ public class Generator extends CTLBaseVisitor<Formula> {
 	}
 
 	/**
-	 * Visits the subformula node of a Not node in the parse tree.
+	 * Visits the given Not node in the parse tree and returns the abstract syntax tree corresponding 
+	 * to the subtree of the parse tree rooted at the Not Node.
 	 * 
-	 * @return	A {@code Not} instance of the inner subformula
+	 * @param context a node in the syntax tree that corresponds to the Not alternative
+	 * @return	A {@code Not} instance that represents the abstract syntax tree corresponding to the subtree
+	 * of the parse tree rooted {@code context}
 	 */
 	@Override
 	public Formula visitNot(NotContext context) {
@@ -160,36 +193,46 @@ public class Generator extends CTLBaseVisitor<Formula> {
 		return new Not(formula);
 	}
 
+	//stop here
 	/**
-	 * Visits the left and right subformula nodes of a ForAllUntil node in the parse tree. 
-	 * 
-	 * @return	A {@code ForAll} instance of an {@code Until} instance containing the 
-	 * 			left and right subformulas
+	 * Visits the left and right sub trees of the given ForAllUntil node in the parse tree and returns
+	 *  an ForAllUntil instance containing the left and right abstract syntax trees 
+	 *  
+	 * @param context a node in the syntax tree that corresponds to the ForAllUntil formula 
+	 * @return A {@code ForAllUntil} instance that represents abstract syntax tree corresponding 
+	 * to the left and right subtree of the parse tree rooted {@code context}
 	 */
 	@Override
 	public Formula visitForAllUntil(ForAllUntilContext context) {
+	
+		Formula right = (Formula) visit(context.formula(1));
 		Formula left = (Formula) visit(context.formula(0));
-		Formula right = (Formula) visit(context.formula(1));	
 		return new ForAllUntil(left, right);
 	}
 
 	/**
-	 * Visits the left and right subformula nodes of an Implies node in the parse tree. 
-	 * 
-	 * @return	An {@code Implies} instance containing the left and right subformulas
+	 * Visits the left and right sub trees of the given Implies node in the parse tree and returns
+	 *  an Implies instance containing the left and right abstract syntax trees 
+	 *  
+	 * @param context a node in the syntax tree that corresponds to the Implies formula 
+	 * @return A {@code Implies} instance that represents abstract syntax tree corresponding 
+	 * to the left and right subtree of the parse tree rooted {@code context}
 	 */
 	@Override
 	public Formula visitImplies(ImpliesContext context) {
-		Formula left = (Formula) visit(context.formula(0));
+		
 		Formula right = (Formula) visit(context.formula(1));
+		Formula left = (Formula) visit(context.formula(0));
 		return new Implies(left, right);
 	}
 
 	/**
-	 * Visits the subformula node of a ForAllNext node in the parse tree. 
+	 * Visits the given ForAllNext node in the parse tree and returns the abstract syntax
+	 * tree corresponding to the subtree of the parse tree rooted at the ForAllNext node.
 	 * 
-	 * @return	A {@code ForAll} instance of a {@code Next} instance of the
-	 * 			inner subformula
+	 * @param context a node in the syntax tree that corresponds to the ForAllNext alternative
+	 * @return A {@code ForAllNext} instance that represents abstract syntax tree corresponding 
+	 * to the subtree of the parse tree rooted {@code context}
 	 */
 	@Override
 	public Formula visitForAllNext(ForAllNextContext context) {
@@ -198,9 +241,12 @@ public class Generator extends CTLBaseVisitor<Formula> {
 	}
 
 	/**
-	 * Visits the left and right subformula nodes of an And node in the parse tree. 
-	 * 
-	 * @return	An {@code And} instance containing the left and right subformulas
+	 * Visits the left and right sub trees of the given Implies node in the parse tree and returns
+	 *  an And instance containing the left and right abstract syntax trees 
+	 *  
+	 * @param context a node in the syntax tree that corresponds to the And formula 
+	 * @return A {@code And} instance that represents abstract syntax tree corresponding 
+	 * to the left and right subtree of the parse tree rooted {@code context}
 	 */
 	@Override
 	public Formula visitAnd(AndContext context) {
@@ -210,10 +256,12 @@ public class Generator extends CTLBaseVisitor<Formula> {
 	}
 
 	/**
-	 * Visits the subformula node of an ExistsAlways node in the parse tree. 
+	 * Visits the given ExistsAlways node in the parse tree and returns the abstract syntax
+	 * tree corresponding to the subtree of the parse tree rooted at the ExistsAlways node.
 	 * 
-	 * @return	An {@code Exists} instance of an {@code Always} instance of the
-	 * 			inner subformula
+	 * @param context a node in the syntax tree that corresponds to the ExistsAlways alternative
+	 * @return A {@code ExistsAlways} instance that represents abstract syntax tree corresponding 
+	 * to the subtree of the parse tree rooted {@code context}
 	 */
 	@Override
 	public Formula visitExistsAlways(ExistsAlwaysContext context) {
@@ -222,23 +270,28 @@ public class Generator extends CTLBaseVisitor<Formula> {
 	}
 
 	/**
-	 * Visits the left and right subformula nodes of an ExistsUntil node in the parse tree.
+	 * Visits the left and right sub trees of the given ExistsUntil node in the parse tree and returns
+	 *  an ExistsUntil instance containing the left and right abstract syntax trees 
 	 *  
-	 * @return	An {@code Exists} instance of an {@code Until} instance containing the
-	 * 			left and right subformulas
+	 * @param context a node in the syntax tree that corresponds to the ExistUntil formula 
+	 * @return A {@code ExistsUntil} instance that represents abstract syntax tree corresponding 
+	 * to the left and right subtree of the parse tree rooted {@code context}
 	 */
 	@Override
 	public Formula visitExistsUntil(ExistsUntilContext context) {
-		Formula left = (Formula) visit(context.formula(0));
+		
 		Formula right = (Formula) visit(context.formula(1));
+		Formula left = (Formula) visit(context.formula(0));
 		return new ExistsUntil(left, right);
 	}
 
-	/**
-	 * Visits the subformula node of an ExistsNext node in the parse tree. 
+	/** 
+	 * Visits the given ExistsNext node in the parse tree and returns the abstract syntax
+	 * tree corresponding to the subtree of the parse tree rooted at the ExistsNext node.
 	 * 
-	 * @return	An {@code Exists} instance of an {@code Next} instance of the
-	 * 			inner subformula
+	 * @param context a node in the syntax tree that corresponds to the ExistsNext alternative
+	 * @return A {@code ExistsNext} instance that represents abstract syntax tree corresponding 
+	 * to the subtree of the parse tree rooted {@code context}
 	 */
 	@Override
 	public Formula visitExistsNext(ExistsNextContext context) {
