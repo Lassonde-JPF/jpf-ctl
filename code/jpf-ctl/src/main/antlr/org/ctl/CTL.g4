@@ -54,10 +54,6 @@ ATOMIC_PROPOSITION
     : JAVANAME
     ;
 
-/* Skip white space */
-
-WS : [ \t\r\n\u000C]+ -> skip ; 
-
 fragment JAVANAME 
 	: IDENTIFIER ('.' IDENTIFIER)+
 	;
@@ -702,3 +698,7 @@ fragment IDENTIFIER_PART
 	| [\uFF10-\uFF19]
 	| [\uFFF9-\uFFFB]
 	;
+
+/* Skip white space */
+
+WS : [ \t\r\n\u000C]+ -> skip ; 
