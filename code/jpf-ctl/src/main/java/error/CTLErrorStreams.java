@@ -55,8 +55,7 @@ public class CTLErrorStreams {
 	public CharStream errorCheckAndRecover(CharStream input) { 
 		String output = Pattern.compile(SPACE).splitAsStream(input.toString())
 				//If the current token is an AtomicProposition then iterate though identifiers
-				.map(token -> token.contains(DOT) ? Pattern
-						.compile(DOT_REGEX).splitAsStream(token)
+				.map(token -> token.contains(DOT) ? Pattern.compile(DOT_REGEX).splitAsStream(token)
 						//If the current identifier is a reserved word then report and recover
 						.map(identifier -> reservedWordsSet.contains(identifier) ? identifier.toUpperCase() : identifier)
 						.collect(Collectors.joining(DOT)) : token)
