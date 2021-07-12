@@ -57,14 +57,37 @@ public class CTLErrorStreams {
 				//If the current token is an AtomicProposition then iterate though identifiers
 				.map(token -> token.contains(DOT) ? Pattern.compile(DOT_REGEX).splitAsStream(token)
 						//If the current identifier is a reserved word then report and recover
-						.map(identifier -> reservedWordsSet.contains(identifier) ? identifier.toUpperCase() : identifier)
+						.map(identifier -> reservedWordsSet.contains(identifier) ? reportWord(input.toString(), input.toString().indexOf(identifier), identifier) : identifier)
 						.collect(Collectors.joining(DOT)) : token)
 				//If the current token is an operator (invalid) then report and recover
-				.map(operator -> operatorsSet.contains(operator) ? operator+operator : operator)
+				.map(operator -> operatorsSet.contains(operator) ? reportOperator(input.toString(), input.toString().indexOf(operator), operator) : operator)
 				.collect(Collectors.joining(SPACE));
 
 		System.out.println("Parsed Formula: " + output);
 		return CharStreams.fromString(output);
+	} 
+	
+	private String reportWord(String errorLine, int charPositionInLine, String token) {
+		underLineError(errorLine, charPositionInLine, token);
+		return token.toUpperCase();
+	}
+	
+	private String reportOperator(String errorLine, int charPositionInLine, String token) {
+		underLineError(errorLine, charPositionInLine, token);
+		return token+token;
 	}
 
+	private void underLineError(String errorLine, int charPositionInLine, String token) {
+		System.err.println("line " + 0 + ":" + (charPositionInLine + 1) + " token recognition error at: '"
+				+ token + "'");
+		System.err.println(errorLine);
+		// To underlines the error location
+		for (int i = 0; i < charPositionInLine; i++)
+			System.err.print(" ");
+
+		for (int i = 0; i < token.length(); i++)
+			System.err.print("^");
+
+		System.err.println();
+	}
 }

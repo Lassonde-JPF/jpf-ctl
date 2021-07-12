@@ -20,6 +20,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import error.CTLError;
+import error.CTLErrorStreams;
 import error.FieldExists;
 
 
@@ -74,7 +75,7 @@ public class CTLErrorTest {
 	 */
 	private ParseTree parseCtl(String formula) {
 		CharStream input = CharStreams.fromString(formula);
-		CTLError error = new CTLError();
+		CTLErrorStreams error = new CTLErrorStreams();
 		input = error.errorCheckAndRecover(input);
 
 		CTLLexer lexer = new CTLLexer(input);
