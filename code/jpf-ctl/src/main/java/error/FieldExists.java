@@ -15,9 +15,9 @@ public class FieldExists extends CTLBaseListener {
 		try {
 			Class.forName(className).getDeclaredField(fieldName);
 		} catch (ClassNotFoundException e) {
-			System.out.println("Class: " + className + " does not exist");
+			System.err.println("WARNING: class " + className + " does not exist");
 		} catch (NoSuchFieldException | SecurityException e) {
-			System.out.println("Field: " + fieldName + " does not exist");
+			System.err.println("WARNING: field " + fieldName + " does not exist");
 		}
 	}
 

@@ -16,8 +16,6 @@ public class CTLError {
 	HashSet<String> reservedWordsSet = new HashSet<>();
 	// Hash set of operators
 	HashSet<String> operatorsSet = new HashSet<>();
-	// Synchronized err and out prints
-	ConsoleWriter cWriter = new ConsoleWriter();
 	// number of input line
 	static int inputLineNum = 0;
 	// To verify if the fields exists in the user input
@@ -57,7 +55,7 @@ public class CTLError {
 		int size = lines.length;
 		int index = 0; // the error character index in the input string
 		boolean hasError = false;
-		//cWriter.printlnout("Initial input: " + inputString);
+		// cWriter.printlnout("Initial input: " + inputString);
 
 		for (int i = 0; i < size; i++) {
 
@@ -65,7 +63,7 @@ public class CTLError {
 			if (operatorsSet.contains(lines[i])) {
 				hasError = true;
 				// call underLineError method to print the error message
-				underLineError(inputString, index, " token recognition error at: '" + lines[i] + " '");
+				underLineError(inputString, index, lines[i]);
 
 				result.append(lines[i]);
 			}
@@ -73,14 +71,14 @@ public class CTLError {
 			if (lines[i].contains(".")) {
 
 				String[] substrings = lines[i].split("[.]");
-				//FieldExists(lines[i], inputString, index);
+				// FieldExists(lines[i], inputString, index);
 
 				for (int j = 0; j < substrings.length; j++) {
 
 					if (reservedWordsSet.contains(substrings[j])) {
 						hasError = true;
 						// call underLineError method to print the error message
-						underLineError(inputString, index, " token recognition error at: '" + substrings[j] + " '");
+						underLineError(inputString, index, substrings[j]);
 						substrings[j] = substrings[j].toUpperCase();
 					}
 					result.append(substrings[j]);
@@ -104,7 +102,7 @@ public class CTLError {
 
 		// if there is error return the recovered input
 		if (hasError) {
-			cWriter.printout("\nRecovered input: " + result.toString());
+			System.out.println("Recovered input: " + result.toString());
 			return CharStreams.fromString(result.toString());
 		}
 
@@ -119,14 +117,17 @@ public class CTLError {
 	 * @param charPositionInLine - error location in the input.
 	 * @param errorChar          - reserved word or operator used in the input.
 	 */
-	private void underLineError(String errorLine, int charPositionInLine, String errorMsg) {
-		cWriter.printerr("\nline " + inputLineNum + ":" + (charPositionInLine + 1) + errorMsg);
-		cWriter.printerr("\n" + errorLine);
-		cWriter.printerr("\n");
+	private void underLineError(String errorLine, int charPositionInLine, String token) {
+		System.err.println("line " + inputLineNum + ":" + (charPositionInLine + 1) + " token recognition error at: '"
+				+ token + "'");
+		System.err.println(errorLine);
 		// To underlines the error location
 		for (int i = 0; i < charPositionInLine; i++)
-			cWriter.printerr(" ");
+			System.err.print(" ");
 
-		cWriter.printerr("^");
+		for (int i = 0; i < token.length(); i++)
+			System.err.print("^");
+
+		System.err.println();
 	}
 }
