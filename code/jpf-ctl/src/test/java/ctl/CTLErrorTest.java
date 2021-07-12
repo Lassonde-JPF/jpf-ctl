@@ -10,6 +10,7 @@ import org.antlr.v4.runtime.CharStream;
 import org.antlr.v4.runtime.CharStreams;
 import org.antlr.v4.runtime.CommonTokenStream;
 import org.antlr.v4.runtime.tree.ParseTree;
+import org.antlr.v4.runtime.tree.ParseTreeWalker;
 import org.ctl.CTLLexer;
 import org.ctl.CTLParser;
 import org.junit.jupiter.api.AfterAll;
@@ -19,6 +20,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import error.CTLError;
+import error.FieldExists;
 
 
 public class CTLErrorTest {
@@ -55,7 +57,7 @@ public class CTLErrorTest {
 	 @Test 
 	 void testOperatorError() 
 	 { 
-		 String ctl1 = "( C.f & C.new )   "; 
+		 String ctl1 = "( java.lang.Integer.f & C.new )   "; 
 		 Formula formula1 = generator.visit(parseCtl(ctl1));
 	 
 		 assertNotNull(formula1);	 
@@ -81,6 +83,9 @@ public class CTLErrorTest {
 		
 		ParseTree tree = parser.formula();
 
+		ParseTreeWalker ptw = new ParseTreeWalker();
+		ptw.walk(new FieldExists(), tree);
+	
 		return tree;
 	}
 
