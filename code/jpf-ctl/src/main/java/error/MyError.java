@@ -21,6 +21,8 @@ public class MyError {
 	static int inputLineNum = 0;
 	// To verify if the fields exists in the user input
 	public boolean fieldNotExist = false;
+	
+	StringBuilder errMsg = new StringBuilder();
 
 
 	/**
@@ -98,7 +100,6 @@ public class MyError {
 
 		inputLineNum++;									//input line number
 		StringBuilder recovedInput = new StringBuilder();		//the recovered input
-		StringBuilder outputErrMsg = new StringBuilder();		//the output message
 		String inputString = input.toString();
 		String[] lines = inputString.split(" ");
 		int size = lines.length;
@@ -112,7 +113,7 @@ public class MyError {
 			if (operatorsSet.contains(lines[i])) {
 				hasError = true;
 				//call underLineError method to print the error message
-				underLineError(outputErrMsg, inputString, index, " token recognition error at: '"+ lines[i] + " '" );
+				underLineError(inputString, index, " token recognition error at: '"+ lines[i] + " '" );
 
 				recovedInput.append(lines[i]);	
 			}
@@ -120,7 +121,7 @@ public class MyError {
 			if (lines[i].contains(".")) {
 				
 				//check if the fields in the input exist
-				FieldExists(outputErrMsg,lines[i],inputString, index);
+				//FieldExists(lines[i],inputString, index);
 				
 				String[] substrings = lines[i].split("[.]");
 			
@@ -129,7 +130,7 @@ public class MyError {
 					if (reservedWordsSet.contains(substrings[j])) {
 						hasError = true;
 						//call underLineError method to print the error message 
-						underLineError(outputErrMsg, inputString, index," token recognition error at: '"+ substrings[j] + " '" );
+						underLineError(inputString, index," token recognition error at: '"+ substrings[j] + " '" );
 						substrings[j] = substrings[j].toUpperCase();
 					}
 					recovedInput.append(substrings[j]);
@@ -152,14 +153,14 @@ public class MyError {
 		//if there is field not found error then terminate
 		if(fieldNotExist )
 		{
-			cWriter.printerr( outputErrMsg.toString() );
+			cWriter.printerr( errMsg.toString() );
 			return null;
 			
 		}
 		//if there is error print message on the console and return the recovered input
 		if(hasError)
 		{
-			cWriter.printerr( outputErrMsg.toString() );
+			cWriter.printerr(errMsg.toString() );
 			cWriter.printout("Initial   input: " + inputString + "\n" + "Recovered input: " + recovedInput.toString() + "\n");
 			
 			return CharStreams.fromString(recovedInput.toString());
@@ -177,7 +178,7 @@ public class MyError {
 	 * @param errCharIndex - error location in the input. 
 	 * 
 	 */
-	private void FieldExists(StringBuilder outputErrMsg,String atomicProposition, String inputString, int errCharIndex )
+	private void FieldExists(String atomicProposition, String inputString, int errCharIndex )
 	{
 		int indexOfLastDot = atomicProposition.lastIndexOf(".");
         String className = atomicProposition.substring(0, indexOfLastDot);
@@ -188,11 +189,11 @@ public class MyError {
  
         } catch (ClassNotFoundException e) { 
         	fieldNotExist = true;
-        	underLineError(outputErrMsg,inputString, errCharIndex," Class '"+ className + " ' cannot be found" );
+        	underLineError(inputString, errCharIndex," Class '"+ className + " ' cannot be found" );
         	
         } catch (NoSuchFieldException | SecurityException e) {     
         	fieldNotExist = true;
-        	underLineError(outputErrMsg,inputString, errCharIndex + indexOfLastDot + 1," Field '"+ fieldName + " ' cannot be found" );
+        	underLineError(inputString, errCharIndex + indexOfLastDot + 1," Field '"+ fieldName + " ' cannot be found" );
         	
         }
 	}
@@ -205,14 +206,15 @@ public class MyError {
 	 * @param charPositionInLine - error location in the input.
 	 * @param errorMsg - error message.
 	 */
-	private void underLineError(StringBuilder outputErrMsg, String errorLine, int charPositionInLine, String errorMsg )
+	private void underLineError(String errorLine, int charPositionInLine, String errorMsg )
 	{
-		outputErrMsg.append("\nline "+ inputLineNum +":"+ (charPositionInLine + 1) + errorMsg + "\n");
-		outputErrMsg.append(errorLine+ "\n");
+		
+		errMsg.append("\nline "+ inputLineNum +":"+ (charPositionInLine + 1) + errorMsg + "\n");
+		errMsg.append(errorLine+ "\n");
 		//To underlines the error location
 		for(int i=0; i<charPositionInLine; i++)
-			outputErrMsg.append(" ");
+			errMsg.append(" ");
 		
-		outputErrMsg.append("^"+ "\n");
+		errMsg.append("^"+ "\n");
 	}
 }
