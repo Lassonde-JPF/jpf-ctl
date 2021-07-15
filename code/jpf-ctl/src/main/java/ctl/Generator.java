@@ -17,24 +17,25 @@
 
 package ctl;
 
-import org.ctl.*;
-import org.ctl.CTLParser.AndContext;
-import org.ctl.CTLParser.AtomicPropositionContext;
-import org.ctl.CTLParser.BracketContext;
-import org.ctl.CTLParser.ExistsAlwaysContext;
-import org.ctl.CTLParser.ExistsEventuallyContext;
-import org.ctl.CTLParser.ExistsNextContext;
-import org.ctl.CTLParser.ExistsUntilContext;
-import org.ctl.CTLParser.FalseContext;
-import org.ctl.CTLParser.ForAllAlwaysContext;
-import org.ctl.CTLParser.ForAllEventuallyContext;
-import org.ctl.CTLParser.ForAllNextContext;
-import org.ctl.CTLParser.ForAllUntilContext;
-import org.ctl.CTLParser.IffContext;
-import org.ctl.CTLParser.ImpliesContext;
-import org.ctl.CTLParser.NotContext;
-import org.ctl.CTLParser.OrContext;
-import org.ctl.CTLParser.TrueContext;
+import ctl.CTLBaseVisitor;
+import ctl.CTLParser.AndContext;
+import ctl.CTLParser.AtomicPropositionContext;
+import ctl.CTLParser.BracketContext;
+import ctl.CTLParser.ExistsAlwaysContext;
+import ctl.CTLParser.ExistsEventuallyContext;
+import ctl.CTLParser.ExistsNextContext;
+import ctl.CTLParser.ExistsUntilContext;
+import ctl.CTLParser.FalseContext;
+import ctl.CTLParser.ForAllAlwaysContext;
+import ctl.CTLParser.ForAllEventuallyContext;
+import ctl.CTLParser.ForAllNextContext;
+import ctl.CTLParser.ForAllUntilContext;
+import ctl.CTLParser.IffContext;
+import ctl.CTLParser.ImpliesContext;
+import ctl.CTLParser.NotContext;
+import ctl.CTLParser.OrContext;
+import ctl.CTLParser.FormulaContext;
+import ctl.CTLParser.TrueContext;
 
 /**
  * Generates an abstract syntax tree from a parse tree.
@@ -44,15 +45,10 @@ import org.ctl.CTLParser.TrueContext;
  * @author Jessie Leung
  * @author Paul Sison
  * @author Franck van Breugel
+ * @author Parssa Khazra
+ * @author Hongru Wang
  */
-
 public class Generator extends CTLBaseVisitor<Formula> {
-
-	/**
-	 * Visits a bracket node in the parse tree.
-	 * 
-	 * @return The formula node contained within the brackets
-	 */
 	
 	/**
 	 * Visits the given Bracket node in the parse tree and returns the abstract syntax
@@ -81,7 +77,6 @@ public class Generator extends CTLBaseVisitor<Formula> {
 		return new ForAllAlways(formula);
 	}
 
-	
 	/**
 	 * Visits the left and right sub trees of the given Or node in the parse tree and returns
 	 *  an Or instance containing the left and right abstract syntax trees 
@@ -96,7 +91,6 @@ public class Generator extends CTLBaseVisitor<Formula> {
 		Formula right = (Formula) visit(context.formula(1));
 		return new Or(left, right);
 	}
-
 
 	/**
 	 * Visits the left and right subtrees of the given Iff node in the parse tree 
@@ -113,7 +107,6 @@ public class Generator extends CTLBaseVisitor<Formula> {
 		Formula right = (Formula) visit(context.formula(1));	
 		return new Iff(left, right);
 	}
-
 
 	/**
 	 * Visits the given True Terminal node in the parse tree 
@@ -137,7 +130,6 @@ public class Generator extends CTLBaseVisitor<Formula> {
 		return new False();
 	}
 
-
 	/**
 	 * Visits the given ExistsEventually node in the parse tree and returns the abstract syntax
 	 * tree corresponding to the subtree of the parse tree rooted at the ExistsEventually node.
@@ -152,7 +144,6 @@ public class Generator extends CTLBaseVisitor<Formula> {
 		return new ExistsEventually(formula);
 	}
 
-
 	/**
 	 * Visits the given AtomicProposition Terminal node in the parse tree and return the context of atomic proposition 
 	 * 
@@ -164,7 +155,6 @@ public class Generator extends CTLBaseVisitor<Formula> {
 		return new AtomicProposition(context.ATOMIC_PROPOSITION().toString());
 	}
 
-	
 	/**
 	 * Visits the given ForAllEventually node in the parse tree and returns the abstract syntax
 	 * tree corresponding to the subtree of the parse tree rooted at the ForAllEventually node.
@@ -193,7 +183,6 @@ public class Generator extends CTLBaseVisitor<Formula> {
 		return new Not(formula);
 	}
 
-	//stop here
 	/**
 	 * Visits the left and right sub trees of the given ForAllUntil node in the parse tree and returns
 	 *  an ForAllUntil instance containing the left and right abstract syntax trees 
@@ -204,7 +193,7 @@ public class Generator extends CTLBaseVisitor<Formula> {
 	 */
 	@Override
 	public Formula visitForAllUntil(ForAllUntilContext context) {
-	
+		// AU is right associative so we visit the right sub tree first	
 		Formula right = (Formula) visit(context.formula(1));
 		Formula left = (Formula) visit(context.formula(0));
 		return new ForAllUntil(left, right);
@@ -220,7 +209,7 @@ public class Generator extends CTLBaseVisitor<Formula> {
 	 */
 	@Override
 	public Formula visitImplies(ImpliesContext context) {
-		
+		// -> is right associative so we visit the right sub tree first
 		Formula right = (Formula) visit(context.formula(1));
 		Formula left = (Formula) visit(context.formula(0));
 		return new Implies(left, right);
@@ -279,7 +268,7 @@ public class Generator extends CTLBaseVisitor<Formula> {
 	 */
 	@Override
 	public Formula visitExistsUntil(ExistsUntilContext context) {
-		
+		// EU is right associative so we visit the right sub tree first
 		Formula right = (Formula) visit(context.formula(1));
 		Formula left = (Formula) visit(context.formula(0));
 		return new ExistsUntil(left, right);
