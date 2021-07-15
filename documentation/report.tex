@@ -37,6 +37,7 @@
 \usepackage{amsthm}
 \newtheorem{theorem}{Theorem}
 \newtheorem{proposition}{Proposition}
+\newtheorem{corollary}{Corollary}
 \theoremstyle{definition}
 \newtheorem{definition}{Definition}
 
@@ -638,11 +639,6 @@ $\satisfaction{\exists \varphi \until \psi}(s) = $ \textcolor{blue}{details stil
 \end{itemize}
 \end{definition}
 
-\bibliographystyle{plain}
-\bibliography{report}
-
-\end{document}
-
 \begin{franck}
 Which paths to consider for the formulas that start with a quantifier is subtle.  Next, we discuss our choices and motivate them by means of examples.
 
@@ -663,7 +659,7 @@ Consider the following partial transition system.
 \draw[->] (0)--(1);
 \end{tikzpicture}
 \end{center}
-Since state~0 is not fully explored, state~0 may have transitions to states other than state~1.  Those other states may not be red and, hence, we do not know whether  $\forall \nxt \mbox{red}$ holds in state~0.  Therefore, for a non-fully explored state~$s$, we consider also all potential successors of state~$s$ when determining if $\forall \nxt \varphi$ holds in $s$:
+Since state~0 is not fully explored, state~0 has transitions to states other than state~1.  Those other states may not be red and, hence, we do not know whether  $\forall \nxt \mbox{red}$ holds in state~0.  Therefore, for a non-fully explored state~$s$, we consider also all potential successors of state~$s$ when determining if $\forall \nxt \varphi$ holds in $s$:
 \[
 \{\, \pi[1] \mid \pi \in \mathit{Paths}(s) \,\}
 \]
@@ -679,7 +675,15 @@ To conclude that $\satisfaction{\forall \nxt \varphi}(s)$ is false, we need to f
 \draw[->] (0)--(1);
 \end{tikzpicture}
 \end{center}
-Since state~0 transitions to a state that is not red, we can conclude that $\forall \nxt \mbox{red}$ does not hold in state~0.  Because state~1 is not fully explored, it has unexplored outgoing transitions.  Hence, the path $0\ 1$ is not complete.  Therefore, we consider both complete and partial paths starting from state~$s$ when determining if $\satisfaction{\forall \nxt \varphi}(s) = \perp$.  Obviously, potential paths should not be considered.
+Since state~0 transitions to a state that is not red, we can conclude that $\forall \nxt \mbox{red}$ does not hold in state~0.  Because state~1 is not fully explored, it has unexplored outgoing transitions.  Hence, the path $0\ 1$ is not complete.  Therefore, we consider both complete and partial paths starting from state~$s$ when determining if $\satisfaction{\forall \nxt \varphi}(s) = \perp$.
+
+Consider the following partial transition system.
+\begin{center}
+\begin{tikzpicture}[yscale=0.9]
+\node[rectangle,fill=red!20] (0) at (1,2.5) {0};
+\end{tikzpicture}
+\end{center}
+Since state~0 is not fully explored, it has transitions.  As a consequence, the formula $\forall \nxt \FALSE$ does not holds in state~0.  More generally, if there are potential paths starting of state~$s$ and the second state of those potential paths does not satisfy $\varphi$, then we can conclude that $\forall \nxt \varphi$ does not holds in $s$.
 
 \subsection*{$\satisfaction{\exists \nxt \varphi}(s) = \top$}
 
@@ -693,6 +697,14 @@ To conclude that $\satisfaction{\exists \nxt \varphi}(s)$ is true, we need a wit
 \end{tikzpicture}
 \end{center}
 Since state~0 transitions to a state that is red, we can conclude that $\exists \nxt \mbox{red}$ holds in state~0.  Because state~1 is not fully explored, it has unexplored outgoing transitions.  Hence, the path $0\ 1$ is not complete.  Therefore, we consider both complete and partial paths starting from state~$s$ when determining if $\satisfaction{\exists \nxt \varphi}(s) = \top$.  Obviously, potential paths should not be considered.
+
+Consider the following partial transition system.
+\begin{center}
+\begin{tikzpicture}[yscale=0.9]
+\node[rectangle,fill=red!20] (0) at (1,2.5) {0};
+\end{tikzpicture}
+\end{center}
+Since state~0 is not fully explored, it has transitions.  As a consequence, the formula $\forall \nxt \TRUE$ holds in state~0.  More generally, if there are potential paths starting of state~$s$ and the second state of those potential paths satifies $\varphi$, then we can conclude that $\forall \nxt \varphi$ holds in $s$.
 
 \subsection*{$\satisfaction{\exists \nxt \varphi}(s) = \perp$}
 
@@ -745,8 +757,7 @@ Consider the following partial transition system.
 \node[rectangle,fill=red!20] (0) at (1,2.5) {0};
 \end{tikzpicture}
 \end{center}
-If $\varphi \equiv \TRUE$ then $\exists \always \varphi \equiv \TRUE$ 
-
+Since state~0 is not fully explored, it has transitions.  As a consequence, the formula $\exists \always \TRUE$ holds in state~0.  More generally, if there are potential paths starting of state~$s$ and all the states of those potential paths satify $\varphi$, then we can conclude that $\exists \always \varphi$ holds in $s$.
 
 \subsection*{$\satisfaction{\exists \always \varphi}(s) = \perp$}
 
@@ -791,6 +802,14 @@ To conclude that $\satisfaction{\forall \eventually \varphi}(s)$ is false, we ne
 \end{center}
 Since state~1 is not fully explored, the path $0\ 1$ is partial.  This partial path may be the prefix of a complete path that includes red states and, hence, we cannot conclude that $\satisfaction{\forall \eventually \mbox{red}}(0) = \perp$.  Therefore, we consider complete paths only when determining if $\satisfaction{\forall \eventually \varphi}(s) = \perp$.
 
+Consider the following partial transition system.
+\begin{center}
+\begin{tikzpicture}[yscale=0.9]
+\node[rectangle,fill=red!20] (0) at (1,2.5) {0};
+\end{tikzpicture}
+\end{center}
+Since state~0 is not fully explored, it has transitions.  As a consequence, the formula $\forall \eventually \FALSE$ does not hold in state~0.  More generally, if there are potential paths starting of state~$s$ and all the states of those potential paths do not satify $\varphi$, then we can conclude that $\forall \eventually \varphi$ does not hold in $s$.
+
 \subsection*{$\satisfaction{\exists \eventually \varphi}(s) = \top$}
 
 To conclude that $\satisfaction{\exists \eventually \varphi}(s)$ is true, we need to find a witness, that is, a path starting in state~$s$ that contains a state that satisfies $\varphi$.  The path can either be complete or partial.
@@ -799,6 +818,26 @@ To conclude that $\satisfaction{\exists \eventually \varphi}(s)$ is true, we nee
 
 To conclude that $\satisfaction{\exists \eventually \varphi}(s)$ is false, no path starting in state~$s$ should contain a state that satisfies $\varphi$.  Hence, we need to consider complete, partial, and potential paths.
 \end{franck}
+
+\section{Existential Normal Form}
+
+In \cite[Definition~6.13]{BK08}, an existential normal form has been introduced.  It restricts the syntax of CTL.  In particular, it restricts to existential quantifiers, eliminating the universal quantifiers.  Furthermore, in \cite[Theorem~6.14]{BK08}, it is shown that for each CTL formula there exists an equivalent CTL formula in existential normal.  Below, we extend these results to the setting of partial transition systems.
+
+\begin{definition}
+Let $\mathit{AP}$ be the set of atomic propositions.  The set of CTL formulas in existential normal form is defined by the following grammar.
+\[
+\varphi
+::= a
+\mid \neg \varphi
+\mid \varphi \wedge \varphi
+\mid \exists \nxt \varphi
+\mid \exists \always \varphi
+\mid \exists \eventually \varphi
+\mid \exists \varphi \until \varphi
+\mid \forall \varphi \until \varphi
+\]
+where $a \in \mathit{AP}$.
+\end{definition}
 
 Next, we define equivalence of CTL formulas.
 
@@ -915,8 +954,10 @@ Since
 and
 \begin{align*}
 \satisfaction{\forall \nxt \varphi}(s) = \perp
-\mbox{ iff } & \exists \pi \in \mathit{CoPaths}(s) \cup \mathit{PaPaths}(s) : |\pi| > 1 \wedge \satisfaction{\varphi}(\pi[1]) = \perp\\
-\mbox{ iff } & \exists \pi \in \mathit{CoPaths}(s) \cup \mathit{PaPaths}(s) : |\pi| > 1 \wedge \satisfaction{\neg \varphi}(\pi[1]) = \top\\
+\mbox{ iff } & (\exists \pi \in \mathit{CoPaths}(s) \cup \mathit{PaPaths}(s) : |\pi| > 1 \wedge \satisfaction{\varphi}(\pi[1]) = \perp) \vee\\
+& (\mathit{PoPaths}(s) \not= \emptyset \wedge \forall \pi \in (\mathit{PoPaths}(s) : |\pi| > 1 \wedge \satisfaction{\varphi}(\pi[1]) = \perp)\\
+\mbox{ iff } & (\exists \pi \in \mathit{CoPaths}(s) \cup \mathit{PaPaths}(s) : |\pi| > 1 \wedge \satisfaction{\neg \varphi}(\pi[1]) = \top) \vee\\
+& (\mathit{PoPaths}(s) \not= \emptyset \wedge \forall \pi \in (\mathit{PoPaths}(s) : |\pi| > 1 \wedge \satisfaction{\neg \varphi}(\pi[1]) = \top)\\
 \mbox{ iff } & \satisfaction{\exists \nxt \neg \varphi}(s) = \top\\
 \mbox{ iff } & \satisfaction{\neg \exists \nxt \neg \varphi}(s) = \perp
 \end{align*}
@@ -951,8 +992,10 @@ Since
 and
 \begin{align*}
 \satisfaction{\forall \eventually \varphi}(s) = \perp
-\mbox{ iff } & \exists \pi \in \mathit{CoPaths}(s) : \forall 0 \leq i < |\pi| : \satisfaction{\varphi}(\pi[1]) = \perp\\
-\mbox{ iff } & \exists \pi \in \mathit{CoPaths}(s) : \forall 0 \leq i < |\pi| : \satisfaction{\neg \varphi}(\pi[1]) = \top\\
+\mbox{ iff } & (\exists \pi \in \mathit{CoPaths}(s) : \forall 0 \leq i < |\pi| : \satisfaction{\varphi}(\pi[1]) = \perp) \vee\\
+& (\mathit{PoPaths}(s) \not= \emptyset \wedge \forall \pi \in \mathit{PoPaths}(s) : \forall 0 \leq i < |\pi| : \satisfaction{\varphi}(\pi[i]) = \perp)\\
+\mbox{ iff } & (\exists \pi \in \mathit{CoPaths}(s) : \forall 0 \leq i < |\pi| : \satisfaction{\neg \varphi}(\pi[1]) = \top) \vee\\
+& (\mathit{PoPaths}(s) \not= \emptyset \wedge \forall \pi \in \mathit{PoPaths}(s) : \forall 0 \leq i < |\pi| : \satisfaction{\neg \varphi}(\pi[i]) = \top)\\
 \mbox{ iff } & \satisfaction{\exists \always \neg \varphi}(s) = \top\\
 \mbox{ iff } & \satisfaction{\neg \exists \always \neg \varphi}(s) = \perp
 \end{align*}
@@ -960,21 +1003,13 @@ we can conclude that $\forall \eventually \varphi \equiv \neg \exists \always \n
 \end{enumerate}
 \end{proof}
 
-As a consequence, we can restrict our attention to CTL formulas defined by the grammar
-\[
-\varphi
-::= a
-\mid \neg \varphi
-\mid \varphi \wedge \varphi
-\mid \exists \nxt \varphi
-\mid \exists \always \varphi
-\mid \exists \eventually \varphi
-\mid \exists \varphi \until \varphi
-\mid \forall \varphi \until \varphi
-\]
-where $a \in \mathit{AP}$.
+\begin{corollary}
+For each CTL formula there exists an equivalent CTL formula in existential normal form.
+\end{corollary}
+
 \end{franck}
 
+\section{}
 
 For a partial transition system in which all states are fully explored, that is, an ordinary transition system, $\satisfaction{\ }$ corresponds to $\models$ as defined in \cite[Definition~6.4]{BK08} adjusted to deal with finite paths (along the lines of \cite{GV13}) as follows:
 \begin{itemize}
@@ -1052,7 +1087,10 @@ and
 For the CTL formula $\exists \nxt \varphi$ we have that
 \begin{align*}
 & \satisfaction{\exists \nxt \varphi}(s) = \top\\
-\mbox{iff } & \exists \pi \in \mathit{CoPaths}(s) \cup \mathit{PaPaths}(s) : |\pi| > 1 \wedge \satisfaction{\varphi}(\pi[1]) = \top\\
+\mbox{iff } & (\exists \pi \in \mathit{CoPaths}(s) \cup \mathit{PaPaths}(s) : |\pi| > 1 \wedge \satisfaction{\varphi}(\pi[1]) = \top) \vee\\
+& (\mathit{PoPaths}(s) \not= \emptyset \wedge \forall \pi \in \mathit{PoPaths}(s) : |\pi| > 1 \wedge \satisfaction{\varphi}(\pi[1]) = \top)\\
+\mbox{iff } & \exists \pi \in \mathit{CoPaths}(s) \cup \mathit{PaPaths}(s) : |\pi| > 1 \wedge \satisfaction{\varphi}(\pi[1]) = \top
+\comment{Proposition~\ref{proposition:no-potential-paths}.1}\\
 \mbox{iff } & \exists \pi \in \mathit{CoPaths}(s) \cup \mathit{PaPaths}(s) : |\pi| > 1 \wedge \pi[1] \models \varphi
 \comment{by induction}\\
 \mbox{iff } & \exists \pi \in \mathit{CoPaths}(s) : |\pi| > 1 \wedge \pi[1] \models \varphi
@@ -1075,7 +1113,10 @@ and
 For the CTL formula $\exists \always \varphi$ we have that
 \begin{align*}
 & \satisfaction{\exists \always \varphi}(s) = \top\\
-\mbox{iff } & \exists \pi \in \mathit{CoPaths}(s) : \forall 0 \leq i < |\pi| : \satisfaction{\varphi}(\pi[i]) = \top\\
+\mbox{iff } & (\exists \pi \in \mathit{CoPaths}(s) : \forall 0 \leq i < |\pi| : \satisfaction{\varphi}(\pi[i]) = \top) \vee\\
+& (\mathit{PoPaths}(s) \not= \emptyset \wedge \forall \pi \in \mathit{PoPaths}(s) : \forall 0 \leq i < |\pi| : \satisfaction{\varphi}(\pi[i]) = \top)\\
+\mbox{iff } & \exists \pi \in \mathit{CoPaths}(s) : \forall 0 \leq i < |\pi| : \satisfaction{\varphi}(\pi[i]) = \top
+\comment{Proposition~\ref{proposition:no-potential-paths}.1}\\
 \mbox{iff } & \exists \pi \in \mathit{CoPaths}(s) : \forall 0 \leq i < |\pi| : \pi[i] \models \varphi
 \comment{by induction}\\
 \mbox{iff } & s \models \exists \always \varphi
@@ -1130,6 +1171,12 @@ Let $\varphi$ be a CTL formula.  Then
 \end{align*}
 \end{definition}
 \color{black}
+
+\bibliographystyle{plain}
+\bibliography{report}
+
+\end{document}
+
 
 \begin{theorem}
 Let $(S, F, \rightarrow, I, \mathit{AP}, L)$ be a partial transition system.  For all $a \in \mathit{AP}$ and $\varphi$, $\psi \in \mathit{CTL}$,
@@ -1197,8 +1244,15 @@ Let $(S, F, \rightarrow, I, \mathit{AP}, L)$ be a partial transition system.  Fo
 %\end{align*}
 \item
 \begin{align*}
-\mathit{Sat}(\exists \nxt \varphi) & = 
-\{\, s \in S \mid \mathit{post}(s) \cap \mathit{Sat}(\varphi) \not= \emptyset \,\}\\
+\mathit{Sat}(\exists \nxt \varphi) & = \left \{
+\begin{array}{ll}
+(S \setminus F) \cup \{\, s \in F \mid \mathit{post}(s) \not= \emptyset \,\}
+& \mbox{if $\varphi \equiv \TRUE$}\\
+\{\, s \in S \mid \mathit{post}(s) \cap \mathit{Sat}(\varphi) \not= \emptyset \,\}
+& \mbox{otherwise}
+\end{array}
+\right .
+\\
 \mathit{Unsat}(\exists \nxt \varphi) & = 
 \{\, s \in F \mid \mathit{post}(s) \subseteq \mathit{Unsat}(\varphi) \,\}
 %\mathit{Unknown}(\exists \nxt \varphi) & = S \setminus (\mathit{Sat}(\exists \nxt \varphi) \cup \mathit{Unsat}(\exists \nxt \varphi))
@@ -1266,30 +1320,30 @@ and
 \item 
 \begin{franck}
 Consider the CTL formula $\exists \nxt \varphi$.  
-%For $\mathit{Sat}$, we distinguish two cases.
-%\begin{itemize}
-%\item 
-%Assume that $\varphi \equiv \TRUE$.  Then
-%\begin{align*}
-%\mathit{Sat}(\exists \nxt \varphi)
-%= & \{\, s \in S \mid \satisfaction{\exists \nxt \varphi}(s) = \top \,\}\\
-%= & \{\, s \in S \mid \exists \pi \in \mathit{CoPaths}(s) \cup \mathit{PaPaths}(s) : |\pi| > 1 \wedge \satisfaction{\varphi}(\pi[1]) = \top \,\}\\
-%= & \{\, s \in S \mid \exists \pi \in \mathit{CoPaths}(s) \cup \mathit{PaPaths}(s) : |\pi| > 1 \wedge \satisfaction{\TRUE}(\pi[1]) = \top \,\}\\
-%& \comment{$\varphi \equiv \TRUE$}\\
-%= & \{\, s \in S \mid \exists \pi \in \mathit{CoPaths}(s) \cup \mathit{PaPaths}(s) : |\pi| > 1 \,\}\\
-%= & \{\, s \in S \setminus F \mid \exists \pi \in \mathit{CoPaths}(s) \cup \mathit{PaPaths}(s) : |\pi| > 1 \,\} \cup\\
-%& \{\, s \in F \mid \exists \pi \in \mathit{CoPaths}(s) \cup \mathit{PaPaths}(s) : |\pi| > 1 \,\}\\
-%= & (S \setminus F) \cup \{\, s \in F \mid \mathit{post} \not= \emptyset \,\}
-%\end{align*}
-%\item
-%Otherwise, $\varphi \not\equiv \TRUE$.  Hence, then there exists $s_{\perp} \in \mathcal{S} \setminus S$ such that $\satisfaction{\varphi}(s_{\perp}) \not= \satisfaction{\TRUE}(s_{\perp}) = \top$.  We distinguish two cases.
-%\begin{itemize}
-%\item 
-%Assume that $s \in S \setminus F$.  Then $s s_{\perp} \in \mathit{PoPaths}(s)$.  Since $\satisfaction{\varphi}((s s_{\perp})[1]) = \satisfaction{\varphi}(s_{\perp}) \not= \top$, we can conclude that $\satisfaction{\varphi}(\pi[1]) \not= \top$ for some $\pi \in \mathit{Paths}(s)$ with $|\pi| > 1$.  
-%\item
-%Assume $s \in F$.  Then $\mathit{post(s)} = \{\, \pi[1] \mid \pi \in \mathit{Paths}(s) \mbox{ with } |\pi| > 1\,\}$.
-%\end{itemize}
-%From the above, we can conclude that
+For $\mathit{Sat}$, we distinguish two cases.
+\begin{itemize}
+\item 
+Assume that $\varphi \equiv \TRUE$.  Then
+\begin{align*}
+\mathit{Sat}(\exists \nxt \varphi)
+= & \{\, s \in S \mid \satisfaction{\exists \nxt \varphi}(s) = \top \,\}\\
+= & \{\, s \in S \mid \exists \pi \in \mathit{CoPaths}(s) \cup \mathit{PaPaths}(s) : |\pi| > 1 \wedge \satisfaction{\varphi}(\pi[1]) = \top \,\}\\
+= & \{\, s \in S \mid \exists \pi \in \mathit{CoPaths}(s) \cup \mathit{PaPaths}(s) : |\pi| > 1 \wedge \satisfaction{\TRUE}(\pi[1]) = \top \,\}\\
+& \comment{$\varphi \equiv \TRUE$}\\
+= & \{\, s \in S \mid \exists \pi \in \mathit{CoPaths}(s) \cup \mathit{PaPaths}(s) : |\pi| > 1 \,\}\\
+= & \{\, s \in S \setminus F \mid \exists \pi \in \mathit{CoPaths}(s) \cup \mathit{PaPaths}(s) : |\pi| > 1 \,\} \cup\\
+& \{\, s \in F \mid \exists \pi \in \mathit{CoPaths}(s) \cup \mathit{PaPaths}(s) : |\pi| > 1 \,\}\\
+= & (S \setminus F) \cup \{\, s \in F \mid \mathit{post} \not= \emptyset \,\}
+\end{align*}
+\item
+Otherwise, $\varphi \not\equiv \TRUE$.  Hence, then there exists $s_{\perp} \in \mathcal{S} \setminus S$ such that $\satisfaction{\varphi}(s_{\perp}) \not= \satisfaction{\TRUE}(s_{\perp}) = \top$.  We distinguish two cases.
+\begin{itemize}
+\item 
+Assume that $s \in S \setminus F$.  Then $s s_{\perp} \in \mathit{PoPaths}(s)$.  Since $\satisfaction{\varphi}((s s_{\perp})[1]) = \satisfaction{\varphi}(s_{\perp}) \not= \top$, we can conclude that $\satisfaction{\varphi}(\pi[1]) \not= \top$ for some $\pi \in \mathit{Paths}(s)$ with $|\pi| > 1$.  
+\item
+Assume $s \in F$.  Then $\mathit{post(s)} = \{\, \pi[1] \mid \pi \in \mathit{Paths}(s) \mbox{ with } |\pi| > 1\,\}$.
+\end{itemize}
+From the above, we can conclude that
 \begin{align*}
 \mathit{Sat}(\exists \nxt \varphi)
 = & \{\, s \in S \mid \satisfaction{\exists \nxt \varphi}(s) = \top \,\}\\
