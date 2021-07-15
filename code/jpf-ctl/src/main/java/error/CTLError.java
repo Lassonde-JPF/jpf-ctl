@@ -15,14 +15,12 @@ import org.antlr.v4.runtime.CharStreams;
  */
 public class CTLError {
 	// Hash set of Java reserved words
-	HashSet<String> reservedWordsSet = new HashSet<>();
+	//HashSet<String> reservedWordsSet = new HashSet<>();
 	// Hash set of operators
 	HashSet<String> operatorsSet = new HashSet<>();
 	// number of input line
 	static int inputLineNum = 0;
-	// To verify if the fields exists in the user input
-	boolean fieldNotExist = false;
-	
+
 	StringBuilder errMsg = new StringBuilder();
 
 	/**
@@ -31,13 +29,13 @@ public class CTLError {
 	 */
 	public CTLError() {
 		// adding Java reserve words to the hash set
-		reservedWordsSet.addAll(Arrays.asList(new String[] { "abstract", "assert", "boolean", "break", "byte", "case",
+		/*reservedWordsSet.addAll(Arrays.asList(new String[] { "abstract", "assert", "boolean", "break", "byte", "case",
 				"catch", "char", "class", "const", "continue", "default", "do", "double", "else", "enum", "extends",
 				"final", "finally", "float", "for", "if", "goto", "implements", "import", "instanceof", "int",
 				"interface", "long", "native", "new", "package", "private", "protected", "public", "return", "short",
 				"static", "strictfp", "super", "switch", "synchronized", "this", "throw", "throws", "transient", "try",
 				"void", "volatile", "while" }));
-
+		*/
 		// adding missing operators to the hash set
 		operatorsSet.add("&");
 		operatorsSet.add("|");
@@ -69,10 +67,11 @@ public class CTLError {
 				hasError = true;
 				//call underLineError method to print the error message
 				underLineError(inputString, index, " token recognition error at: '"+ lines[i] + " '" );
-
+				index += 2;
 				recovedInput.append(lines[i]);	
+				recovedInput.append(lines[i]);
 			}
-			//check and recover if the input formula contains any Java reserve word
+			/*//check and recover if the input formula contains any Java reserve word
 			if (lines[i].contains(".")) {
 				
 				//check if the fields in the input exist
@@ -97,21 +96,15 @@ public class CTLError {
 				}
 				
 				
-			} else 
+			}*/
+			 else 
 			{				
 				recovedInput.append(lines[i]);	
 				index += lines[i].length() + 1;
 			}			
 			recovedInput.append(" ");			
 		}	
-		
-		//if there is field not found error then terminate
-		if(fieldNotExist )
-		{
-			System.err.print( errMsg.toString() );
-			return null;
-			
-		}
+
 		//if there is error print message on the console and return the recovered input
 		if(hasError)
 		{
@@ -119,9 +112,9 @@ public class CTLError {
 			try {
 				Thread.sleep(1);
 			} catch (InterruptedException e) {
-	
+				
 			}
-			System.out.print("Initial   input: " + inputString + "\n" + "Recovered input: " + recovedInput.toString() + "\n");
+			System.out.print("Initial   input: " + inputString + "\n" + "Recovered input: " + recovedInput.toString() + "\n\n");
 			
 			return CharStreams.fromString(recovedInput.toString());
 		}

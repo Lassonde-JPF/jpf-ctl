@@ -31,6 +31,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import error.CTLError;
+import error.FieldExists;
 
 import org.antlr.v4.runtime.CharStream;
 import org.antlr.v4.runtime.CharStreams;
@@ -96,6 +97,9 @@ class GeneratorTest {
 		CTLParser parser = new CTLParser(tokens);
 		
 		ParseTree tree = parser.formula();
+		
+		ParseTreeWalker walker = new ParseTreeWalker();
+		walker.walk(new FieldExists(), tree);
 
 		return tree;
 	}
