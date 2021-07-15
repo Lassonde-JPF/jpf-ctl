@@ -45,6 +45,8 @@
 \usepackage{stmaryrd}
 \newcommand{\satisfaction}[1]{\llbracket #1 \rrbracket}
 
+\newenvironment{franck}{\color{red}}{\color{black}}
+
 \begin{document}
 
 \title{}
@@ -315,7 +317,7 @@ public Formula visitImplies(ImpliesContext context) {
 
 \section{A New Semantics for CTL}
 
-The normal semantics of CTL is described in \cite[Section~6.2.2]{BK08}.  This normal semantics is defined for a transition system $(S, Act, \rightarrow, I, AP, L)$.  Such a transition system is defined in \cite[Definition~2.1]{BK08}.  The new semantics considers a partial transition system.  A partial transition system is a tuple $(S, F, Act, \rightarrow, I, AP, L)$, where all components are defined as before and $F \subseteq S$ is a set of fully explored states.  A transition system is called partial because the states $S \setminus F$ are not fully explored yet, that is, these states \emph{have} transitions that are not part of the transition relation $\rightarrow$.  
+The normal semantics of CTL is described in \cite[Section~6.2.2]{BK08}.  This normal semantics is defined for a transition system $(S, Act, \rightarrow, I, AP, L)$.  Such a transition system is defined in \cite[Definition~2.1]{BK08}.  The new semantics considers a partial transition system.  A partial transition system is a tuple $(S, F, Act, \rightarrow, I, AP, L)$, where all components are defined as before and $F \subseteq S$ is a set of fully explored states.  A transition system is called partial because the states $S \setminus F$ are not fully explored yet, that is, these states \emph{have} transitions that have not been explored yet, that is, they are not part of $\rightarrow$.
 
 Consider the following partial transition system.
 \begin{center}
@@ -342,7 +344,7 @@ We modify the definition of a transition system, as given in \cite[Definition~2.
 A \emph{partial transition system} is a tuple $(S, F, \mathit{Act}, \rightarrow, I, \mathit{AP}, L)$ consisting of
 \begin{itemize}
 \item 
-a set $S$ of \emph{states},
+a \begin{franck}finite\end{franck} set $S$ of \emph{states},
 \item
 a set $F \subseteq S$ of \emph{fully explored states},
 \item
@@ -380,22 +382,21 @@ L(2) & = \{ \mbox{red} \}
 \end{align*}
 \end{itemize} 
 
-Due to the presence of unexplored states, we also revisit the definition of paths.  We fix a set $\mathcal{S}$ and we assume that for each partial transition system we have that $S \subseteq \mathcal{S}$.  We denote the set of nonempty and finite sequences of states in $\mathcal{S}$ by $\mathcal{S}^*$, the set of infinite sequences of states in $\mathcal{S}$ by $\mathcal{S}^{\omega}$, and the set of nonempty finite and infinite sequences of states in $\mathcal{S}$ by $\mathcal{S}^{\infty}$.
+Due to the presence of unexplored states, we also revisit the definition of paths.  We fix a set $\mathcal{S}$ and we assume that for each partial transition system we have that $S \subseteq \mathcal{S}$.  We denote the set of nonempty and finite sequences of states in $\mathcal{S}$ by $\mathcal{S}^*$, the set of infinite sequences of states in $\mathcal{S}$ by $\mathcal{S}^{\omega}$, and the set of nonempty finite or infinite sequences of states in $\mathcal{S}$ by $\mathcal{S}^{\infty}$.
 
 \begin{definition}
 \label{definition:complete-path}
 Let $(S, F, \rightarrow, I, \mathit{AP}, L)$ be a partial transition system.
 \begin{itemize}
 \item 
-The nonempty and finite sequence $s_0 s_1 \ldots s_n$ in $\mathcal{S}^*$, where $n \geq 0$, is a path if $s_i \rightarrow s_{i+1}$ for all $0 \leq i < n$ and $s_n \not\rightarrow$ and $s_n \in F$.
+The nonempty and finite sequence $s_0 s_1 \ldots s_n$ in $\mathcal{S}^*$, where $n \geq 0$, is a \begin{franck}complete\end{franck} path if $s_i \rightarrow s_{i+1}$ for all $0 \leq i < n$ and $s_n \not\rightarrow$ and $s_n \in F$.
 \item 
-The infinite sequence $s_0 s_1 \ldots$ in $\mathcal{S}^{\omega}$ is a path if $s_i \rightarrow s_{i+1}$ for all $i \geq 0$. 
+The infinite sequence $s_0 s_1 \ldots$ in $\mathcal{S}^{\omega}$ is a \begin{franck}complete\end{franck} path if $s_i \rightarrow s_{i+1}$ for all $i \geq 0$. 
 \end{itemize}
 \end{definition}
 
-Note that we require that the final state of a finite path is fully explored.
+Note that we require that the final state of a finite \begin{franck}complete\end{franck} path is fully explored.  \begin{franck}We denote the set of complete paths that start in state $s$ by $\mathit{CoPaths}(s)$.\end{franck}
 
-\color{Green}
 \begin{definition}
 \label{definition:partial-path}
 Let $(S, F, \rightarrow, I, \mathit{AP}, L)$ be a partial transition system.
@@ -405,10 +406,9 @@ The nonempty and finite sequence $s_0 s_1 \ldots s_n$ in $\mathcal{S}^*$, where 
 \end{itemize}
 \end{definition}
 
-We denote the set of (actual) paths defined in Definition~\ref{definition:complete-path} and \ref{definition:partial-path} that start in state $s$ by $\mathit{APaths}(s)$.  
-
-
-\color{black}
+\begin{franck}
+We denote the set of partial paths that start in state $s$ by $\mathit{PaPaths}(s)$.
+\end{franck}
 
 \begin{definition}
 Let $(S, F, \rightarrow, I, \mathit{AP}, L)$ be a partial transition system.
@@ -422,7 +422,9 @@ The infinite sequence $s_0 s_1 \ldots s_n s_{n+1} \ldots$ in $\mathcal{S}^{\omeg
 
 In the first case, the sequence $s_0 s_1 \ldots s_n s_{n+1} \ldots s_{n+m}$ consists of two parts: $s_0 s_1 \ldots s_n$ traverses the explored part of the partial transition system, whereas $s_{n+1} \ldots s_{n+m}$ traverses the unexplored part.  Note that we require that $s_n \not\rightarrow s_{n+1}$: otherwise $s_{n+1}$ would belong to the explored part.  Similarly, the sequence $s_0 s_1 \ldots s_n s_{n+1} \ldots$ consists of the parts $s_0 s_1 \ldots s_n$ and $s_{n+1} \ldots$.  
 
-We denote the set of potential paths that start in state $s$ by $\mathit{PPaths}(s)$.  We denote the set of all paths that start in state $s$ by $\mathit{Paths}(s)$.
+\begin{franck}
+We denote the set of potential paths that start in state $s$ by $\mathit{PoPaths}(s)$.  We denote the set of all paths that start in state $s$ by $\mathit{Paths}(s)$, that is, $\mathit{Paths}(s) = \mathit{CoPaths}(s) \cup \mathit{PaPaths}(s) \cup \mathit{PoPaths}(s)$.
+\end{franck}
 
 Consider the following partial transition system.
 \begin{center}
@@ -441,20 +443,34 @@ Consider the following partial transition system.
 \end{center}
 We have that
 \begin{align*}
-\mathit{APaths}(-1) & = \{ -1, -1\ 0, -1\ 0\ 1, -1\ 0\ 2 \}\\
-\mathit{PPaths}(-1) & = \{\, -1\ 0\ \pi \mid \pi[0] \not\in \{ 1, 2 \} \wedge \pi \in S^{\infty} \,\} \cup \{\, -1\ 0\ 1\ \pi \mid \pi \in S^{\infty} \,\}
+\mathit{CoPaths}(-1) & = \{ -1\ 0\ 2 \}\\
+\mathit{PaPaths}(-1) & = \{ -1, -1\ 0, -1\ 0\ 1 \}\\
+\mathit{PoPaths}(-1) & = \{\, -1\ 0\ \pi \mid \pi[0] \not\in \{ 1, 2 \} \wedge \pi \in S^{\infty} \,\} \cup \{\, -1\ 0\ 1\ \pi \mid \pi \in S^{\infty} \,\}
 \end{align*}
-Since state 0 is not fully explored yet, we know that this state has more outgoing transitions than the two depicted in the above diagram.  All the potential paths starting with $-1\ 0$ do not start with either $-1\ 0\ 1$ or $-1\ 0\ 2$.  Since state 1 is not fully explored, it is not a final state and, as a result, the sequence $-1\ 0\ 1$ is \emph{not} a potential path.
+Since state 0 is not fully explored yet, we know that this state may have more outgoing transitions than the two depicted in the above diagram.  All the potential paths starting with $-1\ 0$ do not start with either $-1\ 0\ 1$ or $-1\ 0\ 2$.  The sequence $-1\ 0\ 1$ is a partial path.
 
-A partial transition system in which all states are fully explored, that is, an ordinary transition system, has no potential paths.
+A partial transition system in which all states are fully explored, that is, an ordinary transition system, has no potential paths.  Furthermore, each partial path can be extended to a complete path.
 
+\begin{franck}
 \begin{proposition}
 \label{proposition:no-potential-paths}
-If $F= S$ then $\mathit{PPAths}(s) = \emptyset$ for all $s \in S$.
+If $F= S$ then for all $s \in S$,
+\begin{enumerate}
+\item
+$\mathit{PoPAths}(s) = \emptyset$ and
+\item
+for all $\pi \in \mathit{PaPaths}(s)$ there exists $\rho \in \mathit{CoPaths}(s)$ such that $|\rho| \geq |\pi|$ and for all $0 \leq i < |\pi|$, $\pi[i] = \rho[i]$.
+\end{enumerate}
 \end{proposition}
-\begin{proof}
-Immediate from the definition of potential paths.
+\begin{proof}\ 
+\begin{enumerate}
+\item 
+Immediate from the definition of potential paths ($s_n \not\in F$).
+\item
+Each partial path can be extended to a complete path since every state is fully explored.
+\end{enumerate}
 \end{proof}
+\end{franck}
 
 The satisfaction relation $\models$ for CTL for ordinary transition systems is defined in \cite[Definition~6.4]{BK08}.  It can be viewed as a function $\satisfaction{\ }$ that maps each CTL formula and state of a transition system to either true of false, that is, for each state formula $\varphi$ and state $s$,
 \[
@@ -513,7 +529,7 @@ Implication is defined as follows.
 && \top & \perp & \mathord{?}\\\hline
 & \top & \top & \perp & ?\\
 v & \perp & \top & \top & \top\\
-& \mathord{?} & \top & \perp & ?
+& \mathord{?} & \top & \begin{franck}?\end{franck} & ?
 \end{array}
 \]
 Equivalence is defined as follows.
@@ -523,11 +539,11 @@ Equivalence is defined as follows.
 && \top & \perp & \mathord{?}\\\hline
 & \top & \top & \perp & ?\\
 v & \perp & \perp & \top & ?\\
-& \mathord{?} & ? & \perp & ?
+& \mathord{?} & ? & \begin{franck}?\end{franck} & ?
 \end{array}
 \]
 
-We denote the length of a (potential) path $\pi$ by $|\pi|$.  If the (potential) path $\pi$ is infinite, then $|\pi| = \omega$.  We denote the set of CTL formulas by $\mathit{CTL}$.
+We denote the length of a path $\pi$ by $|\pi|$.  If the path $\pi$ is infinite, then $|\pi| = \omega$.  We denote the set of CTL formulas by $\mathit{CTL}$.
 
 \begin{definition}
 Let $(S, F, \rightarrow, I, \mathit{AP}, L)$ be a partial transition system.  The function 
@@ -560,8 +576,9 @@ $\satisfaction{\varphi \leftrightarrow \psi}(s) = \satisfaction{\varphi}(s) \lef
 \item
 $\satisfaction{\forall \nxt \varphi}(s) = \left \{
 \begin{array}{ll}
-\top & \mbox{if $\satisfaction{\varphi}(\pi[1]) = \top$ for all $\pi \in \mathit{Paths}(s)$ with $|\pi| > 1$}\\
-\perp & \mbox{if $\satisfaction{\varphi}(\pi[1]) = \perp$ for some $\pi \in \mathit{APaths}(s)$ with $|\pi| > 1$}\\
+\top & \mbox{if $\forall \pi \in \mathit{Paths}(s) : |\pi| > 1 \Rightarrow \satisfaction{\varphi}(\pi[1]) = \top$}\\
+\perp & \mbox{if $\exists \pi \in \mathit{CoPaths}(s) \cup \mathit{PaPaths}(s) : |\pi| > 1 \wedge \satisfaction{\varphi}(\pi[1]) = \perp$}\\
+& \mbox{\begin{franck}or $\mathit{PoPaths}(s) \not= \emptyset \wedge \forall \pi \in \mathit{PoPaths}(s) : |\pi| > 1 \wedge \satisfaction{\varphi}(\pi[1]) = \perp$\end{franck}}\\
 ? & \mbox{otherwise}
 \end{array}
 \right .
@@ -569,8 +586,9 @@ $
 \item
 $\satisfaction{\exists \nxt \varphi}(s) = \left \{
 \begin{array}{ll}
-\top & \mbox{if $\satisfaction{\varphi}(\pi[1]) = \top$ for some $\pi \in \mathit{APaths}(s)$ with $|\pi| > 1$}\\
-\perp & \mbox{if $\satisfaction{\varphi}(\pi[1]) = \perp$ for all $\pi \in \mathit{Paths}(s)$ with $|\pi| > 1$}\\
+\top & \mbox{if $\exists \pi \in \mathit{CoPaths}(s) \cup \mathit{PaPaths}(s) : |\pi| > 1 \wedge \satisfaction{\varphi}(\pi[1]) = \top$}\\
+& \mbox{\begin{franck}or $\mathit{PoPaths}(s) \not= \emptyset \wedge \forall \pi \in \mathit{PoPaths}(s) : |\pi| > 1 \wedge \satisfaction{\varphi}(\pi[1]) = \top$\end{franck}}\\
+\perp & \mbox{if $\forall \pi \in \mathit{Paths}(s) : |\pi| > 1 \Rightarrow \satisfaction{\varphi}(\pi[1]) = \perp$}\\
 ? & \mbox{otherwise}
 \end{array}
 \right .
@@ -578,8 +596,8 @@ $
 \item
 $\satisfaction{\forall \always \varphi}(s) = \left \{
 \begin{array}{ll}
-\top & \mbox{if $\satisfaction{\varphi}(\pi[i]) = \top$ for all $\pi \in \mathit{Paths}(s)$ and $0 \leq i < |\pi|$}\\
-\perp & \mbox{if $\satisfaction{\varphi}(\pi[i]) = \perp$ for some $\pi \in \mathit{APaths}(s)$ and $0 \leq i < |\pi|$}\\
+\top & \mbox{if $\forall \pi \in \mathit{Paths}(s) :  \forall 0 \leq i < |\pi| : \satisfaction{\varphi}(\pi[i]) = \top$}\\
+\perp & \mbox{if $\exists \pi \in \mathit{CoPaths}(s) \cup \mathit{PaPaths}(s) : \exists 0 \leq i < |\pi| : \satisfaction{\varphi}(\pi[i]) = \perp$}\\
 ? & \mbox{otherwise}
 \end{array}
 \right .
@@ -587,8 +605,9 @@ $
 \item
 $\satisfaction{\exists \always \varphi}(s) = \left \{
 \begin{array}{ll}
-\top & \mbox{if $\satisfaction{\varphi}(\pi[i]) = \top$ for some $\pi \in \mathit{APaths}(s)$ and for all $0 \leq i < |\pi|$}\\
-\perp & \mbox{if $\satisfaction{\varphi}(\pi[i]) = \perp$ for all $\pi \in \mathit{Paths}(s)$ and for some $0 \leq i < |\pi|$}\\
+\top & \mbox{if $\begin{franck}\exists \pi \in \mathit{CoPaths}(s) :\end{franck} \forall 0 \leq i < |\pi| : \satisfaction{\varphi}(\pi[i]) = \top$}\\
+& \mbox{\begin{franck}or $\mathit{PoPaths}(s) \not= \emptyset \wedge \forall \pi \in \mathit{PoPaths}(s) : \forall 0 \leq i < |\pi| : \satisfaction{\varphi}(\pi[i]) = \top$\end{franck}}\\
+\perp & \mbox{if $\forall \pi \in \mathit{CoPaths}(s) \cup \mathit{PoPaths}(s) : \exists 0 \leq i < |\pi| : \satisfaction{\varphi}(\pi[i]) = \perp$}\\
 ? & \mbox{otherwise}
 \end{array}
 \right .
@@ -596,8 +615,9 @@ $
 \item
 $\satisfaction{\forall \eventually \varphi}(s) = \left \{
 \begin{array}{ll}
-\top & \mbox{if $\satisfaction{\varphi}(\pi[i]) = \top$ for all $\pi \in \mathit{Paths}(s)$ and for some $0 \leq i < |\pi|$}\\
-\perp & \mbox{if $\satisfaction{\varphi}(\pi[i]) = \perp$ for some $\pi \in \mathit{APaths}(s)$ and for all $0 \leq i < |\pi|$}\\
+\top & \mbox{if $\forall \pi \in \mathit{CoPaths}(s) \cup \mathit{PoPaths}(s) : \exists 0 \leq i < |\pi| : \satisfaction{\varphi}(\pi[i]) = \top$}\\
+\perp & \mbox{if $\begin{franck} \exists \pi \in \mathit{CoPaths}(s) : \end{franck} \forall 0 \leq i < |\pi| : \satisfaction{\varphi}(\pi[i]) = \perp$}\\
+& \mbox{\begin{franck}or $\mathit{PoPaths}(s) \not= \emptyset \wedge \forall \pi \in \mathit{PoPaths}(s) : \forall 0 \leq i < |\pi| : \satisfaction{\varphi}(\pi[i]) = \perp$\end{franck}}\\
 ? & \mbox{otherwise}
 \end{array}
 \right .
@@ -605,8 +625,8 @@ $
 \item
 $\satisfaction{\exists \eventually \varphi}(s) = \left \{
 \begin{array}{ll}
-\top & \mbox{if $\satisfaction{\varphi}(\pi[i]) = \top$ for some $\pi \in \mathit{APaths}(s)$ and $0 \leq i < |\pi|$}\\
-\perp & \mbox{if $\satisfaction{\varphi}(\pi[i]) = \perp$ for all $\pi \in \mathit{Paths}(s)$ and $0 \leq i < |\pi|$}\\
+\top & \mbox{if $\exists \pi \in \mathit{CoPaths}(s) \cup \mathit{PaPaths}(s) : \exists0 \leq i < |\pi| : \satisfaction{\varphi}(\pi[i]) = \top$}\\
+\perp & \mbox{if $\forall \pi \in \mathit{Paths}(s) : \forall 0 \leq i < |\pi| : \satisfaction{\varphi}(\pi[i]) = \perp$}\\
 ? & \mbox{otherwise}
 \end{array}
 \right .
@@ -618,16 +638,358 @@ $\satisfaction{\exists \varphi \until \psi}(s) = $ \textcolor{blue}{details stil
 \end{itemize}
 \end{definition}
 
-For a partial transition system in which all states are fully explored, that is, an ordinary transition system, $\satisfaction{\ }$ corresponds to $\models$ as defined in \cite[Definition~6.4]{BK08} adjusted to deal with finite paths as follows:
+\bibliographystyle{plain}
+\bibliography{report}
+
+\end{document}
+
+\begin{franck}
+Which paths to consider for the formulas that start with a quantifier is subtle.  Next, we discuss our choices and motivate them by means of examples.
+
+\subsection*{$\satisfaction{\forall \nxt \varphi}(s) = \top$}
+
+To conclude that $\satisfaction{\forall \nxt \varphi}(s)$ is true, we need that all successors of state~$s$ satisfy $\varphi$.  If state~$s$ is fully explored, we need to consider all successors:
+\[
+\{\, \pi[1] \mid \pi \in \mathit{CoPaths}(s) \cup \mathit{PaPaths}(s) \,\}
+= \{\, \pi[1] \mid \pi \in \mathit{Paths}(s) \,\}.
+\]
+
+Consider the following partial transition system.
+\begin{center}
+\begin{tikzpicture}[yscale=0.9]
+\node[rectangle,fill=red!20] (0) at (1,2.5) {0};
+\node[circle,fill=red!20] (1) at (1,1) {1};
+
+\draw[->] (0)--(1);
+\end{tikzpicture}
+\end{center}
+Since state~0 is not fully explored, state~0 may have transitions to states other than state~1.  Those other states may not be red and, hence, we do not know whether  $\forall \nxt \mbox{red}$ holds in state~0.  Therefore, for a non-fully explored state~$s$, we consider also all potential successors of state~$s$ when determining if $\forall \nxt \varphi$ holds in $s$:
+\[
+\{\, \pi[1] \mid \pi \in \mathit{Paths}(s) \,\}
+\]
+
+\subsection*{$\satisfaction{\forall \nxt \varphi}(s) = \perp$}
+
+To conclude that $\satisfaction{\forall \nxt \varphi}(s)$ is false, we need to find a counterexample, that is, a successor of state~$s$ in which $\varphi$ does not hold.  Consider the following partial transition system.
+\begin{center}
+\begin{tikzpicture}[yscale=0.9]
+\node[rectangle,fill=red!20] (0) at (1,2.5) {0};
+\node[rectangle,fill=blue!20] (1) at (1,1) {1};
+
+\draw[->] (0)--(1);
+\end{tikzpicture}
+\end{center}
+Since state~0 transitions to a state that is not red, we can conclude that $\forall \nxt \mbox{red}$ does not hold in state~0.  Because state~1 is not fully explored, it has unexplored outgoing transitions.  Hence, the path $0\ 1$ is not complete.  Therefore, we consider both complete and partial paths starting from state~$s$ when determining if $\satisfaction{\forall \nxt \varphi}(s) = \perp$.  Obviously, potential paths should not be considered.
+
+\subsection*{$\satisfaction{\exists \nxt \varphi}(s) = \top$}
+
+To conclude that $\satisfaction{\exists \nxt \varphi}(s)$ is true, we need a witness, that is, a successor of state~$s$ that satisfies $\varphi$.  Consider the following partial transition system.
+\begin{center}
+\begin{tikzpicture}[yscale=0.9]
+\node[rectangle,fill=red!20] (0) at (1,2.5) {0};
+\node[rectangle,fill=red!20] (1) at (1,1) {1};
+
+\draw[->] (0)--(1);
+\end{tikzpicture}
+\end{center}
+Since state~0 transitions to a state that is red, we can conclude that $\exists \nxt \mbox{red}$ holds in state~0.  Because state~1 is not fully explored, it has unexplored outgoing transitions.  Hence, the path $0\ 1$ is not complete.  Therefore, we consider both complete and partial paths starting from state~$s$ when determining if $\satisfaction{\exists \nxt \varphi}(s) = \top$.  Obviously, potential paths should not be considered.
+
+\subsection*{$\satisfaction{\exists \nxt \varphi}(s) = \perp$}
+
+To conclude that $\satisfaction{\exists \nxt \varphi}(s)$ is false, we need that none of the successors of state~$s$ satisfy $\varphi$.  If state~$s$ is fully explored, we need to consider all successors:
+\[
+\{\, \pi[1] \mid \pi \in \mathit{CoPaths}(s) \cup \mathit{PaPaths}(s) \,\}
+= \{\, \pi[1] \mid \pi \in \mathit{Paths}(s) \,\}.
+\]
+
+Consider the following partial transition system.
+\begin{center}
+\begin{tikzpicture}[yscale=0.9]
+\node[rectangle,fill=red!20] (0) at (1,2.5) {0};
+\node[circle,fill=blue!20] (1) at (1,1) {1};
+
+\draw[->] (0)--(1);
+\end{tikzpicture}
+\end{center}
+Since state~0 is not fully explored, state~0 may have transitions to states other than state~1.  Those other states may be red and, hence, we do not know whether  $\exists \nxt \mbox{red}$ does not hold in state~0.  Therefore, for a non-fully explored state~$s$, we consider all actual and potential successors of state~$s$ when determining if $\exists \nxt \varphi$ does not hold in $s$:
+\[
+\{\, \pi[1] \mid \pi \in \mathit{Paths}(s) \,\}
+\]
+
+\subsection*{$\satisfaction{\forall \always \varphi}(s) = \top$}
+
+To conclude that $\satisfaction{\forall \always \varphi}(s)$ is true, we need that all states reachable from state~$s$ satisfy $\varphi$.
+
+Consider the following partial transition system.
+\begin{center}
+\begin{tikzpicture}[yscale=0.9]
+\node[rectangle,fill=red!20] (0) at (1,2.5) {0};
+\node[circle,fill=red!20] (1) at (1,1) {1};
+
+\draw[->] (0)--(1);
+\end{tikzpicture}
+\end{center}
+States different from state~1 that are reachable from state~0 by transitions that have not been explored yet may not be red in which case $\forall \always \mbox{red}$ does not hold.  Therefore, we consider all paths, including the potential paths, starting from state~$s$ when determining if $\satisfaction{\forall \always \varphi}(s) = \top$.
+
+\subsection*{$\satisfaction{\forall \always \varphi}(s) = \perp$}
+
+To conclude that $\satisfaction{\forall \always \varphi}(s)$ is false, we need to find a counterexample, that is, a path starting in state~$s$ that contains a state that does not satisfy $\varphi$.  We consider both complete and partial paths, but not potential paths.
+
+\subsection*{$\satisfaction{\exists \always \varphi}(s) = \top$}
+
+To conclude that $\satisfaction{\exists \always \varphi}(s)$ is true, we need a witness, that is, a complete path starting in state~$s$ of which all states satisfy $\varphi$.  
+
+Consider the following partial transition system.
+\begin{center}
+\begin{tikzpicture}[yscale=0.9]
+\node[rectangle,fill=red!20] (0) at (1,2.5) {0};
+\end{tikzpicture}
+\end{center}
+If $\varphi \equiv \TRUE$ then $\exists \always \varphi \equiv \TRUE$ 
+
+
+\subsection*{$\satisfaction{\exists \always \varphi}(s) = \perp$}
+
+To conclude that $\satisfaction{\exists \always \varphi}(s)$ is false, we need that each path that starts in state~$s$ contains a state that does not satisfy $\varphi$.  Consider the following partial transition system.
+\begin{center}
+\begin{tikzpicture}[yscale=0.9]
+\node[circle,fill=red!20] (0) at (1,2.5) {0};
+\node[circle,fill=red!20] (1) at (1,1) {1};
+\node[rectangle,fill=blue!20] (2) at (1,-0.5) {2};
+
+\draw[->] (0)--(1);
+\draw[->] (1)--(2);
+\end{tikzpicture}
+\end{center}
+Since each path starting from state~0 contains state~2, which is blue, we can conclude that $\exists \always \mbox{red}$ does not hold in state~0.  Note that we should consider both complete paths as well as potential paths.  Partial paths should not be considered.  For example, the partial path $0\ 1$ contains only red states.
+
+\subsection*{$\satisfaction{\forall \eventually \varphi}(s) = \top$}
+
+To conclude that $\satisfaction{\forall \eventually \varphi}(s)$ is true, we need that each path contains a state that satisfies $\varphi$.  Consider the following partial transition system.
+\begin{center}
+\begin{tikzpicture}[yscale=0.9]
+\node[circle,fill=blue!20] (0) at (1,2.5) {0};
+\node[circle,fill=blue!20] (1) at (1,1) {1};
+\node[rectangle,fill=red!20] (2) at (1,-0.5) {2};
+
+\draw[->] (0)--(1);
+\draw[->] (1)--(2);
+\end{tikzpicture}
+\end{center}
+Since each path starting from state~0 contains state~2, which is red, we can conclude that $\forall \eventually \mbox{red}$ holds in state~0.  Note that we should consider both complete paths as well as potential paths.  Partial paths should not be considered.  For example, the partial path $0\ 1$ does not contain any red states.
+
+\subsection*{$\satisfaction{\forall \eventually \varphi}(s) = \perp$}
+
+To conclude that $\satisfaction{\forall \eventually \varphi}(s)$ is false, we need to find a counterexample, that is, a path starting in state~$s$ of which all states do not satisfy $\varphi$.  Consider the following partial transition system.
+\begin{center}
+\begin{tikzpicture}[yscale=0.9]
+\node[circle,fill=blue!20] (0) at (1,2.5) {0};
+\node[rectangle,fill=blue!20] (1) at (1,1) {1};
+
+\draw[->] (0)--(1);
+\end{tikzpicture}
+\end{center}
+Since state~1 is not fully explored, the path $0\ 1$ is partial.  This partial path may be the prefix of a complete path that includes red states and, hence, we cannot conclude that $\satisfaction{\forall \eventually \mbox{red}}(0) = \perp$.  Therefore, we consider complete paths only when determining if $\satisfaction{\forall \eventually \varphi}(s) = \perp$.
+
+\subsection*{$\satisfaction{\exists \eventually \varphi}(s) = \top$}
+
+To conclude that $\satisfaction{\exists \eventually \varphi}(s)$ is true, we need to find a witness, that is, a path starting in state~$s$ that contains a state that satisfies $\varphi$.  The path can either be complete or partial.
+
+\subsection*{$\satisfaction{\exists \eventually \varphi}(s) = \perp$}
+
+To conclude that $\satisfaction{\exists \eventually \varphi}(s)$ is false, no path starting in state~$s$ should contain a state that satisfies $\varphi$.  Hence, we need to consider complete, partial, and potential paths.
+\end{franck}
+
+Next, we define equivalence of CTL formulas.
+
+\begin{definition}
+For CTL formulas $\varphi$ and $\psi$, 
+\[
+\varphi \equiv \psi \mbox{ if } \satisfaction{\varphi}(s) = \satisfaction{\psi}(s) \mbox{ for all partial transition systems and } s \in S.
+\]
+\end{definition}
+
+\begin{franck}
+\begin{proposition}
+Let $a \in \mathit{AP}$.  For CTL formulas $\varphi$ and $\psi$, 
+\begin{enumerate}
+\item 
+$\TRUE \equiv a \vee \neg a$
+\item 
+$\FALSE \equiv a \wedge \neg a$
+\item
+$\varphi \vee \psi \equiv \neg(\neg \varphi \wedge \neg \psi)$
+\item
+$\varphi \rightarrow \psi \equiv \neg \varphi \vee \psi$
+\item
+$\varphi \leftrightarrow \psi \equiv (\varphi \rightarrow \psi) \wedge (\psi \rightarrow \varphi)$
+\item
+$\forall \nxt \varphi \equiv \neg \exists \nxt \neg \varphi$
+\item
+$\forall \always \varphi \equiv \neg \exists \eventually \neg \varphi$
+\item
+$\forall \eventually \varphi \equiv \neg \exists \always \neg \varphi$
+\end{enumerate}
+\end{proposition}
+\begin{proof}
+Let $(S, F, \rightarrow, I, \mathit{AP}, L)$ be a partial transition system and let $s \in S$.
+\begin{enumerate}
+\item 
+If $a \in L(s)$, then
+\[
+\satisfaction{\TRUE}(s) = \top = \top \vee \neg \top = \satisfaction{a}(s) \vee \neg \satisfaction{a}(s) = \satisfaction{a \vee \neg a}(s).
+\]
+Otherwise,
+\[
+\satisfaction{\TRUE}(s) = \top = \perp \vee \neg \perp = \satisfaction{a}(s) \vee \neg \satisfaction{a}(s) = \satisfaction{a \vee \neg a}(s).
+\]
+\item
+If $a \in L(s)$, then
+\[
+\satisfaction{\FALSE}(s) = \perp = \top \wedge \neg \top = \satisfaction{a}(s) \wedge \neg \satisfaction{a}(s) = \satisfaction{a \wedge \neg a}(s).
+\]
+Otherwise,
+\[
+\satisfaction{\FALSE}(s) = \perp = \perp \wedge \neg \perp = \satisfaction{a}(s) \wedge \neg \satisfaction{a}(s) = \satisfaction{a \wedge \neg a}(s).
+\]
+\item
+It suffices to show that $v \vee w = \neg(\neg v \wedge \neg w)$ for all $v$, $w \in \mathbb{V}$.
+
+\[
+\begin{array}{ll|lll|l}
+v     & w     & \neg v & \neg w & \neg v \wedge \neg w & \neg(\neg v \wedge \neg w)\\\hline
+\top  & \top  & \perp  & \perp  & \perp                & \top\\
+\perp & \top  & \top   & \perp  & \perp                & \top\\
+?     & \top  & ?      & \perp  & \perp                & \top\\
+\top  & \perp & \perp  & \top   & \perp                & \top\\
+\perp & \perp & \top   & \top   & \top                 & \perp\\
+?     & \perp & ?      & \top   & ?                    & ?\\
+\top  & ?     & \perp  & ?      & \perp                & \top\\
+\perp & ?     & \top   & ?      & ?                    & ?\\
+?     & ?     & ?      & ?      & ?                    & ?
+\end{array}
+\]
+\item
+It suffices to show that $v \rightarrow w = \neg v \vee w$ for all $v$, $w \in \mathbb{V}$.
+
+\[
+\begin{array}{ll|l|l}
+v     & w     & \neg v & \neg v \vee w\\\hline
+\top  & \top  & \perp  & \top\\
+\perp & \top  & \top   & \top\\
+?     & \top  & ?      & \top\\
+\top  & \perp & \perp  & \perp\\
+\perp & \perp & \top   & \top\\
+?     & \perp & ?      & ?\\
+\top  & ?     & \perp  & ?\\
+\perp & ?     & \top   & \top\\
+?     & ?     & ?      & ?
+\end{array}
+\]
+\item
+It suffices to show that $v \leftrightarrow w = (v \rightarrow w) \wedge (w \rightarrow v)$ for all $v$, $w \in \mathbb{V}$.
+
+\[
+\begin{array}{ll|ll|l}
+v     & w     & v \rightarrow w & w \rightarrow v & (v \rightarrow w) \wedge (w \rightarrow v)\\\hline
+\top  & \top  & \top  & \top  & \top\\
+\perp & \top  & \top  & \perp & \perp\\
+?     & \top  & \top  & ?     & ?\\
+\top  & \perp & \perp & \top  & \perp\\
+\perp & \perp & \top  & \top  & \top\\
+?     & \perp & ?     & \top  & ?\\
+\top  & ?     & ?     & \top  & ?\\
+\perp & ?     & \top  & ?     & ?\\
+?     & ?     & ?     & ?     & ?
+\end{array}
+\]
+\item
+Since
+\begin{align*}
+\satisfaction{\forall \nxt \varphi}(s) = \top
+\mbox{ iff } & \forall \pi \in \mathit{Paths}(s) : |\pi| > 1 \Rightarrow \satisfaction{\varphi}(\pi[1]) = \top\\
+\mbox{ iff } & \forall \pi \in \mathit{Paths}(s) : |\pi| > 1 \Rightarrow \satisfaction{\neg \varphi}(\pi[1]) = \perp\\
+\mbox{ iff } & \satisfaction{\exists \nxt \neg \varphi}(s) = \perp\\
+\mbox{ iff } & \satisfaction{\neg \exists \nxt \neg \varphi}(s) = \top
+\end{align*}
+and
+\begin{align*}
+\satisfaction{\forall \nxt \varphi}(s) = \perp
+\mbox{ iff } & \exists \pi \in \mathit{CoPaths}(s) \cup \mathit{PaPaths}(s) : |\pi| > 1 \wedge \satisfaction{\varphi}(\pi[1]) = \perp\\
+\mbox{ iff } & \exists \pi \in \mathit{CoPaths}(s) \cup \mathit{PaPaths}(s) : |\pi| > 1 \wedge \satisfaction{\neg \varphi}(\pi[1]) = \top\\
+\mbox{ iff } & \satisfaction{\exists \nxt \neg \varphi}(s) = \top\\
+\mbox{ iff } & \satisfaction{\neg \exists \nxt \neg \varphi}(s) = \perp
+\end{align*}
+we can conclude that $\forall \nxt \varphi \equiv \neg \exists \nxt \neg \varphi$.
+\item
+Since
+\begin{align*}
+\satisfaction{\forall \always \varphi}(s) = \top
+\mbox{ iff } & \forall \pi \in \mathit{Paths}(s) : \forall 0 \leq i < |\pi| : \satisfaction{\varphi}(\pi[1]) = \top\\
+\mbox{ iff } & \forall \pi \in \mathit{Paths}(s) : \forall 0 \leq i < |\pi| : \satisfaction{\neg \varphi}(\pi[1]) = \perp\\
+\mbox{ iff } & \satisfaction{\exists \eventually \neg \varphi}(s) = \perp\\
+\mbox{ iff } & \satisfaction{\neg \exists \eventually \neg \varphi}(s) = \top
+\end{align*}
+and
+\begin{align*}
+\satisfaction{\forall \always \varphi}(s) = \perp
+\mbox{ iff } & \exists \pi \in \mathit{CoPaths}(s) \cup \mathit{PaPaths}(s) : \exists 0 \leq i < |\pi| : \satisfaction{\varphi}(\pi[1]) = \perp\\
+\mbox{ iff } & \exists \pi \in \mathit{CoPaths}(s) \cup \mathit{PaPaths}(s) : \exists 0 \leq i < |\pi| : \satisfaction{\neg \varphi}(\pi[1]) = \top\\
+\mbox{ iff } & \satisfaction{\exists \eventually \neg \varphi}(s) = \top\\
+\mbox{ iff } & \satisfaction{\neg \exists \eventually \neg \varphi}(s) = \perp
+\end{align*}
+we can conclude that $\forall \always \varphi \equiv \neg \exists \eventually \neg \varphi$.
+\item
+Since
+\begin{align*}
+\satisfaction{\forall \eventually \varphi}(s) = \top
+\mbox{ iff } & \forall \pi \in \mathit{CoPaths}(s) \cup \mathit{PoPaths}(s) : \exists 0 \leq i < |\pi| : \satisfaction{\varphi}(\pi[1]) = \top\\
+\mbox{ iff } & \forall \pi \in \mathit{CoPaths}(s) \cup \mathit{PoPaths}(s) : \exists 0 \leq i < |\pi| : \satisfaction{\neg \varphi}(\pi[1]) = \perp\\
+\mbox{ iff } & \satisfaction{\exists \always \neg \varphi}(s) = \perp\\
+\mbox{ iff } & \satisfaction{\neg \exists \always \neg \varphi}(s) = \top
+\end{align*}
+and
+\begin{align*}
+\satisfaction{\forall \eventually \varphi}(s) = \perp
+\mbox{ iff } & \exists \pi \in \mathit{CoPaths}(s) : \forall 0 \leq i < |\pi| : \satisfaction{\varphi}(\pi[1]) = \perp\\
+\mbox{ iff } & \exists \pi \in \mathit{CoPaths}(s) : \forall 0 \leq i < |\pi| : \satisfaction{\neg \varphi}(\pi[1]) = \top\\
+\mbox{ iff } & \satisfaction{\exists \always \neg \varphi}(s) = \top\\
+\mbox{ iff } & \satisfaction{\neg \exists \always \neg \varphi}(s) = \perp
+\end{align*}
+we can conclude that $\forall \eventually \varphi \equiv \neg \exists \always \neg \varphi$.
+\end{enumerate}
+\end{proof}
+
+As a consequence, we can restrict our attention to CTL formulas defined by the grammar
+\[
+\varphi
+::= a
+\mid \neg \varphi
+\mid \varphi \wedge \varphi
+\mid \exists \nxt \varphi
+\mid \exists \always \varphi
+\mid \exists \eventually \varphi
+\mid \exists \varphi \until \varphi
+\mid \forall \varphi \until \varphi
+\]
+where $a \in \mathit{AP}$.
+\end{franck}
+
+
+For a partial transition system in which all states are fully explored, that is, an ordinary transition system, $\satisfaction{\ }$ corresponds to $\models$ as defined in \cite[Definition~6.4]{BK08} adjusted to deal with finite paths (along the lines of \cite{GV13}) as follows:
 \begin{itemize}
+\begin{franck}
 \item 
-$s \models \forall \nxt \varphi$ iff for all $\pi \in \mathit{APaths}(s)$ with $|\pi| > 1$, $\pi[1] \models \varphi$ 
+$s \models \exists \nxt \varphi$ iff $\exists \pi \in \mathit{CoPaths}(s): |\pi| > 1 \wedge \pi[1] \models \varphi$ 
 \item
-$s \models \exists \nxt \varphi$ iff for some $\pi \in \mathit{APaths}(s)$ with $|\pi| > 1$, $\pi[1] \models \varphi$
+$s \models \exists \always \varphi$ iff $\exists \pi \in \mathit{CoPaths}(s) : \forall 0 \leq i < |\pi| : \pi[i] \models \varphi$
+\item
+$s \models \exists \eventually \varphi$ iff $\exists \pi \in \mathit{CoPaths}(s) : \exists 0 \leq i < |\pi| : \pi[i] \models \varphi$
+\end{franck}
+\item
+$s \models \exists \varphi \until \psi$ iff $\exists \pi \in \mathit{CoPaths}(s) : \exists 0 \leq j < |\pi| : \pi[j] \models \psi \wedge \forall 0 \leq k < j : \pi[k] \models \varphi$
 \item 
-$s \models \forall \varphi \until \psi$ iff for all $\pi \in \mathit{APaths}(s)$, there exists $0 \leq j < |\pi|$ such that $\pi[j] \models \psi$ and for all $0 \leq k < j$, $\pi[j] \models \varphi$
-\item
-$s \models \exists \varphi \until \psi$ iff for some $\pi \in \mathit{APaths}(s)$, there exists $0 \leq j < |\pi|$ such that $\pi[j] \models \psi$ and for all $0 \leq k < j$, $\pi[j] \models \varphi$
+$s \models \forall \varphi \until \psi$ iff $\forall \pi \in \mathit{CoPaths}(s) : \exists 0 \leq j < |\pi| : \pi[j] \models \psi \wedge \forall 0 \leq k < j : \pi[k] \models \varphi$
 \end{itemize}
 
 \begin{proposition}
@@ -672,77 +1034,92 @@ and
 For the CTL formula $\varphi \wedge \psi$ we have that
 \begin{align*}
 & \satisfaction{\varphi \wedge \psi}(s) = \top\\
-\mbox{iff } & \satisfaction{\varphi}(s) = \top \mbox{ and } \satisfaction{\psi}(s) = \top\\
-\mbox{iff } & s \models \varphi \mbox{ and }  s \models \psi
+\mbox{iff } & \satisfaction{\varphi}(s) = \top \wedge \satisfaction{\psi}(s) = \top\\
+\mbox{iff } & s \models \varphi \wedge  s \models \psi
 \comment{by induction}\\
 \mbox{iff } & s \models \varphi \wedge \psi
 \end{align*}
 and
 \begin{align*}
 & \satisfaction{\varphi \wedge \psi}(s) = \perp\\
-\mbox{iff } & \satisfaction{\varphi}(s) = \perp \mbox{ or } \satisfaction{\psi}(s) = \perp\\
-\mbox{iff } & s \not\models \varphi \mbox{ or } s \not\models \psi
+\mbox{iff } & \satisfaction{\varphi}(s) = \perp \vee \satisfaction{\psi}(s) = \perp\\
+\mbox{iff } & s \not\models \varphi \vee s \not\models \psi
 \comment{by induction}\\
 \mbox{iff } & s \not\models \varphi \wedge \psi
 \end{align*}
-\item
-For the CTL formula $\forall \nxt \varphi$ we have that
-\begin{align*}
-& \satisfaction{\forall \nxt \varphi}(s) = \top\\
-\mbox{iff } & \mbox{for all } \pi \in \mathit{Paths}(s) \mbox{ with } |\pi| > 1, \satisfaction{\varphi}(\pi[1]) = \top\\
-\mbox{iff } & \mbox{for all } \pi \in \mathit{APaths}(s) \mbox{ with } |\pi| > 1, \satisfaction{\varphi}(\pi[1]) = \top
-\comment{Proposition~\ref{proposition:no-potential-paths}}\\
-\mbox{iff } & \mbox{for all } \pi \in \mathit{APaths}(s) \mbox{ with } |\pi| > 1, \pi[1] \models \varphi
-\comment{by induction}\\
-\mbox{iff } & s \models \forall \nxt \varphi
-\end{align*}
-and
-\begin{align*}
-& \satisfaction{\forall \nxt \varphi}(s) = \perp\\
-\mbox{iff } & \mbox{for some } \pi \in \mathit{APaths}(s) \mbox{ with } |\pi| > 1, \satisfaction{\varphi}(\pi[1]) = \perp\\
-\mbox{iff } & \mbox{for some } \pi \in \mathit{APaths}(s) \mbox{ with } |\pi| > 1, \pi[1] \not\models \varphi
-\comment{by induction}\\
-\mbox{iff } & s \not\models \forall \nxt \varphi
-\end{align*}
+\begin{franck}
 \item
 For the CTL formula $\exists \nxt \varphi$ we have that
 \begin{align*}
 & \satisfaction{\exists \nxt \varphi}(s) = \top\\
-\mbox{iff } & \mbox{for some } \pi \in \mathit{APaths}(s) \mbox{ with } |\pi| > 1, \satisfaction{\varphi}(\pi[1]) = \top\\
-\mbox{iff } & \mbox{for some } \pi \in \mathit{APaths}(s) \mbox{ with } |\pi| > 1, \pi[1] \models \varphi
+\mbox{iff } & \exists \pi \in \mathit{CoPaths}(s) \cup \mathit{PaPaths}(s) : |\pi| > 1 \wedge \satisfaction{\varphi}(\pi[1]) = \top\\
+\mbox{iff } & \exists \pi \in \mathit{CoPaths}(s) \cup \mathit{PaPaths}(s) : |\pi| > 1 \wedge \pi[1] \models \varphi
 \comment{by induction}\\
+\mbox{iff } & \exists \pi \in \mathit{CoPaths}(s) : |\pi| > 1 \wedge \pi[1] \models \varphi
+\comment{Proposition~\ref{proposition:no-potential-paths}.2}\\
 \mbox{iff } & s \models \exists \nxt \varphi
 \end{align*}
 and
 \begin{align*}
 & \satisfaction{\exists \nxt \varphi}(s) = \perp\\
-\mbox{iff } & \mbox{for all } \pi \in \mathit{Paths}(s) \mbox{ with } |\pi| > 1, \satisfaction{\varphi}(\pi[1]) = \perp\\
-\mbox{iff } & \mbox{for all } \pi \in \mathit{APaths}(s) \mbox{ with } |\pi| > 1, \satisfaction{\varphi}(\pi[1]) = \perp
-\comment{Proposition~\ref{proposition:no-potential-paths}}\\
-\mbox{iff } & \mbox{for all } \pi \in \mathit{APaths}(s) \mbox{ with } |\pi| > 1, \pi[1] \not\models \varphi
+\mbox{iff } & \forall \pi \in \mathit{Paths}(s) : |\pi| > 1 \Rightarrow \satisfaction{\varphi}(\pi[1]) = \perp\\
+\mbox{iff } & \forall \pi \in \mathit{CoPaths}(s) \cup \mathit{PaPaths}(s) : |\pi| > 1 \Rightarrow \satisfaction{\varphi}(\pi[1]) = \perp
+\comment{Proposition~\ref{proposition:no-potential-paths}.1}\\
+\mbox{iff } & \forall \pi \in \mathit{CoPaths}(s) \cup \mathit{PaPaths}(s) : |\pi| > 1 \Rightarrow \pi[1] \not\models \varphi
 \comment{by induction}\\
+\mbox{iff } & \forall \pi \in \mathit{CoPaths}(s) : |\pi| > 1 \Rightarrow \pi[1] \not\models \varphi
+\comment{Proposition~\ref{proposition:no-potential-paths}.2}\\
 \mbox{iff } & s \not\models \exists \nxt \varphi
 \end{align*}
 \item
-For the CTL formula $\forall \varphi \until \psi$ we have that \textcolor{blue}{details still need to be added here.}
+For the CTL formula $\exists \always \varphi$ we have that
+\begin{align*}
+& \satisfaction{\exists \always \varphi}(s) = \top\\
+\mbox{iff } & \exists \pi \in \mathit{CoPaths}(s) : \forall 0 \leq i < |\pi| : \satisfaction{\varphi}(\pi[i]) = \top\\
+\mbox{iff } & \exists \pi \in \mathit{CoPaths}(s) : \forall 0 \leq i < |\pi| : \pi[i] \models \varphi
+\comment{by induction}\\
+\mbox{iff } & s \models \exists \always \varphi
+\end{align*}
+and
+\begin{align*}
+& \satisfaction{\exists \always \varphi}(s) = \perp\\
+\mbox{iff } & \forall \pi \in \mathit{CoPaths}(s) \cup \mathit{PoPaths}(s) : \exists 0 \leq i < |\pi| : \satisfaction{\varphi}(\pi[i]) = \perp\\
+\mbox{iff } & \forall \pi \in \mathit{CoPaths}(s) : \exists 0 \leq i < |\pi| : \satisfaction{\varphi}(\pi[i]) = \perp
+\comment{Proposition~\ref{proposition:no-potential-paths}.1}\\
+\mbox{iff } & \forall \pi \in \mathit{CoPaths}(s) : \exists 0 \leq i < |\pi| : \pi[i] \not\models \varphi \comment{by induction}\\
+\mbox{iff } & s \not\models \exists \always \varphi
+\end{align*}
+\item
+For the CTL formula $\exists \eventually \varphi$ we have that
+\begin{align*}
+& \satisfaction{\exists \eventually \varphi}(s) = \top\\
+\mbox{iff } & \exists \pi \in \mathit{CoPaths}(s) \cup \mathit{PaPaths}(s) : \exists 0 \leq i < |\pi| : \satisfaction{\varphi}(\pi[i]) = \top\\
+\mbox{iff } & \exists \pi \in \mathit{CoPaths}(s) \cup \mathit{PaPaths}(s) : \exists 0 \leq i < |\pi| : \pi[i] \models \varphi
+\comment{by induction}\\
+\mbox{iff } & \exists \pi \in \mathit{CoPaths}(s) : \exists 0 \leq i < |\pi| : \pi[i] \models \varphi
+\comment{Proposition~\ref{proposition:no-potential-paths}.2}\\
+\mbox{iff } & s \models \exists \eventually \varphi
+\end{align*}
+and
+\begin{align*}
+& \satisfaction{\exists \eventually \varphi}(s) = \perp\\
+\mbox{iff } & \forall \pi \in \mathit{Paths}(s)  : \forall 0 \leq i < |\pi| : \satisfaction{\varphi}(\pi[i]) = \perp\\
+\mbox{iff } & \forall \pi \in \mathit{CoPaths}(s) \cup \mathit{PaPaths}(s) : \forall 0 \leq i < |\pi| : \satisfaction{\varphi}(\pi[i]) = \perp
+\comment{Proposition~\ref{proposition:no-potential-paths}.1}\\
+\mbox{iff } & \forall \pi \in \mathit{CoPaths}(s) \cup \mathit{PaPaths}(s) : \forall 0 \leq i < |\pi| : \pi[i] \not\models \varphi \comment{by induction}\\
+\mbox{iff } & \forall \pi \in \mathit{CoPaths}(s) : \forall 0 \leq i < |\pi| : \pi[i] \not\models \varphi \comment{Proposition~\ref{proposition:no-potential-paths}.2}\\
+\mbox{iff } & s \not\models \exists \eventually \varphi
+\end{align*}
+\end{franck}
 \item
 For the CTL formula $\exists \varphi \until \psi$ we have that
 \textcolor{blue}{details still need to be added here.}
+\item
+For the CTL formula $\forall \varphi \until \psi$ we have that \textcolor{blue}{details still need to be added here.}
 \end{itemize}
 \end{proof}
 
-\color{red}
-Next, we define equivalence of CTL formulas.
-
-\begin{definition}
-For CTL formulas $\varphi$ and $\psi$, 
-\[
-\varphi \equiv \psi \mbox{ if } \satisfaction{\varphi}(s) = \satisfaction{\psi}(s) \mbox{ for all transition systems and } s \in S.
-\]
-\end{definition}
-
-\color{black}
-We use $2^S$ to denote the powerset of $S$.  For each CTL formula we define the following two sets of states.
+For each CTL formula we define the following two sets of states.
 
 \begin{definition}
 Let $\varphi$ be a CTL formula.  Then
@@ -763,18 +1140,18 @@ Let $(S, F, \rightarrow, I, \mathit{AP}, L)$ be a partial transition system.  Fo
 \mathit{Unsat}(a) & = \{\, s \in S \mid a \not\in L(s) \,\}
 %\mathit{Unknown}(a) & = \emptyset
 \end{align*}
-\item 
-\begin{align*}
-\mathit{Sat}(\TRUE) & = S\\
-\mathit{Unsat}(\TRUE) & = \emptyset
-%\mathit{Unknown}(\TRUE) & = \emptyset
-\end{align*}
-\item 
-\begin{align*}
-\mathit{Sat}(\FALSE) & = \emptyset\\
-\mathit{Unsat}(\FALSE) & = S\
-%\mathit{Unknown}(\FALSE) & = \emptyset 
-\end{align*}
+%\item 
+%\begin{align*}
+%\mathit{Sat}(\TRUE) & = S\\
+%\mathit{Unsat}(\TRUE) & = \emptyset
+%%\mathit{Unknown}(\TRUE) & = \emptyset
+%\end{align*}
+%\item 
+%\begin{align*}
+%\mathit{Sat}(\FALSE) & = \emptyset\\
+%\mathit{Unsat}(\FALSE) & = S\
+%%\mathit{Unknown}(\FALSE) & = \emptyset 
+%\end{align*}
 \item
 \begin{align*}
 \mathit{Sat}(\neg \varphi) & = \mathit{Unsat}(\varphi)\\
@@ -787,55 +1164,72 @@ Let $(S, F, \rightarrow, I, \mathit{AP}, L)$ be a partial transition system.  Fo
 \mathit{Unsat}(\varphi \wedge \psi) & = \mathit{Unsat}(\varphi) \cup \mathit{Unsat}(\psi)
 %\mathit{Unknown}(\varphi \wedge \psi) & = S \setminus (\mathit{Sat}(\varphi \wedge \psi) \cup \mathit{Unsat}(\varphi \wedge \psi))
 \end{align*}
-\item
-\begin{align*}
-\mathit{Sat}(\varphi \vee \psi) & = \mathit{Sat}(\varphi) \cup \mathit{Sat}(\psi)\\
-\mathit{Unsat}(\varphi \vee \psi) & = \mathit{Unsat}(\varphi) \cap \mathit{Unsat}(\psi)
-%\mathit{Unknown}(\varphi \vee \psi) & = S \setminus (\mathit{Sat}(\varphi \vee \psi) \cup \mathit{Unsat}(\varphi \vee \psi))
-\end{align*}
-\item
-\begin{align*}
-\mathit{Sat}(\varphi \rightarrow \psi) & = \mathit{Unsat}(\varphi) \cup \mathit{Sat}(\psi)\\
-\mathit{Unsat}(\varphi \rightarrow \psi) & = \mathit{Unsat}(\varphi) \setminus \mathit{Unsat}(\psi)
-%\mathit{Unknown}(\varphi \rightarrow \psi) & = S \setminus (\mathit{Sat}(\varphi \rightarrow \psi) \cup \mathit{Unsat}(\varphi \rightarrow \psi))
-\end{align*}
-\item
-\begin{align*}
-\mathit{Sat}(\varphi \leftrightarrow \psi) & = \\
-\mathit{Unsat}(\varphi \leftrightarrow \psi) & = 
-%\mathit{Unknown}(\varphi \leftrightarrow \psi) & = 
-\end{align*}
-\item
-\begin{align*}
-\mathit{Sat}(\forall \nxt \varphi) & = 
-\left \{
-\begin{array}{ll}
-S & \mbox{if $\varphi \equiv \TRUE$}\\
-\{\, s \in F \mid \mathit{post}(s) \subseteq \mathit{Sat}(\varphi) \,\} & \mbox{otherwise}
-\end{array}
-\right .\\
-\textcolor{Green}{\mathit{Unsat}(\forall \nxt \varphi)} & \textcolor{Green}{= 
-\{\, s \in S \mid \mathit{post}(s) \cap \mathit{Unsat}(\varphi) \not= \emptyset \,\}}
-%\mathit{Unknown}(\forall \nxt \varphi) & = S \setminus (\mathit{Sat}(\forall \nxt \varphi) \cup \mathit{Unsat}(\forall \nxt \varphi))
-\end{align*}
+%\item
+%\begin{align*}
+%\mathit{Sat}(\varphi \vee \psi) & = \mathit{Sat}(\varphi) \cup \mathit{Sat}(\psi)\\
+%\mathit{Unsat}(\varphi \vee \psi) & = \mathit{Unsat}(\varphi) \cap \mathit{Unsat}(\psi)
+%%\mathit{Unknown}(\varphi \vee \psi) & = S \setminus (\mathit{Sat}(\varphi \vee \psi) \cup \mathit{Unsat}(\varphi \vee \psi))
+%\end{align*}
+%\item
+%\begin{align*}
+%\mathit{Sat}(\varphi \rightarrow \psi) & = \mathit{Unsat}(\varphi) \cup \mathit{Sat}(\psi)\\
+%\mathit{Unsat}(\varphi \rightarrow \psi) & = \mathit{Unsat}(\varphi) \setminus \mathit{Unsat}(\psi)
+%%\mathit{Unknown}(\varphi \rightarrow \psi) & = S \setminus (\mathit{Sat}(\varphi \rightarrow \psi) \cup \mathit{Unsat}(\varphi \rightarrow \psi))
+%\end{align*}
+%\item
+%\begin{align*}
+%\mathit{Sat}(\varphi \leftrightarrow \psi) & = \\
+%\mathit{Unsat}(\varphi \leftrightarrow \psi) & = 
+%%\mathit{Unknown}(\varphi \leftrightarrow \psi) & = 
+%\end{align*}
+%\item
+%\begin{align*}
+%\mathit{Sat}(\forall \nxt \varphi) & = 
+%\left \{
+%\begin{array}{ll}
+%S & \mbox{if $\varphi \equiv \TRUE$}\\
+%\{\, s \in F \mid \mathit{post}(s) \subseteq \mathit{Sat}(\varphi) \,\} & \mbox{otherwise}
+%\end{array}
+%\right .\\
+%\textcolor{Green}{\mathit{Unsat}(\forall \nxt \varphi)} & \textcolor{Green}{= 
+%\{\, s \in S \mid \mathit{post}(s) \cap \mathit{Unsat}(\varphi) \not= \emptyset \,\}}
+%%\mathit{Unknown}(\forall \nxt \varphi) & = S \setminus (\mathit{Sat}(\forall \nxt \varphi) \cup \mathit{Unsat}(\forall \nxt \varphi))
+%\end{align*}
 \item
 \begin{align*}
 \mathit{Sat}(\exists \nxt \varphi) & = 
-\left \{
-\begin{array}{ll}
-S \setminus F \cup \{\, s \in F \mid \mathit{post}(s) \not= \emptyset \,\} & \mbox{if $\varphi \equiv \TRUE$}\\
-\{\, s \in S \mid \mathit{post}(s) \cap \mathit{Sat}(\varphi) \not= \emptyset \,\} & \mbox{otherwise}
-\end{array}
-\right .\\
-\textcolor{Green}{\mathit{Unsat}(\exists \nxt \varphi)} & \textcolor{Green}{= 
-\{\, s \in F \mid \mathit{post}(s) \subseteq \mathit{Unsat}(\varphi) \,\}}
+\{\, s \in S \mid \mathit{post}(s) \cap \mathit{Sat}(\varphi) \not= \emptyset \,\}\\
+\mathit{Unsat}(\exists \nxt \varphi) & = 
+\{\, s \in F \mid \mathit{post}(s) \subseteq \mathit{Unsat}(\varphi) \,\}
 %\mathit{Unknown}(\exists \nxt \varphi) & = S \setminus (\mathit{Sat}(\exists \nxt \varphi) \cup \mathit{Unsat}(\exists \nxt \varphi))
 \end{align*}
 \item
+$\mathit{Sat}(\exists \always \varphi)$ is the largest $U \subseteq S$ satisfying
+\[
+U \subseteq \{\, s \in \mathit{Sat}(\varphi) \mid \mathit{post}(s) = \emptyset \vee \mathit{post}(s) \cap U \not= \emptyset \,\}.
+\]
+$\mathit{Unsat}(\exists \always \varphi)$ is the smallest $V \subseteq S$ satisfying
+\[
+V \supseteq 
+\{\, s \in S \mid s \in \mathit{Unsat}(\varphi) \mbox{ or } \mathit{post}(s) \cap V \not= \emptyset \,\}.
+\]
+%\item
+%\begin{align*}
+%\mathit{Sat}(\forall \always \varphi) & = \\
+%\mathit{Unsat}(\forall \always \varphi) & = 
+%%\mathit{Unknown}(\forall \always \varphi) & = 
+%\end{align*}
+%\item
+%\begin{align*}
+%\mathit{Sat}(\forall \eventually \varphi) & = \\
+%\mathit{Unsat}(\forall \eventually \varphi) & = 
+%%\mathit{Unknown}(\forall \eventually \varphi) & = 
+%\end{align*}
+\item
 \begin{align*}
-\mathit{Sat}(\forall \varphi \until \psi) & = \\
-\mathit{Unsat}(\forall \varphi \until \psi) & = 
-%\mathit{Unknown}(\forall \varphi \until \psi) & = 
+\mathit{Sat}(\exists \eventually \varphi) & = \\
+\mathit{Unsat}(\exists \eventually \varphi) & = 
+%\mathit{Unknown}(\exists \eventually \varphi) & = 
 \end{align*}
 \item
 \begin{align*}
@@ -844,47 +1238,19 @@ S \setminus F \cup \{\, s \in F \mid \mathit{post}(s) \not= \emptyset \,\} & \mb
 %\mathit{Unknown}(\exists \varphi \until \psi) & = 
 \end{align*}
 \item
-$\mathit{Sat}(\forall \always \varphi)$ is the largest $U \subseteq S$ satisfying
-\[
-U \subseteq 
-\left \{
-\begin{array}{ll}
-S & \mbox{if $\varphi \equiv \TRUE$}\\
-\{\, s \in F \mid s \in \mathit{Sat}(\varphi) \mbox{ and } \mathit{post}(s) \subseteq U \,\} & \mbox{otherwise}
-\end{array}
-\right .
-\]
-$\mathit{Unsat}(\forall \always \varphi)$ is the smallest $V \subseteq S$ satisfying
-\[
-V \supseteq 
-\{\, s \in S \mid s \in \mathit{Unsat}(\varphi) \mbox{ or } \mathit{post}(s) \cap V \not= \emptyset \,\} 
-\]
-\item
 \begin{align*}
-\mathit{Sat}(\exists \always \varphi) & = \\
-\mathit{Unsat}(\exists \always \varphi) & = 
-%\mathit{Unknown}(\exists \always \varphi) & = 
-\end{align*}
-\item
-\begin{align*}
-\mathit{Sat}(\forall \eventually \varphi) & = \\
-\mathit{Unsat}(\forall \eventually \varphi) & = 
-%\mathit{Unknown}(\forall \eventually \varphi) & = 
-\end{align*}
-\item
-\begin{align*}
-\mathit{Sat}(\exists \eventually \varphi) & = \\
-\mathit{Unsat}(\exists \eventually \varphi) & = 
-%\mathit{Unknown}(\exists \eventually \varphi) & = 
+\mathit{Sat}(\forall \varphi \until \psi) & = \\
+\mathit{Unsat}(\forall \varphi \until \psi) & = 
+%\mathit{Unknown}(\forall \varphi \until \psi) & = 
 \end{align*}
 \end{itemize}
 \end{theorem}
 \begin{proof}
-The first eight cases follow immediately from the definitions.  For example, for the case $\varphi \wedge \psi$ we have that
+The first three cases follow immediately from the definitions.  For example, for the case $\varphi \wedge \psi$ we have that
 \begin{align*}
 \mathit{Sat}(\varphi \wedge \psi) 
 & = \{\, s \in S \mid \satisfaction{\varphi \wedge \psi}(s) = \top \,\}\\
-& = \{\, s \in S \mid \satisfaction{\varphi}(s) = \top \mbox{ and } \satisfaction{\psi}(s) = \top \,\}\\
+& = \{\, s \in S \mid \satisfaction{\varphi}(s) = \top \wedge \satisfaction{\psi}(s) = \top \,\}\\
 & = \{\, s \in S \mid \satisfaction{\varphi}(s) = \top \,\} \cap \{\, s \in S \mid \satisfaction{\psi}(s) = \top \,\}\\
 & = \mathit{Sat}(\varphi) \cap \mathit{Sat}(\psi)
 \end{align*}
@@ -892,118 +1258,134 @@ and
 \begin{align*}
 \mathit{Unsat}(\varphi \wedge \psi) 
 & = \{\, s \in S \mid \satisfaction{\varphi \wedge \psi}(s) = \perp \,\}\\
-& = \{\, s \in S \mid \satisfaction{\varphi}(s) = \perp \mbox{ or } \satisfaction{\psi}(s) = \perp \,\}\\
+& = \{\, s \in S \mid \satisfaction{\varphi}(s) = \perp \vee \satisfaction{\psi}(s) = \perp \,\}\\
 & = \{\, s \in S \mid \satisfaction{\varphi}(s) = \perp \,\} \cup \{\, s \in S \mid \satisfaction{\psi}(s) = \perp \,\}\\
 & = \mathit{Unsat}(\varphi) \cup \mathit{Unsat}(\psi)
 \end{align*}
 \begin{itemize}
 \item 
-\color{red}
-Consider the CTL formula $\forall \nxt \varphi$.  For $\mathit{Sat}$, we distinguish two cases.
-\begin{itemize}
-\item 
-Assume that $\varphi \equiv \TRUE$.  Then
+\begin{franck}
+Consider the CTL formula $\exists \nxt \varphi$.  
+%For $\mathit{Sat}$, we distinguish two cases.
+%\begin{itemize}
+%\item 
+%Assume that $\varphi \equiv \TRUE$.  Then
+%\begin{align*}
+%\mathit{Sat}(\exists \nxt \varphi)
+%= & \{\, s \in S \mid \satisfaction{\exists \nxt \varphi}(s) = \top \,\}\\
+%= & \{\, s \in S \mid \exists \pi \in \mathit{CoPaths}(s) \cup \mathit{PaPaths}(s) : |\pi| > 1 \wedge \satisfaction{\varphi}(\pi[1]) = \top \,\}\\
+%= & \{\, s \in S \mid \exists \pi \in \mathit{CoPaths}(s) \cup \mathit{PaPaths}(s) : |\pi| > 1 \wedge \satisfaction{\TRUE}(\pi[1]) = \top \,\}\\
+%& \comment{$\varphi \equiv \TRUE$}\\
+%= & \{\, s \in S \mid \exists \pi \in \mathit{CoPaths}(s) \cup \mathit{PaPaths}(s) : |\pi| > 1 \,\}\\
+%= & \{\, s \in S \setminus F \mid \exists \pi \in \mathit{CoPaths}(s) \cup \mathit{PaPaths}(s) : |\pi| > 1 \,\} \cup\\
+%& \{\, s \in F \mid \exists \pi \in \mathit{CoPaths}(s) \cup \mathit{PaPaths}(s) : |\pi| > 1 \,\}\\
+%= & (S \setminus F) \cup \{\, s \in F \mid \mathit{post} \not= \emptyset \,\}
+%\end{align*}
+%\item
+%Otherwise, $\varphi \not\equiv \TRUE$.  Hence, then there exists $s_{\perp} \in \mathcal{S} \setminus S$ such that $\satisfaction{\varphi}(s_{\perp}) \not= \satisfaction{\TRUE}(s_{\perp}) = \top$.  We distinguish two cases.
+%\begin{itemize}
+%\item 
+%Assume that $s \in S \setminus F$.  Then $s s_{\perp} \in \mathit{PoPaths}(s)$.  Since $\satisfaction{\varphi}((s s_{\perp})[1]) = \satisfaction{\varphi}(s_{\perp}) \not= \top$, we can conclude that $\satisfaction{\varphi}(\pi[1]) \not= \top$ for some $\pi \in \mathit{Paths}(s)$ with $|\pi| > 1$.  
+%\item
+%Assume $s \in F$.  Then $\mathit{post(s)} = \{\, \pi[1] \mid \pi \in \mathit{Paths}(s) \mbox{ with } |\pi| > 1\,\}$.
+%\end{itemize}
+%From the above, we can conclude that
 \begin{align*}
-\mathit{Sat}(\forall \nxt \varphi)
-& = \{\, s \in S \mid \satisfaction{\forall \nxt \varphi}(s) = \top \,\}\\
-& = \{\, s \in S \mid \satisfaction{\varphi}(\pi[1]) = \top \mbox{ for all } \pi \in \mathit{Paths}(s) \mbox{ with } |\pi| > 1 \,\}\\
-& = \{\, s \in S \mid \satisfaction{\TRUE}(\pi[1]) = \top \mbox{ for all } \pi \in \mathit{Paths}(s) \mbox{ with } |\pi| > 1 \,\}
-\comment{$\varphi \equiv \TRUE$}\\
-& = S
+\mathit{Sat}(\exists \nxt \varphi)
+= & \{\, s \in S \mid \satisfaction{\exists \nxt \varphi}(s) = \top \,\}\\
+= & \{\, s \in S \mid \exists \pi \in \mathit{CoPaths}(s) \cup \mathit{PaPaths}(s) : |\pi| > 1 \wedge \satisfaction{\varphi}(\pi[1]) = \top \,\}\\
+= & \{\, s \in S \mid \exists s' \in \mathit{post}(s) :  \satisfaction{\varphi}(s') = \top \,\}\\
+= & \{\, s \in S \mid \mathit{post}(s) \cap \mathit{Sat}(\varphi) \not= \emptyset \,\}
 \end{align*}
-\item
-Otherwise, $\varphi \not\equiv \TRUE$.  Then there exists $s_{\perp} \in \mathcal{S} \setminus S$ such that $\satisfaction{\varphi}(s_{\perp}) \not= \top$.  We distinguish two cases.
-\begin{itemize}
-\item 
-Assume that $s \in S \setminus F$.  Then $s s_{\perp} \in \mathit{PPaths}(s)$.  Since $\satisfaction{\varphi}((s s_{\perp})[1]) = \satisfaction{\varphi}(s_{\perp}) \not= \top$, we can conclude that $\satisfaction{\varphi}(\pi[1]) \not= \top$ for some $\pi \in \mathit{Paths}(s)$ with $|\pi| > 1$.  
-\item
-Assume $s \in F$.  Then $\mathit{post(s)} = \{\, \pi[1] \mid \pi \in \mathit{Paths}(s) \mbox{ with } |\pi| > 1\,\}$.
-\end{itemize}
-From the above, we can conclude that
-\begin{align*}
-\mathit{Sat}(\forall \nxt \varphi)
-= & \{\, s \in S \mid \satisfaction{\forall \nxt \varphi}(s) = \top \,\}\\
-= & \{\, s \in S \mid \satisfaction{\varphi}(\pi[1]) = \top \mbox{ for all } \pi \in \mathit{Paths}(s) \mbox{ with } |\pi| > 1 \,\}\\
-= & \{\, s \in S \setminus F \mid \satisfaction{\varphi}(\pi[1]) = \top \mbox{ for all } \pi \in \mathit{Paths}(s) \mbox{ with } |\pi| > 1 \,\} \cup\\
-& \{\, s \in F \mid \satisfaction{\varphi}(\pi[1]) = \top \mbox{ for all } \pi \in \mathit{Paths}(s) \mbox{ with } |\pi| > 1 \,\}\\
-= & \emptyset \cup
-\{\, s \in F \mid \satisfaction{\varphi}(s') = \top \mbox{ for all } s' \in \mathit{post}(s) \,\}\\
-= & \{\, s \in F \mid \mathit{post}(s) \subseteq \mathit{Sat}(\varphi) \,\}
-\end{align*}
-\end{itemize}
-\color{Green}
 Next, we consider $\mathit{Unsat}$.
 \begin{align*}
-\mathit{Unsat}(\forall \nxt \varphi)
-= & \{\, s \in S \mid \satisfaction{\forall \nxt \varphi}(s) = \perp \,\}\\
-= & \{\, s \in S \mid \satisfaction{\varphi}(\pi[1]) = \perp \mbox{ for some } \pi \in \mathit{APaths}(s) \mbox{ with } |\pi| > 1 \,\}\\
-= & \{\, s \in S \mid \satisfaction{\varphi}(s') = \perp \mbox{ for some } s' \in \mathit{post}(s) \,\}\\
-= & \{\, s \in S \mid \mathit{post}(s) \cap \mathit{Unsat}(\varphi) \not= \emptyset \,\}
+\mathit{Unsat}(\exists \nxt \varphi)
+= & \{\, s \in S \mid \satisfaction{\exists \nxt \varphi}(s) = \perp \,\}\\
+= & \{\, s \in S \mid \forall \pi \in \mathit{Paths}(s) : |\pi| > 1 \Rightarrow \satisfaction{\varphi}(\pi[1]) = \perp \,\}\\
+= & \{\, s \in S \mid \forall s' \in \mathit{post}(s) : \satisfaction{\varphi}(s') = \perp \,\}\\
+= & \{\, s \in S \mid \mathit{post}(s) \subseteq \mathit{Unsat}(\varphi) \,\}
 \end{align*}
-\color{blue}
 \item
-\textcolor{blue}{Who wants to try $\exists \nxt \varphi$?}
-\color{Green}
-\item
-Consider the CTL formula $\forall \always \varphi$.  We first focus on $\mathit{Sat}$.
-
-Given the CTL formula~$\varphi$, the function
+Consider the CTL formula $\exists \always \varphi$.  We first focus on $\mathit{Sat}$.  We use $2^S$ to denote the powerset of $S$.  Given the CTL formula~$\varphi$, the function
 \[
 \mathcal{F}_{\varphi} : 2^S \to 2^S
 \]
 is defined by
 \[
-\mathcal{F}_{\varphi}(U) = \left \{
-\begin{array}{ll}
-S & \mbox{if $\varphi \equiv \TRUE$}\\
-\{\, s \in F \mid s \in \mathit{Sat}(\varphi) \mbox{ and } \mathit{post}(s) \subseteq U \,\}  & \mbox{otherwise}
-\end{array}
-\right .
+\mathcal{F}_{\varphi}(U) = \{\, s \in \mathit{Sat}(\varphi) \mid \mathit{post}(s) = \emptyset \vee \mathit{post}(s) \cap U \not= \emptyset \,\}.
 \]
 
-Next, we show that the function $\mathcal{F}_{\varphi}$ is monotone, that is, for all $U$, $V \in 2^S$, if $U \subseteq V$ then $\mathcal{F}_{\varphi}(U) \subseteq \mathcal{F}_{\varphi}(V)$.  Let $U$, $V \in 2^S$ and assume that $U \subseteq V$.  Obviously, $\mathcal{F}_{\varphi}(U) \subseteq \mathcal{F}_{\varphi}(V)$ if $\varphi \equiv \TRUE$.  Otherwise, let $s \in \mathcal{F}_{\varphi}(U)$. To conclude that $\mathcal{F}_{\varphi}(U) \subseteq \mathcal{F}_{\varphi}(V)$, it remains to show that $s \in \mathcal{F}_{\varphi}(V)$.  Since $s \in \mathcal{F}_{\varphi}(U)$, we have that $s \in F$, $s \in \mathit{Sat}(\varphi)$, and $\mathit{post}(s) \subseteq U$.  Since $U \subseteq V$, we can conclude that $\mathit{post}(s) \subseteq V$.  Hence, $s \in \mathcal{F}_{\varphi}(V)$.  From the Knaster-Tarski theorem we can conclude that there exists a largest $U \subseteq S$ satisfying $U \subseteq \mathcal{F}_{\varphi}(U)$.
+Next, we show that the function $\mathcal{F}_{\varphi}$ is monotone, that is, for all $U$, $V \in 2^S$, if $U \subseteq V$ then $\mathcal{F}_{\varphi}(U) \subseteq \mathcal{F}_{\varphi}(V)$.  Let $U$, $V \in 2^S$ and assume that $U \subseteq V$.  Let $s \in \mathcal{F}_{\varphi}(U)$. To conclude that $\mathcal{F}_{\varphi}(U) \subseteq \mathcal{F}_{\varphi}(V)$, it remains to show that $s \in \mathcal{F}_{\varphi}(V)$.  Since $s \in \mathcal{F}_{\varphi}(U)$, we have that $s \in \mathit{Sat}(\varphi)$, and either $\mathit{post}(s) = \emptyset$ or $\mathit{post}(s) \cap U \not= \emptyset$.  Since $U \subseteq V$, we can conclude that $\mathit{post}(s) \cap U \not= \emptyset$ implies $\mathit{post}(s) \cap V \not= \emptyset$.  Hence, $s \in \mathcal{F}_{\varphi}(V)$.  From the Knaster-Tarski theorem \cite{K,T} we can conclude that there exists a largest $U \in 2^S$ satisfying $U \subseteq \mathcal{F}_{\varphi}(U)$.
 
-We distinguish two cases.
-\begin{itemize}
-\item 
-Assume that $\varphi \equiv \TRUE$.  Then
+Since
 \begin{align*}
-\mathit{Sat}(\forall \always \varphi)
-& = \{\, s \in S \mid \satisfaction{\forall \always \varphi}(s) = \top \,\}\\
-& = \{\, s \in S \mid \satisfaction{\varphi}(\pi[i]) = \top \mbox{ for all } \pi \in \mathit{Paths}(s) \mbox{ and } 0 \leq i < |\pi| \,\}\\
-& = \{\, s \in S \mid \satisfaction{\TRUE}(\pi[i]) = \top \mbox{ for all } \pi \in \mathit{Paths}(s) \mbox{ and } 0 \leq i < |\pi| \,\}
-\comment{$\varphi \equiv \TRUE$}\\
-& = S
+\mathit{Sat}(\exists \always \varphi)
+= & \{\, s \in S \mid \satisfaction{\exists \always \varphi}(s) = \top \,\}\\
+= & \{\, s \in S \mid \exists \pi \in \mathit{CoPaths}(s) : \forall 0 \leq i < |\pi| : \satisfaction{\varphi}(\pi[i]) = \top \,\}\\
+= & \{\, s \in S \mid \satisfaction{\varphi}(s) = \top \wedge \mathit{post}(s) = \emptyset \,\} \cup\\
+& \{\, s \in S \mid \satisfaction{\varphi}(s) = \top \wedge \exists s' \in \mathit{post}(s) : \exists \pi \in \mathit{CoPaths}(s') : \forall 0 \leq i < |\pi| : \satisfaction{\varphi}(\pi[i]) = \top \,\}\\
+= & \{\, s \in S \mid \satisfaction{\varphi}(s) = \top \wedge \mathit{post}(s) = \emptyset \,\} \cup\\
+& \{\, s \in S \mid \satisfaction{\varphi}(s) = \top \wedge \exists s' \in \mathit{post}(s) : \satisfaction{\exists \always \varphi}(s') = \top \,\}\\
+= & \{\, s \in S \mid s \in \mathit{Sat}(\varphi) \wedge \mathit{post}(s) = \emptyset \,\} \cup\\
+& \{\, s \in S \mid s \in \mathit{Sat}(\varphi) \wedge \exists s' \in \mathit{post}(s) : s' \in \mathit{Sat}(\exists \always \varphi) \,\}\\
+= & \{\, s \in \mathit{Sat}(\varphi) \mid \mathit{post}(s) = \emptyset \vee \mathit{post}(s) \cap \mathit{Sat}(\exists \always \varphi) \not= \emptyset \,\}
 \end{align*}
-\item
-Otherwise, $\varphi \not\equiv \TRUE$.  Then there exists $s_{\perp} \in \mathcal{S} \setminus S$ such that $\satisfaction{\varphi}(s_{\perp}) \not= \top$.  We distinguish two cases.
-\begin{itemize}
-\item 
-Assume that $s \in S \setminus F$.  Then $s s_{\perp} \in \mathit{PPaths}(s)$.  Since $\satisfaction{\varphi}((s s_{\perp})[1]) = \satisfaction{\varphi}(s_{\perp}) \not= \top$, we can conclude that $\satisfaction{\varphi}(\pi[1]) \not= \top$ for some $\pi \in \mathit{Paths}(s)$ with $|\pi| > 1$.  
-\item
-Assume $s \in F$.  Then $\mathit{Paths(s)} = \{\, s \pi \mid s' \in \mathit{post}(s) \mbox{ and } \pi \in \mathit{Paths}(s') \,\}$.
-\end{itemize}
-From the above we can conclude that
-\begin{align*}
-\mathit{Sat}(\forall \always \varphi)
-= & \{\, s \in S \mid \satisfaction{\forall \always \varphi}(s) = \top \,\}\\
-= & \{\, s \in S \mid \satisfaction{\varphi}(\pi[i]) = \top \mbox{ for all } \pi \in \mathit{Paths}(s) \mbox{ and } 0 \leq i < |\pi| \,\}\\
-= & \{\, s \in S \setminus F \mid \satisfaction{\varphi}(\pi[i]) = \top \mbox{ for all } \pi \in \mathit{Paths}(s) \mbox{ and } 0 \leq i < |\pi| \,\} \cup\\
-= & \{\, s \in F \mid \satisfaction{\varphi}(\pi[i]) = \top \mbox{ for all } \pi \in \mathit{Paths}(s) \mbox{ and } 0 \leq i < |\pi| \,\}\\
-= & \emptyset \cup \{\, s \in F \mid \satisfaction{\varphi}((s \pi)[i]) = \top  \mbox{ for all } s' \in \mathit{post}(s) \mbox{ and } \pi \in \mathit{Paths}(s') \mbox{ and } 0 \leq i < |\pi| \,\}\\
-= & \{\, s \in F \mid \satisfaction{\varphi}(s) = \top \mbox{ and } \satisfaction{\varphi}(\pi[i]) = \top  \mbox{ for all } s' \in \mathit{post}(s) \mbox{ and } \pi \in \mathit{Paths}(s') \mbox{ and } 0 \leq i < |\pi| \,\}\\
-= & \{\, s \in F \mid s \in \mathit{Sat}(\varphi) \mbox{ and } s' \in \mathit{Sat}(\forall \always \varphi) \mbox{ for all } s' \in \mathit{post}(s) \,\}\\
-= & \{\, s \in F \mid s \in \mathit{Sat}(\varphi) \mbox{ and } \mathit{post}(s) \subseteq \mathit{Sat}(\forall \always \varphi) \,\}
-\end{align*}
-\end{itemize}
+we can conclude that $\mathit{Sat}(\exists \always \varphi) \subseteq \mathcal{F}_{\varphi}(\mathit{Sat}(\exists \always \varphi))$.
 
-Let $U \subseteq S$ satisfying $U \subseteq \mathcal{F}_{\varphi}(U)$.  It remains to show that $U \subseteq \mathit{Sat}(\forall \always \varphi)$.  We distinguish two cases.
+Let $U \in 2^S$ satisfying $U \subseteq \mathcal{F}_{\varphi}(U)$.  It remains to show that $U \subseteq \mathit{Sat}(\exists \always \varphi)$.  First, we will show that for all $s \in U$ and $n \in \mathbb{N}$,
+\begin{itemize}
+\item[(a)]
+$\exists \pi_n \in \mathit{CoPaths}(s) : |\pi_n| \leq n + 1$ or
+\item[(b)]
+$\exists \pi_n \in \mathit{PaPaths}(s) : |\pi_n| = n + 1$
+\end{itemize}
+and $\forall 0 \leq i < |\pi_n| : \pi_n[i] \in U$ and $\forall 0 \leq i < j \leq n: \pi_i \mbox{ is a prefix of } \pi_j$.  We prove this by induction on $n$.  Let $s \in U$.  We distinguish the following two cases.
 \begin{itemize}
 \item 
-If $\varphi \equiv \TRUE$ then $U \subseteq \mathcal{F}_{\varphi}(U) = S = \mathit{Sat}(\forall \always \varphi)$.
+Let $n = 0$.  We distinguish the following two cases.
+\begin{itemize}
+\item 
+If $\mathit{post}(s) = \emptyset$ then $s \in \mathit{CoPaths}(s)$.
 \item
-Otherwise, $\varphi \not\equiv \TRUE$.  Towards a contradiction, assume that $s \in U$ and $s \not\in \mathit{Sat}(\forall \always \varphi)$.  Then $\satisfaction{\forall \always \varphi}(s) \not= \top$.  Hence, there exists $\pi \in \mathit{Paths}(s)$ and $0 \leq i < |\pi|$ such that $\satisfaction{\varphi}(\pi[i]) \not= \top$.  Next, we show that $\pi[j] \in U$ for all $0 \leq j \leq i$ by induction on $j$.  In the base case $j = 0$, we have that $\pi[0] = s \in U$.  Assume that $j > 0$.  By induction, $\pi[j-1] \in U$.  Since $U \subseteq \mathcal{F}_{\varphi}(U)$, we have that $\pi[j-1] \in F$ and $\mathit{post}(\pi[j-1]) \subseteq U$.  Hence, $\pi[j] \in U$.  Since $\pi[i] \in U$ and $U \subseteq \mathcal{F}_{\varphi}(U)$, we can conclude that $\pi[i] \in \mathit{Sat}(\varphi)$, which contradicts $\satisfaction{\varphi}(\pi[i]) \not= \top$.
+Otherwise, $\mathit{post}(s) \not= \emptyset$.  Then $s \in \mathit{PaPaths}(s)$.
+\end{itemize} 
+\item
+Otherwise, $n > 0$.  We distinguish the following two cases.
+\begin{itemize}
+\item 
+Assume $\exists \pi_{n-1} \in \mathit{CoPaths}(s) : |\pi_{n-1}| \leq n$ and $\forall 0 \leq i < |\pi_{n-1}| : \pi_{n-1}[i] \in U$ and $\forall 0 \leq i < j \leq n - 1: \pi_i \mbox{ is a prefix of } \pi_j$.  Then we choose $\pi_n = \pi_{n-1}$.
+\item
+Otherwise, $\exists \pi_{n-1} \in \mathit{PaPaths}(s) : |\pi_{n-1}| = n$  and $\forall 0 \leq i < |\pi_{n-1}| : \pi_{n-1}[i] \in U$ and $\forall 0 \leq i < j \leq n - 1: \pi_i \mbox{ is a prefix of } \pi_j$.  Let $s' = \pi_{n-1}[n-1]$.  Then $s' \in U$.  We distinguish the following two cases.
+\begin{itemize}
+\item 
+If $\mathit{post}(s') = \emptyset$ then $\pi_{n-1} \in CoPaths(s)$.  Then we choose $\pi_n = \pi_{n-1}$.
+\item
+Otherwise, $\mathit{post}(s') \not= \emptyset$.  Since $s' \in U$ and $U \subseteq \mathcal{F}_{\varphi}(U)$, we have that $s' \in \mathcal{F}_{\varphi}(U)$.  Therefore, $\mathit{post}(s') \cap U \not= \emptyset$.  Let $s'' \in \mathit{post}(s') \cap U$.  In this case, $\pi_n = \pi_{n-1} s''$.
 \end{itemize}
+\end{itemize}
+\end{itemize}
+From the above we can conclude $U \subseteq \mathit{Sat}(\exists \always \varphi)$ as follows.  Let $s \in U$.  Then either
+\[
+\exists n \in \mathbb{N} : \exists \pi_n \in \mathit{CoPaths}(s) : |\pi_n| \leq n + 1 \wedge\forall 0 \leq i < |\pi_n| : \pi_n[i] \in U
+\]
+or
+\begin{align*}
+\forall n \in \mathbb{N} : \exists \pi_n \in \mathit{PaPaths}(s) :\, & |\pi_n| = n + 1 \wedge \forall 0 \leq i < |\pi_n| : \pi_n[i] \in U \wedge\\
+& \forall 0 \leq i < j \leq n: \pi_i \mbox{ is a prefix of } \pi_j.
+\end{align*}
+In the latter case, for $\pi_{\omega} \in S^{\omega}$ with $\pi_{\omega}[i] = \pi_i[i]$ we have that 
+\[
+\pi_{\omega} \in \mathit{CoPaths}(s) \wedge \forall 0 \leq i < |\pi_{\omega}| : \pi_{\omega}[i] \in U.
+\]
+Hence, in both cases,
+\[
+\exists \pi \in \mathit{CoPaths}(s) : \forall 0 \leq i < |\pi| : \pi[i] \in U.
+\]
+Since $U \subseteq \mathcal{F}_{\varphi}(U)$ and $\mathcal{F}_{\varphi}(U) \subseteq \mathit{Sat}(\varphi)$, we have that 
+\[
+\exists \pi \in \mathit{CoPaths}(s) : \forall 0 \leq i < |\pi| : \pi[i] \in \mathit{Sat}(\varphi)
+\]
+and, therefore, $s \in \mathit{Sat}(\exists \always \varphi)$.
 
 Next, we focus on $\mathit{Unsat}$.  Given the CTL formula~$\varphi$, the function
 \[
@@ -1017,22 +1399,245 @@ is defined by
 
 Next, we show that the function $\mathcal{G}_{\varphi}$ is monotone, that is, for all $U$, $V \in 2^S$, if $U \subseteq V$ then $\mathcal{G}_{\varphi}(U) \subseteq \mathcal{G}_{\varphi}(V)$.  Let $U$, $V \in 2^S$ and assume that $U \subseteq V$.  Let $s \in \mathcal{G}_{\varphi}(U)$. To conclude that $\mathcal{G}_{\varphi}(U) \subseteq \mathcal{G}_{\varphi}(V)$, it remains to show that $s \in \mathcal{G}_{\varphi}(V)$.  Since $s \in \mathcal{G}_{\varphi}(U)$, we have that $s \in S$, $s \in \mathit{Unsat}(\varphi)$ or $\mathit{post}(s) \cap U \not= \emptyset$.  Since $U \subseteq V$, we can conclude that $\mathit{post}(s) \cap V \not= \emptyset$.  Hence, $s \in \mathcal{G}_{\varphi}(V)$.  From the Knaster-Tarski theorem we can conclude that there exists a smallest $V \subseteq S$ satisfying $V \supseteq \mathcal{F}_{\varphi}(V)$.
 
-Since $\mathit{APaths}(s) = \{ s \} \cup \{\, s \pi \mid s' \in \mathit{post}(s) \mbox{ and } \pi \in \mathit{APaths}(s') \,\}$, we have that
+
+
+
 \begin{align*}
-\mathit{Unsat}(\forall \always \varphi)
-= & \{\, s \in S \mid \satisfaction{\forall \always \varphi}(s) = \perp \,\}\\
-= & \{\, s \in S \mid \satisfaction{\varphi}(\pi[i]) = \perp \mbox{ for some } \pi \in \mathit{APaths}(s) \mbox{ and } 0 \leq i < |\pi| \,\}\\
-= & \{\, s \in S \mid \satisfaction{\varphi}(s) = \perp \mbox{ or } \satisfaction{\varphi}(\pi[i]) = \perp \mbox{ for some } s' \in \mathit{post}(s) \mbox{ and } \pi \in \mathit{APaths}(s') \mbox{ and } 0 \leq i < |\pi| \,\}\\
-= & \{\, s \in S \mid s \in \mathit{Unsat}(\varphi) \mbox{ or } \mathit{post}(s) \cap \mathit{Unsat}(\forall \always \varphi) \not= \emptyset \,\}
+\mathit{Unsat}(\exists \always \varphi)
+= & \{\, s \in S \mid \satisfaction{\exists \always \varphi}(s) = \perp \,\}\\
+= & \{\, s \in S \mid \forall \pi \in \mathit{CoPaths}(s) \cup \mathit{PoPaths}(s) : \exists 0 \leq i < |\pi| : \satisfaction{\varphi}(\pi[i]) = \perp \,\}\\
+= & \{\, s \in S \mid \satisfaction{\varphi}(s) = \perp \vee  \satisfaction{\varphi}(\pi[i]) = \perp \mbox{ for some } s' \in \mathit{post}(s) \mbox{ and } \pi \in \mathit{APaths}(s') \mbox{ and } 0 \leq i < |\pi| \,\}\\
+= & \{\, s \in S \mid s \in \mathit{Unsat}(\varphi) \mbox{ or } \mathit{post}(s) \cap \mathit{Unsat}(\forall \always \varphi) \not= \emptyset \,\}\\
+= & \mathit{Unsat}(\varphi) \cup \{\, s \in F \mid \emptyset \not= \mathit{post}(s) \subseteq \mathit{Unsat}(\varphi) \,\}\\
 \end{align*}
 
 Let $V \subseteq S$ satisfying $V \supseteq \mathcal{G}_{\varphi}(V)$.  It remains to show that $V \supseteq \mathit{Unsat}(\forall \always \varphi)$.  Towards a contradiction, assume that $s \in \mathit{Unsat}(\forall \always \varphi)$ and $s \not\in V$.  Then $\satisfaction{\varphi}(\pi[i]) = \perp$  for some $\pi \in \mathit{APaths}(s)$ and $0 \leq i < |\pi|$.  A few more details need to be added (soon).
 
-\color{blue}
-\item
-Who wants to try $\exists \always \varphi$?
+\end{franck}
 \end{itemize}
 \end{proof}
+
+
+\section{JPF Listener that Writes a Partial Transition System to File}
+
+A listener for Java PathFinder (JPF) writes its partial transition system to file.  In \cite[Section~7.3]{B20}, a listener that writes a transition system to file has been developed.  This listener is extended to the setting of partial transition systems.
+
+Consider the following partial transition system.
+\begin{center}
+\begin{tikzpicture}[yscale=0.9]
+\node (start) at (0,3) {};
+\node[rectangle,fill=red!20] (-1) at (1,2.5) {-1};
+\node[rectangle,fill=red!20] (0) at (1,1) {0};
+\node[circle,fill=red!20] (1) at (0,0) {1};
+\node[circle,fill=red!20] (2) at (2,0) {2};
+
+\draw[->] (start)--(-1);
+\draw[->] (-1)--(0);
+\draw[->] (0)--(1);
+\draw[->] (0)--(2);
+\end{tikzpicture}
+\end{center}
+State~-1 is the initial state.  The states -1 and 0 are fully explored, and  states 1 and 2 are not fully explored.  The listener produces a file, the name of which is the name of the system under test with ``.tra'' as suffix (see \cite[Section 7.4]{B20}), with the following content.
+\begin{verbatim}
+-1 -> 0
+0 -> 1
+0 -> 2
+1 2
+\end{verbatim}
+The first three lines describe the transitions.  Each line contains the source of the transition followed by the target of the transition.  The last line contains the states that are not fully explored yet.
+
+\bibliographystyle{plain}
+\bibliography{report}
+
+\end{document}
+
+%
+%\section{Normal forms for CTL}
+%
+%\description
+%The objective of this project is to develop a translation of CTL formulas to equivalent formulas in existential normal form and positive normal form for partial transition systems (as defined in the ``new semantics for CTL'' project).  Existential normal form is introduced in Definition~6.13 of the textbook and positive normal form is defined in Definition~6.15.  These normal forms may have to be adjusted to deal with partial transition systems.  
+%
+%\resources
+%\begin{itemize}
+%\item 
+%The textbook.
+%\end{itemize}
+%
+%\deliverables
+%\begin{itemize}
+%\item
+%Definitions of existential normal form and positive normal form for CTL for partial transition systems.
+%\item
+%A proof that for each CTL formula there exists an equivalent CTL formula in existential normal form in the context of partial transition systems (similar to the proof of Theorem~6.14 of the textbook, but considering partial transition systems and providing more details).  A similar result for positive normal form (see Theorem~6.16 of the textbook).
+%\item
+%A report containing the definitions, the proofs, and several examples illustrating how CTL formulas are translated into the normal forms.
+%\end{itemize}
+%
+%\section{Translation of CTL to normal forms}
+%
+%\description
+%The objective of this project is to implement the translation of CTL to both normal forms developed in the "normal forms for CTL" project. 
+%
+%Implement a class named \lstinline{ExistentialNormalForm} that contains a static method named \lstinline{translate}.  This method takes as argument an object of type \lstinline{Formula}, which is part of the \lstinline{ctl} package.  The API of the \lstinline{ctl} package can be found \href{https://www.eecs.yorku.ca/course_archive/2020-21/W/4315/project/api/ast}{here} and has been implemented in the ``from parse tree to abstract syntax tree'' project.  Similarly, develop a class named \lstinline{PositiveNormalForm} that contains a static method named \lstinline{translate}.
+%
+%To represent a CTL formula in the normal forms, you may use classes of the \lstinline{ctl} package.  You may also add new classes to this package.  A CTL formula can be translated to its existential normal form as follows.
+%\begin{lstlisting}
+%Formula formula = ...
+%Formula normalForm = ExistentialNormalForm.translate(formula);
+%\end{lstlisting}
+%
+%\deliverables
+%\begin{itemize}
+%\item
+%Properly documented Java code that implements both translations of CTL to the normal forms.
+%\item
+%A test suite, using JUnit, that rigorously tests the translations.
+%\item
+%A report describing the design, implementation, and testing of the translations.
+%\end{itemize}
+%
+%
+%\section{CTL model checking algorithm for partial transition systems}
+%
+%\description
+%The objective of this project is to adjust the CTL model checking algorithm, as described in Section~6.4.1 of the textbook, to the setting of partial transition systems, as developed in the ``new semantics for CTL'' project.  Given a partial transition system and a CTL formula in existential normal form, as developed in the `` existential normal form for CTL'' project, the algorithm computes the corresponding satisfaction set.
+%
+%\resources
+%\begin{itemize}
+%\item 
+%The textbook.
+%\end{itemize}
+%
+%\deliverables
+%\begin{itemize}
+%\item 
+%An algorithm, similar to Algorithm~14 of the textbook, for the computation of the satisfaction sets of CTL formulas in existential normal form for a partial transition system.
+%\item
+%A proof that proves the algorithm is correct, similar to Theorem~6.23 of the textbook.
+%\item
+%A report describing the algorithm and its correctness proof.
+%\end{itemize}
+%
+%\section{JPF listener that writes a partial transition system to file}
+%
+%\description
+%The first objective of this project is to develop a listener for Java PathFinder (JPF) that writes its partial transition system to file.  Partial transition systems are defined in the ``new semantics for CTL'' project.  In Section~7.3 of the notes, a listener that writes a transition system to file has been developed.  This listener needs to be extended to the setting of partial transition systems.
+%
+%Consider the following partial transition system.
+%\begin{center}
+%\begin{tikzpicture}[yscale=0.9]
+%\node (start) at (0,3) {};
+%\node[rectangle,fill=red!20] (-1) at (1,2.5) {-1};
+%\node[rectangle,fill=red!20] (0) at (1,1) {0};
+%\node[circle,fill=red!20] (1) at (0,0) {1};
+%\node[circle,fill=red!20] (2) at (2,0) {2};
+%
+%\draw[->] (start)--(-1);
+%\draw[->] (-1)--(0);
+%\draw[->] (0)--(1);
+%\draw[->] (0)--(2);
+%\end{tikzpicture}
+%\end{center}
+%State~-1 is the initial state.  The states -1 and 0 are fully explored, and  states 1 and 2 are not fully explored.  The listener should produce a file, the name of which is the name of the system under test with ``.tra'' as suffix (see Section 7.4 of the notes), with the following content.
+%\begin{verbatim}
+%-1 -> 0
+%0 -> 1
+%0 -> 2
+%1 2
+%\end{verbatim}
+%The first three lines describe the transitions.  The last line contains the states that are not fully explored.
+%
+%The second objective of this project is to develop a listener for JPF that writes a graphical representation, using the DOT format, of a partial transition system to file.  In Section~7.4 of the notes, a similar listener is described.
+%
+%\resources
+%\begin{itemize}
+%\item 
+%\href{https://wiki.eecs.yorku.ca/course_archive/2019-20/W/4315/_media/notes.pdf}{Java PathFinder: a tool to detect bugs in Java code}.
+%\item
+%\href{https://github.com/javapathfinder/jpf-core/wiki}{The Java PathFinder website}.
+%\end{itemize}
+%
+%\deliverables
+%\begin{itemize}
+%\item 
+%Properly documented Java code of the listeners.
+%\item
+%A test suite, ideally using JPF's extension of JUnit, that rigorously tests the listeners.
+%\item
+%A report describing the design, implementation, and testing of the listeners.
+%\end{itemize}
+%
+%\section{Implementation of CTL model checking algorithm}
+%
+%\description
+%The main objective of this project is to implement the algorithm developed in the ``CTL model checking algorithm for partial transition systems'' project.  As input, the algorithm takes a CTL formula in existential normal form, as implemented in the ``translation of CTL to existential normal form,'' and a partial transition system, provided by the `` JPF listener that writes a partial transition system to file.'' Another objective of this project is to design a simple GUI to import the file containing the partial transition system, to enter the CTL formula, and to run the implemented algorithm.
+%
+%\resources
+%\begin{itemize}
+%\item
+%The textbook.
+%\end{itemize}
+%
+%\deliverables
+%\begin{itemize}
+%\item 
+%Properly documented Java code that implements the algorithm and the GUI.
+%\item
+%A test suite, using JUnit, that rigorously tests the implementation of the algorithm.
+%\item
+%A report describing the design, implementation, and testing of the algorithm.
+%\end{itemize}
+%
+%\section{Dependencies between the projects}
+%
+%Several projects depend on other projects.  The diagram below depicts these dependencies.  If there is an arrow from one project to another, it means that the latter is dependent on the former.  As a consequence, the latter project needs (some of) the results of the former project.
+%
+%\begin{center}
+%\begin{tikzpicture}
+%\node (1) at (0,4) {1};
+%\node (2) at (0,3) {2};
+%\node (3) at (2,4) {3};
+%\node (4) at (2,3) {4};
+%\node (5) at (1,2) {5};
+%\node (6) at (3,2) {6};
+%\node (7) at (5,2) {7};
+%\node (8) at (3,1) {8};
+%
+%\draw[->] (1)--(2);
+%\draw[->] (2)--(5);
+%\draw[->] (3)--(4);
+%\draw[->] (4)--(5);
+%\draw[->] (4)--(6);
+%\draw[->] (5)--(8);
+%\draw[->] (6)--(8);
+%\draw[->] (7)--(8);
+%\end{tikzpicture}
+%\end{center}
+%
+%Because of these dependencies, deadlines of the projects differ.
+%
+%\begin{tabular}{rl}
+%project number & deadline\\
+%\hline
+%1 & March 5\\
+%2 & March 26\\
+%3 & March 5\\
+%4 & March 26\\
+%5 & April 9\\
+%6 & April 9\\
+%7 & April 9\\
+%8 & April 23 
+%\end{tabular}
+%
+%\end{document}
+
+
+
+One may be tempted to assume that these non-fully explored states \emph{have} unexplored transitions that are not part of the transition relation $\rightarrow$.  We will \emph{not} make the assumption that states which are not fully explored \emph{must have} outgoing transitions (they \emph{may have} them) because it complicates our algorithm as we will explain next.
+
+Suppose that we were to assume that a non-fully explored state~$s$ must have at least one outgoing transition.  Assume we have not explored any of the outgoing transitions of state~$s$.  Then the formula $\exists \nxt \varphi$ holds in state~$s$ if and only if the CTL formula $\varphi$ is equivalent to $\TRUE$.  Deciding that $\varphi$ is equivalent to $\TRUE$ is the same as checking whether $\varphi$ is valid, which in turn is the same as checking that $\neg \varphi$ is not satisfiable.  However, the satisfiability problem for CTL is not easy to solve: it is EXPTIME-complete \cite{FL79}.
+
+
 
 We first consider the formula $\forall \nxt \varphi$, where $\varphi$ is some arbitrary formula.  Assume that the state~$s$ is fully explored.  In that case,
 \[
@@ -1491,216 +2096,3 @@ The set $\mathit{Sat}(\exists \always \varphi)$ can be defined as a greatest fix
 \color{black}
 
 \textcolor{blue}{Similarly, we might be able to characterize $\mathit{Unsat}(\forall \always \varphi)$ as a least fixed-point.}
-
-\section{JPF Listener that Writes a Partial Transition System to File}
-
-A listener for Java PathFinder (JPF) writes its partial transition system to file.  In \cite[Section~7.3]{B20}, a listener that writes a transition system to file has been developed.  This listener is extended to the setting of partial transition systems.
-
-Consider the following partial transition system.
-\begin{center}
-\begin{tikzpicture}[yscale=0.9]
-\node (start) at (0,3) {};
-\node[rectangle,fill=red!20] (-1) at (1,2.5) {-1};
-\node[rectangle,fill=red!20] (0) at (1,1) {0};
-\node[circle,fill=red!20] (1) at (0,0) {1};
-\node[circle,fill=red!20] (2) at (2,0) {2};
-
-\draw[->] (start)--(-1);
-\draw[->] (-1)--(0);
-\draw[->] (0)--(1);
-\draw[->] (0)--(2);
-\end{tikzpicture}
-\end{center}
-State~-1 is the initial state.  The states -1 and 0 are fully explored, and  states 1 and 2 are not fully explored.  The listener produces a file, the name of which is the name of the system under test with ``.tra'' as suffix (see \cite[Section 7.4]{B20}), with the following content.
-\begin{verbatim}
--1 -> 0
-0 -> 1
-0 -> 2
-1 2
-\end{verbatim}
-The first three lines describe the transitions.  Each line contains the source of the transition followed by the target of the transition.  The last line contains the states that are not fully explored yet.
-
-\bibliographystyle{plain}
-\bibliography{report}
-
-\end{document}
-
-%
-%\section{Normal forms for CTL}
-%
-%\description
-%The objective of this project is to develop a translation of CTL formulas to equivalent formulas in existential normal form and positive normal form for partial transition systems (as defined in the ``new semantics for CTL'' project).  Existential normal form is introduced in Definition~6.13 of the textbook and positive normal form is defined in Definition~6.15.  These normal forms may have to be adjusted to deal with partial transition systems.  
-%
-%\resources
-%\begin{itemize}
-%\item 
-%The textbook.
-%\end{itemize}
-%
-%\deliverables
-%\begin{itemize}
-%\item
-%Definitions of existential normal form and positive normal form for CTL for partial transition systems.
-%\item
-%A proof that for each CTL formula there exists an equivalent CTL formula in existential normal form in the context of partial transition systems (similar to the proof of Theorem~6.14 of the textbook, but considering partial transition systems and providing more details).  A similar result for positive normal form (see Theorem~6.16 of the textbook).
-%\item
-%A report containing the definitions, the proofs, and several examples illustrating how CTL formulas are translated into the normal forms.
-%\end{itemize}
-%
-%\section{Translation of CTL to normal forms}
-%
-%\description
-%The objective of this project is to implement the translation of CTL to both normal forms developed in the "normal forms for CTL" project. 
-%
-%Implement a class named \lstinline{ExistentialNormalForm} that contains a static method named \lstinline{translate}.  This method takes as argument an object of type \lstinline{Formula}, which is part of the \lstinline{ctl} package.  The API of the \lstinline{ctl} package can be found \href{https://www.eecs.yorku.ca/course_archive/2020-21/W/4315/project/api/ast}{here} and has been implemented in the ``from parse tree to abstract syntax tree'' project.  Similarly, develop a class named \lstinline{PositiveNormalForm} that contains a static method named \lstinline{translate}.
-%
-%To represent a CTL formula in the normal forms, you may use classes of the \lstinline{ctl} package.  You may also add new classes to this package.  A CTL formula can be translated to its existential normal form as follows.
-%\begin{lstlisting}
-%Formula formula = ...
-%Formula normalForm = ExistentialNormalForm.translate(formula);
-%\end{lstlisting}
-%
-%\deliverables
-%\begin{itemize}
-%\item
-%Properly documented Java code that implements both translations of CTL to the normal forms.
-%\item
-%A test suite, using JUnit, that rigorously tests the translations.
-%\item
-%A report describing the design, implementation, and testing of the translations.
-%\end{itemize}
-%
-%
-%\section{CTL model checking algorithm for partial transition systems}
-%
-%\description
-%The objective of this project is to adjust the CTL model checking algorithm, as described in Section~6.4.1 of the textbook, to the setting of partial transition systems, as developed in the ``new semantics for CTL'' project.  Given a partial transition system and a CTL formula in existential normal form, as developed in the `` existential normal form for CTL'' project, the algorithm computes the corresponding satisfaction set.
-%
-%\resources
-%\begin{itemize}
-%\item 
-%The textbook.
-%\end{itemize}
-%
-%\deliverables
-%\begin{itemize}
-%\item 
-%An algorithm, similar to Algorithm~14 of the textbook, for the computation of the satisfaction sets of CTL formulas in existential normal form for a partial transition system.
-%\item
-%A proof that proves the algorithm is correct, similar to Theorem~6.23 of the textbook.
-%\item
-%A report describing the algorithm and its correctness proof.
-%\end{itemize}
-%
-%\section{JPF listener that writes a partial transition system to file}
-%
-%\description
-%The first objective of this project is to develop a listener for Java PathFinder (JPF) that writes its partial transition system to file.  Partial transition systems are defined in the ``new semantics for CTL'' project.  In Section~7.3 of the notes, a listener that writes a transition system to file has been developed.  This listener needs to be extended to the setting of partial transition systems.
-%
-%Consider the following partial transition system.
-%\begin{center}
-%\begin{tikzpicture}[yscale=0.9]
-%\node (start) at (0,3) {};
-%\node[rectangle,fill=red!20] (-1) at (1,2.5) {-1};
-%\node[rectangle,fill=red!20] (0) at (1,1) {0};
-%\node[circle,fill=red!20] (1) at (0,0) {1};
-%\node[circle,fill=red!20] (2) at (2,0) {2};
-%
-%\draw[->] (start)--(-1);
-%\draw[->] (-1)--(0);
-%\draw[->] (0)--(1);
-%\draw[->] (0)--(2);
-%\end{tikzpicture}
-%\end{center}
-%State~-1 is the initial state.  The states -1 and 0 are fully explored, and  states 1 and 2 are not fully explored.  The listener should produce a file, the name of which is the name of the system under test with ``.tra'' as suffix (see Section 7.4 of the notes), with the following content.
-%\begin{verbatim}
-%-1 -> 0
-%0 -> 1
-%0 -> 2
-%1 2
-%\end{verbatim}
-%The first three lines describe the transitions.  The last line contains the states that are not fully explored.
-%
-%The second objective of this project is to develop a listener for JPF that writes a graphical representation, using the DOT format, of a partial transition system to file.  In Section~7.4 of the notes, a similar listener is described.
-%
-%\resources
-%\begin{itemize}
-%\item 
-%\href{https://wiki.eecs.yorku.ca/course_archive/2019-20/W/4315/_media/notes.pdf}{Java PathFinder: a tool to detect bugs in Java code}.
-%\item
-%\href{https://github.com/javapathfinder/jpf-core/wiki}{The Java PathFinder website}.
-%\end{itemize}
-%
-%\deliverables
-%\begin{itemize}
-%\item 
-%Properly documented Java code of the listeners.
-%\item
-%A test suite, ideally using JPF's extension of JUnit, that rigorously tests the listeners.
-%\item
-%A report describing the design, implementation, and testing of the listeners.
-%\end{itemize}
-%
-%\section{Implementation of CTL model checking algorithm}
-%
-%\description
-%The main objective of this project is to implement the algorithm developed in the ``CTL model checking algorithm for partial transition systems'' project.  As input, the algorithm takes a CTL formula in existential normal form, as implemented in the ``translation of CTL to existential normal form,'' and a partial transition system, provided by the `` JPF listener that writes a partial transition system to file.'' Another objective of this project is to design a simple GUI to import the file containing the partial transition system, to enter the CTL formula, and to run the implemented algorithm.
-%
-%\resources
-%\begin{itemize}
-%\item
-%The textbook.
-%\end{itemize}
-%
-%\deliverables
-%\begin{itemize}
-%\item 
-%Properly documented Java code that implements the algorithm and the GUI.
-%\item
-%A test suite, using JUnit, that rigorously tests the implementation of the algorithm.
-%\item
-%A report describing the design, implementation, and testing of the algorithm.
-%\end{itemize}
-%
-%\section{Dependencies between the projects}
-%
-%Several projects depend on other projects.  The diagram below depicts these dependencies.  If there is an arrow from one project to another, it means that the latter is dependent on the former.  As a consequence, the latter project needs (some of) the results of the former project.
-%
-%\begin{center}
-%\begin{tikzpicture}
-%\node (1) at (0,4) {1};
-%\node (2) at (0,3) {2};
-%\node (3) at (2,4) {3};
-%\node (4) at (2,3) {4};
-%\node (5) at (1,2) {5};
-%\node (6) at (3,2) {6};
-%\node (7) at (5,2) {7};
-%\node (8) at (3,1) {8};
-%
-%\draw[->] (1)--(2);
-%\draw[->] (2)--(5);
-%\draw[->] (3)--(4);
-%\draw[->] (4)--(5);
-%\draw[->] (4)--(6);
-%\draw[->] (5)--(8);
-%\draw[->] (6)--(8);
-%\draw[->] (7)--(8);
-%\end{tikzpicture}
-%\end{center}
-%
-%Because of these dependencies, deadlines of the projects differ.
-%
-%\begin{tabular}{rl}
-%project number & deadline\\
-%\hline
-%1 & March 5\\
-%2 & March 26\\
-%3 & March 5\\
-%4 & March 26\\
-%5 & April 9\\
-%6 & April 9\\
-%7 & April 9\\
-%8 & April 23 
-%\end{tabular}
-%
-%\end{document}
