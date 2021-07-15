@@ -130,35 +130,6 @@ public class CTLError {
 	}
 	
 	/**
-	 * This method verifies if the input fields exists 
-	 * If not, it will print the error messages on the console
-	 * 
-	 * @param atomicProposition - atomic proposition to verify if its fields exist 
-	 * @param inputString - input formula.
-	 * @param errCharIndex - error location in the input. 
-	 * 
-	 */
-	private void FieldExists(String atomicProposition, String inputString, int errCharIndex )
-	{
-		int indexOfLastDot = atomicProposition.lastIndexOf(".");
-        String className = atomicProposition.substring(0, indexOfLastDot);
-        String fieldName = atomicProposition.substring(indexOfLastDot + 1);
-        
-		try {
-           Class.forName(className).getDeclaredField(fieldName);
- 
-        } catch (ClassNotFoundException e) { 
-        	fieldNotExist = true;
-        	underLineError(inputString, errCharIndex," Class '"+ className + " ' cannot be found" );
-        	
-        } catch (NoSuchFieldException | SecurityException e) {     
-        	fieldNotExist = true;
-        	underLineError(inputString, errCharIndex + indexOfLastDot + 1," Field '"+ fieldName + " ' cannot be found" );
-        	
-        }
-	}
-	
-	/**
 	 * This method prints the error messages on the console.
 	 * It also underlines the error location in the input.
 	 * 
