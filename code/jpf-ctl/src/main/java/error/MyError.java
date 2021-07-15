@@ -114,10 +114,11 @@ public class MyError {
 				hasError = true;
 				//call underLineError method to print the error message
 				underLineError(inputString, index, " token recognition error at: '"+ lines[i] + " '" );
-
-				recovedInput.append(lines[i]);	
+				index += 2;
+				recovedInput.append(lines[i]);
+				recovedInput.append(lines[i]);
 			}
-			//check and recover if the input formula contains any Java reserve word
+			/*//check and recover if the input formula contains any Java reserve word
 			if (lines[i].contains(".")) {
 				
 				//check if the fields in the input exist
@@ -142,26 +143,34 @@ public class MyError {
 				}
 				
 				
-			} else 
+			} */
+			else 
 			{				
 				recovedInput.append(lines[i]);	
 				index += lines[i].length() + 1;
 			}			
 			recovedInput.append(" ");			
 		}	
-		
+		/*
 		//if there is field not found error then terminate
 		if(fieldNotExist )
 		{
 			cWriter.printerr( errMsg.toString() );
 			return null;
 			
-		}
+		}*/
+		
 		//if there is error print message on the console and return the recovered input
 		if(hasError)
 		{
 			cWriter.printerr(errMsg.toString() );
-			cWriter.printout("Initial   input: " + inputString + "\n" + "Recovered input: " + recovedInput.toString() + "\n");
+			try {
+				Thread.sleep(1);
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			cWriter.printout("Initial   input: " + inputString + "\n" + "Recovered input: " + recovedInput.toString() + "\n\n");
 			
 			return CharStreams.fromString(recovedInput.toString());
 		}

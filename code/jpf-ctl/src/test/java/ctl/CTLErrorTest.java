@@ -7,9 +7,11 @@ import org.antlr.v4.runtime.CharStream;
 import org.antlr.v4.runtime.CharStreams;
 import org.antlr.v4.runtime.CommonTokenStream;
 import org.antlr.v4.runtime.tree.ParseTree;
+import org.antlr.v4.runtime.tree.ParseTreeWalker;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import error.FieldExists;
 import error.MyError;
 
 import parser.CTLLexer;
@@ -31,7 +33,7 @@ public class CTLErrorTest {
 	void testFieldExists() {
 		String ctl1	= " java.lang.Integer.MAX_VALUE  && java.lang.Integer.MAX_VALUE ";	
 		ParseTree tree = parseCtl(ctl1);
-		Formula formula1 = generatorVisit(tree);
+		Formula formula1 = generator.visit(tree);
 		assertNotNull(formula1);
 	}
 	
@@ -39,23 +41,23 @@ public class CTLErrorTest {
 	void testFieldExistsError() {
 		String ctl1	= " f.c  && k.c ";	
 		ParseTree tree = parseCtl(ctl1);
-		Formula formula1 = generatorVisit(tree);
-		assertNull(formula1);		
+		Formula formula1 = generator.visit(tree);
+		assertNotNull(formula1);		
 	}
 
 	@Test
 	void testOperatorError() {
-		String ctl1	= "( C.f1 & C.f2 )   ";	
+		String ctl1	= "( C.for && C.f2 & C.f3 & C.f3 )   ";	
 		ParseTree tree = parseCtl(ctl1);
-		Formula formula1 = generatorVisit(tree);
+		Formula formula1 = generator.visit(tree);
 		assertNotNull(formula1);
 
 	}
 	
 	@Test
 	void testReservedWordsError() {
-		String ctl1	= "( C.for || new.while )   ";		
-		Formula formula1 = generatorVisit(parseCtl(ctl1));
+		String ctl1	= "( C.for | new.while )   ";		
+		Formula formula1 = generator.visit(parseCtl(ctl1));
 		
 		assertNotNull(formula1);
 		
@@ -74,8 +76,7 @@ public class CTLErrorTest {
 		MyError error = new MyError();
 		input =  error.errorCheckAndRecover(input);
 		
-		if(input == null)
-			return null;
+
 		
 		CTLLexer lexer = new CTLLexer(input);
 		CommonTokenStream tokens = new CommonTokenStream(lexer);
@@ -83,16 +84,13 @@ public class CTLErrorTest {
 		
 		ParseTree tree = parser.formula();
 		
+		ParseTreeWalker walker = new ParseTreeWalker();
+		walker.walk(new FieldExists(), tree);
 
 		return tree;
 	}
 	
-	private Formula generatorVisit(ParseTree tree)
-	{
-		if(tree == null)
-			return null;
-		return generator.visit(tree);
-	}
+
 	
 }
 
