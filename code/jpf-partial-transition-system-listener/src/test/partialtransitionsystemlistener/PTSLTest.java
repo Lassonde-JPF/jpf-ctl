@@ -99,6 +99,7 @@ public class PTSLTest extends TestJPF {
 		properties[properties.length - 1] = max_new_states + 3;
 		if (verifyNoPropertyViolation(properties)) {
 			Random random = new Random();
+			@SuppressWarnings("unused")
 			int state = 0;
 			switch (random.nextInt(5)) {
 			case 0:
