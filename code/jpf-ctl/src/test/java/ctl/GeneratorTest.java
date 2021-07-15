@@ -98,8 +98,8 @@ class GeneratorTest {
 		
 		ParseTree tree = parser.formula();
 		
-		ParseTreeWalker walker = new ParseTreeWalker();
-		walker.walk(new FieldExists(), tree);
+		//ParseTreeWalker walker = new ParseTreeWalker();
+		//walker.walk(new FieldExists(), tree);
 
 		return tree;
 	}
