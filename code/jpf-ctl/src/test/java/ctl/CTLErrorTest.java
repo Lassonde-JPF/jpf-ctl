@@ -75,7 +75,7 @@ public class CTLErrorTest {
 	 */
 	private ParseTree parseCtl(String formula) {
 		CharStream input = CharStreams.fromString(formula);
-		CTLErrorStreams error = new CTLErrorStreams();
+		CTLError error = new CTLError();
 		input = error.errorCheckAndRecover(input);
 
 		CTLLexer lexer = new CTLLexer(input);
