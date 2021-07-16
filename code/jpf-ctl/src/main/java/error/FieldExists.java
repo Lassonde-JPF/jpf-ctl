@@ -1,11 +1,11 @@
 package error;
 
-import parser.CTLBaseListener;
-import parser.CTLParser;
-
+import org.ctl.CTLBaseListener;
+import org.ctl.CTLParser;
 import java.util.logging.*;
 
 public class FieldExists extends CTLBaseListener {
+
 	@Override
 	public void enterAtomicProposition(CTLParser.AtomicPropositionContext ctx) {
 		Logger logger = Logger.getLogger(FieldExists.class.getName());
@@ -23,4 +23,5 @@ public class FieldExists extends CTLBaseListener {
 			logger.warning(" Field '" + fieldName + " ' cannot be found\n");
 		}
 	}
+
 }

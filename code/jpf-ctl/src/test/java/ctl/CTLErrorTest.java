@@ -1,23 +1,25 @@
 package ctl;
 
+
 import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertNull;
 
 import org.antlr.v4.runtime.CharStream;
 import org.antlr.v4.runtime.CharStreams;
 import org.antlr.v4.runtime.CommonTokenStream;
 import org.antlr.v4.runtime.tree.ParseTree;
 import org.antlr.v4.runtime.tree.ParseTreeWalker;
+import org.ctl.CTLLexer;
+import org.ctl.CTLParser;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import error.CTLError;
+import error.CTLErrorStreams;
 import error.FieldExists;
-import error.MyError;
 
-import parser.CTLLexer;
-import parser.CTLParser;
 
 public class CTLErrorTest {
+	
 	private Generator generator;
 	/**
 	 * Creates a Generator object for use by each test case
@@ -73,7 +75,7 @@ public class CTLErrorTest {
 	 */
 	private ParseTree parseCtl(String formula) {
 		CharStream input = CharStreams.fromString(formula);
-		MyError error = new MyError();
+		CTLError error = new CTLError();
 		input =  error.errorCheckAndRecover(input);
 		
 
@@ -89,8 +91,5 @@ public class CTLErrorTest {
 
 		return tree;
 	}
-	
 
-	
 }
-
