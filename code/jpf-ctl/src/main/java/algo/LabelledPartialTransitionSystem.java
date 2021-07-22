@@ -53,6 +53,14 @@ public class LabelledPartialTransitionSystem {
 			this.source = source;
 			this.target = target;
 		}
+		
+		public int getSource() {
+			return this.source;
+		}
+		
+		public int getTarget() {
+			return this.target;
+		}
 
 		@Override
 		public int hashCode() {
@@ -92,13 +100,13 @@ public class LabelledPartialTransitionSystem {
 	// maximum number of states
 	private static final int MAX_LABELS = 3;
 
-	// probability that a state is labelled
+	// probability that a state is labeled
 	private static final double LABELLED = 0.8;
 	
 	private int states;
 
 	/**
-	 * Initializes this labelled partial transition system randomly.
+	 * Initializes this labeled partial transition system randomly.
 	 */
 	public LabelledPartialTransitionSystem() {
 		Random random = new Random(System.currentTimeMillis());
