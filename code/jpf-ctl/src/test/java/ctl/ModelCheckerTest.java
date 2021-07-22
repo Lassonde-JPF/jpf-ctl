@@ -222,7 +222,7 @@ public class ModelCheckerTest {
 	}
 
 	@Test
-	void checkForAllAlways() { // TODO I'm not sure what the expected result should be here
+	void checkForAllAlways() { // TODO I'm not sure what the expected result(s) should be here
 		LabelledPartialTransitionSystem ptsT = new LabelledPartialTransitionSystem();
 		StateSets T = test("AG true", ptsT);
 		// assertEquals(ptsT.getStates(), T.getSat());
@@ -300,7 +300,7 @@ public class ModelCheckerTest {
 	}
 
 	@Test
-	void checkAtomicProposition() { // TODO labelledpartialtransitionsystem needs to be fixed first
+	void checkAtomicProposition() { // TODO LabelledPartialTransitionSystem needs to be fixed first
 		// StateSets result = test("java.lang.Integer.MAX_VALUE", new
 		// LabelledPartialTransitionSystem());
 	}
