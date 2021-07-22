@@ -60,4 +60,8 @@ public class ExistsNext extends Formula {
 	public String toString() {
 		return "EX " + this.formula;
 	}
+	
+	public Formula getFormula() {
+		return this.formula;
+	}
 }

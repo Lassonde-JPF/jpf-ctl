@@ -64,4 +64,14 @@ public class ForAllUntil extends Formula {
 	public String toString() {
 		return "(" + this.left + " AU " + this.right + ")";
 	}
+	
+	public Formula getLeft()
+	{
+    return left;
+    }
+
+	public Formula getRight()
+	{
+    return right;
+ 	}  
 }

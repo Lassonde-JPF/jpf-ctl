@@ -60,4 +60,8 @@ public class ExistsEventually extends Formula {
 	public String toString() {
 		return "EF " + this.formula;
 	}
+	
+	public Formula getFormula() {
+		return this.formula;
+	}
 }

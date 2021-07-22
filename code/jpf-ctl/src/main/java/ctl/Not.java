@@ -60,4 +60,11 @@ public class Not extends Formula {
 	public String toString() {
 		return "! " + this.formula;
 	}
+	
+	public Formula getFormula()
+	{
+    return formula;
+    }
+
+	
 }

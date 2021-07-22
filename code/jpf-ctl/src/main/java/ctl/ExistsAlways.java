@@ -60,4 +60,9 @@ public class ExistsAlways extends Formula {
 	public String toString() {
 		return "EG " + this.formula;
 	}
+	
+	public Formula getFormula()
+	{
+		return this.formula;
+	}
 }
