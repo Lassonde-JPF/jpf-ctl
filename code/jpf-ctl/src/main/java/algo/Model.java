@@ -33,7 +33,12 @@ import ctl.*;
 /**
  * 
  * 
+ * @author Parssa Khazra
+ * @author Anto Nanah Ji
  * @author Franck van Breugel
+ * @author Matthew Walker
+ * @author Hongru Wang 
+ * 
  */
 public class Model {
 
