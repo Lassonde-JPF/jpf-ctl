@@ -38,9 +38,9 @@ public class LabelledPartialTransitionSystem {
 	/**
 	 * A class which represents a transition between two states.
 	 */
-	protected class Transition {
-		protected int source;
-		protected int target;
+	public class Transition {
+		public int source;
+		public int target;
 
 		/**
 		 * 
