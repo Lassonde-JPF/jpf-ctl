@@ -278,12 +278,12 @@ public class ModelCheckerTest {
 		LabelledPartialTransitionSystem ptsFT = new LabelledPartialTransitionSystem();
 		StateSets FT = test("false AU true", ptsFT);
 		assertEquals(ptsFT.getStates(), FT.getSat());
-		assertEquals(true, FT.getUnSat());
+		assertEquals(true, FT.getUnSat().isEmpty());
 
 		LabelledPartialTransitionSystem ptsFF = new LabelledPartialTransitionSystem();
 		StateSets FF = test("false AU false", ptsFF);
 		assertEquals(ptsFF.getStates(), FF.getUnSat());
-		assertEquals(true, FF.getSat());
+		assertEquals(true, FF.getSat().isEmpty());
 	}
 
 	@Test
