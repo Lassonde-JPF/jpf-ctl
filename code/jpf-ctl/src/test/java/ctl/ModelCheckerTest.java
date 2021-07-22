@@ -13,7 +13,7 @@ import org.ctl.CTLParser;
 
 import algo.LabelledPartialTransitionSystem;
 import algo.Model;
-
+import algo.Model.StateSets;
 import error.CTLError;
 import error.FieldExists;
 
@@ -29,23 +29,45 @@ public class ModelCheckerTest {
 	}
 	
 	@Test
-	void ModelCheckTest()
+	void RandomModelCheckTest()
 	{
 		LabelledPartialTransitionSystem pts = new LabelledPartialTransitionSystem();
-		System.out.print(" Transition System: \n");
-		System.out.print(pts.toString());
-		//System.out.print(pts.toDot());
+		System.out.println("Transition System:");
+		System.out.println(pts.toString());
 		
 		Formula randomFormula = Formula.random();	
 		ParseTree tree = parseCtl(randomFormula.toString());
 		Formula formula = generator.visit(tree);
-		System.out.print(" Input formula: \n");
-		System.out.print(randomFormula.toString());
+		System.out.println("Input formula:");
+		System.out.println(randomFormula);
 		
 		Model m = new Model();
-		//System.out.print(" Result: \n");
-		//System.out.print(m.check(pts, formula).toString());
+		StateSets ss = m.check(pts, formula);
+		System.out.println("Result:");
+		System.out.println(ss);
 	}
+	
+	@Test
+	void checkExistsUntil()
+	{
+		LabelledPartialTransitionSystem pts = new LabelledPartialTransitionSystem();
+		System.out.println("Transition System:");
+		System.out.println(pts.toString());
+		
+		String ExistsUntil = "true EU (EX true)";
+		ParseTree tree = parseCtl(ExistsUntil);
+		Formula formula = generator.visit(tree);
+		System.out.println("Input formula:");
+		System.out.println(ExistsUntil);
+		
+		Model m = new Model();
+		StateSets ss = m.check(pts, formula);
+		System.out.println("Result:");
+		System.out.println(ss);
+	}
+	
+	
+	
 	/**
 	 * 
 	 * Translates a syntactically correct CTL formula from its String form to a
@@ -59,8 +81,6 @@ public class ModelCheckerTest {
 		CTLError error = new CTLError();
 		input =  error.errorCheckAndRecover(input);
 		
-
-		
 		CTLLexer lexer = new CTLLexer(input);
 		CommonTokenStream tokens = new CommonTokenStream(lexer);
 		CTLParser parser = new CTLParser(tokens);
@@ -70,7 +90,6 @@ public class ModelCheckerTest {
 		ParseTreeWalker walker = new ParseTreeWalker();
 		walker.walk(new FieldExists(), tree);
 		
-
 		return tree;
 	}
 }

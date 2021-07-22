@@ -22,6 +22,10 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Random;
 import java.util.Set;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
+
+import javax.xml.transform.stream.StreamSource;
 
 /**
  * A class which represents a labelled partial transition system.
@@ -90,6 +94,8 @@ public class LabelledPartialTransitionSystem {
 
 	// probability that a state is labelled
 	private static final double LABELLED = 0.8;
+	
+	private int states;
 
 	/**
 	 * Initializes this labelled partial transition system randomly.
@@ -97,7 +103,7 @@ public class LabelledPartialTransitionSystem {
 	public LabelledPartialTransitionSystem() {
 		Random random = new Random(System.currentTimeMillis());
 
-		int states = 1 + random.nextInt(MAX_STATES);
+		states = 1 + random.nextInt(MAX_STATES);
 
 		this.processed = new HashSet<Integer>();
 		for (int state = 0; state < states; state++) {
@@ -199,8 +205,9 @@ public class LabelledPartialTransitionSystem {
 	}
 	
 	
+	//TODO this is super messy 
 	public Set<Integer> getStates() {
-		return this.processed;
+		return IntStream.range(0, states).boxed().collect(Collectors.toSet());
 	}
 	
 	public Set<Transition> getTransitions() {
