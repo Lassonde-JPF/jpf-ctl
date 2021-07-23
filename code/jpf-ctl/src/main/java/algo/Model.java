@@ -67,7 +67,7 @@ public class Model {
 	 * Returns the set of states that are successors to `state` and if not computed
 	 * before, adds the entry to a hashtable, post
 	 */
-	public Set<Integer> Post(Integer state) {
+	private Set<Integer> Post(Integer state) {
 		post.computeIfAbsent(state, k -> pts.getTransitions().stream().filter(t -> t.source == state).map(t -> t.target)
 				.distinct().collect(Collectors.toSet()));
 		return post.get(state);
@@ -77,7 +77,7 @@ public class Model {
 	 * Returns the set of states that are predecessors to `state` and if not
 	 * computed before, adds the entry to a hashtable, pre
 	 */
-	public Set<Integer> Pre(Integer state) {
+	private Set<Integer> Pre(Integer state) {
 		pre.computeIfAbsent(state, k -> pts.getTransitions().stream().filter(t -> t.target == state).map(t -> t.source)
 				.distinct().collect(Collectors.toSet()));
 		return pre.get(state);
