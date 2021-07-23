@@ -209,13 +209,12 @@ public class Model {
 		}
 		/*
 		 * This case is (AG p1) case. On page 333 of the textbook there is an alternate
-		 * definition for this formula. The alternate definition is: !(true EU p1)
+		 * definition for this formula. The alternate definition is: !(true EU !p1)
 		 */
 		else if (formula instanceof ForAllAlways) {
 			ForAllAlways fA = (ForAllAlways) formula;
 			StateSets S = check(system, fA.getFormula()); // p1
 
-			//TODO S.sat is !(true EU p1) ..... S.unsat is !(true EU !p1)
 			List<Integer> E = S.unsat.stream().collect(Collectors.toList());
 			Set<Integer> T = new HashSet<Integer>(E);
 			while (!E.isEmpty()) {
