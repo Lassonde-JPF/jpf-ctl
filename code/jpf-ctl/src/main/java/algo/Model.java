@@ -51,7 +51,6 @@ public class Model {
 	 * possible classes where the bug may exist.
 	 */
 
-
 	/**
 	 * Returns the
 	 * 
@@ -213,7 +212,8 @@ public class Model {
 			ForAllAlways fA = (ForAllAlways) formula;
 			StateSets S = check(system, fA.getFormula()); // p1
 
-			List<Integer> E = S.sat.stream().collect(Collectors.toList());
+			//TODO S.sat is !(true EU p1) ..... S.unsat is !(true EU !p1)
+			List<Integer> E = S.unsat.stream().collect(Collectors.toList());
 			Set<Integer> T = new HashSet<Integer>(E);
 			while (!E.isEmpty()) {
 				Integer sP = E.remove(0);
