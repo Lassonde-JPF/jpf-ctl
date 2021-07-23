@@ -96,9 +96,17 @@ public class Model {
 	 * 
 	 */
 	public StateSets check(LabelledPartialTransitionSystem system, Formula formula) {
+		/*
+		 * Base Case
+		 */
 		if (formula instanceof True) {
 			return new StateSets(system.getStates(), new HashSet<Integer>());
-		} else if (formula instanceof False) {
+
+		}
+		/*
+		 * Base Case
+		 */
+		else if (formula instanceof False) {
 			return new StateSets(new HashSet<Integer>(), system.getStates());
 		} else if (formula instanceof And) {
 			And f = (And) formula;
@@ -171,12 +179,12 @@ public class Model {
 			Set<Integer> unSat = new HashSet<Integer>(system.getStates());
 			unSat.removeAll(T);
 			return new StateSets(T, unSat);
-
-			/*
-			 * This case is (EF p1) case. On page 333 of the textbook there is an alternate
-			 * definition for this formula. The alternate definition is: (true EU p1)
-			 */
-		} else if (formula instanceof ExistsEventually) {
+		}
+		/*
+		 * This case is (EF p1) case. On page 333 of the textbook there is an alternate
+		 * definition for this formula. The alternate definition is: (true EU p1)
+		 */
+		else if (formula instanceof ExistsEventually) {
 			ExistsEventually eE = (ExistsEventually) formula;
 			StateSets S = check(system, eE.getFormula());
 
@@ -229,12 +237,12 @@ public class Model {
 			Set<Integer> unSat = new HashSet<Integer>(system.getStates());
 			unSat.removeAll(T);
 			return new StateSets(T, unSat);
-
-			/*
-			 * This case is (AG p1) case. On page 333 of the textbook there is an alternate
-			 * definition for this formula. The alternate definition is: !(true EU p1)
-			 */
-		} else if (formula instanceof ForAllAlways) {
+		}
+		/*
+		 * This case is (AG p1) case. On page 333 of the textbook there is an alternate
+		 * definition for this formula. The alternate definition is: !(true EU p1)
+		 */
+		else if (formula instanceof ForAllAlways) {
 			ForAllAlways fA = (ForAllAlways) formula;
 			StateSets S = check(system, fA.getFormula());
 
@@ -256,12 +264,12 @@ public class Model {
 			Set<Integer> Sat = new HashSet<Integer>(system.getStates());
 			Sat.removeAll(T);
 			return new StateSets(Sat, T);
-
-			/*
-			 * This case is (AF p1) case. On page 333 of the textbook there is an alternate
-			 * definition for this formula. The alternate definition is: !EG!p1 .
-			 */
-		} else if (formula instanceof ForAllEventually) {
+		}
+		/*
+		 * This case is (AF p1) case. On page 333 of the textbook there is an alternate
+		 * definition for this formula. The alternate definition is: !EG!p1 .
+		 */
+		else if (formula instanceof ForAllEventually) {
 			ForAllEventually fAF = (ForAllEventually) formula;
 			// In this case we want the !p1 or the unsat states
 			Set<Integer> S = check(system, fAF.getFormula()).unsat;
@@ -291,10 +299,11 @@ public class Model {
 			Sat.removeAll(T);
 			return new StateSets(Sat, T);
 
-			/*
-			 * this case is the (AX p1) case
-			 */
-		} else if (formula instanceof ForAllNext) {
+		}
+		/*
+		 * this case is the (AX p1) case
+		 */
+		else if (formula instanceof ForAllNext) {
 			ForAllNext fN = (ForAllNext) formula;
 			StateSets S = check(system, fN.getFormula()); // recursive part
 
@@ -306,15 +315,15 @@ public class Model {
 			Set<Integer> Sat = new HashSet<Integer>(system.getStates());
 			Sat.removeAll(unSat);
 			return new StateSets(Sat, unSat);
-
-			/*
-			 * This case is the (p1 AU p2) case. On page 333 of the textbook there is an
-			 * alternate definition for this formula. The alternate definition is: !(!p2 EU
-			 * (!p1 && !p2)) && !EG!p2 In order to do this, we break down the formula
-			 * ourselves and combine the separate pieces Piece1: (!p1 && !p2) Piece2: !(!p2
-			 * EU Piece1) Piece3: !EG!p2 Piece4: Piece2 && Piece3
-			 */
-		} else if (formula instanceof ForAllUntil) {
+		}
+		/*
+		 * This case is the (p1 AU p2) case. On page 333 of the textbook there is an
+		 * alternate definition for this formula. The alternate definition is: !(!p2 EU
+		 * (!p1 && !p2)) && !EG!p2 In order to do this, we break down the formula
+		 * ourselves and combine the separate pieces Piece1: (!p1 && !p2) Piece2: !(!p2
+		 * EU Piece1) Piece3: !EG!p2 Piece4: Piece2 && Piece3
+		 */
+		else if (formula instanceof ForAllUntil) {
 			ForAllUntil fAU = (ForAllUntil) formula;
 			StateSets L = check(system, fAU.getLeft());
 			StateSets R = check(system, fAU.getRight());
