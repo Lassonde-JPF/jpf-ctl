@@ -104,38 +104,38 @@ public class Model {
 			And f = (And) formula;
 			StateSets L = check(system, f.getLeft());
 			StateSets R = check(system, f.getRight());
-			Set<Integer> Sat = L.sat.stream().filter(R.sat::contains).collect(Collectors.toSet());
+			L.sat.retainAll(R.sat);
 			Set<Integer> unSat = new HashSet<Integer>(system.getStates());
-			unSat.removeAll(Sat);
-			return new StateSets(Sat, unSat);
+			unSat.removeAll(L.sat);
+			return new StateSets(L.sat, unSat);
 		} else if (formula instanceof Or) {
 			Or f = (Or) formula;
 			StateSets L = check(system, f.getLeft());
 			StateSets R = check(system, f.getRight());
-			Set<Integer> Sat = new HashSet<Integer>(L.sat);
-			Sat.addAll(R.sat);
+			L.sat.addAll(R.sat);
 			Set<Integer> unSat = new HashSet<Integer>(system.getStates());
-			unSat.removeAll(Sat);
-			return new StateSets(Sat, unSat);
+			unSat.removeAll(L.sat);
+			return new StateSets(L.sat, unSat);
 		} else if (formula instanceof Implies) {
 			// !a or b
 			Implies f = (Implies) formula;
 			StateSets L = check(system, f.getLeft());
 			StateSets R = check(system, f.getRight());
-			Set<Integer> Sat = new HashSet<Integer>(L.unsat);
-			Sat.addAll(R.sat);
+			L.unsat.addAll(R.sat);
 			Set<Integer> unSat = new HashSet<Integer>(system.getStates());
-			unSat.removeAll(Sat);
-			return new StateSets(Sat, unSat);
+			unSat.removeAll(L.unsat);
+			return new StateSets(L.unsat, unSat);
 		} else if (formula instanceof Iff) {
 			// (a && b) || (!a && !b)
 			Iff f = (Iff) formula;
 			StateSets L = check(system, f.getLeft());
 			StateSets R = check(system, f.getRight());
 			// (a && b)
-			Set<Integer> LSat = L.sat.stream().filter(R.sat::contains).collect(Collectors.toSet());
+			Set<Integer> LSat = new HashSet<Integer>(L.sat);
+			LSat.retainAll(R.sat);
 			// (!a && !b)
-			Set<Integer> RSat = L.unsat.stream().filter(R.unsat::contains).collect(Collectors.toSet());
+			Set<Integer> RSat = new HashSet<Integer>(L.unsat);
+			RSat.retainAll(R.unsat);
 			// (a && b) || (!a && !b)
 			Set<Integer> Sat = new HashSet<Integer>(LSat);
 			Sat.addAll(RSat);
@@ -320,7 +320,8 @@ public class Model {
 			StateSets R = check(system, fAU.getRight());
 
 			// Piece1: (!p1 && !p2)
-			Set<Integer> AND = L.unsat.stream().filter(R.unsat::contains).collect(Collectors.toSet());
+			Set<Integer> AND = new HashSet<Integer>(L.unsat);
+			L.unsat.retainAll(R.unsat);
 
 			// Piece2: !(!p2 EU Piece1)
 			List<Integer> E = AND.stream().collect(Collectors.toList());
@@ -366,7 +367,7 @@ public class Model {
 			}
 
 			// Piece4: Piece2 && Piece3
-			EU.stream().filter(G::contains).collect(Collectors.toSet());
+			EU.retainAll(G);
 
 			// Final cleanup
 			Set<Integer> unSat = new HashSet<Integer>(system.getStates());
