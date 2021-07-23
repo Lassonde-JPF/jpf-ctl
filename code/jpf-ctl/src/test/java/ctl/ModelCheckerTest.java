@@ -218,16 +218,16 @@ public class ModelCheckerTest {
 	}
 
 	@Test
-	void checkForAllAlways() { // TODO I'm not sure what the expected result(s) should be here
+	void checkForAllAlways() { // TODO There is an error with ForAllAlways
 		LabelledPartialTransitionSystem ptsT = new LabelledPartialTransitionSystem();
 		StateSets T = test("AG true", ptsT);
-		// assertEquals(ptsT.getStates(), T.getSat());
-		// assertEquals(true, T.getUnSat().isEmpty());
+		assertEquals(ptsT.getStates(), T.getSat());
+		assertEquals(true, T.getUnSat().isEmpty());
 
 		LabelledPartialTransitionSystem ptsF = new LabelledPartialTransitionSystem();
 		StateSets F = test("AG false", ptsF);
-		// assertEquals(ptsF.getStates(), F.getUnSat());
-		// assertEquals(true, F.getSat().isEmpty());
+		assertEquals(ptsF.getStates(), F.getUnSat());
+		assertEquals(true, F.getSat().isEmpty());
 	}
 
 	@Test
@@ -263,8 +263,8 @@ public class ModelCheckerTest {
 		LabelledPartialTransitionSystem ptsTT = new LabelledPartialTransitionSystem();
 		StateSets TT = test("true AU true", ptsTT);
 		// TODO this case also fails, should be all states
-//		assertEquals(ptsTT.getStates(), TT.getSat());
-//		assertEquals(true, TT.getUnSat().isEmpty());
+		assertEquals(ptsTT.getStates(), TT.getSat());
+		assertEquals(true, TT.getUnSat().isEmpty());
 
 		LabelledPartialTransitionSystem ptsTF = new LabelledPartialTransitionSystem();
 		StateSets TF = test("true AU false", ptsTF);
@@ -274,13 +274,13 @@ public class ModelCheckerTest {
 
 		LabelledPartialTransitionSystem ptsFT = new LabelledPartialTransitionSystem();
 		StateSets FT = test("false AU true", ptsFT);
-//		assertEquals(ptsFT.getStates(), FT.getSat());
-//		assertEquals(true, FT.getUnSat().isEmpty());
+		assertEquals(ptsFT.getStates(), FT.getSat());
+		assertEquals(true, FT.getUnSat().isEmpty());
 
 		LabelledPartialTransitionSystem ptsFF = new LabelledPartialTransitionSystem();
 		StateSets FF = test("false AU false", ptsFF);
-//		assertEquals(ptsFF.getStates(), FF.getUnSat());
-//		assertEquals(true, FF.getSat().isEmpty());
+		assertEquals(ptsFF.getStates(), FF.getUnSat());
+		assertEquals(true, FF.getSat().isEmpty());
 	}
 
 	@Test

@@ -1,9 +1,5 @@
 package algo;
 
-import java.lang.reflect.Field;
-import java.util.HashSet;
-import java.util.List;
-
 /*
  * Copyright (C)  2021
  *
@@ -23,13 +19,14 @@ import java.util.List;
 
 import java.util.Set;
 import java.util.stream.Collectors;
-
-import algo.LabelledPartialTransitionSystem.Transition;
 import ctl.And;
 import ctl.False;
 import ctl.Formula;
 import ctl.Or;
 import ctl.*;
+import java.lang.reflect.Field;
+import java.util.HashSet;
+import java.util.List;
 
 /**
  * 
@@ -48,6 +45,10 @@ public class Model {
 	 * 
 	 * TODO suggestion - why not have the model class either be static OR have it
 	 * contain an instance of a LabelledPartialTransitionSystem?
+	 * 
+	 * TODO forAllAlways, ForAllUntil need to be fixed. ForAllUntil is dependent on
+	 * forAllAlways and forAllAlways is dependent on ExistsUntil so those are all
+	 * possible classes where the bug may exist.
 	 */
 	public static class StateSets {
 		private Set<Integer> sat;
@@ -249,7 +250,7 @@ public class Model {
 		 */
 		else if (formula instanceof ForAllAlways) {
 			ForAllAlways fA = (ForAllAlways) formula;
-			StateSets S = check(system, fA.getFormula());
+			StateSets S = check(system, fA.getFormula()); // p1
 
 			List<Integer> E = S.sat.stream().collect(Collectors.toList());
 			Set<Integer> T = new HashSet<Integer>(E);
