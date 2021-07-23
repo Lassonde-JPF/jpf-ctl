@@ -18,7 +18,7 @@ import org.ctl.CTLParser;
 
 import algo.LabelledPartialTransitionSystem;
 import algo.Model;
-import algo.Model.StateSets;
+import algo.StateSets;
 import error.CTLError;
 import error.FieldExists;
 
