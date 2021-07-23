@@ -41,7 +41,7 @@ public class LabelledPartialTransitionSystem {
 	private Map<Integer, Set<Integer>> labelling;
 
 	// maximum number of states
-	private static final int MAX_STATES = 10;
+	private static final int MAX_STATES = 1000;
 
 	// probability that a state is fully explored
 	private static final double PROCESSED = 0.8;

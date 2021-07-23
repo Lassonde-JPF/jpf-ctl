@@ -49,11 +49,11 @@ import java.util.Map;
  */
 public class Model {
 
-	//Post and Pre hashtables
+	// Post and Pre hashtables
 	private Map<Integer, Set<Integer>> post;
 	private Map<Integer, Set<Integer>> pre;
 
-	//Target Transition System
+	// Target Transition System
 	private LabelledPartialTransitionSystem pts;
 
 	public Model(LabelledPartialTransitionSystem pts) {
@@ -74,8 +74,8 @@ public class Model {
 	}
 
 	/*
-	 * Returns the set of states that are predecessors to `state` and if not computed
-	 * before, adds the entry to a hashtable, pre
+	 * Returns the set of states that are predecessors to `state` and if not
+	 * computed before, adds the entry to a hashtable, pre
 	 */
 	public Set<Integer> Pre(Integer state) {
 		pre.computeIfAbsent(state, k -> pts.getTransitions().stream().filter(t -> t.target == state).map(t -> t.source)
