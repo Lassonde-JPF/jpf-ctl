@@ -308,7 +308,7 @@ public class ModelCheckerTest {
 		ParseTree tree = parseCtl(input);
 		Formula formula = generator.visit(tree);
 		System.out.println("Input formula:\n" + input);
-		StateSets ss = new Model().check(pts, formula);
+		StateSets ss = new Model(pts).check(formula);
 		System.out.println("Result:");
 		System.out.println(ss);
 		return ss;

@@ -26,8 +26,10 @@ import ctl.Or;
 import ctl.*;
 import java.lang.reflect.Field;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 
 /**
  * 
@@ -39,72 +41,101 @@ import java.util.List;
  * @author Hongru Wang
  * 
  */
+
+/**
+ * 
+ * TODO suggestion - why not have the model class either be static OR have it
+ * contain an instance of a LabelledPartialTransitionpts?
+ */
 public class Model {
 
-	/**
-	 * This class represents a pair of sets of states:
-	 * 
-	 * TODO suggestion - why not have the model class either be static OR have it
-	 * contain an instance of a LabelledPartialTransitionSystem?
-	 * 
-	 * TODO forAllAlways, ForAllUntil need to be fixed. ForAllUntil is dependent on
-	 * forAllAlways and forAllAlways is dependent on ExistsUntil so those are all
-	 * possible classes where the bug may exist.
+	//Post and Pre hashtables
+	private Map<Integer, Set<Integer>> post;
+	private Map<Integer, Set<Integer>> pre;
+
+	//Target Transition System
+	private LabelledPartialTransitionSystem pts;
+
+	public Model(LabelledPartialTransitionSystem pts) {
+		this.post = new HashMap<Integer, Set<Integer>>();
+		this.pre = new HashMap<Integer, Set<Integer>>();
+
+		this.pts = pts;
+	}
+
+	/*
+	 * Returns the set of states that are successors to `state` and if not computed
+	 * before, adds the entry to a hashtable, post
 	 */
+	public Set<Integer> Post(Integer state) {
+		post.computeIfAbsent(state, k -> pts.getTransitions().stream().filter(t -> t.source == state).map(t -> t.target)
+				.distinct().collect(Collectors.toSet()));
+		return post.get(state);
+	}
+
+	/*
+	 * Returns the set of states that are predecessors to `state` and if not computed
+	 * before, adds the entry to a hashtable, pre
+	 */
+	public Set<Integer> Pre(Integer state) {
+		pre.computeIfAbsent(state, k -> pts.getTransitions().stream().filter(t -> t.target == state).map(t -> t.source)
+				.distinct().collect(Collectors.toSet()));
+		return pre.get(state);
+	}
 
 	/**
 	 * Returns the
 	 * 
-	 * @param system
+	 * @param pts
 	 * @param formula
 	 * @return
 	 * 
 	 */
-	public StateSets check(LabelledPartialTransitionSystem system, Formula formula) {
+	public StateSets check(Formula formula) {
 		/*
 		 * Base Case
 		 */
 		if (formula instanceof True) {
-			return new StateSets(system.getStates(), new HashSet<Integer>());
+			return new StateSets(pts.getStates(), new HashSet<Integer>());
 		}
 		/*
 		 * Base Case
 		 */
 		else if (formula instanceof False) {
-			return new StateSets(new HashSet<Integer>(), system.getStates());
+			return new StateSets(new HashSet<Integer>(), pts.getStates());
 		} else if (formula instanceof And) {
 			And f = (And) formula;
-			StateSets L = check(system, f.getLeft());
-			StateSets R = check(system, f.getRight());
+			StateSets L = check(f.getLeft());
+			StateSets R = check(f.getRight());
 			Set<Integer> Sat = new HashSet<Integer>(L.sat);
 			Sat.retainAll(R.sat);
-			Set<Integer> unSat = new HashSet<Integer>(system.getStates());
+			Set<Integer> unSat = new HashSet<Integer>(pts.getStates());
 			unSat.removeAll(Sat);
 			return new StateSets(Sat, unSat);
 		} else if (formula instanceof Or) {
 			Or f = (Or) formula;
-			StateSets L = check(system, f.getLeft());
-			StateSets R = check(system, f.getRight());
+			StateSets L = check(f.getLeft());
+			StateSets R = check(f.getRight());
 			Set<Integer> Sat = new HashSet<Integer>(L.sat);
 			Sat.addAll(R.sat);
-			Set<Integer> unSat = new HashSet<Integer>(system.getStates());
+			Set<Integer> unSat = new HashSet<Integer>(pts.getStates());
 			unSat.removeAll(Sat);
 			return new StateSets(Sat, unSat);
 		} else if (formula instanceof Implies) {
 			// !a or b
 			Implies f = (Implies) formula;
-			StateSets L = check(system, f.getLeft());
-			StateSets R = check(system, f.getRight());
+			StateSets L = check(f.getLeft());
+			StateSets R = check(f.getRight());
 			Set<Integer> Sat = new HashSet<Integer>(L.unsat);
 			Sat.addAll(R.sat);
-			Set<Integer> unSat = new HashSet<Integer>(system.getStates());
+			Set<Integer> unSat = new HashSet<Integer>(pts.getStates());
 			unSat.removeAll(Sat);
 			return new StateSets(Sat, unSat);
 		} else if (formula instanceof Iff) {
 			// (a && b) || (!a && !b)
 			Iff f = (Iff) formula;
-			StateSets L = check(system, f.getLeft());
-			StateSets R = check(system, f.getRight());
+			StateSets L = check(f.getLeft());
+			StateSets R = check(f.getRight());
 			// (a && b)
 			Set<Integer> LSat = new HashSet<Integer>(L.sat);
 			LSat.retainAll(R.sat);
@@ -115,26 +146,25 @@ public class Model {
 			Set<Integer> Sat = new HashSet<Integer>(LSat);
 			Sat.addAll(RSat);
 			// !( (a && b) || (!a && !b) )
-			Set<Integer> unSat = new HashSet<Integer>(system.getStates());
+			Set<Integer> unSat = new HashSet<Integer>(pts.getStates());
 			unSat.removeAll(Sat);
 			return new StateSets(Sat, unSat);
 		} else if (formula instanceof ExistsAlways) {
 			ExistsAlways f = (ExistsAlways) formula;
-			Set<Integer> Sat = check(system, f.getFormula()).sat;
-			List<Integer> E = system.getStates().stream().filter(s -> !Sat.contains(s)).collect(Collectors.toList());
+			Set<Integer> Sat = check(f.getFormula()).sat;
+			List<Integer> E = pts.getStates().stream().filter(s -> !Sat.contains(s)).collect(Collectors.toList());
 			Set<Integer> T = Sat;
 
 			int max = 0;
-			if (!Sat.isEmpty()) max = Collections.max(Sat);
-			Integer[] count = new Integer[max+1];
+			if (!Sat.isEmpty())
+				max = Collections.max(Sat);
+			Integer[] count = new Integer[max + 1];
 			for (Integer s : Sat) {
-				Integer succ = (int) system.getTransitions().stream().filter(t -> t.source == s).count();
-				count[s] = succ;
+				count[s] = Post(s).size();
 			}
 			while (!E.isEmpty()) {
 				Integer sP = E.remove(0);
-				Set<Integer> preS = system.getTransitions().stream().filter(t -> t.target == sP).map(t -> t.source)
-						.collect(Collectors.toSet());
+				Set<Integer> preS = Pre(sP);
 				for (Integer s : preS) {
 					if (T.contains(s)) {
 						count[s] = count[s - 1];
@@ -145,7 +175,7 @@ public class Model {
 					}
 				}
 			}
-			Set<Integer> unSat = new HashSet<Integer>(system.getStates());
+			Set<Integer> unSat = new HashSet<Integer>(pts.getStates());
 			unSat.removeAll(T);
 			return new StateSets(T, unSat);
 		}
@@ -155,16 +185,15 @@ public class Model {
 		 */
 		else if (formula instanceof ExistsEventually) {
 			ExistsEventually eE = (ExistsEventually) formula;
-			StateSets S = check(system, eE.getFormula());
+			StateSets S = check(eE.getFormula());
 
 			List<Integer> E = S.sat.stream().collect(Collectors.toList());
 			Set<Integer> T = new HashSet<Integer>(E);
 			while (!E.isEmpty()) {
 				Integer sP = E.remove(0);
-				Set<Integer> preS = system.getTransitions().stream().filter(t -> t.target == sP).map(t -> t.source)
-						.collect(Collectors.toSet());
+				Set<Integer> preS = Pre(sP);
 				for (Integer s : preS) {
-					Set<Integer> lSatLessT = system.getStates(); // "true" set
+					Set<Integer> lSatLessT = pts.getStates(); // "true" set
 					lSatLessT.removeAll(T);
 					if (lSatLessT.contains(s)) {
 						E.add(s);
@@ -172,28 +201,27 @@ public class Model {
 					}
 				}
 			}
-			Set<Integer> unSat = new HashSet<Integer>(system.getStates());
+			Set<Integer> unSat = new HashSet<Integer>(pts.getStates());
 			unSat.removeAll(T);
 			return new StateSets(T, unSat);
 		} else if (formula instanceof ExistsNext) {
 			ExistsNext eN = (ExistsNext) formula;
-			StateSets S = check(system, eN.getFormula()); // recursive part
-			Set<Integer> Sat = system.getTransitions().stream().filter(t -> S.sat.contains(t.target)).map(t -> t.source)
+			StateSets S = check(eN.getFormula()); // recursive part
+			Set<Integer> Sat = pts.getTransitions().stream().filter(t -> S.sat.contains(t.target)).map(t -> t.source)
 					.collect(Collectors.toSet());
-			Set<Integer> unSat = new HashSet<Integer>(system.getStates());
+			Set<Integer> unSat = new HashSet<Integer>(pts.getStates());
 			unSat.removeAll(Sat);
 			return new StateSets(Sat, unSat);
 		} else if (formula instanceof ExistsUntil) {
 			ExistsUntil eU = (ExistsUntil) formula;
-			StateSets R = check(system, eU.getRight());
-			StateSets L = check(system, eU.getLeft());
+			StateSets R = check(eU.getRight());
+			StateSets L = check(eU.getLeft());
 
 			List<Integer> E = R.sat.stream().collect(Collectors.toList());
 			Set<Integer> T = new HashSet<Integer>(E);
 			while (!E.isEmpty()) {
 				Integer sP = E.remove(0);
-				Set<Integer> preS = system.getTransitions().stream().filter(t -> t.target == sP).map(t -> t.source)
-						.collect(Collectors.toSet());
+				Set<Integer> preS = Pre(sP);
 				for (Integer s : preS) {
 					Set<Integer> lSatLessT = new HashSet<Integer>(L.sat);
 					lSatLessT.removeAll(T);
@@ -203,7 +231,7 @@ public class Model {
 					}
 				}
 			}
-			Set<Integer> unSat = new HashSet<Integer>(system.getStates());
+			Set<Integer> unSat = new HashSet<Integer>(pts.getStates());
 			unSat.removeAll(T);
 			return new StateSets(T, unSat);
 		}
@@ -213,16 +241,15 @@ public class Model {
 		 */
 		else if (formula instanceof ForAllAlways) {
 			ForAllAlways fA = (ForAllAlways) formula;
-			StateSets S = check(system, fA.getFormula()); // p1
+			StateSets S = check(fA.getFormula()); // p1
 
 			List<Integer> E = S.unsat.stream().collect(Collectors.toList());
 			Set<Integer> T = new HashSet<Integer>(E);
 			while (!E.isEmpty()) {
 				Integer sP = E.remove(0);
-				Set<Integer> preS = system.getTransitions().stream().filter(t -> t.target == sP).map(t -> t.source)
-						.collect(Collectors.toSet());
+				Set<Integer> preS = Pre(sP);
 				for (Integer s : preS) {
-					Set<Integer> lSatLessT = system.getStates(); // "true"
+					Set<Integer> lSatLessT = pts.getStates(); // "true"
 					lSatLessT.removeAll(T);
 					if (lSatLessT.contains(s)) {
 						E.add(s);
@@ -230,7 +257,7 @@ public class Model {
 					}
 				}
 			}
-			Set<Integer> Sat = new HashSet<Integer>(system.getStates());
+			Set<Integer> Sat = new HashSet<Integer>(pts.getStates());
 			Sat.removeAll(T);
 			return new StateSets(Sat, T);
 		}
@@ -241,21 +268,20 @@ public class Model {
 		else if (formula instanceof ForAllEventually) {
 			ForAllEventually fAF = (ForAllEventually) formula;
 			// In this case we want the !p1 or the unsat states
-			Set<Integer> S = check(system, fAF.getFormula()).unsat;
-			List<Integer> E = system.getStates().stream().filter(s -> !S.contains(s)).collect(Collectors.toList());
+			Set<Integer> S = check(fAF.getFormula()).unsat;
+			List<Integer> E = pts.getStates().stream().filter(s -> !S.contains(s)).collect(Collectors.toList());
 			Set<Integer> T = S;
 
 			int max = 0;
-			if (!S.isEmpty()) max = Collections.max(S);
-			Integer[] count = new Integer[max+1];
+			if (!S.isEmpty())
+				max = Collections.max(S);
+			Integer[] count = new Integer[max + 1];
 			for (Integer s : S) {
-				Integer succ = (int) system.getTransitions().stream().filter(t -> t.source == s).count();
-				count[s] = succ;
+				count[s] = Post(s).size();
 			}
 			while (!E.isEmpty()) {
 				Integer sP = E.remove(0);
-				Set<Integer> preS = system.getTransitions().stream().filter(t -> t.target == sP).map(t -> t.source)
-						.collect(Collectors.toSet());
+				Set<Integer> preS = Pre(sP);
 				for (Integer s : preS) {
 					if (T.contains(s)) {
 						count[s] = count[s - 1];
@@ -266,7 +292,7 @@ public class Model {
 					}
 				}
 			}
-			Set<Integer> Sat = new HashSet<Integer>(system.getStates());
+			Set<Integer> Sat = new HashSet<Integer>(pts.getStates());
 			Sat.removeAll(T);
 			return new StateSets(Sat, T);
 
@@ -276,14 +302,14 @@ public class Model {
 		 */
 		else if (formula instanceof ForAllNext) {
 			ForAllNext fN = (ForAllNext) formula;
-			StateSets S = check(system, fN.getFormula()); // recursive part
+			StateSets S = check(fN.getFormula()); // recursive part
 
 			// States that DO NOT satisfy this formula CONTAIN a transition in which the
 			// TARGET is NOT CONTAINED in Sat(p1)
-			Set<Integer> unSat = system.getTransitions().stream().filter(t -> !S.sat.contains(t.target))
-					.map(t -> t.source).collect(Collectors.toSet());
+			Set<Integer> unSat = pts.getTransitions().stream().filter(t -> !S.sat.contains(t.target)).map(t -> t.source)
+					.collect(Collectors.toSet());
 
-			Set<Integer> Sat = new HashSet<Integer>(system.getStates());
+			Set<Integer> Sat = new HashSet<Integer>(pts.getStates());
 			Sat.removeAll(unSat);
 			return new StateSets(Sat, unSat);
 		}
@@ -296,8 +322,8 @@ public class Model {
 		 */
 		else if (formula instanceof ForAllUntil) {
 			ForAllUntil fAU = (ForAllUntil) formula;
-			StateSets L = check(system, fAU.getLeft());
-			StateSets R = check(system, fAU.getRight());
+			StateSets L = check(fAU.getLeft());
+			StateSets R = check(fAU.getRight());
 
 			// Piece1: (!p1 && !p2)
 			Set<Integer> AND = new HashSet<Integer>(L.unsat);
@@ -308,8 +334,7 @@ public class Model {
 			Set<Integer> T = new HashSet<Integer>(E);
 			while (!E.isEmpty()) {
 				Integer sP = E.remove(0);
-				Set<Integer> preS = system.getTransitions().stream().filter(t -> t.target == sP).map(t -> t.source)
-						.collect(Collectors.toSet());
+				Set<Integer> preS = Pre(sP);
 				for (Integer s : preS) {
 					Set<Integer> lSatLessT = new HashSet<Integer>(L.unsat);
 					lSatLessT.removeAll(T);
@@ -319,24 +344,22 @@ public class Model {
 					}
 				}
 			}
-			Set<Integer> EU = system.getStates().stream().filter(s -> !T.contains(s)).collect(Collectors.toSet());
+			Set<Integer> EU = pts.getStates().stream().filter(s -> !T.contains(s)).collect(Collectors.toSet());
 
 			// Piece3: !EG!p2
-			List<Integer> F = system.getStates().stream().filter(s -> !R.unsat.contains(s))
-					.collect(Collectors.toList());
+			List<Integer> F = pts.getStates().stream().filter(s -> !R.unsat.contains(s)).collect(Collectors.toList());
 			Set<Integer> G = R.unsat;
 
 			int max = 0;
-			if (!R.unsat.isEmpty()) max = Collections.max(R.unsat);
-			Integer[] count = new Integer[max+1];
+			if (!R.unsat.isEmpty())
+				max = Collections.max(R.unsat);
+			Integer[] count = new Integer[max + 1];
 			for (Integer s : R.unsat) {
-				Integer succ = (int) system.getTransitions().stream().filter(t -> t.source == s).count();
-				count[s] = succ;
+				count[s] = Post(s).size();
 			}
 			while (!F.isEmpty()) {
 				Integer sP = F.remove(0);
-				Set<Integer> preS = system.getTransitions().stream().filter(t -> t.target == sP).map(t -> t.source)
-						.collect(Collectors.toSet());
+				Set<Integer> preS = Pre(sP);
 				for (Integer s : preS) {
 					if (G.contains(s)) {
 						count[s] = count[s - 1];
@@ -347,19 +370,19 @@ public class Model {
 					}
 				}
 			}
-			Set<Integer> notF = new HashSet<Integer>(system.getStates());
+			Set<Integer> notF = new HashSet<Integer>(pts.getStates());
 			notF.removeAll(F);
 
 			// Piece4: Piece2 && Piece3
 			EU.retainAll(notF);
 
 			// Final cleanup
-			Set<Integer> unSat = new HashSet<Integer>(system.getStates());
+			Set<Integer> unSat = new HashSet<Integer>(pts.getStates());
 			unSat.removeAll(EU);
 			return new StateSets(EU, unSat);
 		} else if (formula instanceof Not) {
 			Not n = (Not) formula;
-			StateSets S = check(system, n.getFormula());
+			StateSets S = check(n.getFormula());
 			return new StateSets(S.unsat, S.sat);
 		} else if (formula instanceof AtomicProposition) {
 			AtomicProposition aP = (AtomicProposition) formula;
@@ -377,10 +400,10 @@ public class Model {
 				Object val = f.get(obj); // This is the "value" of the AP's field
 
 				// now we filter all states by those whose label contains this value
-				Sat = system.getStates().stream().filter(s -> system.getLabelling().get(s).contains(val))
+				Sat = pts.getStates().stream().filter(s -> pts.getLabelling().get(s).contains(val))
 						.collect(Collectors.toSet());
 
-				unSat = new HashSet<Integer>(system.getStates());
+				unSat = new HashSet<Integer>(pts.getStates());
 				unSat.removeAll(Sat);
 
 				// This catch should never be triggered as we filter for these possibilities in
