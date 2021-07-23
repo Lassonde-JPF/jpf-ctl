@@ -45,6 +45,9 @@ public class Model {
 
 	/**
 	 * This class represents a pair of sets of states:
+	 * 
+	 * TODO suggestion - why not have the model class either be static OR have it
+	 * contain an instance of a LabelledPartialTransitionSystem?
 	 */
 	public static class StateSets {
 		private Set<Integer> sat;
@@ -101,7 +104,6 @@ public class Model {
 		 */
 		if (formula instanceof True) {
 			return new StateSets(system.getStates(), new HashSet<Integer>());
-
 		}
 		/*
 		 * Base Case
@@ -112,27 +114,30 @@ public class Model {
 			And f = (And) formula;
 			StateSets L = check(system, f.getLeft());
 			StateSets R = check(system, f.getRight());
-			L.sat.retainAll(R.sat);
+			Set<Integer> Sat = new HashSet<Integer>(L.sat);
+			Sat.retainAll(R.sat);
 			Set<Integer> unSat = new HashSet<Integer>(system.getStates());
-			unSat.removeAll(L.sat);
-			return new StateSets(L.sat, unSat);
+			unSat.removeAll(Sat);
+			return new StateSets(Sat, unSat);
 		} else if (formula instanceof Or) {
 			Or f = (Or) formula;
 			StateSets L = check(system, f.getLeft());
 			StateSets R = check(system, f.getRight());
-			L.sat.addAll(R.sat);
+			Set<Integer> Sat = new HashSet<Integer>(L.sat);
+			Sat.addAll(R.sat);
 			Set<Integer> unSat = new HashSet<Integer>(system.getStates());
-			unSat.removeAll(L.sat);
-			return new StateSets(L.sat, unSat);
+			unSat.removeAll(Sat);
+			return new StateSets(Sat, unSat);
 		} else if (formula instanceof Implies) {
 			// !a or b
 			Implies f = (Implies) formula;
 			StateSets L = check(system, f.getLeft());
 			StateSets R = check(system, f.getRight());
-			L.unsat.addAll(R.sat);
+			Set<Integer> Sat = new HashSet<Integer>(L.unsat);
+			Sat.addAll(R.sat);
 			Set<Integer> unSat = new HashSet<Integer>(system.getStates());
-			unSat.removeAll(L.unsat);
-			return new StateSets(L.unsat, unSat);
+			unSat.removeAll(Sat);
+			return new StateSets(Sat, unSat);
 		} else if (formula instanceof Iff) {
 			// (a && b) || (!a && !b)
 			Iff f = (Iff) formula;
