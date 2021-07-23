@@ -25,6 +25,7 @@ import ctl.Formula;
 import ctl.Or;
 import ctl.*;
 import java.lang.reflect.Field;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 
@@ -117,13 +118,15 @@ public class Model {
 			Set<Integer> unSat = new HashSet<Integer>(system.getStates());
 			unSat.removeAll(Sat);
 			return new StateSets(Sat, unSat);
-		} else if (formula instanceof ExistsAlways) { // Page 352 in textbook
+		} else if (formula instanceof ExistsAlways) {
 			ExistsAlways f = (ExistsAlways) formula;
 			Set<Integer> Sat = check(system, f.getFormula()).sat;
 			List<Integer> E = system.getStates().stream().filter(s -> !Sat.contains(s)).collect(Collectors.toList());
 			Set<Integer> T = Sat;
 
-			Integer[] count = new Integer[Sat.size()];
+			int max = 0;
+			if (!Sat.isEmpty()) max = Collections.max(Sat);
+			Integer[] count = new Integer[max+1];
 			for (Integer s : Sat) {
 				Integer succ = (int) system.getTransitions().stream().filter(t -> t.source == s).count();
 				count[s] = succ;
@@ -243,7 +246,9 @@ public class Model {
 			List<Integer> E = system.getStates().stream().filter(s -> !S.contains(s)).collect(Collectors.toList());
 			Set<Integer> T = S;
 
-			Integer[] count = new Integer[S.size()];
+			int max = 0;
+			if (!S.isEmpty()) max = Collections.max(S);
+			Integer[] count = new Integer[max+1];
 			for (Integer s : S) {
 				Integer succ = (int) system.getTransitions().stream().filter(t -> t.source == s).count();
 				count[s] = succ;
@@ -297,7 +302,7 @@ public class Model {
 
 			// Piece1: (!p1 && !p2)
 			Set<Integer> AND = new HashSet<Integer>(L.unsat);
-			L.unsat.retainAll(R.unsat);
+			AND.retainAll(R.unsat);
 
 			// Piece2: !(!p2 EU Piece1)
 			List<Integer> E = AND.stream().collect(Collectors.toList());
@@ -322,7 +327,9 @@ public class Model {
 					.collect(Collectors.toList());
 			Set<Integer> G = R.unsat;
 
-			Integer[] count = new Integer[R.unsat.size()];
+			int max = 0;
+			if (!R.unsat.isEmpty()) max = Collections.max(R.unsat);
+			Integer[] count = new Integer[max+1];
 			for (Integer s : R.unsat) {
 				Integer succ = (int) system.getTransitions().stream().filter(t -> t.source == s).count();
 				count[s] = succ;
@@ -341,9 +348,11 @@ public class Model {
 					}
 				}
 			}
+			Set<Integer> notF = new HashSet<Integer>(system.getStates());
+			notF.removeAll(F);
 
 			// Piece4: Piece2 && Piece3
-			EU.retainAll(G);
+			EU.retainAll(notF);
 
 			// Final cleanup
 			Set<Integer> unSat = new HashSet<Integer>(system.getStates());

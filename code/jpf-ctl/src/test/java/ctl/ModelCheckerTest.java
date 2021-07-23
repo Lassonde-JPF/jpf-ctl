@@ -35,8 +35,10 @@ public class ModelCheckerTest {
 
 	@Test
 	void checkRandom() {
+		// for (int i = 0; i < 25; i++) {
 		StateSets result = test(Formula.random().toString(), new LabelledPartialTransitionSystem());
 		assertNotNull(result);
+		// }
 	}
 
 	@Test
@@ -218,7 +220,7 @@ public class ModelCheckerTest {
 	}
 
 	@Test
-	void checkForAllAlways() { // TODO There is an error with ForAllAlways
+	void checkForAllAlways() {
 		LabelledPartialTransitionSystem ptsT = new LabelledPartialTransitionSystem();
 		StateSets T = test("AG true", ptsT);
 		assertEquals(ptsT.getStates(), T.getSat());
@@ -262,7 +264,6 @@ public class ModelCheckerTest {
 	void checkForAllUntil() {
 		LabelledPartialTransitionSystem ptsTT = new LabelledPartialTransitionSystem();
 		StateSets TT = test("true AU true", ptsTT);
-		// TODO this case also fails, should be all states
 		assertEquals(ptsTT.getStates(), TT.getSat());
 		assertEquals(true, TT.getUnSat().isEmpty());
 
