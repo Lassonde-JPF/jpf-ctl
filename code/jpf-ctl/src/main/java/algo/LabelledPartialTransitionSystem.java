@@ -1,5 +1,3 @@
-package algo;
-
 /*
  * Copyright (C)  2021
  *
@@ -16,6 +14,8 @@ package algo;
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
+
+package algo;
 
 import java.util.HashMap;
 import java.util.HashSet;
@@ -39,6 +39,8 @@ public class LabelledPartialTransitionSystem {
 	private Set<Transition> transitions;
 	// labelling of the states
 	private Map<Integer, Set<Integer>> labelling;
+	// number of states in the system
+	private int states;
 
 	// maximum number of states
 	private static final int MAX_STATES = 1000;
@@ -52,9 +54,6 @@ public class LabelledPartialTransitionSystem {
 	// probability that a state is labeled
 	private static final double LABELLED = 0.8;
 	
-	//number of states in the system
-	private int states;
-
 	/**
 	 * Initializes this labeled partial transition system randomly.
 	 */
@@ -162,19 +161,41 @@ public class LabelledPartialTransitionSystem {
 		return toDot.toString();
 	}
 	
-	
-	//TODO this is super messy 
-	public Set<Integer> getStates() {
-		return IntStream.range(0, states).boxed().collect(Collectors.toSet());
+	/**
+	 * Returns the number of states of this system.
+	 * 
+	 * @return the number of states of this system
+	 */
+	public int getNumberOfStates() {
+		return this.states;
 	}
 	
+	/**
+	 * Returns the set of states of this system.
+	 * 
+	 * @return the set of states of this system.
+	 */
+	public BitSet getStates() {
+		BitSet set = new BitSet();
+		set.set(0, this.states);
+		return set;
+	}
+	
+	/**
+	 * Returns the set of transitions of this system.
+	 * 
+	 * @return the set of transitions of this system.
+	 */
 	public Set<Transition> getTransitions() {
 		return this.transitions;
 	}
 
-	public Map<Integer, Set<Integer>> getLabelling()
-	{
+	/**
+	 * Returns the labelling of this system.
+	 * 
+	 * @return the labelling of this system.
+	 */
+	public Map<Integer, Set<Integer>> getLabelling() {
 		return this.labelling;
 	}
-
 }

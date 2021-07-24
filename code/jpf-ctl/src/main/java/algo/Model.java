@@ -1,5 +1,3 @@
-package algo;
-
 /*
  * Copyright (C)  2021
  *
@@ -17,6 +15,8 @@ package algo;
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
+package algo;
+
 import java.util.Set;
 import java.util.stream.Collectors;
 import ctl.And;
@@ -25,6 +25,7 @@ import ctl.Formula;
 import ctl.Or;
 import ctl.*;
 import java.lang.reflect.Field;
+import java.util.BitSet;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -93,26 +94,81 @@ public class Model {
 	 */
 	public StateSets check(Formula formula) {
 		/*
-		 * Base Case
+		 * Base case
 		 */
 		if (formula instanceof True) {
-			return new StateSets(pts.getStates(), new HashSet<Integer>());
+			return new StateSets(pts.getStates(), new BitSet());
 		}
 		/*
-		 * Base Case
+		 * Base case
 		 */
 		else if (formula instanceof False) {
-			return new StateSets(new HashSet<Integer>(), pts.getStates());
-		} else if (formula instanceof And) {
-			And f = (And) formula;
-			StateSets L = check(f.getLeft());
-			StateSets R = check(f.getRight());
-			Set<Integer> Sat = new HashSet<Integer>(L.sat);
-			Sat.retainAll(R.sat);
-			Set<Integer> unSat = new HashSet<Integer>(pts.getStates());
-			unSat.removeAll(Sat);
-			return new StateSets(Sat, unSat);
+			return new StateSets(new BitSet(), pts.getStates());
+		} 
+		/*
+		 * Base case
+		 */
+		else if (formula instanceof AtomicProposition) {
+			String label = formula.toString();
+			
+			BitSet sat = new BitSet();
+			BitSet unsat = new BitSet();
+			for (int state = 0; state < pts.getNumberOfStates; state++) {
+				if (pts.getLabelling.get(state).contains(label)) {
+					sat.set(state);
+				} else {
+					unsat.set(state);
+				}
+			}
+			
+			//AtomicProposition aP = (AtomicProposition) formula;
+			//int indexOfLastDot = aP.toString().lastIndexOf(".");
+			//String className = aP.toString().substring(0, indexOfLastDot);
+			//String fieldName = aP.toString().substring(indexOfLastDot + 1);
+
+			//Set<Integer> Sat = new HashSet<Integer>();
+			//Set<Integer> unSat = new HashSet<Integer>();
+
+			//try { // reflection part
+				//Class<?> obj = Class.forName(className);
+				//Field f = obj.getField(fieldName);
+				//Object val = f.get(obj); // This is the "value" of the AP's field
+
+				// now we filter all states by those whose label contains this value
+				//Sat = pts.getStates().stream().filter(s -> pts.getLabelling().get(s).contains(val))
+						.collect(Collectors.toSet());
+
+				//unSat = new HashSet<Integer>(pts.getStates());
+				//unSat.removeAll(Sat);
+
+				// This catch should never be triggered as we filter for these possibilities in
+				// the FieldExists class
+			//} catch (ClassNotFoundException | NoSuchFieldException | SecurityException | IllegalArgumentException
+			//		| IllegalAccessException e) {
+				// e.printStackTrace();
+				//System.err.println(e.getMessage());
+			//}
+
+			return new StateSets(sat, unsat);
+		} 
+		/*
+		 * Other cases
+		 */
+		else if (formula instanceof And) {
+			And and = (And) formula;
+			StateSets left = check(and.getLeft());
+			StateSets right = check(and.getRight());
+			BitSet sat = (BitSet) left.getSat().clone();
+			sat.and(right.getSat());
+			BitSet unsat = (BitSet) left.getUnsat().clone();
+			sat.or(right.getUnsat());
+			//Set<Integer> Sat = new HashSet<Integer>(L.sat);
+			//Sat.retainAll(R.sat);
+			//Set<Integer> unSat = new HashSet<Integer>(pts.getStates());
+			//unSat.removeAll(Sat);
+			return new StateSets(sat, unsat);
 		} else if (formula instanceof Or) {
+			// deal with similarly as And
 			Or f = (Or) formula;
 			StateSets L = check(f.getLeft());
 			StateSets R = check(f.getRight());
@@ -384,37 +440,6 @@ public class Model {
 			Not n = (Not) formula;
 			StateSets S = check(n.getFormula());
 			return new StateSets(S.unsat, S.sat);
-		} else if (formula instanceof AtomicProposition) {
-			AtomicProposition aP = (AtomicProposition) formula;
-
-			int indexOfLastDot = aP.toString().lastIndexOf(".");
-			String className = aP.toString().substring(0, indexOfLastDot);
-			String fieldName = aP.toString().substring(indexOfLastDot + 1);
-
-			Set<Integer> Sat = new HashSet<Integer>();
-			Set<Integer> unSat = new HashSet<Integer>();
-
-			try { // reflection part
-				Class<?> obj = Class.forName(className);
-				Field f = obj.getField(fieldName);
-				Object val = f.get(obj); // This is the "value" of the AP's field
-
-				// now we filter all states by those whose label contains this value
-				Sat = pts.getStates().stream().filter(s -> pts.getLabelling().get(s).contains(val))
-						.collect(Collectors.toSet());
-
-				unSat = new HashSet<Integer>(pts.getStates());
-				unSat.removeAll(Sat);
-
-				// This catch should never be triggered as we filter for these possibilities in
-				// the FieldExists class
-			} catch (ClassNotFoundException | NoSuchFieldException | SecurityException | IllegalArgumentException
-					| IllegalAccessException e) {
-				// e.printStackTrace();
-				System.err.println(e.getMessage());
-			}
-
-			return new StateSets(Sat, unSat);
 		} else {
 			System.err.println("This formula type is unknown");
 			return null;
