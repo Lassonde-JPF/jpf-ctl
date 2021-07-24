@@ -60,4 +60,9 @@ public class ForAllNext extends Formula {
 	public String toString() {
 		return "AX " + this.formula;
 	}
+	
+	public Formula getFormula()
+	{
+		return this.formula;
+	}
 }

@@ -64,4 +64,14 @@ public class ExistsUntil extends Formula {
 	public String toString() {
 		return "(" + this.left + " EU " + this.right + ")";
 	}
+	
+	public Formula getLeft()
+	{
+    return left;
+    }
+
+	public Formula getRight()
+	{
+    return right;
+ 	}  
 }

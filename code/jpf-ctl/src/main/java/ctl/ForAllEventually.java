@@ -60,4 +60,9 @@ public class ForAllEventually extends Formula {
 	public String toString() {
 		return "AF " + this.formula;
 	}
+
+	public Formula getFormula()
+	{
+		return this.formula;
+	}
 }

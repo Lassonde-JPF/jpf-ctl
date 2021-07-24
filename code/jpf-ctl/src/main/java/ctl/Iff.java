@@ -64,4 +64,14 @@ public class Iff extends Formula {
 	public String toString() {
 		return "(" + this.left + " <-> " + this.right + ")";
 	}
+	
+	public Formula getLeft()
+	{
+    return left;
+    }
+
+	public Formula getRight()
+	{
+    return right;
+ 	}  
 }
