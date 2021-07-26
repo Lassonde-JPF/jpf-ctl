@@ -171,20 +171,18 @@ public class LabelledPartialTransitionSystem {
 	}
 	
 	/**
-	 * Returns the set of states of this system.
+	 * Returns the set of fully explored states of this system.
 	 * 
-	 * @return the set of states of this system.
+	 * @return the set of fully explored states of this system
 	 */
-	public BitSet getStates() {
-		BitSet set = new BitSet();
-		set.set(0, this.states);
-		return set;
+	public Set<Integer> getProcessed() {
+		return this.processed;
 	}
 	
 	/**
 	 * Returns the set of transitions of this system.
 	 * 
-	 * @return the set of transitions of this system.
+	 * @return the set of transitions of this system
 	 */
 	public Set<Transition> getTransitions() {
 		return this.transitions;
@@ -193,7 +191,7 @@ public class LabelledPartialTransitionSystem {
 	/**
 	 * Returns the labelling of this system.
 	 * 
-	 * @return the labelling of this system.
+	 * @return the labelling of this system
 	 */
 	public Map<Integer, Set<Integer>> getLabelling() {
 		return this.labelling;

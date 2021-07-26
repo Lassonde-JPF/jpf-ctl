@@ -97,13 +97,17 @@ public class Model {
 		 * Base case
 		 */
 		if (formula instanceof True) {
-			return new StateSets(pts.getStates(), new BitSet());
+			BitSet sat = new BitSet();
+			sat.set(0, pts.getNumberOfStates());
+			return new StateSets(sat, new BitSet());
 		}
 		/*
 		 * Base case
 		 */
 		else if (formula instanceof False) {
-			return new StateSets(new BitSet(), pts.getStates());
+			BitSet unsat = new BitSet();
+			unsat.set(0, pts.getNumberOfStates());
+			return new StateSets(new BitSet(), unsat);
 		} 
 		/*
 		 * Base case
@@ -261,13 +265,46 @@ public class Model {
 			unSat.removeAll(T);
 			return new StateSets(T, unSat);
 		} else if (formula instanceof ExistsNext) {
-			ExistsNext eN = (ExistsNext) formula;
-			StateSets S = check(eN.getFormula()); // recursive part
-			Set<Integer> Sat = pts.getTransitions().stream().filter(t -> S.sat.contains(t.target)).map(t -> t.source)
-					.collect(Collectors.toSet());
-			Set<Integer> unSat = new HashSet<Integer>(pts.getStates());
-			unSat.removeAll(Sat);
-			return new StateSets(Sat, unSat);
+			Formula subFormula = ((ExistsNext) formula).getFormula();
+			StateSets sub = check(subFormula);
+			
+			BitSet sat = new BitSet();
+			if (subFormula instanceof True) {
+				for (int state = 0; state < pts.getNumberOfStates(); state++) {
+					if (pts.getProcessed().contains(state)) { // state is fully explored
+						if (!post.get(state).isEmpty()) { //post(state) is nonempty
+							sat.set(state);
+						}
+					} else { // state is not fully explored
+						sat.set(state); 
+					}
+				}
+			} else {
+				for (int state = 0; state < pts.getNumberOfStates(); state++) {
+					if (!post.get(state).and(sub.getSat()).isEmpty()) { // intersection of post(state) and Sat of subformula is nonempty
+						sat.nextSetBit(state);
+					}
+				}
+			}
+			
+			BitSet unsat = new BitSet();
+			if (subFormula instanceof False) {
+				unsat.set(0, pts.getNumberOfStates()); // all states
+			} else {
+				for (Integer state : pts.getProcessed()) {
+					if (post.get(state).andNot(sub.getUnsat()).isEmpty()) { // post(state) is subset of or equal to Unsat of subformula
+						unsat.set(state);
+					}
+				}
+			}
+			
+			//ExistsNext eN = (ExistsNext) formula;
+			//StateSets S = check(eN.getFormula()); // recursive part
+			//Set<Integer> Sat = pts.getTransitions().stream().filter(t -> S.sat.contains(t.target)).map(t -> t.source)
+			//		.collect(Collectors.toSet());
+			//Set<Integer> unSat = new HashSet<Integer>(pts.getStates());
+			//unSat.removeAll(Sat);
+			return new StateSets(sat, unsat);
 		} else if (formula instanceof ExistsUntil) {
 			ExistsUntil eU = (ExistsUntil) formula;
 			StateSets R = check(eU.getRight());
@@ -357,17 +394,21 @@ public class Model {
 		 * this case is the (AX p1) case
 		 */
 		else if (formula instanceof ForAllNext) {
-			ForAllNext fN = (ForAllNext) formula;
-			StateSets S = check(fN.getFormula()); // recursive part
+			Formula subFormula = ((ForAllNext) formula).getFormula();
+			Formula equivalent = new Not(new ExistsNext(new Not(subFormula))); // ForAllNext(subFormula) = !ExistsNext(!subFormula)
+			return check(equivalent);
+			
+			//ForAllNext fN = (ForAllNext) formula;
+			//StateSets S = check(fN.getFormula()); // recursive part
 
 			// States that DO NOT satisfy this formula CONTAIN a transition in which the
 			// TARGET is NOT CONTAINED in Sat(p1)
-			Set<Integer> unSat = pts.getTransitions().stream().filter(t -> !S.sat.contains(t.target)).map(t -> t.source)
-					.collect(Collectors.toSet());
+			//Set<Integer> unSat = pts.getTransitions().stream().filter(t -> !S.sat.contains(t.target)).map(t -> t.source)
+			//		.collect(Collectors.toSet());
 
-			Set<Integer> Sat = new HashSet<Integer>(pts.getStates());
-			Sat.removeAll(unSat);
-			return new StateSets(Sat, unSat);
+			//Set<Integer> Sat = new HashSet<Integer>(pts.getStates());
+			//Sat.removeAll(unSat);
+			//return new StateSets(Sat, unSat);
 		}
 		/*
 		 * This case is the (p1 AU p2) case. On page 333 of the textbook there is an
