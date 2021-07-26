@@ -18,8 +18,8 @@ import org.junit.jupiter.api.Test;
 
 import error.MyError;
 
-import parser.CTLLexer;
-import parser.CTLParser;
+import org.ctl.CTLLexer;
+import org.ctl.CTLParser;
 
 
 
@@ -201,8 +201,8 @@ public class BracketsTest {
 	 */
 	private ParseTree parseCtl(String formula) {
 		CharStream input = CharStreams.fromString(formula);
-		MyError error = new MyError();
-		input =  error.errorCheckAndRecover(input);
+		MyError error = new MyError(input);
+		input =  error.errorCheckAndRecover();
 		
 		CTLLexer lexer = new CTLLexer(input);
 		CommonTokenStream tokens = new CommonTokenStream(lexer);

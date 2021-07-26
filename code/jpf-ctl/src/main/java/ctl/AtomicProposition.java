@@ -28,7 +28,8 @@ package ctl;
  */
 public class AtomicProposition extends Formula {
 	private String name;
-
+	private String className;
+	private String fieldName;
 	/**
 	 * Initializes this CTL formula as an atomic proposition with the given name.
 	 * 
@@ -36,6 +37,10 @@ public class AtomicProposition extends Formula {
 	 */
 	public AtomicProposition(String name) {
 		this.name = name;
+		
+		int indexOfLastDot = name.lastIndexOf(".");
+		String className = name.substring(0, indexOfLastDot);
+		String fieldName = name.substring(indexOfLastDot + 1);
 	}
 
 	@Override
@@ -56,5 +61,16 @@ public class AtomicProposition extends Formula {
 	@Override
 	public String toString() {
 		return this.name;
+	}
+	
+	
+	public String getClassName()
+	{
+		return this.className;
+	}
+	
+	public String getFieldName()
+	{
+		return this.fieldName;
 	}
 }

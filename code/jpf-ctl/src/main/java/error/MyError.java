@@ -1,6 +1,8 @@
 package error;
 
 import java.util.HashSet;
+import java.util.Map;
+
 import org.antlr.v4.runtime.CharStream;
 import org.antlr.v4.runtime.CharStreams;
 
@@ -11,26 +13,90 @@ import org.antlr.v4.runtime.CharStreams;
  *
  */
 public class MyError {
+	public static String inputString = "";
 	// Hash set of Java reserved words
-	HashSet<String> reservedWordsSet = new HashSet<>();
+	//HashSet<String> reservedWordsSet = new HashSet<>();
 	// Hash set of operators 
-	HashSet<String> operatorsSet = new HashSet<>();
+	HashSet<Character> operatorsSet = new HashSet<>();
 	// Synchronized err and out prints
-	ConsoleWriter cWriter = new ConsoleWriter();
-	// Number of input line
-	static int inputLineNum = 0;
-	// To verify if the fields exists in the user input
-	public boolean fieldNotExist = false;
+	//ConsoleWriter cWriter = new ConsoleWriter();
+
+	/**
+	*  Inserts the Java reserved words into the reservedWordsSet Hash set.
+	*  It also inserts the missing operators '&' and '|' into operatorsSet Hash set.
+	*  
+	*/
+	public MyError() {
+		// adding Java reserve words to the hash set
+		/*		reservedWordsSet.add("abstract");
+				reservedWordsSet.add("assert");
+				reservedWordsSet.add("boolean");
+				reservedWordsSet.add("break");
+				reservedWordsSet.add("byte");
+				reservedWordsSet.add("case");
+				reservedWordsSet.add("catch");
+				reservedWordsSet.add("char");
+				reservedWordsSet.add("class");
+				reservedWordsSet.add("const");
+				reservedWordsSet.add("continue");
+				reservedWordsSet.add("default");
+				reservedWordsSet.add("do");
+				reservedWordsSet.add("double");
+				reservedWordsSet.add("else");
+				reservedWordsSet.add("enum");
+				reservedWordsSet.add("extends");
+				reservedWordsSet.add("final");
+				reservedWordsSet.add("finally");
+				reservedWordsSet.add("float");
+				reservedWordsSet.add("for");
+				reservedWordsSet.add("if");
+				reservedWordsSet.add("goto");
+				reservedWordsSet.add("implements");
+				reservedWordsSet.add("import");
+				reservedWordsSet.add("instanceof");
+				reservedWordsSet.add("int");
+				reservedWordsSet.add("interface");
+				reservedWordsSet.add("long");
+				reservedWordsSet.add("native");
+				reservedWordsSet.add("new");
+				reservedWordsSet.add("package");
+				reservedWordsSet.add("private");
+				reservedWordsSet.add("protected");
+				reservedWordsSet.add("public");
+				reservedWordsSet.add("return");
+				reservedWordsSet.add("short");
+				reservedWordsSet.add("static");
+				reservedWordsSet.add("strictfp");
+				reservedWordsSet.add("super");
+				reservedWordsSet.add("switch");
+				reservedWordsSet.add("synchronized");
+				reservedWordsSet.add("this");
+				reservedWordsSet.add("throw");
+				reservedWordsSet.add("throws");
+				reservedWordsSet.add("transient");
+				reservedWordsSet.add("try");
+				reservedWordsSet.add("void");
+				reservedWordsSet.add("volatile");
+				reservedWordsSet.add("while");
+				*/
+				
+				// adding missing operators to the hash set
+				operatorsSet.add('&');
+				operatorsSet.add('|');
+	}
 	
-	StringBuilder errMsg = new StringBuilder();
 
 
 	/**
 	 *  Inserts the Java reserved words into the reservedWordsSet Hash set.
 	 *  It also inserts the missing operators '&' and '|' into operatorsSet Hash set.
+	 *  
+	 *  @param input - input formula
 	 */
-	public MyError() {
+	public MyError(CharStream input) 
+	{	
 		// adding Java reserve words to the hash set
+		/*
 		reservedWordsSet.add("abstract");
 		reservedWordsSet.add("assert");
 		reservedWordsSet.add("boolean");
@@ -81,130 +147,95 @@ public class MyError {
 		reservedWordsSet.add("void");
 		reservedWordsSet.add("volatile");
 		reservedWordsSet.add("while");
-		
+		*/
 		
 		// adding missing operators to the hash set
-		operatorsSet.add("&");
-		operatorsSet.add("|");
+		operatorsSet.add('&');
+		operatorsSet.add('|');
+		
+		inputString = input.toString();
 	}
 	
+	
 	/**
-	 * This method verifies the input formula if it contains any Java reserved words.
-	 * It also checks if the input contains '&' or '|' characters.
-	 * Finally, it recovers from the errors and returns the recovered input.
+	 * This method verifies the input formula if it contains '&' or '|' characters.
+	 * It also recovers from the errors and returns the recovered input.
 	 * 
-	 * @param input - the input formula.
+	 * @return  recovered input if there is an error, the input formal otherwise.
+	 */
+	public  CharStream errorCheckAndRecover() 
+	{
+		//the resulted input
+		StringBuilder res = new StringBuilder();
+		//Split the input string by lines
+		String[] lines = inputString.split("\r\n|\r|\n");
+		int size = lines.length;
+		//Verify if every line in the input contains '&' or '|' characters by calling the helper method
+		for (int i = 0; i < size; i++) {
+			if(i > 0)
+			{
+				res.append("\n");
+			}
+			res.append(errorCheckAndRecoverHelper(lines[i], i+1));
+		}
+		
+		//if the resulted String from the helper method != input String, then print the error message
+		if(!res.toString().equals(inputString))
+		{
+			System.out.print("\nInitial   input: " + inputString + "\n" + "Recovered input: " + res.toString() + "\n\n");
+		}
+		return CharStreams.fromString(res.toString());		
+	}
+	/**
+	 * This method verifies the input formula if contains '&' or '|' characters.
+	 * It also recovers from the errors and returns the recovered input.
+	 * 
+	 * @param inString - the input formula.
+	 * @param lineNum - line number in the input formula
 	 * @return recovered input if there is an error, the input formal otherwise. 
 	 */
-	public CharStream errorCheckAndRecover(CharStream input) {
-
-		inputLineNum++;									//input line number
-		StringBuilder recovedInput = new StringBuilder();		//the recovered input
-		String inputString = input.toString();
-		String[] lines = inputString.split(" ");
-		int size = lines.length;
-		int index = 0;									//the error character index in the input string
+	public CharStream errorCheckAndRecoverHelper(String inString, int lineNum) 
+	{
+		//the recovered input
+		StringBuilder recovedInput = new StringBuilder();				
+		int size = inString.length();
+		//the error character index in the input string
+		int index = 0;			
 		boolean hasError = false;
-
 		
-		for (int i = 0; i < size; i++) {
-			
+		for (int i = 0; i < size ; i++) 
+		{
 			//check and recover if the input formula missing the operators '&' or '|'
-			if (operatorsSet.contains(lines[i])) {
-				hasError = true;
-				//call underLineError method to print the error message
-				underLineError(inputString, index, " token recognition error at: '"+ lines[i] + " '" );
-				index += 2;
-				recovedInput.append(lines[i]);
-				recovedInput.append(lines[i]);
-			}
-			/*//check and recover if the input formula contains any Java reserve word
-			if (lines[i].contains(".")) {
-				
-				//check if the fields in the input exist
-				//FieldExists(lines[i],inputString, index);
-				
-				String[] substrings = lines[i].split("[.]");
 			
-				for (int j = 0; j < substrings.length; j++) {
-
-					if (reservedWordsSet.contains(substrings[j])) {
-						hasError = true;
-						//call underLineError method to print the error message 
-						underLineError(inputString, index," token recognition error at: '"+ substrings[j] + " '" );
-						substrings[j] = substrings[j].toUpperCase();
-					}
-					recovedInput.append(substrings[j]);
-					if (j < substrings.length - 1)
-					{
-						recovedInput.append(".");							
-					}
-					index += substrings[j].length() + 1;					
+			if (operatorsSet.contains(inString.charAt(i)) ) 
+			{
+				if( ( i == 0    && !operatorsSet.contains(inString.charAt(i + 1)) ) ||
+					( i == size - 1 && !operatorsSet.contains(inString.charAt(i - 1)) ) ||
+					(!operatorsSet.contains(inString.charAt(i + 1)) && !operatorsSet.contains(inString.charAt(i - 1)))
+				   ) 
+				{
+					hasError = true;
+					//call underLineError method to print the error message
+					underLineError( inString, index,lineNum, " token recognition error at: '"+ inString.charAt(i) + " '" );
+					index += 1;
+					recovedInput.append(inString.charAt(i));
+					recovedInput.append(inString.charAt(i));
 				}
-				
-				
-			} */
+			}			
 			else 
 			{				
-				recovedInput.append(lines[i]);	
-				index += lines[i].length() + 1;
+				recovedInput.append(inString.charAt(i));	
+				index += 1;
 			}			
-			recovedInput.append(" ");			
 		}	
-		/*
-		//if there is field not found error then terminate
-		if(fieldNotExist )
-		{
-			cWriter.printerr( errMsg.toString() );
-			return null;
-			
-		}*/
 		
 		//if there is error print message on the console and return the recovered input
 		if(hasError)
 		{
-			cWriter.printerr(errMsg.toString() );
-			try {
-				Thread.sleep(1);
-			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-			cWriter.printout("Initial   input: " + inputString + "\n" + "Recovered input: " + recovedInput.toString() + "\n\n");
-			
 			return CharStreams.fromString(recovedInput.toString());
 		}
 		
-		return input;		
-	}
-	
-	/**
-	 * This method verifies if the input fields exists 
-	 * If not, it will print the error messages on the console
-	 * 
-	 * @param atomicProposition - atomic proposition to verify if its fields exist 
-	 * @param inputString - input formula.
-	 * @param errCharIndex - error location in the input. 
-	 * 
-	 */
-	private void FieldExists(String atomicProposition, String inputString, int errCharIndex )
-	{
-		int indexOfLastDot = atomicProposition.lastIndexOf(".");
-        String className = atomicProposition.substring(0, indexOfLastDot);
-        String fieldName = atomicProposition.substring(indexOfLastDot + 1);
-        
-		try {
-           Class.forName(className).getDeclaredField(fieldName);
- 
-        } catch (ClassNotFoundException e) { 
-        	fieldNotExist = true;
-        	underLineError(inputString, errCharIndex," Class '"+ className + " ' cannot be found" );
-        	
-        } catch (NoSuchFieldException | SecurityException e) {     
-        	fieldNotExist = true;
-        	underLineError(inputString, errCharIndex + indexOfLastDot + 1," Field '"+ fieldName + " ' cannot be found" );
-        	
-        }
+		return CharStreams.fromString(inString);		
 	}
 	
 	/**
@@ -215,15 +246,24 @@ public class MyError {
 	 * @param charPositionInLine - error location in the input.
 	 * @param errorMsg - error message.
 	 */
-	private void underLineError(String errorLine, int charPositionInLine, String errorMsg )
+	private void underLineError(String inString, int charPositionInLine, int lineNum, String errorMsg )
 	{
+		StringBuilder errMsg = new StringBuilder();
 		
-		errMsg.append("\nline "+ inputLineNum +":"+ (charPositionInLine + 1) + errorMsg + "\n");
-		errMsg.append(errorLine+ "\n");
+		errMsg.append("\nline "+ lineNum +":"+ (charPositionInLine + 1) + errorMsg + "\n");
+		errMsg.append(inString+ "\n");
 		//To underlines the error location
 		for(int i=0; i<charPositionInLine; i++)
 			errMsg.append(" ");
 		
 		errMsg.append("^"+ "\n");
+		
+		System.err.print(errMsg.toString() );
+		try {
+			Thread.sleep(1);
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 }

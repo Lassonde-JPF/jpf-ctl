@@ -18,9 +18,8 @@ import error.CTLErrorStreams;
 import error.FieldExists;
 import error.MyError;
 
-
-public class CTLErrorTest {
 	
+public class ModelCheckerTest {
 	private Generator generator;
 	/**
 	 * Creates a Generator object for use by each test case
@@ -30,44 +29,24 @@ public class CTLErrorTest {
 		generator = new Generator();
 	}
 	
-	
-	
-	@Test
-	void testFieldExists() {  
-		String ctl1	= " MAX_VALUE.MIN_VALUE &java.lang.Integer.MIC_VALUE|\njava.lang.Integer.k&C.MIN_VALUE ";	
-		ParseTree tree = parseCtl(ctl1);
-		Formula formula1 = generator.visit(tree);
-		assertNotNull(formula1);
-	}
-	
 	/*@Test
-	void testFieldExistsError() {
-		String ctl1	= "  f.c&f.c|f.c ";	
-		ParseTree tree = parseCtl(ctl1);
-		Formula formula1 = generator.visit(tree);
-		assertNotNull(formula1);		
-	}*/
-	
-
-
-	/*@Test
-	void testOperatorError() {
-		String ctl1	= "( C.for && C.f2 & C.f3 & C.f3 )   ";	
-		ParseTree tree = parseCtl(ctl1);
-		Formula formula1 = generator.visit(tree);
-		assertNotNull(formula1);
-
-	}
-	
-	@Test
-	void testReservedWordsError() {
-		String ctl1	= "( C.for | new.while )   ";		
-		Formula formula1 = generator.visit(parseCtl(ctl1));
+	void ModelCheck()
+	{
+		LabelledPartialTransitionSystem pts = new LabelledPartialTransitionSystem();
+		System.out.print(" Transition System: \n");
+		System.out.print(pts.toString());
+		//System.out.print(pts.toDot());
 		
-		assertNotNull(formula1);
+		Formula randomFormula = Formula.random();	
+		ParseTree tree = parseCtl(randomFormula.toString());
+		Formula formula = generator.visit(tree);
+		System.out.print(" Input formula: \n");
+		System.out.print(randomFormula.toString());
 		
+		Model m = new Model();
+		System.out.print(" Result: \n");
+		System.out.print(m.check(pts, formula).toString());
 	}*/
-
 	/**
 	 * 
 	 * Translates a syntactically correct CTL formula from its String form to a
@@ -95,5 +74,4 @@ public class CTLErrorTest {
 
 		return tree;
 	}
-
 }
