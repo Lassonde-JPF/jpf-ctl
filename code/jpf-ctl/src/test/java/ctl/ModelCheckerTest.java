@@ -3,6 +3,10 @@ package ctl;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.PrintWriter;
+import java.util.HashSet;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -35,10 +39,8 @@ public class ModelCheckerTest {
 
 	@Test
 	void checkRandom() {
-		// for (int i = 0; i < 25; i++) {
 		StateSets result = test(Formula.random().toString(), new LabelledPartialTransitionSystem());
 		assertNotNull(result);
-		// }
 	}
 
 	@Test
@@ -269,9 +271,10 @@ public class ModelCheckerTest {
 
 		LabelledPartialTransitionSystem ptsTF = new LabelledPartialTransitionSystem();
 		StateSets TF = test("true AU false", ptsTF);
-		// TODO this case I'm not sure. I tried all states which do not have a
-		// transition (which i believe is what is expected) though the actual result was
-		// different.
+		Set<Integer> expected = ptsTF.getStates().stream()
+				.filter(s -> !ptsTF.getTransitions().stream().map(t -> t.source).collect(Collectors.toSet()).contains(s))
+				.collect(Collectors.toSet());
+		assertEquals(expected, TF.getUnSat());
 
 		LabelledPartialTransitionSystem ptsFT = new LabelledPartialTransitionSystem();
 		StateSets FT = test("false AU true", ptsFT);
@@ -298,19 +301,39 @@ public class ModelCheckerTest {
 	}
 
 	@Test
-	void checkAtomicProposition() { // TODO LabelledPartialTransitionSystem needs to be fixed first
-		// StateSets result = test("java.lang.Integer.MAX_VALUE", new
-		// LabelledPartialTransitionSystem());
+	void checkAtomicProposition() {
+		LabelledPartialTransitionSystem pts = new LabelledPartialTransitionSystem();
+		StateSets result = test("java.lang.Integer.MAX_VALUE || java.lang.Integer.MIN_VALUE", pts);
+		Set<Integer> Sat = new HashSet<Integer>();
+		pts.getLabelling().entrySet().forEach(entry -> {
+			if (entry.getValue().contains(java.lang.Integer.MAX_VALUE) || entry.getValue().contains(java.lang.Integer.MIN_VALUE)) {
+				Sat.add(entry.getKey());
+			}
+		});
+		assertEquals(Sat, result.sat);
+		toDot(pts, "checkAtomicProposition");
+	}
+	
+	private void toDot(LabelledPartialTransitionSystem pts, String fileName) {
+		String pathPrefix = "src/test/resources/toDot/";
+		File file = new File(pathPrefix + ModelCheckerTest.class.getName() + "_" + fileName + ".dot");
+		try {
+			PrintWriter pw = new PrintWriter(file);
+			pw.print(pts.toDot());
+			pw.close();
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		}
 	}
 
 	public StateSets test(String input, LabelledPartialTransitionSystem pts) {
-		System.out.println("Transition System:\n" + pts);
+		//System.out.println("Transition System:\n" + pts);
 		ParseTree tree = parseCtl(input);
 		Formula formula = generator.visit(tree);
-		System.out.println("Input formula:\n" + input);
+		//System.out.println("Input formula:\n" + input);
 		StateSets ss = new Model(pts).check(formula);
-		System.out.println("Result:");
-		System.out.println(ss);
+		//System.out.println("Result:");
+		//System.out.println(ss);
 		return ss;
 	}
 

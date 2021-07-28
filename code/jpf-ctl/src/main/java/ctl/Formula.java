@@ -31,6 +31,16 @@ import java.util.Random;
 public abstract class Formula {
 	private static final Random RANDOM = new Random();
 	
+	public static final String[] javaFields = new String[] {
+		"java.lang.Integer.MAX_VALUE",
+		"java.lang.Integer.MIN_VALUE",
+		"java.lang.Double.MAX_VALUE",
+		"java.lang.Double.MIN_VALUE",
+		"java.lang.Float.MAX_VALUE",
+		"java.lang.Float.MIN_VALUE"
+	
+	};
+	
 	/**
 	 * Returns a random formula of at most the given depth.
 	 * 
@@ -49,7 +59,7 @@ public abstract class Formula {
 			case 1 :
 				return new False();
 			case 2 :
-				String name = "C.f" + RANDOM.nextInt(MAX_INDEX + 1);
+				String name = javaFields[new Random().nextInt(javaFields.length-1)];//"C.f" + RANDOM.nextInt(MAX_INDEX + 1);
 				return new AtomicProposition(name);
 			default :
 				throw new IllegalArgumentException("Illegal argument for switch in base case");
@@ -61,7 +71,7 @@ public abstract class Formula {
 			case 1 :
 				return new False();
 			case 2 :
-				String name = "C.f" + RANDOM.nextInt(MAX_INDEX + 1);
+				String name = javaFields[new Random().nextInt(javaFields.length-1)];//"C.f" + RANDOM.nextInt(MAX_INDEX + 1);
 				return new AtomicProposition(name);
 			case 3 :
 				return new Not(Formula.random(depth - 1));

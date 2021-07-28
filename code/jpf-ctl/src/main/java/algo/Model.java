@@ -50,11 +50,11 @@ import java.util.Map;
 public class Model {
 
 	// Post and Pre hashtables
-	private Map<Integer, Set<Integer>> post;
-	private Map<Integer, Set<Integer>> pre;
+	private final Map<Integer, Set<Integer>> post;
+	private final Map<Integer, Set<Integer>> pre;
 
 	// Target Transition System
-	private LabelledPartialTransitionSystem pts;
+	private final LabelledPartialTransitionSystem pts;
 
 	public Model(LabelledPartialTransitionSystem pts) {
 		this.post = new HashMap<Integer, Set<Integer>>();
@@ -103,7 +103,45 @@ public class Model {
 		 */
 		else if (formula instanceof False) {
 			return new StateSets(new HashSet<Integer>(), pts.getStates());
-		} else if (formula instanceof And) {
+		}
+		/*
+		 * Base Case
+		 */
+		else if (formula instanceof AtomicProposition) {
+			AtomicProposition aP = (AtomicProposition) formula;
+
+			int indexOfLastDot = aP.toString().lastIndexOf(".");
+			String className = aP.toString().substring(0, indexOfLastDot);
+			String fieldName = aP.toString().substring(indexOfLastDot + 1);
+
+			Set<Integer> Sat = new HashSet<Integer>();
+			Set<Integer> unSat = new HashSet<Integer>();
+
+			try { // reflection part
+				Class<?> obj = Class.forName(className);
+				Field f = obj.getField(fieldName);
+				Object val = f.get(obj); // This is the "value" of the AP's field
+
+				// now we filter all states by those whose label contains this value
+				Sat = pts.getStates().stream()
+						.filter(s -> pts.getLabelling().containsKey(s))
+						.filter(s -> pts.getLabelling().get(s).contains(val))
+						.collect(Collectors.toSet());
+
+				unSat = new HashSet<Integer>(pts.getStates());
+				unSat.removeAll(Sat);
+
+				// This catch should never be triggered as we filter for these possibilities in
+				// the FieldExists class
+			} catch (ClassNotFoundException | NoSuchFieldException | SecurityException | IllegalArgumentException
+					| IllegalAccessException e) {
+				System.err.println("This error should never have happened:\n" + e.getMessage());
+			}
+
+			return new StateSets(Sat, unSat);
+		}
+
+		else if (formula instanceof And) {
 			And f = (And) formula;
 			StateSets L = check(f.getLeft());
 			StateSets R = check(f.getRight());
@@ -362,6 +400,7 @@ public class Model {
 				Set<Integer> preS = Pre(sP);
 				for (Integer s : preS) {
 					if (G.contains(s)) {
+						//TODO the count breaks here will an index out of bounds -1
 						count[s] = count[s - 1];
 						if (count[s] == 0) {
 							G.remove(s);
@@ -384,37 +423,6 @@ public class Model {
 			Not n = (Not) formula;
 			StateSets S = check(n.getFormula());
 			return new StateSets(S.unsat, S.sat);
-		} else if (formula instanceof AtomicProposition) {
-			AtomicProposition aP = (AtomicProposition) formula;
-
-			int indexOfLastDot = aP.toString().lastIndexOf(".");
-			String className = aP.toString().substring(0, indexOfLastDot);
-			String fieldName = aP.toString().substring(indexOfLastDot + 1);
-
-			Set<Integer> Sat = new HashSet<Integer>();
-			Set<Integer> unSat = new HashSet<Integer>();
-
-			try { // reflection part
-				Class<?> obj = Class.forName(className);
-				Field f = obj.getField(fieldName);
-				Object val = f.get(obj); // This is the "value" of the AP's field
-
-				// now we filter all states by those whose label contains this value
-				Sat = pts.getStates().stream().filter(s -> pts.getLabelling().get(s).contains(val))
-						.collect(Collectors.toSet());
-
-				unSat = new HashSet<Integer>(pts.getStates());
-				unSat.removeAll(Sat);
-
-				// This catch should never be triggered as we filter for these possibilities in
-				// the FieldExists class
-			} catch (ClassNotFoundException | NoSuchFieldException | SecurityException | IllegalArgumentException
-					| IllegalAccessException e) {
-				// e.printStackTrace();
-				System.err.println(e.getMessage());
-			}
-
-			return new StateSets(Sat, unSat);
 		} else {
 			System.err.println("This formula type is unknown");
 			return null;

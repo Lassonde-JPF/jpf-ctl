@@ -38,22 +38,26 @@ public class LabelledPartialTransitionSystem {
 	// transitions
 	private Set<Transition> transitions;
 	// labelling of the states
-	private Map<Integer, Set<Integer>> labelling;
+	private Map<Integer, Set<Object>> labelling;
 
 	// maximum number of states
-	private static final int MAX_STATES = 1000;
+	private static final int MAX_STATES = 10;
 
 	// probability that a state is fully explored
 	private static final double PROCESSED = 0.8;
 
 	// maximum number of states
-	private static final int MAX_LABELS = 3;
+	private static final int MAX_LABELS = 5;
 
 	// probability that a state is labeled
 	private static final double LABELLED = 0.8;
-	
-	//number of states in the system
+
+	// number of states in the system
 	private int states;
+
+	public static final Object[] javaFields = new Object[] { java.lang.Integer.MAX_VALUE, java.lang.Integer.MIN_VALUE,
+			java.lang.Double.MAX_VALUE, java.lang.Double.MIN_VALUE, java.lang.Float.MAX_VALUE,
+			java.lang.Float.MIN_VALUE };
 
 	/**
 	 * Initializes this labeled partial transition system randomly.
@@ -80,16 +84,16 @@ public class LabelledPartialTransitionSystem {
 			}
 		}
 
-		int labels = 1 + random.nextInt(MAX_LABELS);
-		this.labelling = new HashMap<Integer, Set<Integer>>();
+		int labels = 4 + random.nextInt(MAX_LABELS - 4 + 1);
+		this.labelling = new HashMap<Integer, Set<Object>>();
 		for (int state = 0; state < states; state++) {
 			if (random.nextDouble() < LABELLED) {
-				Set<Integer> labelSet = new HashSet<Integer>();
+				Set<Object> labelSet = new HashSet<Object>();
 				this.labelling.put(state, labelSet);
 				do {
 					for (int label = 0; label < labels; label++) {
 						if (random.nextDouble() < LABELLED / labels) {
-							labelSet.add(label);
+							labelSet.add(javaFields[label]);
 						}
 					}
 				} while (labelSet.isEmpty());
@@ -111,7 +115,7 @@ public class LabelledPartialTransitionSystem {
 		toString.append("\n");
 		for (Integer state : labelling.keySet()) {
 			toString.append(state + ":");
-			for (Integer label : labelling.get(state)) {
+			for (Object label : labelling.get(state)) {
 				toString.append(" " + label);
 			}
 			toString.append("\n");
@@ -138,20 +142,42 @@ public class LabelledPartialTransitionSystem {
 
 		for (Integer state : labelling.keySet()) {
 			toDot.append("  " + state + " [");
+
+			// if this state is not fully explored
 			if (!this.processed.contains(state)) {
 				toDot.append("shape=box ");
 			}
-			int number = labelling.get(state).size();
-			if (number == 1) {
+
+			int labels = labelling.get(state).size();
+
+			// Is there more than one label?
+			if (labels == 1) {
 				toDot.append("style=filled fillcolor=");
 			} else {
 				toDot.append("fillcolor=\"");
 			}
-			for (Integer label : labelling.get(state)) {
-				toDot.append((label + 1) + ":");
+
+			// Append colors by label
+			for (int i = 0; i < javaFields.length; i++) {
+				if (labelling.get(state).contains(javaFields[i])) {
+					toDot.append((i + 2) + ":");
+				}
 			}
-			toDot.setLength(toDot.length() - 1); // remove last :
-			if (number != 1) {
+
+			// remove last :
+			toDot.setLength(toDot.length() - 1);
+			if (labels != 1) {
+				toDot.append("\"");
+			}
+
+			// add actual label (val of AP)
+			if (labels > 0) {
+				toDot.append(",label=\"" + state + ": ");
+				for (Object label : labelling.get(state)) {
+					toDot.append(label + ", ");
+				}
+				// remove last ,
+				toDot.setLength(toDot.length() - 2);
 				toDot.append("\"");
 			}
 			toDot.append("]\n");
@@ -161,19 +187,17 @@ public class LabelledPartialTransitionSystem {
 
 		return toDot.toString();
 	}
-	
-	
-	//TODO this is super messy 
+
+	// TODO this is super messy
 	public Set<Integer> getStates() {
 		return IntStream.range(0, states).boxed().collect(Collectors.toSet());
 	}
-	
+
 	public Set<Transition> getTransitions() {
 		return this.transitions;
 	}
 
-	public Map<Integer, Set<Integer>> getLabelling()
-	{
+	public Map<Integer, Set<Object>> getLabelling() {
 		return this.labelling;
 	}
 
