@@ -43,8 +43,19 @@
 
 \newcommand{\comment}[1]{\hspace{2em}[\mbox{#1}]}
 
+\usepackage{enumitem}
+\setlistdepth{5}
+\setlist[itemize,1]{label=$\bullet$}
+\setlist[itemize,2]{label=$-$}
+\setlist[itemize,3]{label=$*$}
+\setlist[itemize,4]{label=$\cdot$}
+\setlist[itemize,5]{label=$\bullet$}
+\renewlist{itemize}{itemize}{5}
+
 \usepackage{stmaryrd}
 \newcommand{\satisfaction}[1]{\llbracket #1 \rrbracket}
+
+\newcommand{\bottom}{\mathord{\perp}}
 
 \newenvironment{franck}{\color{red}}{\color{black}}
 
@@ -335,9 +346,9 @@ Consider the following partial transition system.
 \draw[->] (0)--(2);
 \end{tikzpicture}
 \end{center}
-State~-1 is the initial state.  The states -1 and 0 are fully explored, and  states 1 and 2 are not fully explored.  Consider, for example, the CTL formula $\exists \eventually\, \mbox{blue}$.  This formula holds in the above partial transition system, since state 1 is blue and can be reached from the initial state.  The CTL formula $\forall \always\, \mbox{red}$ does not hold for the same reason.  Now consider the CTL formula $\forall \always\, (\mbox{red} \vee \mbox{blue})$.  The above partial transition system does not provide a counterexample to this formula as all states that can be reached from the initial state are either red or blue.  However, since states 1 and 2 are not fully explored, either state may have a successor that is neither red nor blue.  So, the best we can say is ``don't know.''  Hence, whether a partial transition system satisfies a CTL formula can be answered as either yes ($\top$), no ($\perp$), or don't know (?).
+State~-1 is the initial state.  The states -1 and 0 are fully explored, and  states 1 and 2 are not fully explored.  Consider, for example, the CTL formula $\exists \eventually\, \mbox{blue}$.  This formula holds in the above partial transition system, since state 1 is blue and can be reached from the initial state.  The CTL formula $\forall \always\, \mbox{red}$ does not hold for the same reason.  Now consider the CTL formula $\forall \always\, (\mbox{red} \vee \mbox{blue})$.  The above partial transition system does not provide a counterexample to this formula as all states that can be reached from the initial state are either red or blue.  However, since states 1 and 2 are not fully explored, either state may have a successor that is neither red nor blue.  So, the best we can say is ``don't know.''  Hence, whether a partial transition system satisfies a CTL formula can be answered as either yes ($\top$), no ($\bottom$), or don't know (?).
 
-Recall that the satisfaction relation $\models$, defined in \cite[Definition~6.4]{BK08}, can be viewed as mapping a state~$s$ of a transition system and a CTL formula~$\varphi$ to a Boolean, that is, $(s, \varphi)$ is mapped to true if $s \models \varphi$ and mapped to false otherwise.  The satisfaction relation $\models$ for CTL formulas on partial transition systems can be viewed as a mapping from states and formulas to $\top$, $\perp$, and ?.
+Recall that the satisfaction relation $\models$, defined in \cite[Definition~6.4]{BK08}, can be viewed as mapping a state~$s$ of a transition system and a CTL formula~$\varphi$ to a Boolean, that is, $(s, \varphi)$ is mapped to true if $s \models \varphi$ and mapped to false otherwise.  The satisfaction relation $\models$ for CTL formulas on partial transition systems can be viewed as a mapping from states and formulas to $\top$, $\bottom$, and ?.
 
 We modify the definition of a transition system, as given in \cite[Definition~2.1]{BK08}, as follows.
 
@@ -508,6 +519,62 @@ There exists a complete path $\rho$ such that $\pi \sqsubseteq \rho$.  This cont
 \end{itemize} 
 \end{itemize}
 \end{proof}
+
+\begin{proposition}
+\label{proposition:there-are-paths}
+For all $s \in S$, $\mathit{CoPaths}(s) \cup \mathit{PoPaths}(s) \not= \emptyset$.
+\end{proposition}
+\begin{proof}
+First, we will show that for all $s \in S$ and $n \in \mathbb{N}$,
+\begin{itemize}
+\item[(a)]
+$\exists \pi_n \in \mathit{CoPaths}(s) : |\pi_n| \leq n + 1$ or
+\item[(a)]
+$\exists \pi_n \in \mathit{PoPaths}(s) : |\pi_n| \leq n + 2$ or
+\item[(b)]
+$\exists \pi_n \in \mathit{PaPaths}(s) : |\pi_n| = n + 1$
+\end{itemize}
+and $\forall 0 \leq i < j \leq n: \pi_i \sqsubseteq \pi_j$.  We prove this by induction on $n$.  Let $s \in S$.   We distinguish the following two cases.
+\begin{itemize}
+\item 
+Let $n = 0$.  We distinguish the following three cases.
+\begin{itemize}
+\item 
+If $s \in F \wedge \mathit{post}(s) = \emptyset$ then $s \in \mathit{CoPaths}(s)$.
+\item
+If $s \not\in F$ there exists $s' \in \mathcal{S} \setminus \mathit{post}(s)$ such that $s s' \in \mathit{PoPaths}(s)$.
+\item 
+Otherwise, $s \in F \wedge \mathit{post}(s) \not= \emptyset$.   Then $s \in \mathit{PaPaths}(s)$.
+\end{itemize} 
+\item
+Otherwise, $n > 0$.  We distinguish the following two cases.
+\begin{itemize}
+\item 
+Assume $\exists \pi_{n-1} \in \mathit{CoPaths}(s) : |\pi_{n-1}| \leq n$ and  $\forall 0 \leq i < j \leq n - 1: \pi_i \sqsubseteq \pi_j$.  Then we choose $\pi_n = \pi_{n-1}$.
+\item 
+Assume $\exists \pi_{n-1} \in \mathit{PoPaths}(s) : |\pi_{n-1}| \leq n + 1$ and  $\forall 0 \leq i < j \leq n - 1: \pi_i \sqsubseteq \pi_j$.  Then we choose $\pi_n = \pi_{n-1}$.
+\item
+Otherwise, $\exists \pi_{n-1} \in \mathit{PaPaths}(s) : |\pi_{n-1}| = n$  and $\forall 0 \leq i < j \leq n - 1: \pi_i \sqsubseteq \pi_j$.  Let $s' = \pi_{n-1}[n-1]$.  We distinguish the following three cases.
+\begin{itemize}
+\item 
+If $s' \in F \wedge \mathit{post}(s') = \emptyset$ then $\pi_{n-1} \in \mathit{CoPaths}(s)$.  Then we choose $\pi_n = \pi_{n-1}$.
+\item
+If $s' \not\in F$ there exists $s'' \in \mathcal{S} \setminus \mathit{post}(s')$ such that $\pi_{n-1} s'' \in \mathit{PoPaths}(s)$.  Then we choose $\pi_n = \pi_{n-1} s''$.
+\item
+Otherwise, $s' \in F \wedge \mathit{post}(s') \not= \emptyset$.  Let $s'' \in \mathit{post}(s')$.  In this case, $\pi_{n-1} s'' \in \mathit{PaPaths}(s)$ and, therefore, we choose $\pi_n = \pi_{n-1} s''$.
+\end{itemize}
+\end{itemize}
+\end{itemize}
+From the above we can conclude the following.  Let $s \in S$.  Then either
+\[
+\exists n \in \mathbb{N} : \exists \pi_n \in \mathit{CoPaths}(s) \cup \mathit{PoPaths}(s) 
+\]
+or
+\begin{align*}
+\forall n \in \mathbb{N} : \exists \pi_n \in \mathit{PaPaths}(s) :\, & |\pi_n| = n + 1 \wedge \forall 0 \leq i < j \leq n: \pi_i \sqsubseteq \pi_j.
+\end{align*}
+In the latter case, for $\pi_{\omega} \in S^{\omega}$ with $\pi_{\omega}[i] = \pi_i[i]$ we have that $\pi_{\omega} \in \mathit{CoPaths}(s)$.
+\end{proof}
 \end{franck}
 
 A partial transition system in which all states are fully explored, that is, an ordinary transition system, has no potential paths.  Furthermore, each partial path can be extended to a complete path.
@@ -530,23 +597,23 @@ To deal with partial transition systems, we extend the range of the function $\s
 \item 
 $\satisfaction{\varphi}(s) = \top$: the formula $\varphi$ holds in the state $s$,
 \item
-$\satisfaction{\varphi}(s) = \perp$: the formula $\varphi$ does not hold in the state $s$, or
+$\satisfaction{\varphi}(s) = \bottom$: the formula $\varphi$ does not hold in the state $s$, or
 \item
 $\satisfaction{\varphi}(s) = \mathord{?}$: we cannot determine whether the formula $\varphi$ holds in the state $s$ since some states, relevant to $\varphi$,  have not been explored.
 \end{itemize}
 
-For example, consider the partial transition system depicted above.  Consider the formula $\forall \nxt \mbox{red}$.  We have that $\satisfaction{\forall \nxt \mbox{red}}(-1) = \top$ since the state $-1$ is fully explored and all its successor states are red.  Furthermore, $\satisfaction{\forall \nxt \mbox{red}}(0) = \perp$ since one of the  successor states of state 0 is not red.  Finally, $\satisfaction{\forall \nxt \mbox{red}}(1) = \mathord{?}$ since the state 1 is not fully explored and it does not have a successor that is not red.
+For example, consider the partial transition system depicted above.  Consider the formula $\forall \nxt \mbox{red}$.  We have that $\satisfaction{\forall \nxt \mbox{red}}(-1) = \top$ since the state $-1$ is fully explored and all its successor states are red.  Furthermore, $\satisfaction{\forall \nxt \mbox{red}}(0) = \bottom$ since one of the  successor states of state 0 is not red.  Finally, $\satisfaction{\forall \nxt \mbox{red}}(1) = \mathord{?}$ since the state 1 is not fully explored and it does not have a successor that is not red.
 
-We denote the set of three values, $\top$, $\perp$ and $?$ by $\mathbb{V}$, that is,
+We denote the set of three values, $\top$, $\bottom$ and $?$ by $\mathbb{V}$, that is,
 \[
-\mathbb{V} = \{ \top, \perp, \mathord{?} \}.
+\mathbb{V} = \{ \top, \bottom, \mathord{?} \}.
 \]
 We can extend the usual Boolean operators to $\mathbb{V}$ as follows.  Negation is captured in the following table.
 \[
 \begin{array}{c|c}
 v & \neg v\\\hline
-\top & \perp\\
-\perp & \top\\
+\top & \bottom\\
+\bottom & \top\\
 \mathord{?} & \mathord{?}
 \end{array}
 \]
@@ -554,19 +621,19 @@ Conjunction is defined as follows.
 \[
 \begin{array}{cc|ccc}
 \multicolumn{2}{c|}{v \wedge w} & & w &\\
-&& \top & \perp & \mathord{?}\\\hline
-& \top & \top & \perp & \mathord{?}\\
-v & \perp & \perp & \perp & \perp\\
-& \mathord{?} & \mathord{?} & \perp & \mathord{?}
+&& \top & \bottom & \mathord{?}\\\hline
+& \top & \top & \bottom & \mathord{?}\\
+v & \bottom & \bottom & \bottom & \bottom\\
+& \mathord{?} & \mathord{?} & \bottom & \mathord{?}
 \end{array}
 \]
 Disjunction is defined as follows.
 \[
 \begin{array}{cc|ccc}
 \multicolumn{2}{c|}{v \vee w} & & w &\\
-&& \top & \perp & \mathord{?}\\\hline
+&& \top & \bottom & \mathord{?}\\\hline
 & \top & \top & \top & \top\\
-v & \perp & \top & \perp & \mathord{?}\\
+v & \bottom & \top & \bottom & \mathord{?}\\
 & \mathord{?} & \top & \mathord{?} & \mathord{?}
 \end{array}
 \]
@@ -574,9 +641,9 @@ Implication is defined as follows.
 \[
 \begin{array}{cc|ccc}
 \multicolumn{2}{c|}{v \rightarrow w} & & w &\\
-&& \top & \perp & \mathord{?}\\\hline
-& \top & \top & \perp & ?\\
-v & \perp & \top & \top & \top\\
+&& \top & \bottom & \mathord{?}\\\hline
+& \top & \top & \bottom & ?\\
+v & \bottom & \top & \top & \top\\
 & \mathord{?} & \top & ? & ?
 \end{array}
 \]
@@ -584,9 +651,9 @@ Equivalence is defined as follows.
 \[
 \begin{array}{cc|ccc}
 \multicolumn{2}{c|}{v \leftrightarrow w} & & w &\\
-&& \top & \perp & \mathord{?}\\\hline
-& \top & \top & \perp & ?\\
-v & \perp & \perp & \top & ?\\
+&& \top & \bottom & \mathord{?}\\\hline
+& \top & \top & \bottom & ?\\
+v & \bottom & \bottom & \top & ?\\
 & \mathord{?} & ? & ? & ?
 \end{array}
 \]
@@ -604,13 +671,13 @@ is defined by structural induction on the CTL formula as follows.
 $\satisfaction{a}(s) = \left \{
 \begin{array}{ll}
 \top & \mbox{if $a \in L(s)$}\\
-\perp & \mbox{otherwise}
+\bottom & \mbox{otherwise}
 \end{array}\right .
 $
 \item 
 $\satisfaction{\TRUE}(s) = \top$ 
 \item 
-$\satisfaction{\FALSE}(s) = \perp$ 
+$\satisfaction{\FALSE}(s) = \bottom$ 
 \item 
 $\satisfaction{\neg \varphi}(s) = \neg \satisfaction{\varphi}(s)$ 
 \item 
@@ -626,8 +693,8 @@ $\satisfaction{\varphi \leftrightarrow \psi}(s) = \satisfaction{\varphi}(s) \lef
 $\satisfaction{\forall \nxt \varphi}(s) = \left \{
 \begin{array}{ll}
 \top & \mbox{if $\forall \pi \in \mathit{Paths}(s) : |\pi| > 1 \Rightarrow \satisfaction{\varphi}(\pi[1]) = \top$}\\
-\perp & \mbox{if $\exists \pi \in \mathit{CoPaths}(s) \cup \mathit{PaPaths}(s) : |\pi| > 1 \wedge \satisfaction{\varphi}(\pi[1]) = \perp$}\\
-& \mbox{or $\mathit{PoPaths}(s) \not= \emptyset \wedge \forall \pi \in \mathit{PoPaths}(s) : |\pi| > 1 \wedge \satisfaction{\varphi}(\pi[1]) = \perp$}\\
+\bottom & \mbox{if $\exists \pi \in \mathit{CoPaths}(s) \cup \mathit{PaPaths}(s) : |\pi| > 1 \wedge \satisfaction{\varphi}(\pi[1]) = \bottom$}\\
+& \mbox{or $\mathit{PoPaths}(s) \not= \emptyset \wedge \forall \pi \in \mathit{PoPaths}(s) : |\pi| > 1 \wedge \satisfaction{\varphi}(\pi[1]) = \bottom$}\\
 ? & \mbox{otherwise}
 \end{array}
 \right .
@@ -637,7 +704,7 @@ $\satisfaction{\exists \nxt \varphi}(s) = \left \{
 \begin{array}{ll}
 \top & \mbox{if $\exists \pi \in \mathit{CoPaths}(s) \cup \mathit{PaPaths}(s) : |\pi| > 1 \wedge \satisfaction{\varphi}(\pi[1]) = \top$}\\
 & \mbox{or $\mathit{PoPaths}(s) \not= \emptyset \wedge \forall \pi \in \mathit{PoPaths}(s) : |\pi| > 1 \wedge \satisfaction{\varphi}(\pi[1]) = \top$}\\
-\perp & \mbox{if $\forall \pi \in \mathit{Paths}(s) : |\pi| > 1 \Rightarrow \satisfaction{\varphi}(\pi[1]) = \perp$}\\
+\bottom & \mbox{if $\forall \pi \in \mathit{Paths}(s) : |\pi| > 1 \Rightarrow \satisfaction{\varphi}(\pi[1]) = \bottom$}\\
 ? & \mbox{otherwise}
 \end{array}
 \right .
@@ -646,8 +713,8 @@ $
 $\satisfaction{\forall \always \varphi}(s) = \left \{
 \begin{array}{ll}
 \top & \mbox{if $\forall \pi \in \mathit{Paths}(s) :  \forall 0 \leq i < |\pi| : \satisfaction{\varphi}(\pi[i]) = \top$}\\
-\perp & \mbox{if $\exists \pi \in \mathit{CoPaths}(s) \cup \mathit{PaPaths}(s) : \exists 0 \leq i < |\pi| : \satisfaction{\varphi}(\pi[i]) = \perp$}\\
-%& \mbox{or $\mathit{PoPaths}(s) \not= \emptyset \wedge \forall \pi \in \mathit{PoPaths}(s) : \exists 0 \leq i < |\pi| : \satisfaction{\varphi}(\pi[i]) = \perp$}\\
+\bottom & \mbox{if $\exists \pi \in \mathit{CoPaths}(s) \cup \mathit{PaPaths}(s) : \exists 0 \leq i < |\pi| : \satisfaction{\varphi}(\pi[i]) = \bottom$}\\
+%& \mbox{or $\mathit{PoPaths}(s) \not= \emptyset \wedge \forall \pi \in \mathit{PoPaths}(s) : \exists 0 \leq i < |\pi| : \satisfaction{\varphi}(\pi[i]) = \bottom$}\\
 ? & \mbox{otherwise}
 \end{array}
 \right .
@@ -657,7 +724,7 @@ $\satisfaction{\exists \always \varphi}(s) = \left \{
 \begin{array}{ll}
 \top & \mbox{if $\exists \pi \in \mathit{CoPaths}(s) : \forall 0 \leq i < |\pi| : \satisfaction{\varphi}(\pi[i]) = \top$}\\
 & \mbox{or $\mathit{PoPaths}(s) \not= \emptyset \wedge \forall \pi \in \mathit{PoPaths}(s) : \forall 0 \leq i < |\pi| : \satisfaction{\varphi}(\pi[i]) = \top$}\\
-\perp & \mbox{if $\forall \pi \in \mathit{CoPaths}(s) \cup \mathit{PoPaths}(s) : \exists 0 \leq i < |\pi| : \satisfaction{\varphi}(\pi[i]) = \perp$}\\
+\bottom & \mbox{if $\forall \pi \in \mathit{CoPaths}(s) \cup \mathit{PoPaths}(s) : \exists 0 \leq i < |\pi| : \satisfaction{\varphi}(\pi[i]) = \bottom$}\\
 ? & \mbox{otherwise}
 \end{array}
 \right .
@@ -666,8 +733,8 @@ $
 $\satisfaction{\forall \eventually \varphi}(s) = \left \{
 \begin{array}{ll}
 \top & \mbox{if $\forall \pi \in \mathit{CoPaths}(s) \cup \mathit{PoPaths}(s) : \exists 0 \leq i < |\pi| : \satisfaction{\varphi}(\pi[i]) = \top$}\\
-\perp & \mbox{if $ \exists \pi \in \mathit{CoPaths}(s) :  \forall 0 \leq i < |\pi| : \satisfaction{\varphi}(\pi[i]) = \perp$}\\
-& \mbox{or $\mathit{PoPaths}(s) \not= \emptyset \wedge \forall \pi \in \mathit{PoPaths}(s) : \forall 0 \leq i < |\pi| : \satisfaction{\varphi}(\pi[i]) = \perp$}\\
+\bottom & \mbox{if $ \exists \pi \in \mathit{CoPaths}(s) :  \forall 0 \leq i < |\pi| : \satisfaction{\varphi}(\pi[i]) = \bottom$}\\
+& \mbox{or $\mathit{PoPaths}(s) \not= \emptyset \wedge \forall \pi \in \mathit{PoPaths}(s) : \forall 0 \leq i < |\pi| : \satisfaction{\varphi}(\pi[i]) = \bottom$}\\
 ? & \mbox{otherwise}
 \end{array}
 \right .
@@ -677,7 +744,7 @@ $\satisfaction{\exists \eventually \varphi}(s) = \left \{
 \begin{array}{ll}
 \top & \mbox{if $\exists \pi \in \mathit{CoPaths}(s) \cup \mathit{PaPaths}(s) : \exists0 \leq i < |\pi| : \satisfaction{\varphi}(\pi[i]) = \top$}\\
 %& \mbox{or $\mathit{PoPaths}(s) \not= \emptyset \wedge \forall \pi \in \mathit{PoPaths}(s) : \exists 0 \leq i < |\pi| : \satisfaction{\varphi}(\pi[i]) = \top$}\\
-\perp & \mbox{if $\forall \pi \in \mathit{Paths}(s) : \forall 0 \leq i < |\pi| : \satisfaction{\varphi}(\pi[i]) = \perp$}\\
+\bottom & \mbox{if $\forall \pi \in \mathit{Paths}(s) : \forall 0 \leq i < |\pi| : \satisfaction{\varphi}(\pi[i]) = \bottom$}\\
 ? & \mbox{otherwise}
 \end{array}
 \right .
@@ -685,17 +752,18 @@ $
 \item
 $\satisfaction{\forall \varphi \until \psi}(s) = $ \textcolor{blue}{details still need to be added here.}
 \item
-\begin{align*}
-& \satisfaction{\exists \varphi \until \psi}(s) = \\
-& \left \{
-\begin{array}{ll}
-\top & \mbox{if $\exists \pi \in \mathit{CoPaths}(s) \cup \mathit{PaPaths}(s) : \exists 0 \leq i < |\pi| : \satisfaction{\psi}(\pi[i]) = \top \wedge \forall 0 \leq i < j : \satisfaction{\varphi}(\pi[j]) = \top$}\\
-& \mbox{of $\mathit{PoPaths}(s) \not= \emptyset \wedge \forall \pi \in \mathit{PoPaths}(s) : \exists 0 \leq i < |\pi| : \satisfaction{\psi}(\pi[i]) = \top \wedge \forall 0 \leq i < j : \satisfaction{\varphi}(\pi[j]) = \top$}\\
-\perp & \mbox{if }\\
-? & \mbox{otherwise}
-\end{array}
-\right .
-\end{align*}
+%\begin{align*}
+$\satisfaction{\exists \varphi \until \psi}(s)$ = \textcolor{blue}{details still need to be added here.}
+%\\
+%& \left \{
+%\begin{array}{ll}
+%\top & \mbox{if $\exists \pi \in \mathit{CoPaths}(s) \cup \mathit{PaPaths}(s) : \exists 0 \leq i < |\pi| : \satisfaction{\psi}(\pi[i]) = \top \wedge \forall 0 \leq i < j : \satisfaction{\varphi}(\pi[j]) = \top$}\\
+%& \mbox{of $\mathit{PoPaths}(s) \not= \emptyset \wedge \forall \pi \in \mathit{PoPaths}(s) : \exists 0 \leq i < |\pi| : \satisfaction{\psi}(\pi[i]) = \top \wedge \forall 0 \leq i < j : \satisfaction{\varphi}(\pi[j]) = \top$}\\
+%\bottom & \mbox{if \textcolor{blue}{incomplete}}\\
+%? & \mbox{otherwise}
+%\end{array}
+%\right .
+%\end{align*}
 \end{franck}
 \end{itemize}
 \end{definition}
@@ -724,7 +792,7 @@ Since state~0 is not fully explored, state~0 has transitions to states other tha
 \{\, \pi[1] \mid \pi \in \mathit{Paths}(s) \,\}
 \]
 
-\subsection*{$\satisfaction{\forall \nxt \varphi}(s) = \perp$}
+\subsection*{$\satisfaction{\forall \nxt \varphi}(s) = \bottom$}
 
 We can conclude that $\satisfaction{\forall \nxt \varphi}(s)$ is false, if we find a counterexample, that is, a successor of state~$s$ in which $\varphi$ does not hold.  Consider the following partial transition system.
 \begin{center}
@@ -735,7 +803,7 @@ We can conclude that $\satisfaction{\forall \nxt \varphi}(s)$ is false, if we fi
 \draw[->] (0)--(1);
 \end{tikzpicture}
 \end{center}
-Since state~0 transitions to a state that is not red, we can conclude that $\forall \nxt \mbox{red}$ does not hold in state~0.  Because state~1 is not fully explored, it has unexplored outgoing transitions.  Hence, the path $0\ 1$ is not complete.  Therefore, we consider both complete and partial paths starting from state~$s$ when determining if $\satisfaction{\forall \nxt \varphi}(s) = \perp$.
+Since state~0 transitions to a state that is not red, we can conclude that $\forall \nxt \mbox{red}$ does not hold in state~0.  Because state~1 is not fully explored, it has unexplored outgoing transitions.  Hence, the path $0\ 1$ is not complete.  Therefore, we consider both complete and partial paths starting from state~$s$ when determining if $\satisfaction{\forall \nxt \varphi}(s) = \bottom$.
 
 Consider the following partial transition system.
 \begin{center}
@@ -766,7 +834,7 @@ Consider the following partial transition system.
 \end{center}
 Since state~0 is not fully explored, it has transitions.  As a consequence, the formula $\forall \nxt \TRUE$ holds in state~0.  More generally, if there are potential paths starting of state~$s$ and each second state of all those potential paths satifies $\varphi$, then we can conclude that $\forall \nxt \varphi$ holds in $s$.
 
-\subsection*{$\satisfaction{\exists \nxt \varphi}(s) = \perp$}
+\subsection*{$\satisfaction{\exists \nxt \varphi}(s) = \bottom$}
 
 To conclude that $\satisfaction{\exists \nxt \varphi}(s)$ is false, we need that none of the successors of state~$s$ satisfy $\varphi$.  If state~$s$ is fully explored, we need to consider all successors:
 \[
@@ -803,7 +871,7 @@ Consider the following partial transition system.
 \end{center}
 States different from state~1 that are reachable from state~0 by transitions that have not been explored yet may not be red in which case $\forall \always \mbox{red}$ does not hold.  Therefore, we consider all paths, including the potential paths, starting from state~$s$ when determining if $\satisfaction{\forall \always \varphi}(s) = \top$.
 
-\subsection*{$\satisfaction{\forall \always \varphi}(s) = \perp$}
+\subsection*{$\satisfaction{\forall \always \varphi}(s) = \bottom$}
 
 If we can find a counterexample, that is, a path starting in state~$s$ that contains a state that does not satisfy $\varphi$, then we can conclude that $\satisfaction{\forall \always \varphi}(s)$ is false.  We consider both complete and partial paths, but not potential paths.
 
@@ -827,7 +895,7 @@ Consider the following partial transition system.
 \end{center}
 Since state~0 is not fully explored, it has transitions.  As a consequence, the formula $\exists \always \TRUE$ holds in state~0.  More generally, if there are potential paths starting of state~$s$ and all the states of those potential paths satify $\varphi$, then we can conclude that $\exists \always \varphi$ holds in $s$.
 
-\subsection*{$\satisfaction{\exists \always \varphi}(s) = \perp$}
+\subsection*{$\satisfaction{\exists \always \varphi}(s) = \bottom$}
 
 To conclude that $\satisfaction{\exists \always \varphi}(s)$ is false, we need that each path that starts in state~$s$ contains a state that does not satisfy $\varphi$.  Consider the following partial transition system.
 \begin{center}
@@ -857,7 +925,7 @@ To conclude that $\satisfaction{\forall \eventually \varphi}(s)$ is true, we nee
 \end{center}
 Since each path starting from state~0 contains state~2, which is red, we can conclude that $\forall \eventually \mbox{red}$ holds in state~0.  Note that we should consider both complete paths as well as potential paths.  Partial paths should not be considered.  For example, the partial path $0\ 1$ does not contain any red states.
 
-\subsection*{$\satisfaction{\forall \eventually \varphi}(s) = \perp$}
+\subsection*{$\satisfaction{\forall \eventually \varphi}(s) = \bottom$}
 
 If we can find a counterexample, that is, a path starting in state~$s$ of which all states do not satisfy $\varphi$, then we can conclude that $\satisfaction{\forall \eventually \varphi}(s)$ is false.  Consider the following partial transition system.
 \begin{center}
@@ -868,7 +936,7 @@ If we can find a counterexample, that is, a path starting in state~$s$ of which 
 \draw[->] (0)--(1);
 \end{tikzpicture}
 \end{center}
-The partial path $0\ 1$ may be the prefix of a complete path that includes red states and, hence, we cannot conclude that $\satisfaction{\forall \eventually \mbox{red}}(0) = \perp$.  Therefore, we consider complete paths only when determining if $\satisfaction{\forall \eventually \varphi}(s) = \perp$.
+The partial path $0\ 1$ may be the prefix of a complete path that includes red states and, hence, we cannot conclude that $\satisfaction{\forall \eventually \mbox{red}}(0) = \bottom$.  Therefore, we consider complete paths only when determining if $\satisfaction{\forall \eventually \varphi}(s) = \bottom$.
 
 Consider the following partial transition system.
 \begin{center}
@@ -882,7 +950,7 @@ Since state~0 is not fully explored, it has transitions.  As a consequence, the 
 
 To conclude that $\satisfaction{\exists \eventually \varphi}(s)$ is true, we need to find a witness, that is, a path starting in state~$s$ that contains a state that satisfies $\varphi$.  The path can either be complete or partial.
 
-\subsection*{$\satisfaction{\exists \eventually \varphi}(s) = \perp$}
+\subsection*{$\satisfaction{\exists \eventually \varphi}(s) = \bottom$}
 
 To conclude that $\satisfaction{\exists \eventually \varphi}(s)$ is false, no path starting in state~$s$ should contain a state that satisfies $\varphi$.  Hence, we need to consider complete, partial, and potential paths.
 
@@ -946,6 +1014,10 @@ $\forall \nxt \varphi \equiv \neg \exists \nxt \neg \varphi$
 $\forall \always \varphi \equiv \neg \exists \eventually \neg \varphi$
 \item
 $\forall \eventually \varphi \equiv \neg \exists \always \neg \varphi$
+\item
+\begin{franck}
+$\forall \varphi \until \psi \equiv (\neg \exists (\neg \psi) \until (\neg \varphi \wedge \neg \psi)) \wedge \neg \exists \always \neg \psi$
+\end{franck}
 \end{enumerate}
 \end{proposition}
 \begin{proof}
@@ -958,16 +1030,16 @@ If $a \in L(s)$, then
 \]
 Otherwise,
 \[
-\satisfaction{\TRUE}(s) = \top = \perp \vee \neg \perp = \satisfaction{a}(s) \vee \neg \satisfaction{a}(s) = \satisfaction{a \vee \neg a}(s).
+\satisfaction{\TRUE}(s) = \top = \bottom \vee \neg \bottom = \satisfaction{a}(s) \vee \neg \satisfaction{a}(s) = \satisfaction{a \vee \neg a}(s).
 \]
 \item
 If $a \in L(s)$, then
 \[
-\satisfaction{\FALSE}(s) = \perp = \top \wedge \neg \top = \satisfaction{a}(s) \wedge \neg \satisfaction{a}(s) = \satisfaction{a \wedge \neg a}(s).
+\satisfaction{\FALSE}(s) = \bottom = \top \wedge \neg \top = \satisfaction{a}(s) \wedge \neg \satisfaction{a}(s) = \satisfaction{a \wedge \neg a}(s).
 \]
 Otherwise,
 \[
-\satisfaction{\FALSE}(s) = \perp = \perp \wedge \neg \perp = \satisfaction{a}(s) \wedge \neg \satisfaction{a}(s) = \satisfaction{a \wedge \neg a}(s).
+\satisfaction{\FALSE}(s) = \bottom = \bottom \wedge \neg \bottom = \satisfaction{a}(s) \wedge \neg \satisfaction{a}(s) = \satisfaction{a \wedge \neg a}(s).
 \]
 \item
 It suffices to show that $v \vee w = \neg(\neg v \wedge \neg w)$ for all $v$, $w \in \mathbb{V}$.
@@ -975,14 +1047,14 @@ It suffices to show that $v \vee w = \neg(\neg v \wedge \neg w)$ for all $v$, $w
 \[
 \begin{array}{ll|lll|l}
 v     & w     & \neg v & \neg w & \neg v \wedge \neg w & \neg(\neg v \wedge \neg w)\\\hline
-\top  & \top  & \perp  & \perp  & \perp                & \top\\
-\perp & \top  & \top   & \perp  & \perp                & \top\\
-?     & \top  & ?      & \perp  & \perp                & \top\\
-\top  & \perp & \perp  & \top   & \perp                & \top\\
-\perp & \perp & \top   & \top   & \top                 & \perp\\
-?     & \perp & ?      & \top   & ?                    & ?\\
-\top  & ?     & \perp  & ?      & \perp                & \top\\
-\perp & ?     & \top   & ?      & ?                    & ?\\
+\top  & \top  & \bottom  & \bottom  & \bottom                & \top\\
+\bottom & \top  & \top   & \bottom  & \bottom                & \top\\
+?     & \top  & ?      & \bottom  & \bottom                & \top\\
+\top  & \bottom & \bottom  & \top   & \bottom                & \top\\
+\bottom & \bottom & \top   & \top   & \top                 & \bottom\\
+?     & \bottom & ?      & \top   & ?                    & ?\\
+\top  & ?     & \bottom  & ?      & \bottom                & \top\\
+\bottom & ?     & \top   & ?      & ?                    & ?\\
 ?     & ?     & ?      & ?      & ?                    & ?
 \end{array}
 \]
@@ -992,14 +1064,14 @@ It suffices to show that $v \rightarrow w = \neg v \vee w$ for all $v$, $w \in \
 \[
 \begin{array}{ll|l|l}
 v     & w     & \neg v & \neg v \vee w\\\hline
-\top  & \top  & \perp  & \top\\
-\perp & \top  & \top   & \top\\
+\top  & \top  & \bottom  & \top\\
+\bottom & \top  & \top   & \top\\
 ?     & \top  & ?      & \top\\
-\top  & \perp & \perp  & \perp\\
-\perp & \perp & \top   & \top\\
-?     & \perp & ?      & ?\\
-\top  & ?     & \perp  & ?\\
-\perp & ?     & \top   & \top\\
+\top  & \bottom & \bottom  & \bottom\\
+\bottom & \bottom & \top   & \top\\
+?     & \bottom & ?      & ?\\
+\top  & ?     & \bottom  & ?\\
+\bottom & ?     & \top   & \top\\
 ?     & ?     & ?      & ?
 \end{array}
 \]
@@ -1010,13 +1082,13 @@ It suffices to show that $v \leftrightarrow w = (v \rightarrow w) \wedge (w \rig
 \begin{array}{ll|ll|l}
 v     & w     & v \rightarrow w & w \rightarrow v & (v \rightarrow w) \wedge (w \rightarrow v)\\\hline
 \top  & \top  & \top  & \top  & \top\\
-\perp & \top  & \top  & \perp & \perp\\
+\bottom & \top  & \top  & \bottom & \bottom\\
 ?     & \top  & \top  & ?     & ?\\
-\top  & \perp & \perp & \top  & \perp\\
-\perp & \perp & \top  & \top  & \top\\
-?     & \perp & ?     & \top  & ?\\
+\top  & \bottom & \bottom & \top  & \bottom\\
+\bottom & \bottom & \top  & \top  & \top\\
+?     & \bottom & ?     & \top  & ?\\
 \top  & ?     & ?     & \top  & ?\\
-\perp & ?     & \top  & ?     & ?\\
+\bottom & ?     & \top  & ?     & ?\\
 ?     & ?     & ?     & ?     & ?
 \end{array}
 \]
@@ -1025,19 +1097,19 @@ Since
 \begin{align*}
 \satisfaction{\forall \nxt \varphi}(s) = \top
 \mbox{ iff } & \forall \pi \in \mathit{Paths}(s) : |\pi| > 1 \Rightarrow \satisfaction{\varphi}(\pi[1]) = \top\\
-\mbox{ iff } & \forall \pi \in \mathit{Paths}(s) : |\pi| > 1 \Rightarrow \satisfaction{\neg \varphi}(\pi[1]) = \perp\\
-\mbox{ iff } & \satisfaction{\exists \nxt \neg \varphi}(s) = \perp\\
+\mbox{ iff } & \forall \pi \in \mathit{Paths}(s) : |\pi| > 1 \Rightarrow \satisfaction{\neg \varphi}(\pi[1]) = \bottom\\
+\mbox{ iff } & \satisfaction{\exists \nxt \neg \varphi}(s) = \bottom\\
 \mbox{ iff } & \satisfaction{\neg \exists \nxt \neg \varphi}(s) = \top
 \end{align*}
 and
 \begin{align*}
-\satisfaction{\forall \nxt \varphi}(s) = \perp
-\mbox{ iff } & (\exists \pi \in \mathit{CoPaths}(s) \cup \mathit{PaPaths}(s) : |\pi| > 1 \wedge \satisfaction{\varphi}(\pi[1]) = \perp) \vee\\
-& (\mathit{PoPaths}(s) \not= \emptyset \wedge \forall \pi \in \mathit{PoPaths}(s) : |\pi| > 1 \wedge \satisfaction{\varphi}(\pi[1]) = \perp)\\
+\satisfaction{\forall \nxt \varphi}(s) = \bottom
+\mbox{ iff } & (\exists \pi \in \mathit{CoPaths}(s) \cup \mathit{PaPaths}(s) : |\pi| > 1 \wedge \satisfaction{\varphi}(\pi[1]) = \bottom) \vee\\
+& (\mathit{PoPaths}(s) \not= \emptyset \wedge \forall \pi \in \mathit{PoPaths}(s) : |\pi| > 1 \wedge \satisfaction{\varphi}(\pi[1]) = \bottom)\\
 \mbox{ iff } & (\exists \pi \in \mathit{CoPaths}(s) \cup \mathit{PaPaths}(s) : |\pi| > 1 \wedge \satisfaction{\neg \varphi}(\pi[1]) = \top) \vee\\
 & (\mathit{PoPaths}(s) \not= \emptyset \wedge \forall \pi \in (\mathit{PoPaths}(s) : |\pi| > 1 \wedge \satisfaction{\neg \varphi}(\pi[1]) = \top)\\
 \mbox{ iff } & \satisfaction{\exists \nxt \neg \varphi}(s) = \top\\
-\mbox{ iff } & \satisfaction{\neg \exists \nxt \neg \varphi}(s) = \perp
+\mbox{ iff } & \satisfaction{\neg \exists \nxt \neg \varphi}(s) = \bottom
 \end{align*}
 we can conclude that $\forall \nxt \varphi \equiv \neg \exists \nxt \neg \varphi$.
 \item
@@ -1045,17 +1117,17 @@ Since
 \begin{align*}
 \satisfaction{\forall \always \varphi}(s) = \top
 \mbox{ iff } & \forall \pi \in \mathit{Paths}(s) : \forall 0 \leq i < |\pi| : \satisfaction{\varphi}(\pi[i]) = \top\\
-\mbox{ iff } & \forall \pi \in \mathit{Paths}(s) : \forall 0 \leq i < |\pi| : \satisfaction{\neg \varphi}(\pi[i]) = \perp\\
-\mbox{ iff } & \satisfaction{\exists \eventually \neg \varphi}(s) = \perp\\
+\mbox{ iff } & \forall \pi \in \mathit{Paths}(s) : \forall 0 \leq i < |\pi| : \satisfaction{\neg \varphi}(\pi[i]) = \bottom\\
+\mbox{ iff } & \satisfaction{\exists \eventually \neg \varphi}(s) = \bottom\\
 \mbox{ iff } & \satisfaction{\neg \exists \eventually \neg \varphi}(s) = \top
 \end{align*}
 and
 \begin{align*}
-\satisfaction{\forall \always \varphi}(s) = \perp
-\mbox{ iff } & \exists \pi \in \mathit{CoPaths}(s) \cup \mathit{PaPaths}(s) : \exists 0 \leq i < |\pi| : \satisfaction{\varphi}(\pi[i]) = \perp\\
+\satisfaction{\forall \always \varphi}(s) = \bottom
+\mbox{ iff } & \exists \pi \in \mathit{CoPaths}(s) \cup \mathit{PaPaths}(s) : \exists 0 \leq i < |\pi| : \satisfaction{\varphi}(\pi[i]) = \bottom\\
 \mbox{ iff } & \exists \pi \in \mathit{CoPaths}(s) \cup \mathit{PaPaths}(s) : \exists 0 \leq i < |\pi| : \satisfaction{\neg \varphi}(\pi[i]) = \top\\
 \mbox{ iff } & \satisfaction{\exists \eventually \neg \varphi}(s) = \top\\
-\mbox{ iff } & \satisfaction{\neg \exists \eventually \neg \varphi}(s) = \perp
+\mbox{ iff } & \satisfaction{\neg \exists \eventually \neg \varphi}(s) = \bottom
 \end{align*}
 we can conclude that $\forall \always \varphi \equiv \neg \exists \eventually \neg \varphi$.
 \item
@@ -1063,21 +1135,25 @@ Since
 \begin{align*}
 \satisfaction{\forall \eventually \varphi}(s) = \top
 \mbox{ iff } & \forall \pi \in \mathit{CoPaths}(s) \cup \mathit{PoPaths}(s) : \exists 0 \leq i < |\pi| : \satisfaction{\varphi}(\pi[i]) = \top\\
-\mbox{ iff } & \forall \pi \in \mathit{CoPaths}(s) \cup \mathit{PoPaths}(s) : \exists 0 \leq i < |\pi| : \satisfaction{\neg \varphi}(\pi[i]) = \perp\\
-\mbox{ iff } & \satisfaction{\exists \always \neg \varphi}(s) = \perp\\
+\mbox{ iff } & \forall \pi \in \mathit{CoPaths}(s) \cup \mathit{PoPaths}(s) : \exists 0 \leq i < |\pi| : \satisfaction{\neg \varphi}(\pi[i]) = \bottom\\
+\mbox{ iff } & \satisfaction{\exists \always \neg \varphi}(s) = \bottom\\
 \mbox{ iff } & \satisfaction{\neg \exists \always \neg \varphi}(s) = \top
 \end{align*}
 and
 \begin{align*}
-\satisfaction{\forall \eventually \varphi}(s) = \perp
-\mbox{ iff } & (\exists \pi \in \mathit{CoPaths}(s) : \forall 0 \leq i < |\pi| : \satisfaction{\varphi}(\pi[i]) = \perp) \vee\\
-& (\mathit{PoPaths}(s) \not= \emptyset \wedge \forall \pi \in \mathit{PoPaths}(s) : \forall 0 \leq i < |\pi| : \satisfaction{\varphi}(\pi[i]) = \perp)\\
+\satisfaction{\forall \eventually \varphi}(s) = \bottom
+\mbox{ iff } & (\exists \pi \in \mathit{CoPaths}(s) : \forall 0 \leq i < |\pi| : \satisfaction{\varphi}(\pi[i]) = \bottom) \vee\\
+& (\mathit{PoPaths}(s) \not= \emptyset \wedge \forall \pi \in \mathit{PoPaths}(s) : \forall 0 \leq i < |\pi| : \satisfaction{\varphi}(\pi[i]) = \bottom)\\
 \mbox{ iff } & (\exists \pi \in \mathit{CoPaths}(s) : \forall 0 \leq i < |\pi| : \satisfaction{\neg \varphi}(\pi[i]) = \top) \vee\\
 & (\mathit{PoPaths}(s) \not= \emptyset \wedge \forall \pi \in \mathit{PoPaths}(s) : \forall 0 \leq i < |\pi| : \satisfaction{\neg \varphi}(\pi[i]) = \top)\\
 \mbox{ iff } & \satisfaction{\exists \always \neg \varphi}(s) = \top\\
-\mbox{ iff } & \satisfaction{\neg \exists \always \neg \varphi}(s) = \perp
+\mbox{ iff } & \satisfaction{\neg \exists \always \neg \varphi}(s) = \bottom
 \end{align*}
 we can conclude that $\forall \eventually \varphi \equiv \neg \exists \always \neg \varphi$.
+\item
+\begin{franck}
+Proof still needs to be added.
+\end{franck}
 \end{enumerate}
 \end{proof}
 
@@ -1097,17 +1173,17 @@ $s \models \exists \always \varphi$ iff $\exists \pi \in \mathit{CoPaths}(s) : \
 $s \models \exists \eventually \varphi$ iff $\exists \pi \in \mathit{CoPaths}(s) : \exists 0 \leq i < |\pi| : \pi[i] \models \varphi$
 \item
 $s \models \exists \varphi \until \psi$ iff $\exists \pi \in \mathit{CoPaths}(s) : \exists 0 \leq j < |\pi| : \pi[j] \models \psi \wedge \forall 0 \leq k < j : \pi[k] \models \varphi$
-\item 
-$s \models \forall \varphi \until \psi$ iff $\forall \pi \in \mathit{CoPaths}(s) : \exists 0 \leq j < |\pi| : \pi[j] \models \psi \wedge \forall 0 \leq k < j : \pi[k] \models \varphi$
+%\item 
+%$s \models \forall \varphi \until \psi$ iff $\forall \pi \in \mathit{CoPaths}(s) : \exists 0 \leq j < |\pi| : \pi[j] \models \psi \wedge \forall 0 \leq k < j : \pi[k] \models \varphi$
 \end{itemize}
 
 \begin{proposition}
-If $F = S$, for all $\varphi \in \mathit{CTL}$ and $s \in S$, 
+If $F = S$, for all $\varphi \in \mathit{CTL}$ in existential normal form and $s \in S$, 
 \begin{itemize}
 \item
 $\satisfaction{\varphi}(s) = \top$ iff $s \models \varphi$, and
 \item
-$\satisfaction{\varphi}(s) = \perp$ iff $s \not\models \varphi$.
+$\satisfaction{\varphi}(s) = \bottom$ iff $s \not\models \varphi$.
 \end{itemize}
 \end{proposition}
 \begin{proof}
@@ -1120,20 +1196,20 @@ For the CTL formula $a$ we have that
 \]
 and
 \[
-\satisfaction{a}(s) = \perp \mbox{ iff } a \not\in L(s) \mbox{ iff } s \not\models a.
+\satisfaction{a}(s) = \bottom \mbox{ iff } a \not\in L(s) \mbox{ iff } s \not\models a.
 \]
 \item
 For the CTL formula $\neg \varphi$ we have that
 \begin{align*}
 & \satisfaction{\neg \varphi}(s) = \top\\
-\mbox{iff } & \satisfaction{\varphi}(s) = \perp\\
+\mbox{iff } & \satisfaction{\varphi}(s) = \bottom\\
 \mbox{iff } & s \not\models \varphi 
 \comment{by induction}\\
 \mbox{iff } & s \models \neg \varphi 
 \end{align*}
 and
 \begin{align*}
-& \satisfaction{\neg \varphi}(s) = \perp\\
+& \satisfaction{\neg \varphi}(s) = \bottom\\
 \mbox{iff } & \satisfaction{\varphi}(s) = \top\\
 \mbox{iff } & s \models \varphi 
 \comment{by induction}\\
@@ -1150,13 +1226,12 @@ For the CTL formula $\varphi \wedge \psi$ we have that
 \end{align*}
 and
 \begin{align*}
-& \satisfaction{\varphi \wedge \psi}(s) = \perp\\
-\mbox{iff } & \satisfaction{\varphi}(s) = \perp \vee \satisfaction{\psi}(s) = \perp\\
+& \satisfaction{\varphi \wedge \psi}(s) = \bottom\\
+\mbox{iff } & \satisfaction{\varphi}(s) = \bottom \vee \satisfaction{\psi}(s) = \bottom\\
 \mbox{iff } & s \not\models \varphi \vee s \not\models \psi
 \comment{by induction}\\
 \mbox{iff } & s \not\models \varphi \wedge \psi
 \end{align*}
-\begin{franck}
 \item
 For the CTL formula $\exists \nxt \varphi$ we have that
 \begin{align*}
@@ -1173,9 +1248,9 @@ For the CTL formula $\exists \nxt \varphi$ we have that
 \end{align*}
 and
 \begin{align*}
-& \satisfaction{\exists \nxt \varphi}(s) = \perp\\
-\mbox{iff } & \forall \pi \in \mathit{Paths}(s) : |\pi| > 1 \Rightarrow \satisfaction{\varphi}(\pi[1]) = \perp\\
-\mbox{iff } & \forall \pi \in \mathit{CoPaths}(s) \cup \mathit{PaPaths}(s) : |\pi| > 1 \Rightarrow \satisfaction{\varphi}(\pi[1]) = \perp
+& \satisfaction{\exists \nxt \varphi}(s) = \bottom\\
+\mbox{iff } & \forall \pi \in \mathit{Paths}(s) : |\pi| > 1 \Rightarrow \satisfaction{\varphi}(\pi[1]) = \bottom\\
+\mbox{iff } & \forall \pi \in \mathit{CoPaths}(s) \cup \mathit{PaPaths}(s) : |\pi| > 1 \Rightarrow \satisfaction{\varphi}(\pi[1]) = \bottom
 \comment{Proposition~\ref{proposition:no-potential-paths}}\\
 \mbox{iff } & \forall \pi \in \mathit{CoPaths}(s) \cup \mathit{PaPaths}(s) : |\pi| > 1 \Rightarrow \pi[1] \not\models \varphi
 \comment{by induction}\\
@@ -1190,17 +1265,17 @@ For the CTL formula $\exists \always \varphi$ we have that
 \mbox{iff } & (\exists \pi \in \mathit{CoPaths}(s) : \forall 0 \leq i < |\pi| : \satisfaction{\varphi}(\pi[i]) = \top) \vee\\
 & (\mathit{PoPaths}(s) \not= \emptyset \wedge \forall \pi \in \mathit{PoPaths}(s) : \forall 0 \leq i < |\pi| : \satisfaction{\varphi}(\pi[i]) = \top)\\
 \mbox{iff } & \exists \pi \in \mathit{CoPaths}(s) : \forall 0 \leq i < |\pi| : \satisfaction{\varphi}(\pi[i]) = \top
-\comment{Proposition~\ref{proposition:no-potential-paths}.1}\\
+\comment{Proposition~\ref{proposition:no-potential-paths}}\\
 \mbox{iff } & \exists \pi \in \mathit{CoPaths}(s) : \forall 0 \leq i < |\pi| : \pi[i] \models \varphi
 \comment{by induction}\\
 \mbox{iff } & s \models \exists \always \varphi
 \end{align*}
 and
 \begin{align*}
-& \satisfaction{\exists \always \varphi}(s) = \perp\\
-\mbox{iff } & \forall \pi \in \mathit{CoPaths}(s) \cup \mathit{PoPaths}(s) : \exists 0 \leq i < |\pi| : \satisfaction{\varphi}(\pi[i]) = \perp\\
-\mbox{iff } & \forall \pi \in \mathit{CoPaths}(s) : \exists 0 \leq i < |\pi| : \satisfaction{\varphi}(\pi[i]) = \perp
-\comment{Proposition~\ref{proposition:no-potential-paths}.1}\\
+& \satisfaction{\exists \always \varphi}(s) = \bottom\\
+\mbox{iff } & \forall \pi \in \mathit{CoPaths}(s) \cup \mathit{PoPaths}(s) : \exists 0 \leq i < |\pi| : \satisfaction{\varphi}(\pi[i]) = \bottom\\
+\mbox{iff } & \forall \pi \in \mathit{CoPaths}(s) : \exists 0 \leq i < |\pi| : \satisfaction{\varphi}(\pi[i]) = \bottom
+\comment{Proposition~\ref{proposition:no-potential-paths}}\\
 \mbox{iff } & \forall \pi \in \mathit{CoPaths}(s) : \exists 0 \leq i < |\pi| : \pi[i] \not\models \varphi \comment{by induction}\\
 \mbox{iff } & s \not\models \exists \always \varphi
 \end{align*}
@@ -1212,25 +1287,22 @@ For the CTL formula $\exists \eventually \varphi$ we have that
 \mbox{iff } & \exists \pi \in \mathit{CoPaths}(s) \cup \mathit{PaPaths}(s) : \exists 0 \leq i < |\pi| : \pi[i] \models \varphi
 \comment{by induction}\\
 \mbox{iff } & \exists \pi \in \mathit{CoPaths}(s) : \exists 0 \leq i < |\pi| : \pi[i] \models \varphi
-\comment{Proposition~\ref{proposition:no-potential-paths}.2}\\
+\comment{Proposition~\ref{proposition:partial-path-extension}}\\
 \mbox{iff } & s \models \exists \eventually \varphi
 \end{align*}
 and
 \begin{align*}
-& \satisfaction{\exists \eventually \varphi}(s) = \perp\\
-\mbox{iff } & \forall \pi \in \mathit{Paths}(s)  : \forall 0 \leq i < |\pi| : \satisfaction{\varphi}(\pi[i]) = \perp\\
-\mbox{iff } & \forall \pi \in \mathit{CoPaths}(s) \cup \mathit{PaPaths}(s) : \forall 0 \leq i < |\pi| : \satisfaction{\varphi}(\pi[i]) = \perp
-\comment{Proposition~\ref{proposition:no-potential-paths}.1}\\
+& \satisfaction{\exists \eventually \varphi}(s) = \bottom\\
+\mbox{iff } & \forall \pi \in \mathit{Paths}(s)  : \forall 0 \leq i < |\pi| : \satisfaction{\varphi}(\pi[i]) = \bottom\\
+\mbox{iff } & \forall \pi \in \mathit{CoPaths}(s) \cup \mathit{PaPaths}(s) : \forall 0 \leq i < |\pi| : \satisfaction{\varphi}(\pi[i]) = \bottom
+\comment{Proposition~\ref{proposition:no-potential-paths}}\\
 \mbox{iff } & \forall \pi \in \mathit{CoPaths}(s) \cup \mathit{PaPaths}(s) : \forall 0 \leq i < |\pi| : \pi[i] \not\models \varphi \comment{by induction}\\
-\mbox{iff } & \forall \pi \in \mathit{CoPaths}(s) : \forall 0 \leq i < |\pi| : \pi[i] \not\models \varphi \comment{Proposition~\ref{proposition:no-potential-paths}.2}\\
+\mbox{iff } & \forall \pi \in \mathit{CoPaths}(s) : \forall 0 \leq i < |\pi| : \pi[i] \not\models \varphi \comment{Proposition~\ref{proposition:partial-path-extension}}\\
 \mbox{iff } & s \not\models \exists \eventually \varphi
 \end{align*}
-\end{franck}
 \item
 For the CTL formula $\exists \varphi \until \psi$ we have that
 \textcolor{blue}{details still need to be added here.}
-\item
-For the CTL formula $\forall \varphi \until \psi$ we have that \textcolor{blue}{details still need to be added here.}
 \end{itemize}
 \end{proof}
 
@@ -1255,11 +1327,11 @@ then
 \item
 If $s \in F$ and 
 \[
-\mathit{PoPaths}(s) \not= \emptyset \wedge \forall \pi \in \mathit{PoPaths}(s) : \satisfaction{\varphi}(\pi[1]) = \perp
+\mathit{PoPaths}(s) \not= \emptyset \wedge \forall \pi \in \mathit{PoPaths}(s) : \satisfaction{\varphi}(\pi[1]) = \bottom
 \]
 then
 \[
-\exists \pi \in \pi \in \mathit{PaPaths}(s) : |\pi| > 1 \wedge \satisfaction{\varphi}(\pi[1]) = \perp
+\exists \pi \in \pi \in \mathit{PaPaths}(s) : |\pi| > 1 \wedge \satisfaction{\varphi}(\pi[1]) = \bottom
 \]
 \item
 If $s \not\in F$ then 
@@ -1271,7 +1343,7 @@ If $s \not\in F$ then
 \item
 If $s \not\in F$ then 
 \[
-\forall \pi \in \mathit{PoPaths}(s) : \satisfaction{\varphi}(\pi[1]) = \perp
+\forall \pi \in \mathit{PoPaths}(s) : \satisfaction{\varphi}(\pi[1]) = \bottom
 \mbox{ iff }
 \varphi \equiv \FALSE
 \]
@@ -1292,9 +1364,9 @@ Let $\pi \in \mathit{PoPaths}(s)$.  Then $|\pi| > 1$ by part 1.\ and $\satisfact
 \item 
 Let $s \in F$ and assume that
 \[
-\mathit{PoPaths}(s) \not= \emptyset \wedge \forall \pi \in \mathit{PoPaths}(s) : \satisfaction{\varphi}(\pi[1]) = \perp
+\mathit{PoPaths}(s) \not= \emptyset \wedge \forall \pi \in \mathit{PoPaths}(s) : \satisfaction{\varphi}(\pi[1]) = \bottom
 \]
-Let $\pi \in \mathit{PoPaths}(s)$.  Then $|\pi| > 1$ by part 1.\ and $\satisfaction{\varphi}(\pi[1]) = \perp$.  Hence, there exists $s' \in S$ such that $s \rightarrow s'$ and $\satisfaction{\varphi}(s') = \perp$.  Hence, $s s' \in \mathit{PaPaths}(s)$ with $|s s'| > 1$ and $\satisfaction{\varphi}((s s')[1]) = \perp$.
+Let $\pi \in \mathit{PoPaths}(s)$.  Then $|\pi| > 1$ by part 1.\ and $\satisfaction{\varphi}(\pi[1]) = \bottom$.  Hence, there exists $s' \in S$ such that $s \rightarrow s'$ and $\satisfaction{\varphi}(s') = \bottom$.  Hence, $s s' \in \mathit{PaPaths}(s)$ with $|s s'| > 1$ and $\satisfaction{\varphi}((s s')[1]) = \bottom$.
 \item
 We prove two implications.
 \begin{itemize}
@@ -1307,9 +1379,9 @@ Assume that $\varphi \not\equiv \TRUE$.  Without loss of generality, there exist
 We prove two implications.
 \begin{itemize}
 \item 
-Assume that $\varphi \equiv \FALSE$.  Let $\pi \in \mathit{PoPaths}(s)$.  Then $\satisfaction{\varphi}(\pi[1]) = \satisfaction{\FALSE}(\pi[1]) = \perp$.
+Assume that $\varphi \equiv \FALSE$.  Let $\pi \in \mathit{PoPaths}(s)$.  Then $\satisfaction{\varphi}(\pi[1]) = \satisfaction{\FALSE}(\pi[1]) = \bottom$.
 \item
-Assume that $\varphi \not\equiv \FALSE$.  Without loss of generality, there exists $s' \in \mathcal{S} \setminus S$ such that $\satisfaction{\varphi}(s') \not= \satisfaction{\FALSE}(s') = \perp$.  Hence, $s s' \in \mathit{PoPaths}(s)$ and $\satisfaction{\varphi}((s s')[1]) \not= \perp$.
+Assume that $\varphi \not\equiv \FALSE$.  Without loss of generality, there exists $s' \in \mathcal{S} \setminus S$ such that $\satisfaction{\varphi}(s') \not= \satisfaction{\FALSE}(s') = \bottom$.  Hence, $s s' \in \mathit{PoPaths}(s)$ and $\satisfaction{\varphi}((s s')[1]) \not= \bottom$.
 \end{itemize}
 \end{enumerate}
 \end{proof}
@@ -1320,7 +1392,7 @@ Assume that $\varphi \not\equiv \FALSE$.  Without loss of generality, there exis
 \begin{array}{ll}
 \top & \mbox{if $\exists \pi \in \mathit{CoPaths}(s) \cup \mathit{PaPaths}(s) : |\pi| > 1 \wedge \satisfaction{\varphi}(\pi[1]) = \top$}\\
 & \mbox{or $s \not\in F \wedge \varphi \equiv \TRUE$}\\
-\perp & \mbox{if $s \in F \wedge \forall \pi \in \mathit{Paths}(s) : |\pi| > 1 \Rightarrow \satisfaction{\varphi}(\pi[1]) = \perp$}\\
+\bottom & \mbox{if $s \in F \wedge \forall \pi \in \mathit{Paths}(s) : |\pi| > 1 \Rightarrow \satisfaction{\varphi}(\pi[1]) = \bottom$}\\
 & \mbox{or $s \not\in F \wedge \varphi \equiv \FALSE$}\\
 ? & \mbox{otherwise}
 \end{array}
@@ -1337,26 +1409,26 @@ If $\mathit{PoPaths}(s) \not= \emptyset$ then
 \]
 \item
 \[
-\forall \pi \in \mathit{PoPaths}(s) : \forall 0 \leq i < |\pi| : \satisfaction{\varphi}(\pi[i]) = \perp \mbox{ iff } \varphi \equiv \FALSE
+\forall \pi \in \mathit{PoPaths}(s) : \forall 0 \leq i < |\pi| : \satisfaction{\varphi}(\pi[i]) = \bottom \mbox{ iff } \varphi \equiv \FALSE
 \]
-\item
-If 
-\[
-\forall \pi \in \mathit{PoPaths}(s) : \exists 0 \leq i < |\pi| : \satisfaction{\varphi}(\pi[i]) = \top
-\]
-then
-\[
-\varphi \equiv \TRUE \vee \exists \pi \in \mathit{PaPaths}(s) : \exists 0 \leq i < |\pi| : \satisfaction{\varphi}(\pi[i]) = \top
-\]
-\item
-If 
-\[
-\forall \pi \in \mathit{PoPaths}(s) : \exists 0 \leq i < |\pi| : \satisfaction{\varphi}(\pi[i]) = \perp
-\]
-then
-\[
-\varphi \equiv \FALSE \vee \exists \pi \in \mathit{PaPaths}(s) : \exists 0 \leq i < |\pi| : \satisfaction{\varphi}(\pi[i]) = \perp
-\]
+%\item
+%If 
+%\[
+%\forall \pi \in \mathit{PoPaths}(s) : \exists 0 \leq i < |\pi| : \satisfaction{\varphi}(\pi[i]) = \top
+%\]
+%then
+%\[
+%\varphi \equiv \TRUE \vee \exists \pi \in \mathit{PaPaths}(s) : \exists 0 \leq i < |\pi| : \satisfaction{\varphi}(\pi[i]) = \top
+%\]
+%\item
+%If 
+%\[
+%\forall \pi \in \mathit{PoPaths}(s) : \exists 0 \leq i < |\pi| : \satisfaction{\varphi}(\pi[i]) = \bottom
+%\]
+%then
+%\[
+%\varphi \equiv \FALSE \vee \exists \pi \in \mathit{PaPaths}(s) : \exists 0 \leq i < |\pi| : \satisfaction{\varphi}(\pi[i]) = \bottom
+%\]
 \end{enumerate}
 \end{proposition}
 \begin{proof}
@@ -1374,36 +1446,49 @@ Assume that $\varphi \not\equiv \TRUE$.  Without loss of generality, there exist
 We prove two implications.
 \begin{itemize}
 \item 
-Assume that $\varphi \equiv \FALSE$.  Let $\pi \in \mathit{PoPaths}(s)$ and $0 \leq i < |\pi|$.  Then $\satisfaction{\varphi}(\pi[i]) = \satisfaction{\FALSE}(\pi[i]) = \perp$.
+Assume that $\varphi \equiv \FALSE$.  Let $\pi \in \mathit{PoPaths}(s)$ and $0 \leq i < |\pi|$.  Then $\satisfaction{\varphi}(\pi[i]) = \satisfaction{\FALSE}(\pi[i]) = \bottom$.
 \item
-Assume that $\varphi \not\equiv \FALSE$.  Without loss of generality, there exists $s' \in \mathcal{S} \setminus S$ such that $\satisfaction{\varphi}(s') \not= \satisfaction{\FALSE}(s') = \perp$.  Since $\mathit{PoPaths}(s) \not= \emptyset$, there exist $s_0, s_1, \ldots, s_n \in S$ such that $s = s_0$ and $s_j \rightarrow s_{j+1}$ for $0 \leq j < n$ and $s_n \not\in F$.  Hence, $s_0 s_1 \ldots s_n s' \in \mathit{PoPaths}(s)$ and $\satisfaction{\varphi}((s_0 s_1 \ldots s_n s')[n+1]) = \satisfaction{\varphi}(s') \not= \perp$.
+Assume that $\varphi \not\equiv \FALSE$.  Without loss of generality, there exists $s' \in \mathcal{S} \setminus S$ such that $\satisfaction{\varphi}(s') \not= \satisfaction{\FALSE}(s') = \bottom$.  Since $\mathit{PoPaths}(s) \not= \emptyset$, there exist $s_0, s_1, \ldots, s_n \in S$ such that $s = s_0$ and $s_j \rightarrow s_{j+1}$ for $0 \leq j < n$ and $s_n \not\in F$.  Hence, $s_0 s_1 \ldots s_n s' \in \mathit{PoPaths}(s)$ and $\satisfaction{\varphi}((s_0 s_1 \ldots s_n s')[n+1]) = \satisfaction{\varphi}(s') \not= \bottom$.
 \end{itemize}
-\item
-Assume that $\varphi \not\equiv \TRUE$ and
-\[
-\forall \pi \in \mathit{PaPaths}(s) : \forall 0 \leq i < |\pi| : \satisfaction{\varphi}(\pi[i]) \not= \top  
-\]
-It suffices to show that
-\[
-\exists \pi \in \mathit{PoPaths}(s) : \forall 0 \leq i < |\pi| : \satisfaction{\varphi}(\pi[i]) \not= \top
-\]
-Since $\mathit{PoPaths}(s) \not= \emptyset$, there exist $s_0, s_1, \ldots, s_n \in S$ such that $s = s_0$ and $s_j \rightarrow s_{j+1}$ for $0 \leq j < n$ and $s_n \not\in F$.  Since $\pi = s_0 s_1 \ldots s_n \in \mathit{PaPaths}(s)$, we have that $\satisfaction{\varphi}(\pi[i]) \not= \top$ for all $0 \leq i < |\pi|$.
-
-Because $\varphi \not\equiv \TRUE$, without loss of generality, there exists $s' \in \mathcal{S} \setminus S$ such that $\satisfaction{\varphi}(s') \not= \satisfaction{\TRUE}(s') = \top$.  Furthermore, $\rho = s_0 s_1 \ldots s_n s' \in \mathit{PoPaths}(s)$ and $\satisfaction{\varphi}(\rho[j]) \not= \top$ for all $0 \leq j < |\rho|$.
-\item
-Assume that $\varphi \not\equiv \FALSE$ and
-\[
-\forall \pi \in \mathit{PaPaths}(s) : \forall 0 \leq i < |\pi| : \satisfaction{\varphi}(\pi[i]) \not= \perp  
-\]
-It suffices to show that
-\[
-\exists \pi \in \mathit{PoPaths}(s) : \forall 0 \leq i < |\pi| : \satisfaction{\varphi}(\pi[i]) \not= \perp
-\]
-Since $\mathit{PoPaths}(s) \not= \emptyset$, there exist $s_0, s_1, \ldots, s_n \in S$ such that $s = s_0$ and $s_j \rightarrow s_{j+1}$ for $0 \leq j < n$ and $s_n \not\in F$.  Since $\pi = s_0 s_1 \ldots s_n \in \mathit{PaPaths}(s)$, we have that $\satisfaction{\varphi}(\pi[i]) \not= \perp$ for all $0 \leq i < |\pi|$.
-
-Because $\varphi \not\equiv \FALSE$, without loss of generality, there exists $s' \in \mathcal{S} \setminus S$ such that $\satisfaction{\varphi}(s') \not= \satisfaction{\FALSE}(s') = \perp$.  Furthermore, $\rho = s_0 s_1 \ldots s_n s' \in \mathit{PoPaths}(s)$ and $\satisfaction{\varphi}(\rho[j]) \not= \perp$ for all $0 \leq j < |\rho|$.
+%\item
+%Assume that $\varphi \not\equiv \TRUE$ and
+%\[
+%\forall \pi \in \mathit{PaPaths}(s) : \forall 0 \leq i < |\pi| : \satisfaction{\varphi}(\pi[i]) \not= \top  
+%\]
+%It suffices to show that
+%\[
+%\exists \pi \in \mathit{PoPaths}(s) : \forall 0 \leq i < |\pi| : \satisfaction{\varphi}(\pi[i]) \not= \top
+%\]
+%Since $\mathit{PoPaths}(s) \not= \emptyset$, there exist $s_0, s_1, \ldots, s_n \in S$ such that $s = s_0$ and $s_j \rightarrow s_{j+1}$ for $0 \leq j < n$ and $s_n \not\in F$.  Since $\pi = s_0 s_1 \ldots s_n \in \mathit{PaPaths}(s)$, we have that $\satisfaction{\varphi}(\pi[i]) \not= \top$ for all $0 \leq i < |\pi|$.
+%
+%Because $\varphi \not\equiv \TRUE$, without loss of generality, there exists $s' \in \mathcal{S} \setminus S$ such that $\satisfaction{\varphi}(s') \not= \satisfaction{\TRUE}(s') = \top$.  Furthermore, $\rho = s_0 s_1 \ldots s_n s' \in \mathit{PoPaths}(s)$ and $\satisfaction{\varphi}(\rho[j]) \not= \top$ for all $0 \leq j < |\rho|$.
+%\item
+%Assume that $\varphi \not\equiv \FALSE$ and
+%\[
+%\forall \pi \in \mathit{PaPaths}(s) : \forall 0 \leq i < |\pi| : \satisfaction{\varphi}(\pi[i]) \not= \bottom  
+%\]
+%It suffices to show that
+%\[
+%\exists \pi \in \mathit{PoPaths}(s) : \forall 0 \leq i < |\pi| : \satisfaction{\varphi}(\pi[i]) \not= \bottom
+%\]
+%Since $\mathit{PoPaths}(s) \not= \emptyset$, there exist $s_0, s_1, \ldots, s_n \in S$ such that $s = s_0$ and $s_j \rightarrow s_{j+1}$ for $0 \leq j < n$ and $s_n \not\in F$.  Since $\pi = s_0 s_1 \ldots s_n \in \mathit{PaPaths}(s)$, we have that $\satisfaction{\varphi}(\pi[i]) \not= \bottom$ for all $0 \leq i < |\pi|$.
+%
+%Because $\varphi \not\equiv \FALSE$, without loss of generality, there exists $s' \in \mathcal{S} \setminus S$ such that $\satisfaction{\varphi}(s') \not= \satisfaction{\FALSE}(s') = \bottom$.  Furthermore, $\rho = s_0 s_1 \ldots s_n s' \in \mathit{PoPaths}(s)$ and $\satisfaction{\varphi}(\rho[j]) \not= \bottom$ for all $0 \leq j < |\rho|$.
 \end{enumerate}
 \end{proof}
+
+\begin{corollary}
+\[
+\satisfaction{\exists \always \varphi}(s) = \left \{
+\begin{array}{ll}
+\top & \mbox{if $\exists \pi \in \mathit{CoPaths}(s) : \forall 0 \leq i < |\pi| : \satisfaction{\varphi}(\pi[i]) = \top$}\\
+& \mbox{or $\varphi \equiv \TRUE$}\\
+\bottom & \mbox{if $\forall \pi \in \mathit{CoPaths}(s) \cup \mathit{PoPaths}(s) : \exists 0 \leq i < |\pi| : \satisfaction{\varphi}(\pi[i]) = \bottom$}\\
+? & \mbox{otherwise}
+\end{array}
+\right .
+\]
+\end{corollary}
 \end{franck}
 
 \section{}
@@ -1414,13 +1499,13 @@ For each CTL formula we define the following two sets of states.
 Let $\varphi$ be a CTL formula.  Then
 \begin{align*}
 \mathit{Sat}(\varphi) & = \{\, s \in S \mid \satisfaction{\varphi}(s) = \top \,\}\\
-\mathit{Unsat}(\varphi) & = \{\, s \in S \mid \satisfaction{\varphi}(s) = \perp \,\}
+\mathit{Unsat}(\varphi) & = \{\, s \in S \mid \satisfaction{\varphi}(s) = \bottom \,\}
 %\mathit{Unknown}(\varphi) & = \{\, s \in S \mid \satisfaction{\varphi}(s) = ? \,\}
 \end{align*}
 \end{definition}
 
 \begin{theorem}
-Let $(S, F, \rightarrow, I, \mathit{AP}, L)$ be a partial transition system.  For all $a \in \mathit{AP}$ and $\varphi$, $\psi \in \mathit{CTL}$,
+Let $(S, F, \rightarrow, I, \mathit{AP}, L)$ be a partial transition system.  For all $a \in \mathit{AP}$ and $\varphi$, $\psi \in \mathit{CTL}$ in existential normal form,
 \begin{itemize}
 \item
 \begin{align*}
@@ -1503,14 +1588,14 @@ S & \mbox{if $\varphi \equiv \FALSE$}\\
 %\mathit{Unknown}(\exists \nxt \varphi) & = S \setminus (\mathit{Sat}(\exists \nxt \varphi) \cup \mathit{Unsat}(\exists \nxt \varphi))
 \end{align*}
 \item
-$\mathit{Sat}(\exists \always \varphi)$ is the largest $U \subseteq S$ satisfying
+If $\varphi \equiv \TRUE$ then $\mathit{Sat}(\exists \always \varphi) = S$.  Otherwise, $\mathit{Sat}(\exists \always \varphi)$ is the largest $U \subseteq S$ satisfying
 \[
 U \subseteq \{\, s \in \mathit{Sat}(\varphi) \mid \mathit{post}(s) = \emptyset \vee \mathit{post}(s) \cap U \not= \emptyset \,\}.
 \]
-$\mathit{Unsat}(\exists \always \varphi)$ is the smallest $V \subseteq S$ satisfying
+If $\varphi \equiv \FALSE$ then $\mathit{Unsat}(\exists \always \varphi) = S$.  Otherwise, $\mathit{Unsat}(\exists \always \varphi)$ is the smallest $V \subseteq S$ satisfying
 \[
-V \supseteq 
-\{\, s \in S \mid s \in \mathit{Unsat}(\varphi) \mbox{ or } \mathit{post}(s) \cap V \not= \emptyset \,\}.
+V \supseteq \mathit{Unsat}(\varphi) \cup
+\{\, s \in F \mid \mathit{post}(s) \not= \emptyset \wedge \mathit{post}(s) \subseteq V \,\}.
 \]
 %\item
 %\begin{align*}
@@ -1536,12 +1621,12 @@ V \supseteq
 \mathit{Unsat}(\exists \varphi \until \psi) & = 
 %\mathit{Unknown}(\exists \varphi \until \psi) & = 
 \end{align*}
-\item
-\begin{align*}
-\mathit{Sat}(\forall \varphi \until \psi) & = \\
-\mathit{Unsat}(\forall \varphi \until \psi) & = 
-%\mathit{Unknown}(\forall \varphi \until \psi) & = 
-\end{align*}
+%\item
+%\begin{align*}
+%\mathit{Sat}(\forall \varphi \until \psi) & = \\
+%\mathit{Unsat}(\forall \varphi \until \psi) & = 
+%%\mathit{Unknown}(\forall \varphi \until \psi) & = 
+%\end{align*}
 \end{itemize}
 \end{theorem}
 \begin{proof}
@@ -1556,9 +1641,9 @@ The first three cases follow immediately from the definitions.  For example, for
 and
 \begin{align*}
 \mathit{Unsat}(\varphi \wedge \psi) 
-& = \{\, s \in S \mid \satisfaction{\varphi \wedge \psi}(s) = \perp \,\}\\
-& = \{\, s \in S \mid \satisfaction{\varphi}(s) = \perp \vee \satisfaction{\psi}(s) = \perp \,\}\\
-& = \{\, s \in S \mid \satisfaction{\varphi}(s) = \perp \,\} \cup \{\, s \in S \mid \satisfaction{\psi}(s) = \perp \,\}\\
+& = \{\, s \in S \mid \satisfaction{\varphi \wedge \psi}(s) = \bottom \,\}\\
+& = \{\, s \in S \mid \satisfaction{\varphi}(s) = \bottom \vee \satisfaction{\psi}(s) = \bottom \,\}\\
+& = \{\, s \in S \mid \satisfaction{\varphi}(s) = \bottom \,\} \cup \{\, s \in S \mid \satisfaction{\psi}(s) = \bottom \,\}\\
 & = \mathit{Unsat}(\varphi) \cup \mathit{Unsat}(\psi)
 \end{align*}
 \begin{itemize}
@@ -1589,15 +1674,16 @@ Otherwise, $\varphi \not\equiv \TRUE$.  Then
 = & \{\, s \in S \mid \exists s' \in \mathit{post}(s) :  \satisfaction{\varphi}(s') = \top \,\}\\
 = & \{\, s \in S \mid \mathit{post}(s) \cap \mathit{Sat}(\varphi) \not= \emptyset \,\}
 \end{align*}
+\end{itemize}
 For $\mathit{Unsat}$ we consider two cases as well.
 \begin{itemize}
 \item 
 Assume that $\varphi \equiv \FALSE$.  Then
 \begin{align*}
 & \mathit{Unsat}(\exists \nxt \varphi)\\
-= & \{\, s \in S \mid \satisfaction{\exists \nxt \varphi}(s) = \perp \,\}\\
-= & \{\, s \in S \mid (s \in F \wedge \forall \pi \in \mathit{Paths}(s) : |\pi| > 1 \Rightarrow \satisfaction{\varphi}(\pi[1]) = \perp) \vee (s \not\in F \wedge \varphi \equiv \FALSE) \,\}\\
-= & \{\, s \in S \mid (s \in F \wedge \forall \pi \in \mathit{Paths}(s) : |\pi| > 1 \Rightarrow \satisfaction{\FALSE}(\pi[1]) = \perp) \vee s \not\in F \,\}\\
+= & \{\, s \in S \mid \satisfaction{\exists \nxt \varphi}(s) = \bottom \,\}\\
+= & \{\, s \in S \mid (s \in F \wedge \forall \pi \in \mathit{Paths}(s) : |\pi| > 1 \Rightarrow \satisfaction{\varphi}(\pi[1]) = \bottom) \vee (s \not\in F \wedge \varphi \equiv \FALSE) \,\}\\
+= & \{\, s \in S \mid (s \in F \wedge \forall \pi \in \mathit{Paths}(s) : |\pi| > 1 \Rightarrow \satisfaction{\FALSE}(\pi[1]) = \bottom) \vee s \not\in F \,\}\\
 & \comment{$\varphi \equiv \FALSE$}\\
 = & S
 \end{align*}
@@ -1605,37 +1691,37 @@ Assume that $\varphi \equiv \FALSE$.  Then
 Otherwise, $\varphi \not\equiv \FALSE$.  Then
 \begin{align*}
 & \mathit{Unsat}(\exists \nxt \varphi)\\
-= & \{\, s \in S \mid \satisfaction{\exists \nxt \varphi}(s) = \perp \,\}\\
-= & \{\, s \in S \mid (s \in F \wedge \forall \pi \in \mathit{Paths}(s) : |\pi| > 1 \Rightarrow \satisfaction{\varphi}(\pi[1]) = \perp) \vee (s \not\in F \wedge \varphi \equiv \FALSE) \,\}\\
-= & \{\, s \in F \mid \forall \pi \in \mathit{Paths}(s) : |\pi| > 1 \Rightarrow \satisfaction{\varphi}(\pi[1]) = \perp \,\}\\
-= & \{\, s \in F \mid \forall s' \in \mathit{post}(s) : \satisfaction{\varphi}(s') = \perp \,\}\\
+= & \{\, s \in S \mid \satisfaction{\exists \nxt \varphi}(s) = \bottom \,\}\\
+= & \{\, s \in S \mid (s \in F \wedge \forall \pi \in \mathit{Paths}(s) : |\pi| > 1 \Rightarrow \satisfaction{\varphi}(\pi[1]) = \bottom) \vee (s \not\in F \wedge \varphi \equiv \FALSE) \,\}\\
+= & \{\, s \in F \mid \forall \pi \in \mathit{Paths}(s) : |\pi| > 1 \Rightarrow \satisfaction{\varphi}(\pi[1]) = \bottom \,\}\\
+= & \{\, s \in F \mid \forall s' \in \mathit{post}(s) : \satisfaction{\varphi}(s') = \bottom \,\}\\
 = & \{\, s \in F \mid \mathit{post}(s) \subseteq \mathit{Unsat}(\varphi) \,\}
 \end{align*}
 \end{itemize}
 \item
-Consider the CTL formula $\exists \always \varphi$.  We first focus on $\mathit{Sat}$.  We use $2^S$ to denote the powerset of $S$.  Given the CTL formula~$\varphi$, the function
+Consider the CTL formula $\exists \always \varphi$.  We first focus on $\mathit{Sat}$.  If $\varphi \equiv \TRUE$, then $\mathit{Sat}(\exists \always \varphi) = S$.  Let us next consider the case that $\varphi \not\equiv \TRUE$.  We use $2^S$ to denote the powerset of $S$.  Given the CTL formula~$\varphi$, the function
 \[
 \mathcal{F}_{\varphi} : 2^S \to 2^S
 \]
 is defined by
 \[
-\mathcal{F}_{\varphi}(U) = \{\, s \in \mathit{Sat}(\varphi) \mid \mathit{post}(s) = \emptyset \vee \mathit{post}(s) \cap U \not= \emptyset \,\}.
+\mathcal{F}_{\varphi}(U) = \{\, s \in \mathit{Sat}(\varphi) \mid (s \in F \wedge \mathit{post}(s) = \emptyset) \vee \mathit{post}(s) \cap U \not= \emptyset \,\}.
 \]
 
-Next, we show that the function $\mathcal{F}_{\varphi}$ is monotone, that is, for all $U$, $V \in 2^S$, if $U \subseteq V$ then $\mathcal{F}_{\varphi}(U) \subseteq \mathcal{F}_{\varphi}(V)$.  Let $U$, $V \in 2^S$ and assume that $U \subseteq V$.  Let $s \in \mathcal{F}_{\varphi}(U)$. To conclude that $\mathcal{F}_{\varphi}(U) \subseteq \mathcal{F}_{\varphi}(V)$, it remains to show that $s \in \mathcal{F}_{\varphi}(V)$.  Since $s \in \mathcal{F}_{\varphi}(U)$, we have that $s \in \mathit{Sat}(\varphi)$, and either $\mathit{post}(s) = \emptyset$ or $\mathit{post}(s) \cap U \not= \emptyset$.  Since $U \subseteq V$, we can conclude that $\mathit{post}(s) \cap U \not= \emptyset$ implies $\mathit{post}(s) \cap V \not= \emptyset$.  Hence, $s \in \mathcal{F}_{\varphi}(V)$.  From the Knaster-Tarski theorem \cite{K,T} we can conclude that there exists a largest $U \in 2^S$ satisfying $U \subseteq \mathcal{F}_{\varphi}(U)$.
+Next, we show that the function $\mathcal{F}_{\varphi}$ is monotone, that is, for all $U$, $V \in 2^S$, if $U \subseteq V$ then $\mathcal{F}_{\varphi}(U) \subseteq \mathcal{F}_{\varphi}(V)$.  Let $U$, $V \in 2^S$ and assume that $U \subseteq V$.  Let $s \in \mathcal{F}_{\varphi}(U)$. To conclude that $\mathcal{F}_{\varphi}(U) \subseteq \mathcal{F}_{\varphi}(V)$, it remains to show that $s \in \mathcal{F}_{\varphi}(V)$.  Since $s \in \mathcal{F}_{\varphi}(U)$, we have that $s \in \mathit{Sat}(\varphi)$, and either $s \in F \wedge \mathit{post}(s) = \emptyset$ or $\mathit{post}(s) \cap U \not= \emptyset$.  Since $U \subseteq V$, we can conclude that $\mathit{post}(s) \cap U \not= \emptyset$ implies $\mathit{post}(s) \cap V \not= \emptyset$.  Hence, $s \in \mathcal{F}_{\varphi}(V)$.  From the Knaster-Tarski theorem \cite{K28,T55} we can conclude that there exists a largest $U \in 2^S$ satisfying $U \subseteq \mathcal{F}_{\varphi}(U)$.
 
 Since
 \begin{align*}
 \mathit{Sat}(\exists \always \varphi)
 = & \{\, s \in S \mid \satisfaction{\exists \always \varphi}(s) = \top \,\}\\
 = & \{\, s \in S \mid \exists \pi \in \mathit{CoPaths}(s) : \forall 0 \leq i < |\pi| : \satisfaction{\varphi}(\pi[i]) = \top \,\}\\
-= & \{\, s \in S \mid \satisfaction{\varphi}(s) = \top \wedge \mathit{post}(s) = \emptyset \,\} \cup\\
+= & \{\, s \in F \mid \satisfaction{\varphi}(s) = \top \wedge \mathit{post}(s) = \emptyset \,\} \cup\\
 & \{\, s \in S \mid \satisfaction{\varphi}(s) = \top \wedge \exists s' \in \mathit{post}(s) : \exists \pi \in \mathit{CoPaths}(s') : \forall 0 \leq i < |\pi| : \satisfaction{\varphi}(\pi[i]) = \top \,\}\\
-= & \{\, s \in S \mid \satisfaction{\varphi}(s) = \top \wedge \mathit{post}(s) = \emptyset \,\} \cup\\
+= & \{\, s \in F \mid \satisfaction{\varphi}(s) = \top \wedge \mathit{post}(s) = \emptyset \,\} \cup\\
 & \{\, s \in S \mid \satisfaction{\varphi}(s) = \top \wedge \exists s' \in \mathit{post}(s) : \satisfaction{\exists \always \varphi}(s') = \top \,\}\\
-= & \{\, s \in S \mid s \in \mathit{Sat}(\varphi) \wedge \mathit{post}(s) = \emptyset \,\} \cup\\
+= & \{\, s \in F \mid s \in \mathit{Sat}(\varphi) \wedge \mathit{post}(s) = \emptyset \,\} \cup\\
 & \{\, s \in S \mid s \in \mathit{Sat}(\varphi) \wedge \exists s' \in \mathit{post}(s) : s' \in \mathit{Sat}(\exists \always \varphi) \,\}\\
-= & \{\, s \in \mathit{Sat}(\varphi) \mid \mathit{post}(s) = \emptyset \vee \mathit{post}(s) \cap \mathit{Sat}(\exists \always \varphi) \not= \emptyset \,\}
+= & \{\, s \in \mathit{Sat}(\varphi) \mid (s \in F \wedge \mathit{post}(s) = \emptyset) \vee \mathit{post}(s) \cap \mathit{Sat}(\exists \always \varphi) \not= \emptyset \,\}
 \end{align*}
 we can conclude that $\mathit{Sat}(\exists \always \varphi) \subseteq \mathcal{F}_{\varphi}(\mathit{Sat}(\exists \always \varphi))$.
 
@@ -1646,28 +1732,28 @@ $\exists \pi_n \in \mathit{CoPaths}(s) : |\pi_n| \leq n + 1$ or
 \item[(b)]
 $\exists \pi_n \in \mathit{PaPaths}(s) : |\pi_n| = n + 1$
 \end{itemize}
-and $\forall 0 \leq i < |\pi_n| : \pi_n[i] \in U$ and $\forall 0 \leq i < j \leq n: \pi_i \mbox{ is a prefix of } \pi_j$.  We prove this by induction on $n$.  Let $s \in U$.  We distinguish the following two cases.
+and $\forall 0 \leq i < |\pi_n| : \pi_n[i] \in U$ and $\forall 0 \leq i < j \leq n: \pi_i \sqsubseteq \pi_j$.  We prove this by induction on $n$.  Let $s \in U$.  Then $s \in\mathcal{F}_{\varphi}(U)$ and, hence, $s \in \mathit{Sat}(\varphi)$ and either $s \in F \wedge \mathit{post}(s) = \emptyset$ or $\mathit{post}(s) \cap U \not= \emptyset$.  We distinguish the following two cases.
 \begin{itemize}
 \item 
 Let $n = 0$.  We distinguish the following two cases.
 \begin{itemize}
 \item 
-If $\mathit{post}(s) = \emptyset$ then $s \in \mathit{CoPaths}(s)$.
+If $s \in F \wedge \mathit{post}(s) = \emptyset$ then $s \in \mathit{CoPaths}(s)$.
 \item
-Otherwise, $\mathit{post}(s) \not= \emptyset$.  Then $s \in \mathit{PaPaths}(s)$.
+Otherwise, $\mathit{post}(s) \cap U \not= \emptyset$ and, therefore, $\mathit{post}(s) \not= \emptyset$.  Then $s \in \mathit{PaPaths}(s)$.
 \end{itemize} 
 \item
 Otherwise, $n > 0$.  We distinguish the following two cases.
 \begin{itemize}
 \item 
-Assume $\exists \pi_{n-1} \in \mathit{CoPaths}(s) : |\pi_{n-1}| \leq n$ and $\forall 0 \leq i < |\pi_{n-1}| : \pi_{n-1}[i] \in U$ and $\forall 0 \leq i < j \leq n - 1: \pi_i \mbox{ is a prefix of } \pi_j$.  Then we choose $\pi_n = \pi_{n-1}$.
+Assume $\exists \pi_{n-1} \in \mathit{CoPaths}(s) : |\pi_{n-1}| \leq n$ and $\forall 0 \leq i < |\pi_{n-1}| : \pi_{n-1}[i] \in U$ and $\forall 0 \leq i < j \leq n - 1: \pi_i \sqsubseteq \pi_j$.  Then we choose $\pi_n = \pi_{n-1}$.
 \item
-Otherwise, $\exists \pi_{n-1} \in \mathit{PaPaths}(s) : |\pi_{n-1}| = n$  and $\forall 0 \leq i < |\pi_{n-1}| : \pi_{n-1}[i] \in U$ and $\forall 0 \leq i < j \leq n - 1: \pi_i \mbox{ is a prefix of } \pi_j$.  Let $s' = \pi_{n-1}[n-1]$.  Then $s' \in U$.  We distinguish the following two cases.
+Otherwise, $\exists \pi_{n-1} \in \mathit{PaPaths}(s) : |\pi_{n-1}| = n$  and $\forall 0 \leq i < |\pi_{n-1}| : \pi_{n-1}[i] \in U$ and $\forall 0 \leq i < j \leq n - 1: \pi_i \sqsubseteq \pi_j$.  Let $s' = \pi_{n-1}[n-1]$.  Then $s' \in U$ and, therefore, $s' \in \mathcal{F}_{\varphi}(U)$ and, hence, $s' \in \mathit{Sat}(\varphi)$ and either $s' \in F \wedge \mathit{post}(s') = \emptyset$ or $\mathit{post}(s') \cap U \not= \emptyset$.  We distinguish the following two cases.
 \begin{itemize}
 \item 
-If $\mathit{post}(s') = \emptyset$ then $\pi_{n-1} \in CoPaths(s)$.  Then we choose $\pi_n = \pi_{n-1}$.
+If $s' \in F \wedge \mathit{post}(s') = \emptyset$ then $\pi_{n-1} \in \mathit{CoPaths}(s)$.  Then we choose $\pi_n = \pi_{n-1}$.
 \item
-Otherwise, $\mathit{post}(s') \not= \emptyset$.  Since $s' \in U$ and $U \subseteq \mathcal{F}_{\varphi}(U)$, we have that $s' \in \mathcal{F}_{\varphi}(U)$.  Therefore, $\mathit{post}(s') \cap U \not= \emptyset$.  Let $s'' \in \mathit{post}(s') \cap U$.  In this case, $\pi_n = \pi_{n-1} s''$.
+Otherwise, $\mathit{post}(s') \cap U \not= \emptyset$.  Let $s'' \in \mathit{post}(s') \cap U$.  In this case, $\pi_n = \pi_{n-1} s''$.
 \end{itemize}
 \end{itemize}
 \end{itemize}
@@ -1678,7 +1764,7 @@ From the above we can conclude $U \subseteq \mathit{Sat}(\exists \always \varphi
 or
 \begin{align*}
 \forall n \in \mathbb{N} : \exists \pi_n \in \mathit{PaPaths}(s) :\, & |\pi_n| = n + 1 \wedge \forall 0 \leq i < |\pi_n| : \pi_n[i] \in U \wedge\\
-& \forall 0 \leq i < j \leq n: \pi_i \mbox{ is a prefix of } \pi_j.
+& \forall 0 \leq i < j \leq n: \pi_i \sqsubseteq \pi_j.
 \end{align*}
 In the latter case, for $\pi_{\omega} \in S^{\omega}$ with $\pi_{\omega}[i] = \pi_i[i]$ we have that 
 \[
@@ -1694,31 +1780,80 @@ Since $U \subseteq \mathcal{F}_{\varphi}(U)$ and $\mathcal{F}_{\varphi}(U) \subs
 \]
 and, therefore, $s \in \mathit{Sat}(\exists \always \varphi)$.
 
-Next, we focus on $\mathit{Unsat}$.  Given the CTL formula~$\varphi$, the function
+Next, we focus on $\mathit{Unsat}$.  If $\varphi \equiv \FALSE$, then $\mathit{Unsat}(\exists \always \varphi) = S$.  Let us next consider the case that $\varphi \not\equiv \FALSE$.  Given the CTL formula~$\varphi$, the function
 \[
 \mathcal{G}_{\varphi} : 2^S \to 2^S
 \]
 is defined by
 \[
 \mathcal{G}_{\varphi}(V) = 
-\{\, s \in S \mid s \in \mathit{Unsat}(\varphi) \mbox{ or } \mathit{post}(s) \cap V \not= \emptyset \,\} 
+\mathit{Unsat}(\varphi) \cup \{\, s \in F \mid \mathit{post}(s) \not= \emptyset \wedge \mathit{post}(s) \subseteq V \,\}
 \]
 
-Next, we show that the function $\mathcal{G}_{\varphi}$ is monotone, that is, for all $U$, $V \in 2^S$, if $U \subseteq V$ then $\mathcal{G}_{\varphi}(U) \subseteq \mathcal{G}_{\varphi}(V)$.  Let $U$, $V \in 2^S$ and assume that $U \subseteq V$.  Let $s \in \mathcal{G}_{\varphi}(U)$. To conclude that $\mathcal{G}_{\varphi}(U) \subseteq \mathcal{G}_{\varphi}(V)$, it remains to show that $s \in \mathcal{G}_{\varphi}(V)$.  Since $s \in \mathcal{G}_{\varphi}(U)$, we have that $s \in S$, $s \in \mathit{Unsat}(\varphi)$ or $\mathit{post}(s) \cap U \not= \emptyset$.  Since $U \subseteq V$, we can conclude that $\mathit{post}(s) \cap V \not= \emptyset$.  Hence, $s \in \mathcal{G}_{\varphi}(V)$.  From the Knaster-Tarski theorem we can conclude that there exists a smallest $V \subseteq S$ satisfying $V \supseteq \mathcal{F}_{\varphi}(V)$.
+Next, we show that the function $\mathcal{G}_{\varphi}$ is monotone, that is, for all $U$, $V \in 2^S$, if $U \subseteq V$ then $\mathcal{G}_{\varphi}(U) \subseteq \mathcal{G}_{\varphi}(V)$.  Let $U$, $V \in 2^S$ and assume that $U \subseteq V$.  Let $s \in \mathcal{G}_{\varphi}(U)$. To conclude that $\mathcal{G}_{\varphi}(U) \subseteq \mathcal{G}_{\varphi}(V)$, it remains to show that $s \in \mathcal{G}_{\varphi}(V)$.  Since $s \in \mathcal{G}_{\varphi}(U)$, we have that $s \in \mathit{Unsat}(\varphi)$ or $s \in F$ and $\emptyset \not= \mathit{post}(s) \subseteq U$.  Since $U \subseteq V$, we can conclude that $\emptyset \not= \mathit{post}(s) \subseteq V$.  Hence, $s \in \mathcal{G}_{\varphi}(V)$.  From the Knaster-Tarski theorem we can conclude that there exists a smallest $V \subseteq S$ satisfying $V \supseteq \mathcal{F}_{\varphi}(V)$.
 
-
-
-
+Since
 \begin{align*}
-\mathit{Unsat}(\exists \always \varphi)
-= & \{\, s \in S \mid \satisfaction{\exists \always \varphi}(s) = \perp \,\}\\
-= & \{\, s \in S \mid \forall \pi \in \mathit{CoPaths}(s) \cup \mathit{PoPaths}(s) : \exists 0 \leq i < |\pi| : \satisfaction{\varphi}(\pi[i]) = \perp \,\}\\
-= & \{\, s \in S \mid \satisfaction{\varphi}(s) = \perp \vee  \satisfaction{\varphi}(\pi[i]) = \perp \mbox{ for some } s' \in \mathit{post}(s) \mbox{ and } \pi \in \mathit{APaths}(s') \mbox{ and } 0 \leq i < |\pi| \,\}\\
-= & \{\, s \in S \mid s \in \mathit{Unsat}(\varphi) \mbox{ or } \mathit{post}(s) \cap \mathit{Unsat}(\forall \always \varphi) \not= \emptyset \,\}\\
-= & \mathit{Unsat}(\varphi) \cup \{\, s \in F \mid \emptyset \not= \mathit{post}(s) \subseteq \mathit{Unsat}(\varphi) \,\}\\
+& \mathit{Unsat}(\exists \always \varphi)\\
+= & \{\, s \in S \mid \satisfaction{\exists \always \varphi}(s) = \bottom \,\}\\
+= & \{\, s \in S \mid \forall \pi \in \mathit{CoPaths}(s) \cup \mathit{PoPaths}(s) : \exists 0 \leq i < |\pi| : \satisfaction{\varphi}(\pi[i]) = \bottom \,\}\\
+= & \{\, s \in S \mid \forall \pi \in \mathit{CoPaths}(s) \cup \mathit{PoPaths}(s) : \satisfaction{\varphi}(\pi[0]) = \bottom \vee \exists 1 \leq i < |\pi| : \satisfaction{\varphi}(\pi[i]) = \bottom \,\}\\
+= & \{\, s \in S \mid \forall \pi \in \mathit{CoPaths}(s) \cup \mathit{PoPaths}(s) : \satisfaction{\varphi}(s) = \bottom \vee \exists 1 \leq i < |\pi| : \satisfaction{\varphi}(\pi[i]) = \bottom \,\}\\
+= & \{\, s \in S \mid \satisfaction{\varphi}(s) = \bottom \vee \forall \pi \in \mathit{CoPaths}(s) \cup \mathit{PoPaths}(s) : \exists 1 \leq i < |\pi| : \satisfaction{\varphi}(\pi[i]) = \bottom \,\}\\
+& \comment{Proposition~\ref{proposition:there-are-paths}}\\
+= & \{\, s \in S \mid \satisfaction{\varphi}(s) = \bottom \,\} \cup\\
+& \{\, s \in S \mid \forall \pi \in \mathit{CoPaths}(s) \cup \mathit{PoPaths}(s) : \exists 1 \leq i < |\pi| : \satisfaction{\varphi}(\pi[i]) = \bottom \,\}\\
+= & \mathit{Unsat}(\varphi) \cup\\
+& \{\, s \in F \mid \forall \pi \in \mathit{CoPaths}(s) \cup \mathit{PoPaths}(s) : \exists 1 \leq i < |\pi| : \satisfaction{\varphi}(\pi[i]) = \bottom \,\} \cup\\
+& \{\, s \in S \setminus F \mid \forall \pi \in \mathit{CoPaths}(s) \cup \mathit{PoPaths}(s) : \exists 1 \leq i < |\pi| : \satisfaction{\varphi}(\pi[i]) = \bottom \,\}\\
+= & \mathit{Unsat}(\varphi) \cup\\
+& \{\, s \in F \mid \mathit{post}(s) \not= \emptyset \wedge \forall s' \in \mathit{post}(s) : \forall \pi' \in \mathit{CoPaths}(s') \cup \mathit{PoPaths}(s') : \exists 0 \leq i < |\pi'| : \satisfaction{\varphi}(\pi'[i]) = \bottom\,\} \cup\\
+& \emptyset
+\comment{\textcolor{blue}{explain this step}}\\
+= & \mathit{Unsat}(\varphi) \cup\\
+& \{\, s \in F \mid \mathit{post}(s) \not= \emptyset \wedge \forall s' \in \mathit{post}(s) : \satisfaction{\exists \always \varphi}(s') = \bottom  \,\}\\
+= & \mathit{Unsat}(\varphi) \cup\\
+& \{\, s \in F \mid \mathit{post}(s) \not= \emptyset \wedge \forall s' \in \mathit{post}(s) : s' \in \mathit{Unsat}(\exists \always \varphi) \,\}\\
+= & \mathit{Unsat}(\varphi) \cup \{\, s \in F \mid \mathit{post}(s) \not= \emptyset \wedge \mathit{post}(s) \subseteq \mathit{Unsat}(\exists \always \varphi) \,\}
 \end{align*}
+we can conclude that $\mathit{Unsat}(\exists \always \varphi) \supseteq \mathcal{G}_{\varphi}(\mathit{Unsat}(\exists \always \varphi))$.
 
-Let $V \subseteq S$ satisfying $V \supseteq \mathcal{G}_{\varphi}(V)$.  It remains to show that $V \supseteq \mathit{Unsat}(\forall \always \varphi)$.  Towards a contradiction, assume that $s \in \mathit{Unsat}(\forall \always \varphi)$ and $s \not\in V$.  Then $\satisfaction{\varphi}(\pi[i]) = \perp$  for some $\pi \in \mathit{APaths}(s)$ and $0 \leq i < |\pi|$.  A few more details need to be added (soon).
+%Let $V \subseteq S$ satisfying $V \supseteq \mathcal{G}_{\varphi}(V)$.  It remains to show that $V \supseteq \mathit{Unsat}(\exists \always \varphi)$.  First, we will show that for all $s \not\in V \cap F$ and $n \in \mathbb{N}$,
+%\begin{itemize}
+%\item[(a)]
+%$\exists \pi_n \in \mathit{CoPaths}(s) : |\pi_n| \leq n + 1$ or
+%\item[(b)]
+%$\exists \pi_n \in \mathit{PaPaths}(s) : |\pi_n| = n + 1$
+%\end{itemize}
+%and $\forall 0 \leq i < |\pi_n| : \pi_n[i] \not\in V \cap F$ and $\forall 0 \leq i < j \leq n: \pi_i \sqsubseteq \pi_j$.  We prove this by induction on $n$.  Let $s \not\in V \cap F$.  Then $s \not\in \mathcal{G}_{\varphi}(V) \cap F$ and, hence, $s \not\in F$ or $\mathit{post}(s) = \emptyset$ or $\mathit{post}(s) \not\subseteq V \cap F$.  We distinguish the following two cases.
+%\begin{itemize}
+%\item 
+%Let $n = 0$.  We distinguish two cases.
+%\begin{itemize}
+%\item 
+%If $\mathit{post}(s) = \emptyset$ then $s \in \mathit{CoPaths}(s)$ since $s \in F$.
+%\item
+%Otherwise, $\mathit{post}(s) \not\subseteq V \cap F$ and, therefore, $\mathit{post}(s) \not= \emptyset$.  Then $s \in \mathit{PaPaths}(s)$.
+%\end{itemize}
+%\item
+%Otherwise, $n > 0$.  We distinguish the following two cases.
+%\begin{itemize}
+%\item 
+%Assume $\exists \pi_{n-1} \in \mathit{CoPaths}(s) : |\pi_{n-1}| \leq n$ and $\forall 0 \leq i < |\pi_{n-1}| : \pi_{n-1}[i] \in F \setminus V$ and $\forall 0 \leq i < j \leq n - 1: \pi_i \sqsubseteq \pi_j$.  Then we choose $\pi_n = \pi_{n-1}$.
+%\item
+%Otherwise, $\exists \pi_{n-1} \in \mathit{PaPaths}(s) : |\pi_{n-1}| = n$  and $\forall 0 \leq i < |\pi_{n-1}| : \pi_{n-1}[i] \in F \setminus V$ and $\forall 0 \leq i < j \leq n - 1: \pi_i \sqsubseteq \pi_j$.  Let $s' = \pi_{n-1}[n-1]$.  Then $s' \in F \setminus V$ and, therefore, $s' \in F \setminus \mathcal{G}_{\varphi}(V)$ and, hence, $\mathit{post}(s') = \emptyset$ or $\mathit{post}(s') \not\subseteq V \cap F$.  We distinguish the following two cases.
+%\begin{itemize}
+%\item 
+%If $\mathit{post}(s') = \emptyset$ then $\pi_{n-1} \in \mathit{CoPaths}(s)$ since $s' \in F$.  Then we choose $\pi_n = \pi_{n-1}$.
+%\item
+%Otherwise, $\mathit{post}(s') \not\subseteq V \cap F$.  Let $s'' \in \mathit{post}(s')$ such that $s'' \in ???$.  In this case, $\pi_n = \pi_{n-1} s''$.
+%\end{itemize}
+%\end{itemize}
+%\end{itemize}
+
+
+
+
 
 \end{franck}
 \end{itemize}
@@ -1954,7 +2089,7 @@ We first consider the formula $\forall \nxt \varphi$, where $\varphi$ is some ar
 \satisfaction{\forall \nxt \varphi}(s) = \left \{
 \begin{array}{ll}
 \top & \mbox{if $\satisfaction{\varphi}(s') = \top$ for all $s \rightarrow s'$}\\
-\perp & \mbox{if $\satisfaction{\varphi}(s') = \perp$ for some $s \rightarrow s'$}\\
+\bottom & \mbox{if $\satisfaction{\varphi}(s') = \bottom$ for some $s \rightarrow s'$}\\
 ? & \mbox{otherwise.}
 \end{array}
 \right .
@@ -1970,7 +2105,7 @@ Next, assume that the state~$s$ is not fully explored.  Recall that state~$s$ ha
 \item 
 None of outgoing transitions of state~$s$ have been explored yet.  Let us first consider the case that $\varphi$ is $\TRUE$.  In that case, $\satisfaction{\forall \nxt \TRUE}(s) = \top$ because every state satisfies $\TRUE$.  Similarly, we have that $\satisfaction{\forall \nxt (\TRUE \vee \FALSE)}(s) = \top$.  To capture all these cases, we use the notion of equivalence of CTL formulas, denoted $\equiv$ (see \cite[Definition~6.12]{BK08}).  If $\varphi \equiv \TRUE$ then $\satisfaction{\forall \nxt \varphi}(s) = \top$.
 
-Next, let us consider the case that $\varphi$ is $\FALSE$.  No state satisfies $\FALSE$.  Hence, $\satisfaction{\forall \nxt \FALSE}(s) = \perp$.  More generally, $\varphi \equiv \FALSE$ then $\satisfaction{\forall \nxt \varphi}(s) = \perp$.
+Next, let us consider the case that $\varphi$ is $\FALSE$.  No state satisfies $\FALSE$.  Hence, $\satisfaction{\forall \nxt \FALSE}(s) = \bottom$.  More generally, $\varphi \equiv \FALSE$ then $\satisfaction{\forall \nxt \varphi}(s) = \bottom$.
 
 Otherwise, $\varphi \not\equiv \TRUE$ and $\varphi \not\equiv \FALSE$.  The former implies that there exists a transition system with initial state $s_{\TRUE}$ such that $s_{\TRUE} \not\models \varphi$ and the latter implies that there exists a transition system with initial state $s_{\FALSE}$ such that $s_{\FALSE} \models \varphi$.  State~$s_0$ has at least one outgoing transition.  We do not know anything about the target state of that transition (it could be $s_{\TRUE}$ or $s_{\FALSE}$ or any other state), we do not know that value of $\satisfaction{\forall \nxt \varphi}(s)$.
 
@@ -1979,45 +2114,45 @@ Combining the above, we arrive at
 \satisfaction{\forall \nxt \varphi}(s) = \left \{
 \begin{array}{ll}
 \top & \mbox{if $\varphi \equiv \TRUE$}\\
-\perp & \mbox{if $\varphi \equiv \FALSE$}\\
+\bottom & \mbox{if $\varphi \equiv \FALSE$}\\
 ? & \mbox{otherwise.}
 \end{array}
 \right .
 \]
 \item
-State~$s$ has a single explored outgoing transition to state~$s_1$.  State~$s$ has more outgoing transitions, but those have not been explored yet.   As in the previous case, if  $\varphi \equiv \TRUE$ then $\satisfaction{\forall \nxt \varphi}(s) = \top$, and if $\varphi \equiv \FALSE$ then $\satisfaction{\forall \nxt \varphi}(s) = \perp$.
+State~$s$ has a single explored outgoing transition to state~$s_1$.  State~$s$ has more outgoing transitions, but those have not been explored yet.   As in the previous case, if  $\varphi \equiv \TRUE$ then $\satisfaction{\forall \nxt \varphi}(s) = \top$, and if $\varphi \equiv \FALSE$ then $\satisfaction{\forall \nxt \varphi}(s) = \bottom$.
 
-Now let us consider state $s_1$ and formula $\varphi$.  If $\satisfaction{\varphi}(s_1) = \perp$, we can conclude that $\satisfaction{\forall \nxt \varphi}(s) = \perp$.  In case $\satisfaction{\varphi}(s) \not= \perp$, we obtain no additional information about $\satisfaction{\forall \nxt \varphi}(s)$.
+Now let us consider state $s_1$ and formula $\varphi$.  If $\satisfaction{\varphi}(s_1) = \bottom$, we can conclude that $\satisfaction{\forall \nxt \varphi}(s) = \bottom$.  In case $\satisfaction{\varphi}(s) \not= \bottom$, we obtain no additional information about $\satisfaction{\forall \nxt \varphi}(s)$.
 
 Combining the above, we arrive at
 \[
 \satisfaction{\forall \nxt \varphi}(s) = \left \{
 \begin{array}{ll}
 \top & \mbox{if $\varphi \equiv \TRUE$}\\
-\perp & \mbox{if $\varphi \equiv \FALSE$ or $\satisfaction{\varphi}(s_1) = \perp$}\\
+\bottom & \mbox{if $\varphi \equiv \FALSE$ or $\satisfaction{\varphi}(s_1) = \bottom$}\\
 ? & \mbox{otherwise.}
 \end{array}
 \right .
 \]
-Note that $\satisfaction{\varphi}(s_1) = \perp$ if $\varphi \equiv \FALSE$.  Hence, we can simplify the above to
+Note that $\satisfaction{\varphi}(s_1) = \bottom$ if $\varphi \equiv \FALSE$.  Hence, we can simplify the above to
 \[
 \satisfaction{\forall \nxt \varphi}(s) = \left \{
 \begin{array}{ll}
 \top & \mbox{if $\varphi \equiv \TRUE$}\\
-\perp & \mbox{if $\satisfaction{\varphi}(s_1) = \perp$}\\
+\bottom & \mbox{if $\satisfaction{\varphi}(s_1) = \bottom$}\\
 ? & \mbox{otherwise.}
 \end{array}
 \right .
 \]
 \item
-State~$s$ has explored outgoing transitions to state~$s_1$ and $s_2$.  State~$s$ has more outgoing transitions, but those have not been explored yet.   As in the previous cases, if  $\varphi \equiv \TRUE$ then $\satisfaction{\forall \nxt \varphi}(s) = \top$, and if $\varphi \equiv \FALSE$ then $\satisfaction{\forall \nxt \varphi}(s) = \perp$. 
+State~$s$ has explored outgoing transitions to state~$s_1$ and $s_2$.  State~$s$ has more outgoing transitions, but those have not been explored yet.   As in the previous cases, if  $\varphi \equiv \TRUE$ then $\satisfaction{\forall \nxt \varphi}(s) = \top$, and if $\varphi \equiv \FALSE$ then $\satisfaction{\forall \nxt \varphi}(s) = \bottom$. 
 
-Now let us consider state~$s_1$ and $s_2$.  If $\satisfaction{\varphi}(s_1) = \perp$ or $\satisfaction{\varphi}(s_2) = \perp$, we can conclude that $\satisfaction{\forall \nxt \varphi}(s) = \perp$.  In case $\satisfaction{\varphi}(s_1)\not= \perp$ and $\satisfaction{\varphi}(s_2)\not= \perp$, we obtain no additional information about $\satisfaction{\forall \nxt \varphi}(s)$.  Therefore,
+Now let us consider state~$s_1$ and $s_2$.  If $\satisfaction{\varphi}(s_1) = \bottom$ or $\satisfaction{\varphi}(s_2) = \bottom$, we can conclude that $\satisfaction{\forall \nxt \varphi}(s) = \bottom$.  In case $\satisfaction{\varphi}(s_1)\not= \bottom$ and $\satisfaction{\varphi}(s_2)\not= \bottom$, we obtain no additional information about $\satisfaction{\forall \nxt \varphi}(s)$.  Therefore,
 \[
 \satisfaction{\forall \nxt \varphi}(s) = \left \{
 \begin{array}{ll}
 \top & \mbox{if $\varphi \equiv \TRUE$}\\
-\perp & \mbox{if $\varphi \equiv \FALSE$ or $\satisfaction{\varphi}(s_1) = \perp$ or $\satisfaction{\varphi}(s_2) = \perp$}\\
+\bottom & \mbox{if $\varphi \equiv \FALSE$ or $\satisfaction{\varphi}(s_1) = \bottom$ or $\satisfaction{\varphi}(s_2) = \bottom$}\\
 ? & \mbox{otherwise.}
 \end{array}
 \right .
@@ -2027,7 +2162,7 @@ This can be simplified to
 \satisfaction{\forall \nxt \varphi}(s) = \left \{
 \begin{array}{ll}
 \top & \mbox{if $\varphi \equiv \TRUE$}\\
-\perp & \mbox{if $\satisfaction{\varphi}(s_1) = \perp$ or $\satisfaction{\varphi}(s_2) = \perp$}\\
+\bottom & \mbox{if $\satisfaction{\varphi}(s_1) = \bottom$ or $\satisfaction{\varphi}(s_2) = \bottom$}\\
 ? & \mbox{otherwise.}
 \end{array}
 \right .
@@ -2038,7 +2173,7 @@ The above three cases can be generalized as follows.
 \satisfaction{\forall \nxt \varphi}(s) = \left \{
 \begin{array}{ll}
 \top & \mbox{if $\varphi \equiv \TRUE$}\\
-\perp & \mbox{if $\varphi \equiv \FALSE$ or $\satisfaction{\varphi}(s') = \perp$ for some $s \rightarrow s'$}\\
+\bottom & \mbox{if $\varphi \equiv \FALSE$ or $\satisfaction{\varphi}(s') = \bottom$ for some $s \rightarrow s'$}\\
 ? & \mbox{otherwise.}
 \end{array}
 \right .
@@ -2072,7 +2207,7 @@ Next, let us consider the formula $\exists \nxt \varphi$, where $\varphi$ is som
 \satisfaction{\exists \nxt \varphi}(s) = \left \{
 \begin{array}{ll}
 \top & \mbox{if $\satisfaction{\varphi}(s') = \top$ for some $s \rightarrow s'$}\\
-\perp & \mbox{if $\satisfaction{\varphi}(s') = \perp$ for all $s \rightarrow s'$}\\
+\bottom & \mbox{if $\satisfaction{\varphi}(s') = \bottom$ for all $s \rightarrow s'$}\\
 ? & \mbox{otherwise.}
 \end{array}
 \right .
@@ -2081,14 +2216,14 @@ The above is equivalent to
 \[
 \satisfaction{\exists \nxt \varphi}(s) = \bigvee \{\, \satisfaction{\varphi}(s') \mid s \rightarrow s' \,\}.
 \]
-Note that $\bigvee \emptyset = \perp$.
+Note that $\bigvee \emptyset = \bottom$.
 
 Next, assume that the state~$s$ is not fully explored.  Recall that state~$s$ has outgoing transitions, but those have not been explored yet.  We distinguish three cases.
 \begin{itemize}
 \item 
 None of outgoing transitions of state~$s$ have been explored yet.  Let us first consider the case that $\varphi$ is $\TRUE$.  In that case, $\satisfaction{\exists \nxt \TRUE}(s) = \top$ because state~$s$ has outgoing transitions and every state satisfies $\TRUE$.  More generally, if $\varphi \equiv \TRUE$ then $\satisfaction{\exists \nxt \varphi}(s) = \top$.
 
-Next, let us consider the case that $\varphi$ is $\FALSE$.  No state satisfies $\FALSE$.  Hence, $\satisfaction{\exists \nxt \FALSE}(s) = \perp$.  More generally, $\varphi \equiv \FALSE$ then $\satisfaction{\exists \nxt \varphi}(s) = \perp$.
+Next, let us consider the case that $\varphi$ is $\FALSE$.  No state satisfies $\FALSE$.  Hence, $\satisfaction{\exists \nxt \FALSE}(s) = \bottom$.  More generally, $\varphi \equiv \FALSE$ then $\satisfaction{\exists \nxt \varphi}(s) = \bottom$.
 
 Otherwise, $\varphi \not\equiv \TRUE$ and $\varphi \not\equiv \FALSE$.  The former implies that there exists a transition system with initial state $s_{\TRUE}$ such that $s_{\TRUE} \not\models \varphi$ and the latter implies that there exists a transition system with initial state $s_{\FALSE}$ such that $s_{\FALSE} \models \varphi$.  State~$s$ has at least one outgoing transition.  We do not know anything about the target state of that transition (it could be $s_{\TRUE}$ or $s_{\FALSE}$ or any other state), we do not know that value of $\satisfaction{\exists \nxt \varphi}(s)$.
 
@@ -2097,13 +2232,13 @@ Combining the above, we arrive at
 \satisfaction{\exists \nxt \varphi}(s) = \left \{
 \begin{array}{ll}
 \top & \mbox{if $\varphi \equiv \TRUE$}\\
-\perp & \mbox{if $\varphi \equiv \FALSE$}\\
+\bottom & \mbox{if $\varphi \equiv \FALSE$}\\
 ? & \mbox{otherwise.}
 \end{array}
 \right .
 \]
 \item
-State~$s$ has a single explored outgoing transition to state~$s_1$.  State~$s$ has more outgoing transitions, but those have not been explored yet.   As in the previous case, if  $\varphi \equiv \TRUE$ then $\satisfaction{\exists \nxt \varphi}(s) = \top$, and if $\varphi \equiv \FALSE$ then $\satisfaction{\exists \nxt \varphi}(s) = \perp$.
+State~$s$ has a single explored outgoing transition to state~$s_1$.  State~$s$ has more outgoing transitions, but those have not been explored yet.   As in the previous case, if  $\varphi \equiv \TRUE$ then $\satisfaction{\exists \nxt \varphi}(s) = \top$, and if $\varphi \equiv \FALSE$ then $\satisfaction{\exists \nxt \varphi}(s) = \bottom$.
 
 Now let us consider state $s_1$ and formula $\varphi$.  If $\satisfaction{\varphi}(s_1) = \top$, we can conclude that $\satisfaction{\exists \nxt \varphi}(s) = \top$.  In case $\satisfaction{\varphi}(s_1)\not= \top$, we obtain no additional information about $\satisfaction{\exists \nxt \varphi}(s)$.
 
@@ -2112,7 +2247,7 @@ Combining the above, we arrive at
 \satisfaction{\exists \nxt \varphi}(s) = \left \{
 \begin{array}{ll}
 \top & \mbox{if $\varphi \equiv \TRUE$ or $\satisfaction{\varphi}(s_1) = \top$}\\
-\perp & \mbox{if $\varphi \equiv \FALSE$}\\
+\bottom & \mbox{if $\varphi \equiv \FALSE$}\\
 ? & \mbox{otherwise.}
 \end{array}
 \right .
@@ -2122,20 +2257,20 @@ Note that $\satisfaction{\varphi}(s_1) = \top$ if $\varphi \equiv \TRUE$.  Hence
 \satisfaction{\exists \nxt \varphi}(s) = \left \{
 \begin{array}{ll}
 \top & \mbox{if $\satisfaction{\varphi}(s_1) = \top$}\\
-\perp & \mbox{if $\varphi \equiv \FALSE$}\\
+\bottom & \mbox{if $\varphi \equiv \FALSE$}\\
 ? & \mbox{otherwise.}
 \end{array}
 \right .
 \]
 \item
-State~$s$ has explored outgoing transitions to state~$s_1$ and $s_2$.  State~$s$ has more outgoing transitions, but those have not been explored yet.   As in the previous cases, if  $\varphi \equiv \TRUE$ then $\satisfaction{\exists \nxt \varphi}(s) = \top$, and if $\varphi \equiv \FALSE$ then $\satisfaction{\exists \nxt \varphi}(s) = \perp$. 
+State~$s$ has explored outgoing transitions to state~$s_1$ and $s_2$.  State~$s$ has more outgoing transitions, but those have not been explored yet.   As in the previous cases, if  $\varphi \equiv \TRUE$ then $\satisfaction{\exists \nxt \varphi}(s) = \top$, and if $\varphi \equiv \FALSE$ then $\satisfaction{\exists \nxt \varphi}(s) = \bottom$. 
 
 Now let us consider state~$s_1$ and $s_2$.  If $\satisfaction{\varphi}(s_1) = \top$ or $\satisfaction{\varphi}(s_2) = \top$, we can conclude that $\satisfaction{\exists \nxt \varphi}(s) = \top$.  In case $\satisfaction{\varphi}(s_1)\not= \top$ and $\satisfaction{\varphi}(s_2)\not= \top$, we obtain no additional information about $\satisfaction{\exists \nxt \varphi}(s)$.  Therefore,
 \[
 \satisfaction{\exists \nxt \varphi}(s) = \left \{
 \begin{array}{ll}
 \top & \mbox{if $\varphi \equiv \TRUE$ or $\satisfaction{\varphi}(s_1) = \top$ or $\satisfaction{\varphi}(s_2) = \top$}\\
-\perp & \mbox{if $\varphi \equiv \FALSE$}\\
+\bottom & \mbox{if $\varphi \equiv \FALSE$}\\
 ? & \mbox{otherwise.}
 \end{array}
 \right .
@@ -2145,7 +2280,7 @@ This can be simplified to
 \satisfaction{\exists \nxt \varphi}(s) = \left \{
 \begin{array}{ll}
 \top & \mbox{if $\satisfaction{\varphi}(s_1) = \top$ or $\satisfaction{\varphi}(s_2) = \top$}\\
-\perp & \mbox{if $\varphi \equiv \FALSE$}\\
+\bottom & \mbox{if $\varphi \equiv \FALSE$}\\
 ? & \mbox{otherwise.}
 \end{array}
 \right .
@@ -2156,7 +2291,7 @@ The above three cases can be generalized as follows.
 \satisfaction{\exists \nxt \varphi}(s) = \left \{
 \begin{array}{ll}
 \top & \mbox{if $\varphi \equiv \TRUE$ or $\satisfaction{\varphi}(s') = \top$ for some $s \rightarrow s'$}\\
-\perp & \mbox{if $\varphi \equiv \FALSE$}\\
+\bottom & \mbox{if $\varphi \equiv \FALSE$}\\
 ? & \mbox{otherwise.}
 \end{array}
 \right .
@@ -2186,7 +2321,7 @@ Next, let us consider the formulas $\forall \always \varphi$.  Assume that the s
 \satisfaction{\forall \always \varphi}(s) = \left \{
 \begin{array}{ll}
 \top & \mbox{if $\satisfaction{\varphi}(s) = \top$ and $\satisfaction{\forall \always \varphi}(s') = \top$ for all $s \rightarrow s'$}\\
-\perp & \mbox{if $\satisfaction{\varphi}(s) = \perp$ or $\satisfaction{\forall \always \varphi}(s') = \perp$ for some $s \rightarrow s'$}\\
+\bottom & \mbox{if $\satisfaction{\varphi}(s) = \bottom$ or $\satisfaction{\forall \always \varphi}(s') = \bottom$ for some $s \rightarrow s'$}\\
 ? & \mbox{otherwise.}
 \end{array}
 \right .
@@ -2197,9 +2332,9 @@ Next, assume that the state $s$ is not fully explored.  Recall that state~$s$ ha
 \item 
 None of outgoing transitions of state~$s$ have been explored yet.  Let us first consider the case that $\varphi$ is $\TRUE$.  In that case, $\satisfaction{\forall \always \TRUE}(s) = \top$ because each (reachable) state satisfies $\TRUE$.
 
-Next, let us consider the case that $\varphi$ is $\FALSE$.  No state satisfies $\FALSE$.  Hence, $\satisfaction{\forall \always \FALSE}(s) = \perp$.  More generally, $\varphi \equiv \FALSE$ then $\satisfaction{\forall \always \varphi}(s) = \perp$.
+Next, let us consider the case that $\varphi$ is $\FALSE$.  No state satisfies $\FALSE$.  Hence, $\satisfaction{\forall \always \FALSE}(s) = \bottom$.  More generally, $\varphi \equiv \FALSE$ then $\satisfaction{\forall \always \varphi}(s) = \bottom$.
 
-If $\satisfaction{\varphi}(s) = \perp$, there exists a state reachable from state~$s$ that does not satisfy $\varphi$ and, hence, $\satisfaction{\forall \always \varphi}(s) = \perp$.
+If $\satisfaction{\varphi}(s) = \bottom$, there exists a state reachable from state~$s$ that does not satisfy $\varphi$ and, hence, $\satisfaction{\forall \always \varphi}(s) = \bottom$.
 
 Otherwise, $\varphi \not\equiv \TRUE$ and $\varphi \not\equiv \FALSE$.  The former implies that there exists a transition system with initial state $s_{\TRUE}$ such that $s_{\TRUE} \not\models \varphi$ and the latter implies that there exists a transition system with initial state $s_{\FALSE}$ such that $s_{\FALSE} \models \varphi$.  Hence, $\satisfaction{\forall \always \varphi}(s) = ?$.
 
@@ -2208,7 +2343,7 @@ Combining the above, we arrive at
 \satisfaction{\forall \always \varphi}(s) = \left \{
 \begin{array}{ll}
 \top & \mbox{if $\varphi \equiv \TRUE$}\\
-\perp & \mbox{if $\varphi \equiv \FALSE$ or $\satisfaction{\varphi}(s) = \perp$}\\
+\bottom & \mbox{if $\varphi \equiv \FALSE$ or $\satisfaction{\varphi}(s) = \bottom$}\\
 ? & \mbox{otherwise.}
 \end{array}
 \right .
@@ -2218,24 +2353,24 @@ This can be further simplified to
 \satisfaction{\forall \always \varphi}(s) = \left \{
 \begin{array}{ll}
 \top & \mbox{if $\varphi \equiv \TRUE$}\\
-\perp & \mbox{if $\satisfaction{\varphi}(s) = \perp$}\\
+\bottom & \mbox{if $\satisfaction{\varphi}(s) = \bottom$}\\
 ? & \mbox{otherwise.}
 \end{array}
 \right .
 \]
 \item
-State~$s$ has a single explored outgoing transition to state~$s_1$.  State~$s$ has more outgoing transitions, but those have not been explored yet.   As in the previous case, if  $\varphi \equiv \TRUE$ then $\satisfaction{\forall \always \varphi}(s) = \top$, and if $\varphi \equiv \FALSE$ then $\satisfaction{\forall \always \varphi}(s) = \perp$.
+State~$s$ has a single explored outgoing transition to state~$s_1$.  State~$s$ has more outgoing transitions, but those have not been explored yet.   As in the previous case, if  $\varphi \equiv \TRUE$ then $\satisfaction{\forall \always \varphi}(s) = \top$, and if $\varphi \equiv \FALSE$ then $\satisfaction{\forall \always \varphi}(s) = \bottom$.
 
-If $\satisfaction{\varphi}(s) = \perp$, there exists a state reachable from state~$s$ that does not satisfy $\varphi$ and, hence, $\satisfaction{\forall \always \varphi}(s) = \perp$.
+If $\satisfaction{\varphi}(s) = \bottom$, there exists a state reachable from state~$s$ that does not satisfy $\varphi$ and, hence, $\satisfaction{\forall \always \varphi}(s) = \bottom$.
 
-Now let us consider state $s_1$.  If $\satisfaction{\forall \always \varphi}(s_1) = \perp$, we can conclude that $\satisfaction{\forall \always \varphi}(s) = \perp$.  In case $\satisfaction{\forall \always \varphi}(s_1)\not= \perp$, we obtain no additional information about $\satisfaction{\forall \always \varphi}(s)$.
+Now let us consider state $s_1$.  If $\satisfaction{\forall \always \varphi}(s_1) = \bottom$, we can conclude that $\satisfaction{\forall \always \varphi}(s) = \bottom$.  In case $\satisfaction{\forall \always \varphi}(s_1)\not= \bottom$, we obtain no additional information about $\satisfaction{\forall \always \varphi}(s)$.
 
 Combining the above, we arrive at
 \[
 \satisfaction{\forall \always \varphi}(s) = \left \{
 \begin{array}{ll}
 \top & \mbox{if $\varphi \equiv \TRUE$}\\
-\perp & \mbox{if $\varphi \equiv \FALSE$ or $\satisfaction{\varphi}(s) = \perp$ or $\satisfaction{\forall \always \varphi}(s_1) = \perp$}\\
+\bottom & \mbox{if $\varphi \equiv \FALSE$ or $\satisfaction{\varphi}(s) = \bottom$ or $\satisfaction{\forall \always \varphi}(s_1) = \bottom$}\\
 ? & \mbox{otherwise.}
 \end{array}
 \right .
@@ -2245,22 +2380,22 @@ This can be further simplified to
 \satisfaction{\forall \always \varphi}(s) = \left \{
 \begin{array}{ll}
 \top & \mbox{if $\varphi \equiv \TRUE$}\\
-\perp & \mbox{if $\satisfaction{\varphi}(s) = \perp$ or $\satisfaction{\forall \always \varphi}(s_1) = \perp$}\\
+\bottom & \mbox{if $\satisfaction{\varphi}(s) = \bottom$ or $\satisfaction{\forall \always \varphi}(s_1) = \bottom$}\\
 ? & \mbox{otherwise.}
 \end{array}
 \right .
 \]
 \item
-State~$s$ has explored outgoing transitions to state~$s_1$ and $s_2$.  State~$s$ has more outgoing transitions, but those have not been explored yet.   As in the previous cases, if  $\varphi \equiv \TRUE$ then $\satisfaction{\forall \always \varphi}(s) = \top$, and if $\varphi \equiv \FALSE$ then $\satisfaction{\forall \always \varphi}(s) = \perp$. 
+State~$s$ has explored outgoing transitions to state~$s_1$ and $s_2$.  State~$s$ has more outgoing transitions, but those have not been explored yet.   As in the previous cases, if  $\varphi \equiv \TRUE$ then $\satisfaction{\forall \always \varphi}(s) = \top$, and if $\varphi \equiv \FALSE$ then $\satisfaction{\forall \always \varphi}(s) = \bottom$. 
 
-If $\satisfaction{\varphi}(s) = \perp$, there exists a state reachable from state~$s$ that does not satisfy $\varphi$ and, hence, $\satisfaction{\forall \always \varphi}(s) = \perp$.
+If $\satisfaction{\varphi}(s) = \bottom$, there exists a state reachable from state~$s$ that does not satisfy $\varphi$ and, hence, $\satisfaction{\forall \always \varphi}(s) = \bottom$.
 
-Now let us consider state~$s_1$ and $s_2$.  If $\satisfaction{\forall \always \varphi}(s_1) = \perp$, we can conclude that $\satisfaction{\forall \always \varphi}(s) = \perp$.  Similarly, if $\satisfaction{\forall \always \varphi}(s_2) = \perp$, then $\satisfaction{\forall \always \varphi}(s) = \perp$.  Otherwise, we obtain no additional information about $\satisfaction{\forall \always \varphi}(s)$.  Therefore,
+Now let us consider state~$s_1$ and $s_2$.  If $\satisfaction{\forall \always \varphi}(s_1) = \bottom$, we can conclude that $\satisfaction{\forall \always \varphi}(s) = \bottom$.  Similarly, if $\satisfaction{\forall \always \varphi}(s_2) = \bottom$, then $\satisfaction{\forall \always \varphi}(s) = \bottom$.  Otherwise, we obtain no additional information about $\satisfaction{\forall \always \varphi}(s)$.  Therefore,
 \[
 \satisfaction{\forall \always \varphi}(s) = \left \{
 \begin{array}{ll}
 \top & \mbox{if $\varphi \equiv \TRUE$}\\
-\perp & \mbox{if $\varphi \equiv \FALSE$ or $\satisfaction{\varphi}(s) = \perp$ or $\satisfaction{\forall \always \varphi}(s_1) = \perp$ or $\satisfaction{\forall \always \varphi}(s_2) = \perp$}\\
+\bottom & \mbox{if $\varphi \equiv \FALSE$ or $\satisfaction{\varphi}(s) = \bottom$ or $\satisfaction{\forall \always \varphi}(s_1) = \bottom$ or $\satisfaction{\forall \always \varphi}(s_2) = \bottom$}\\
 ? & \mbox{otherwise.}
 \end{array}
 \right .
@@ -2270,7 +2405,7 @@ This can be further simplified to
 \satisfaction{\forall \always \varphi}(s) = \left \{
 \begin{array}{ll}
 \top & \mbox{if $\varphi \equiv \TRUE$}\\
-\perp & \mbox{if $\satisfaction{\varphi}(s) = \perp$ or $\satisfaction{\forall \always \varphi}(s_1) = \perp$ or $\satisfaction{\forall \always \varphi}(s_2) = \perp$}\\
+\bottom & \mbox{if $\satisfaction{\varphi}(s) = \bottom$ or $\satisfaction{\forall \always \varphi}(s_1) = \bottom$ or $\satisfaction{\forall \always \varphi}(s_2) = \bottom$}\\
 ? & \mbox{otherwise.}
 \end{array}
 \right .
@@ -2281,13 +2416,13 @@ The above three cases can be generalized as follows.
 \satisfaction{\forall \always \varphi}(s) = \left \{
 \begin{array}{ll}
 \top & \mbox{if $\varphi \equiv \TRUE$}\\
-\perp & \mbox{if $\satisfaction{\varphi}(s) = \perp$ or $\satisfaction{\forall \always \varphi}(s') = \perp$ for some $s \rightarrow s'$}\\
+\bottom & \mbox{if $\satisfaction{\varphi}(s) = \bottom$ or $\satisfaction{\forall \always \varphi}(s') = \bottom$ for some $s \rightarrow s'$}\\
 ? & \mbox{otherwise.}
 \end{array}
 \right .
 \]
 
-Now consider that case that state~$s$ is not fully explored and transitions to itself and assume that $\varphi \not\equiv \FALSE$ and $\satisfaction{\varphi}(s) \not= \perp$.  Then $\satisfaction{\forall \always \varphi}(s) = \perp$ if $\satisfaction{\forall \always \varphi}(s) = \perp$.  To demonstrate that $\satisfaction{\forall \always \varphi}$ can be defined so that it satisfies the above equation, we will rely on the Knaster-Tarski fixed-point theorem \cite{K28,T55}.
+Now consider that case that state~$s$ is not fully explored and transitions to itself and assume that $\varphi \not\equiv \FALSE$ and $\satisfaction{\varphi}(s) \not= \bottom$.  Then $\satisfaction{\forall \always \varphi}(s) = \bottom$ if $\satisfaction{\forall \always \varphi}(s) = \bottom$.  To demonstrate that $\satisfaction{\forall \always \varphi}$ can be defined so that it satisfies the above equation, we will rely on the Knaster-Tarski fixed-point theorem \cite{K28,T55}.
 
 Let us first reformulate the above in terms of $\mathit{Sat}$, $\mathit{Unsat}$, and $\mathit{Unknown}$.  
 \begin{align*}
@@ -2373,7 +2508,7 @@ Next, let us consider the formulas $\exists \always \varphi$.  Assume that the s
 \satisfaction{\exists \always \varphi}(s) = \left \{
 \begin{array}{ll}
 \top & \mbox{if $\satisfaction{\varphi}(s) = \top$ and ($s \not\rightarrow$ or $\satisfaction{\exists \always \varphi}(s') = \top$ for some $s \rightarrow s'$)}\\
-\perp & \mbox{if $\satisfaction{\varphi}(s) = \perp$ or ($s \rightarrow$ and $\satisfaction{\exists \always \varphi}(s') = \perp$ for all $s \rightarrow s'$)}\\
+\bottom & \mbox{if $\satisfaction{\varphi}(s) = \bottom$ or ($s \rightarrow$ and $\satisfaction{\exists \always \varphi}(s') = \bottom$ for all $s \rightarrow s'$)}\\
 ? & \mbox{otherwise.}
 \end{array}
 \right .
@@ -2384,7 +2519,7 @@ Next, assume that the state $s$ is not fully explored.  Then
 \satisfaction{\exists \always \varphi}(s) = \left \{
 \begin{array}{ll}
 \top & \mbox{if $\varphi \equiv \TRUE$ or ($\satisfaction{\varphi}(s) = \top$ and $\satisfaction{\exists \always \varphi}(s') = \top$ for some $s \rightarrow s'$)}\\
-\perp & \mbox{if $\satisfaction{\varphi}(s) = \perp$}\\
+\bottom & \mbox{if $\satisfaction{\varphi}(s) = \bottom$}\\
 ? & \mbox{otherwise.}
 \end{array}
 \right .
