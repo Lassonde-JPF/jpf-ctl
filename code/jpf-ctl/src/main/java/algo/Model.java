@@ -210,34 +210,55 @@ public class Model {
 			unSat.removeAll(Sat);
 			return new StateSets(Sat, unSat);
 		} else if (formula instanceof ExistsAlways) {
-			ExistsAlways f = (ExistsAlways) formula;
-			Set<Integer> Sat = check(f.getFormula()).sat;
-			List<Integer> E = pts.getStates().stream().filter(s -> !Sat.contains(s)).collect(Collectors.toList());
-			Set<Integer> T = Sat;
-
-			int max = 0;
-			if (!Sat.isEmpty())
-				max = Collections.max(Sat);
-			Integer[] count = new Integer[max + 1];
-			for (Integer s : Sat) {
-				count[s] = Post(s).size();
-			}
-			while (!E.isEmpty()) {
-				Integer sP = E.remove(0);
-				Set<Integer> preS = Pre(sP);
-				for (Integer s : preS) {
-					if (T.contains(s)) {
-						count[s] = count[s - 1];
-						if (count[s] == 0) {
-							T.remove(s);
-							E.add(s);
+			ExistsAlways subFormula = ((ExistsAlways) formula).getFormula();
+			
+			BitSet sat = new BitSet();
+			sat.set(0, pts.getNumberOfStates());
+			if (!subFormula instanceof True) {
+				BitSet subResult = check(subFormula).getSat();
+				BitSet previous;
+				do {
+					previous = sat;
+					sat = new BitSet();
+					// Matt: I am converted, streams are convenient (but seem not to interact well with BitSets)
+					for (int state = subResult.nextSetBit(0); state != -1; state = subResult.nextSetBit(state + 1)) { // for each state in Sat(subFormula)
+						if (post.get(state).isEmpty() || !post.get(state).and(previous).isEmpty()) { // post(state) is empty or intersection of post(state) and previous is nonempty
+							sat.set(state);
 						}
 					}
-				}
+				} while (!sat.equals(previous));
 			}
-			Set<Integer> unSat = new HashSet<Integer>(pts.getStates());
-			unSat.removeAll(T);
-			return new StateSets(T, unSat);
+			
+			// still need to compute unsat
+			BitSet unsat = new BitSet();
+			
+//			Set<Integer> Sat = check(f.getFormula()).sat;
+//			List<Integer> E = pts.getStates().stream().filter(s -> !Sat.contains(s)).collect(Collectors.toList());
+//			Set<Integer> T = Sat;
+//
+//			int max = 0;
+//			if (!Sat.isEmpty())
+//				max = Collections.max(Sat);
+//			Integer[] count = new Integer[max + 1];
+//			for (Integer s : Sat) {
+//				count[s] = Post(s).size();
+//			}
+//			while (!E.isEmpty()) {
+//				Integer sP = E.remove(0);
+//				Set<Integer> preS = Pre(sP);
+//				for (Integer s : preS) {
+//					if (T.contains(s)) {
+//						count[s] = count[s - 1];
+//						if (count[s] == 0) {
+//							T.remove(s);
+//							E.add(s);
+//						}
+//					}
+//				}
+//			}
+//			Set<Integer> unSat = new HashSet<Integer>(pts.getStates());
+//			unSat.removeAll(T);
+			return new StateSets(sat, unsat);
 		}
 		/*
 		 * This case is (EF p1) case. On page 333 of the textbook there is an alternate
@@ -272,7 +293,7 @@ public class Model {
 			if (subFormula instanceof True) {
 				for (int state = 0; state < pts.getNumberOfStates(); state++) {
 					if (pts.getProcessed().contains(state)) { // state is fully explored
-						if (!post.get(state).isEmpty()) { //post(state) is nonempty
+						if (!post.get(state).isEmpty()) { // post(state) is nonempty
 							sat.set(state);
 						}
 					} else { // state is not fully explored
