@@ -68,8 +68,10 @@ public class Model {
 	 * before, adds the entry to a hashtable, post
 	 */
 	private Set<Integer> Post(Integer state) {
-		post.computeIfAbsent(state, k -> pts.getTransitions().stream().filter(t -> t.source == state).map(t -> t.target)
-				.distinct().collect(Collectors.toSet()));
+		post.computeIfAbsent(state, k -> pts.getTransitions().stream()		
+				.filter(t -> t.source == state)
+				.map(t -> t.target)
+				.collect(Collectors.toSet()));
 		return post.get(state);
 	}
 
@@ -78,8 +80,10 @@ public class Model {
 	 * computed before, adds the entry to a hashtable, pre
 	 */
 	private Set<Integer> Pre(Integer state) {
-		pre.computeIfAbsent(state, k -> pts.getTransitions().stream().filter(t -> t.target == state).map(t -> t.source)
-				.distinct().collect(Collectors.toSet()));
+		pre.computeIfAbsent(state, k -> pts.getTransitions().stream()
+				.filter(t -> t.target == state)
+				.map(t -> t.source)
+				.collect(Collectors.toSet()));
 		return pre.get(state);
 	}
 
@@ -122,8 +126,10 @@ public class Model {
 				Field f = obj.getField(fieldName);
 				Object val = f.get(obj); // This is the "value" of the AP's field
 				// now we filter all states by those whose label contains this value
-				Sat = pts.getStates().stream().filter(s -> pts.getLabelling().containsKey(s))
-						.filter(s -> pts.getLabelling().get(s).contains(val)).collect(Collectors.toSet());
+				Sat = pts.getStates().stream()
+						.filter(s -> pts.getLabelling().containsKey(s))
+						.filter(s -> pts.getLabelling().get(s).contains(val))
+						.collect(Collectors.toSet());
 
 				unSat = new HashSet<Integer>(pts.getStates());
 				unSat.removeAll(Sat);
@@ -184,7 +190,9 @@ public class Model {
 		} else if (formula instanceof ExistsAlways) {
 			ExistsAlways f = (ExistsAlways) formula;
 			Set<Integer> Sat = check(f.getFormula()).sat;
-			List<Integer> E = pts.getStates().stream().filter(s -> !Sat.contains(s)).collect(Collectors.toList());
+			List<Integer> E = pts.getStates().stream()
+					.filter(s -> !Sat.contains(s))
+					.collect(Collectors.toList());
 			Set<Integer> T = Sat;
 
 			Map<Integer, Integer> count = new HashMap<Integer, Integer>();
@@ -234,7 +242,9 @@ public class Model {
 		} else if (formula instanceof ExistsNext) {
 			ExistsNext eN = (ExistsNext) formula;
 			StateSets S = check(eN.getFormula()); // recursive part
-			Set<Integer> Sat = pts.getTransitions().stream().filter(t -> S.sat.contains(t.target)).map(t -> t.source)
+			Set<Integer> Sat = pts.getTransitions().stream()
+					.filter(t -> S.sat.contains(t.target))
+					.map(t -> t.source)
 					.collect(Collectors.toSet());
 			Set<Integer> unSat = new HashSet<Integer>(pts.getStates());
 			unSat.removeAll(Sat);
@@ -296,7 +306,9 @@ public class Model {
 			ForAllEventually fAF = (ForAllEventually) formula;
 			// In this case we want the !p1 or the unsat states
 			Set<Integer> S = check(fAF.getFormula()).unsat;
-			List<Integer> E = pts.getStates().stream().filter(s -> !S.contains(s)).collect(Collectors.toList());
+			List<Integer> E = pts.getStates().stream()
+					.filter(s -> !S.contains(s))
+					.collect(Collectors.toList());
 			Set<Integer> T = S;
 
 			Map<Integer, Integer> count = new HashMap<Integer, Integer>();
@@ -328,7 +340,9 @@ public class Model {
 
 			// States that DO NOT satisfy this formula CONTAIN a transition in which the
 			// TARGET is NOT CONTAINED in Sat(p1)
-			Set<Integer> unSat = pts.getTransitions().stream().filter(t -> !S.sat.contains(t.target)).map(t -> t.source)
+			Set<Integer> unSat = pts.getTransitions().stream()
+					.filter(t -> !S.sat.contains(t.target))
+					.map(t -> t.source)
 					.collect(Collectors.toSet());
 
 			Set<Integer> Sat = new HashSet<Integer>(pts.getStates());
@@ -366,10 +380,14 @@ public class Model {
 					}
 				}
 			}
-			Set<Integer> EU = pts.getStates().stream().filter(s -> !T.contains(s)).collect(Collectors.toSet());
+			Set<Integer> EU = pts.getStates().stream()
+					.filter(s -> !T.contains(s))
+					.collect(Collectors.toSet());
 
 			// Piece3: !EG!p2
-			List<Integer> F = pts.getStates().stream().filter(s -> !R.unsat.contains(s)).collect(Collectors.toList());
+			List<Integer> F = pts.getStates().stream()
+					.filter(s -> !R.unsat.contains(s))
+					.collect(Collectors.toList());
 			Set<Integer> G = R.unsat;
 
 			Map<Integer, Integer> count = new HashMap<Integer, Integer>();
