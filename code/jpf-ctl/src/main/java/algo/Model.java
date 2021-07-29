@@ -123,10 +123,8 @@ public class Model {
 				Object val = f.get(obj); // This is the "value" of the AP's field
 
 				// now we filter all states by those whose label contains this value
-				Sat = pts.getStates().stream()
-						.filter(s -> pts.getLabelling().containsKey(s))
-						.filter(s -> pts.getLabelling().get(s).contains(val))
-						.collect(Collectors.toSet());
+				Sat = pts.getStates().stream().filter(s -> pts.getLabelling().containsKey(s))
+						.filter(s -> pts.getLabelling().get(s).contains(val)).collect(Collectors.toSet());
 
 				unSat = new HashSet<Integer>(pts.getStates());
 				unSat.removeAll(Sat);
@@ -193,11 +191,8 @@ public class Model {
 			List<Integer> E = pts.getStates().stream().filter(s -> !Sat.contains(s)).collect(Collectors.toList());
 			Set<Integer> T = Sat;
 
-			int max = 0;
-			if (!Sat.isEmpty())
-				max = Collections.max(Sat);
-			Integer[] count = new Integer[max + 1];
-			for (Integer s : Sat) {
+			Integer[] count = new Integer[T.isEmpty() ? 0 : Collections.max(T)+1];
+			for (Integer s : T) {
 				count[s] = Post(s).size();
 			}
 			while (!E.isEmpty()) {
@@ -205,7 +200,7 @@ public class Model {
 				Set<Integer> preS = Pre(sP);
 				for (Integer s : preS) {
 					if (T.contains(s)) {
-						count[s] = count[s - 1];
+						count[s] = count[s] - 1;
 						if (count[s] == 0) {
 							T.remove(s);
 							E.add(s);
@@ -310,11 +305,8 @@ public class Model {
 			List<Integer> E = pts.getStates().stream().filter(s -> !S.contains(s)).collect(Collectors.toList());
 			Set<Integer> T = S;
 
-			int max = 0;
-			if (!S.isEmpty())
-				max = Collections.max(S);
-			Integer[] count = new Integer[max + 1];
-			for (Integer s : S) {
+			Integer[] count = new Integer[T.isEmpty() ? 0 : Collections.max(T)+1];
+			for (Integer s : T) {
 				count[s] = Post(s).size();
 			}
 			while (!E.isEmpty()) {
@@ -322,7 +314,7 @@ public class Model {
 				Set<Integer> preS = Pre(sP);
 				for (Integer s : preS) {
 					if (T.contains(s)) {
-						count[s] = count[s - 1];
+						count[s] = count[s] - 1;
 						if (count[s] == 0) {
 							T.remove(s);
 							E.add(s);
@@ -388,11 +380,8 @@ public class Model {
 			List<Integer> F = pts.getStates().stream().filter(s -> !R.unsat.contains(s)).collect(Collectors.toList());
 			Set<Integer> G = R.unsat;
 
-			int max = 0;
-			if (!R.unsat.isEmpty())
-				max = Collections.max(R.unsat);
-			Integer[] count = new Integer[max + 1];
-			for (Integer s : R.unsat) {
+			Integer[] count = new Integer[G.isEmpty() ? 0 : Collections.max(G)+1];
+			for (Integer s : G) {
 				count[s] = Post(s).size();
 			}
 			while (!F.isEmpty()) {
@@ -400,8 +389,7 @@ public class Model {
 				Set<Integer> preS = Pre(sP);
 				for (Integer s : preS) {
 					if (G.contains(s)) {
-						//TODO the count breaks here will an index out of bounds -1
-						count[s] = count[s - 1];
+						count[s] = count[s] - 1;
 						if (count[s] == 0) {
 							G.remove(s);
 							F.add(s);

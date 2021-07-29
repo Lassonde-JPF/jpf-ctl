@@ -39,8 +39,10 @@ public class ModelCheckerTest {
 
 	@Test
 	void checkRandom() {
-		StateSets result = test(Formula.random().toString(), new LabelledPartialTransitionSystem());
-		assertNotNull(result);
+		for (int i = 0; i < 100; i++) {
+			StateSets result = test(Formula.random().toString(), new LabelledPartialTransitionSystem());
+			assertNotNull(result);
+		}
 	}
 
 	@Test
