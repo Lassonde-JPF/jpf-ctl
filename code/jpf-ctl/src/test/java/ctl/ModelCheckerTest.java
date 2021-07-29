@@ -1,7 +1,6 @@
 package ctl;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -39,9 +38,16 @@ public class ModelCheckerTest {
 
 	@Test
 	void checkRandom() {
-		for (int i = 0; i < 100; i++) {
-			StateSets result = test(Formula.random().toString(), new LabelledPartialTransitionSystem());
-			assertNotNull(result);
+		for (int i = 0; i < 1; i++) {
+			LabelledPartialTransitionSystem pts = new LabelledPartialTransitionSystem();
+			String input = Formula.random().toString();
+			StateSets result = test(input, pts);
+
+			System.out.println("Transition System:\n" + pts);
+			System.out.println("Input formula:\n" + input);
+			System.out.println("Result:" + result);
+
+			toDot(pts, "Random" + i);
 		}
 	}
 
@@ -273,8 +279,8 @@ public class ModelCheckerTest {
 
 		LabelledPartialTransitionSystem ptsTF = new LabelledPartialTransitionSystem();
 		StateSets TF = test("true AU false", ptsTF);
-		Set<Integer> expected = ptsTF.getStates().stream()
-				.filter(s -> !ptsTF.getTransitions().stream().map(t -> t.source).collect(Collectors.toSet()).contains(s))
+		Set<Integer> expected = ptsTF.getStates().stream().filter(
+				s -> !ptsTF.getTransitions().stream().map(t -> t.source).collect(Collectors.toSet()).contains(s))
 				.collect(Collectors.toSet());
 		assertEquals(expected, TF.getUnSat());
 
@@ -308,14 +314,15 @@ public class ModelCheckerTest {
 		StateSets result = test("java.lang.Integer.MAX_VALUE || java.lang.Integer.MIN_VALUE", pts);
 		Set<Integer> Sat = new HashSet<Integer>();
 		pts.getLabelling().entrySet().forEach(entry -> {
-			if (entry.getValue().contains(java.lang.Integer.MAX_VALUE) || entry.getValue().contains(java.lang.Integer.MIN_VALUE)) {
+			if (entry.getValue().contains(java.lang.Integer.MAX_VALUE)
+					|| entry.getValue().contains(java.lang.Integer.MIN_VALUE)) {
 				Sat.add(entry.getKey());
 			}
 		});
 		assertEquals(Sat, result.sat);
 		toDot(pts, "checkAtomicProposition");
 	}
-	
+
 	private void toDot(LabelledPartialTransitionSystem pts, String fileName) {
 		String pathPrefix = "src/test/resources/toDot/";
 		File file = new File(pathPrefix + ModelCheckerTest.class.getName() + "_" + fileName + ".dot");
@@ -329,13 +336,13 @@ public class ModelCheckerTest {
 	}
 
 	public StateSets test(String input, LabelledPartialTransitionSystem pts) {
-		//System.out.println("Transition System:\n" + pts);
+		// System.out.println("Transition System:\n" + pts);
 		ParseTree tree = parseCtl(input);
 		Formula formula = generator.visit(tree);
-		//System.out.println("Input formula:\n" + input);
+		// System.out.println("Input formula:\n" + input);
 		StateSets ss = new Model(pts).check(formula);
-		//System.out.println("Result:");
-		//System.out.println(ss);
+		// System.out.println("Result:");
+		// System.out.println(ss);
 		return ss;
 	}
 

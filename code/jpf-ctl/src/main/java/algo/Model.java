@@ -121,24 +121,20 @@ public class Model {
 				Class<?> obj = Class.forName(className);
 				Field f = obj.getField(fieldName);
 				Object val = f.get(obj); // This is the "value" of the AP's field
-
 				// now we filter all states by those whose label contains this value
 				Sat = pts.getStates().stream().filter(s -> pts.getLabelling().containsKey(s))
 						.filter(s -> pts.getLabelling().get(s).contains(val)).collect(Collectors.toSet());
 
 				unSat = new HashSet<Integer>(pts.getStates());
 				unSat.removeAll(Sat);
-
 				// This catch should never be triggered as we filter for these possibilities in
 				// the FieldExists class
 			} catch (ClassNotFoundException | NoSuchFieldException | SecurityException | IllegalArgumentException
 					| IllegalAccessException e) {
 				System.err.println("This error should never have happened:\n" + e.getMessage());
 			}
-
 			return new StateSets(Sat, unSat);
 		}
-
 		else if (formula instanceof And) {
 			And f = (And) formula;
 			StateSets L = check(f.getLeft());
@@ -191,17 +187,15 @@ public class Model {
 			List<Integer> E = pts.getStates().stream().filter(s -> !Sat.contains(s)).collect(Collectors.toList());
 			Set<Integer> T = Sat;
 
-			Integer[] count = new Integer[T.isEmpty() ? 0 : Collections.max(T)+1];
-			for (Integer s : T) {
-				count[s] = Post(s).size();
-			}
+			Map<Integer, Integer> count = new HashMap<Integer, Integer>();
+			T.stream().forEach(s -> count.computeIfAbsent(s, k -> Post(s).size()));
 			while (!E.isEmpty()) {
 				Integer sP = E.remove(0);
 				Set<Integer> preS = Pre(sP);
 				for (Integer s : preS) {
 					if (T.contains(s)) {
-						count[s] = count[s] - 1;
-						if (count[s] == 0) {
+						count.compute(s, (k, v) -> v - 1);
+						if (count.get(s) == 0) {
 							T.remove(s);
 							E.add(s);
 						}
@@ -305,17 +299,15 @@ public class Model {
 			List<Integer> E = pts.getStates().stream().filter(s -> !S.contains(s)).collect(Collectors.toList());
 			Set<Integer> T = S;
 
-			Integer[] count = new Integer[T.isEmpty() ? 0 : Collections.max(T)+1];
-			for (Integer s : T) {
-				count[s] = Post(s).size();
-			}
+			Map<Integer, Integer> count = new HashMap<Integer, Integer>();
+			T.stream().forEach(s -> count.computeIfAbsent(s, k -> Post(s).size()));
 			while (!E.isEmpty()) {
 				Integer sP = E.remove(0);
 				Set<Integer> preS = Pre(sP);
 				for (Integer s : preS) {
 					if (T.contains(s)) {
-						count[s] = count[s] - 1;
-						if (count[s] == 0) {
+						count.compute(s, (k, v) -> v - 1);
+						if (count.get(s) == 0) {
 							T.remove(s);
 							E.add(s);
 						}
@@ -380,17 +372,15 @@ public class Model {
 			List<Integer> F = pts.getStates().stream().filter(s -> !R.unsat.contains(s)).collect(Collectors.toList());
 			Set<Integer> G = R.unsat;
 
-			Integer[] count = new Integer[G.isEmpty() ? 0 : Collections.max(G)+1];
-			for (Integer s : G) {
-				count[s] = Post(s).size();
-			}
+			Map<Integer, Integer> count = new HashMap<Integer, Integer>();
+			G.stream().forEach(s -> count.computeIfAbsent(s, k -> Post(s).size()));
 			while (!F.isEmpty()) {
 				Integer sP = F.remove(0);
 				Set<Integer> preS = Pre(sP);
 				for (Integer s : preS) {
 					if (G.contains(s)) {
-						count[s] = count[s] - 1;
-						if (count[s] == 0) {
+						count.compute(s, (k, v) -> v - 1);
+						if (count.get(s) == 0) {
 							G.remove(s);
 							F.add(s);
 						}
