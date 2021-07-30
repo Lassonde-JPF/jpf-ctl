@@ -25,7 +25,6 @@ import ctl.Formula;
 import ctl.Or;
 import ctl.*;
 import java.lang.reflect.Field;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -405,7 +404,7 @@ public class Model {
 					}
 				}
 			}
-			Set<Integer> notF = new HashSet<Integer>(pts.getStates());
+			Set<Integer>  notF = new HashSet<Integer>(pts.getStates());
 			notF.removeAll(F);
 
 			// Piece4: Piece2 && Piece3

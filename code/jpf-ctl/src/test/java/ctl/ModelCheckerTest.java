@@ -28,6 +28,8 @@ import error.FieldExists;
 
 public class ModelCheckerTest {
 	private Generator generator;
+	
+	private static final int NUM_ITERATIONS = 1;
 
 	/**
 	 * Creates a Generator object for use by each test case
@@ -39,7 +41,7 @@ public class ModelCheckerTest {
 
 	@Test
 	void checkRandom() {
-		for (int i = 0; i < 1; i++) {
+		for (int i = 0; i < NUM_ITERATIONS; i++) {
 			LabelledPartialTransitionSystem pts = new LabelledPartialTransitionSystem();
 			String input = Formula.random().toString();
 			StateSets result = test(input, pts);

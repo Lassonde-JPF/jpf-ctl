@@ -65,6 +65,8 @@ public class PartialTransitionSystemListener extends SearchListenerAdapter {
 	private int source;
 	private int target;
 	private int newStates;
+	
+	private static final int SINK_STATE = -2;
 
 	/**
 	 * Creates a new PartialTransitionSystemListener instance
@@ -173,6 +175,7 @@ public class PartialTransitionSystemListener extends SearchListenerAdapter {
 
 		StringJoiner sj = new StringJoiner(" ");
 		for (int state : unexploredStates) {
+			writer.printf("%d -> %d%n", state, SINK_STATE);
 			sj.add("" + state);
 		}
 

@@ -50,7 +50,6 @@ public abstract class Formula {
 	public static Formula random(int depth) {
 		final int BASE_CASES = 3;
 		final int INDUCTIVE_CASES = 13;
-		final int MAX_INDEX = 9;
 		
 		if (depth == 0) {
 			switch (RANDOM.nextInt(BASE_CASES)) {

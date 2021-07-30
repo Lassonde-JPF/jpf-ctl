@@ -54,6 +54,9 @@ public class LabelledPartialTransitionSystem {
 
 	// number of states in the system
 	private int states;
+	
+	// sink state
+	private static final int SINK_STATE = -2;
 
 	public static final Object[] javaFields = new Object[] { java.lang.Integer.MAX_VALUE, java.lang.Integer.MIN_VALUE,
 			java.lang.Double.MAX_VALUE, java.lang.Double.MIN_VALUE, java.lang.Float.MAX_VALUE,
@@ -81,6 +84,9 @@ public class LabelledPartialTransitionSystem {
 				if (random.nextDouble() < TRANSITIONS) {
 					this.transitions.add(new Transition(source, target));
 				}
+			}
+			if (!this.processed.contains(source)) {
+				this.transitions.add(new Transition(source, SINK_STATE));
 			}
 		}
 
