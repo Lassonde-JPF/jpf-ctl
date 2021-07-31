@@ -3,8 +3,8 @@ package algo;
 import java.util.Set;
 
 public class StateSets {
-	public Set<Integer> sat;
-	public Set<Integer> unsat;
+	private Set<Integer> sat;
+	private Set<Integer> unsat;
 
 	/**
 	 * @param sat

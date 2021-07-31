@@ -33,28 +33,30 @@ import java.util.stream.IntStream;
  */
 public class LabelledPartialTransitionSystem {
 
-	// states that are fully explored
-	private Set<Integer> processed;
+	// states that are not fully explored
+	private Set<Integer> partial;
 	// transitions
 	private Set<Transition> transitions;
 	// labelling of the states
 	private Map<Integer, Set<Object>> labelling;
+	// all states
+	private Set<Integer> stateSet;
 
 	// maximum number of states
-	private static final int MAX_STATES = 100;
+	private static final int MAX_STATES = 15;
 
-	// probability that a state is fully explored
-	private static final double PROCESSED = 0.8;
+	// probability that a state is not explored
+	private static final double PARTIAL = 0.1;
 
 	// maximum number of states
-	private static final int MAX_LABELS = 5;
+	private static final int MAX_LABELS_PER_STATE = 5;
 
 	// probability that a state is labeled
-	private static final double LABELLED = 0.8;
+	private static final double LABELLED = 0.9;
 
 	// number of states in the system
 	private int states;
-	
+
 	// sink state
 	private static final int SINK_STATE = -2;
 
@@ -68,15 +70,24 @@ public class LabelledPartialTransitionSystem {
 	public LabelledPartialTransitionSystem() {
 		Random random = new Random(System.currentTimeMillis());
 
+		// The number of states that will be in this transition system
 		states = 1 + random.nextInt(MAX_STATES);
+		stateSet = IntStream.range(0, states).boxed().collect(Collectors.toSet());
 
-		this.processed = new HashSet<Integer>();
+		/*
+		 * Randomly generates a set of states that will be considered 'not fully
+		 * explored'
+		 */
+		this.partial = new HashSet<Integer>();
 		for (int state = 0; state < states; state++) {
-			if (random.nextDouble() < PROCESSED) {
-				this.processed.add(state);
+			if (random.nextDouble() < PARTIAL) {
+				this.partial.add(state);
 			}
 		}
 
+		/*
+		 * Randomly generates transitions between states (explored and not explored)
+		 */
 		final double TRANSITIONS = 2 * Math.log(states) / states;
 		this.transitions = new HashSet<Transition>();
 		for (int source = 0; source < states; source++) {
@@ -85,24 +96,25 @@ public class LabelledPartialTransitionSystem {
 					this.transitions.add(new Transition(source, target));
 				}
 			}
-			if (!this.processed.contains(source)) {
+			if (this.partial.contains(source)) {
 				this.transitions.add(new Transition(source, SINK_STATE));
 			}
 		}
 
-		int labels = 4 + random.nextInt(MAX_LABELS - 4 + 1);
+		// TODO So I need to label -2 (sink state) as true once and false another time
+		// but not at the same time..?
 		this.labelling = new HashMap<Integer, Set<Object>>();
 		for (int state = 0; state < states; state++) {
+			// Do we give this state a labeling?
 			if (random.nextDouble() < LABELLED) {
+				// How many labels should this state have (roughly since it's a set and may have
+				// duplicates)
+				int labels = 1 + random.nextInt(MAX_LABELS_PER_STATE);
 				Set<Object> labelSet = new HashSet<Object>();
 				this.labelling.put(state, labelSet);
-				do {
-					for (int label = 0; label < labels; label++) {
-						if (random.nextDouble() < LABELLED / labels) {
-							labelSet.add(javaFields[label]);
-						}
-					}
-				} while (labelSet.isEmpty());
+				for (int label = 0; label < labels; label++) {
+					labelSet.add(javaFields[random.nextInt(javaFields.length)]);
+				}
 			}
 		}
 	}
@@ -114,7 +126,7 @@ public class LabelledPartialTransitionSystem {
 			toString.append(transition);
 			toString.append("\n");
 		}
-		for (Integer state : this.processed) {
+		for (Integer state : this.partial) {
 			toString.append(state);
 			toString.append(" ");
 		}
@@ -150,7 +162,7 @@ public class LabelledPartialTransitionSystem {
 			toDot.append("  " + state + " [");
 
 			// if this state is not fully explored
-			if (!this.processed.contains(state)) {
+			if (this.partial.contains(state)) {
 				toDot.append("shape=box ");
 			}
 
@@ -194,9 +206,8 @@ public class LabelledPartialTransitionSystem {
 		return toDot.toString();
 	}
 
-	// TODO this is super messy
 	public Set<Integer> getStates() {
-		return IntStream.range(0, states).boxed().collect(Collectors.toSet());
+		return this.stateSet;
 	}
 
 	public Set<Transition> getTransitions() {
