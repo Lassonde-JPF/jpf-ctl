@@ -1,5 +1,7 @@
 package algo;
 
+import java.lang.reflect.Field;
+
 /*
  * Copyright (C)  2021
  *
@@ -35,15 +37,19 @@ public class LabelledPartialTransitionSystem {
 
 	// states that are not fully explored
 	private Set<Integer> partial;
+	
 	// transitions
 	private Set<Transition> transitions;
+	
 	// labelling of the states
-	private Map<Integer, Set<Object>> labelling;
+	private Map<Integer, Set<Integer>> labelling; // stateID -> indicies
+	private Map<String, Integer> fields; // qualifiedFieldNames -> indicies 
+	
 	// all states
 	private Set<Integer> stateSet;
 
 	// maximum number of states
-	private static final int MAX_STATES = 15;
+	private static final int MAX_STATES = 50;
 
 	// probability that a state is not explored
 	private static final double PARTIAL = 0.1;
@@ -59,10 +65,6 @@ public class LabelledPartialTransitionSystem {
 
 	// sink state
 	private static final int SINK_STATE = -2;
-
-	public static final Object[] javaFields = new Object[] { java.lang.Integer.MAX_VALUE, java.lang.Integer.MIN_VALUE,
-			java.lang.Double.MAX_VALUE, java.lang.Double.MIN_VALUE, java.lang.Float.MAX_VALUE,
-			java.lang.Float.MIN_VALUE };
 
 	/**
 	 * Initializes this labeled partial transition system randomly.
@@ -88,7 +90,7 @@ public class LabelledPartialTransitionSystem {
 		/*
 		 * Randomly generates transitions between states (explored and not explored)
 		 */
-		final double TRANSITIONS = 2 * Math.log(states) / states;
+		final double TRANSITIONS = 2 * Math.log(states) / Math.pow(states, 1.5);//2 * Math.log(states) / states;
 		this.transitions = new HashSet<Transition>();
 		for (int source = 0; source < states; source++) {
 			for (int target = 0; target < states; target++) {
@@ -100,20 +102,32 @@ public class LabelledPartialTransitionSystem {
 				this.transitions.add(new Transition(source, SINK_STATE));
 			}
 		}
+		
+		// Field Setup
+		this.fields = new HashMap<String, Integer>();
+		String[] fieldNames = new String[] {
+			"algo.JavaFields.p1",
+			"algo.JavaFields.p2",
+			"algo.JavaFields.p3",
+			"algo.JavaFields.p4"
+		};
+		for (int i = 0; i < fieldNames.length; i++) {
+			fields.put(fieldNames[i], i);
+		}
 
 		// TODO So I need to label -2 (sink state) as true once and false another time
 		// but not at the same time..?
-		this.labelling = new HashMap<Integer, Set<Object>>();
+		this.labelling = new HashMap<Integer, Set<Integer>>();
 		for (int state = 0; state < states; state++) {
 			// Do we give this state a labeling?
 			if (random.nextDouble() < LABELLED) {
 				// How many labels should this state have (roughly since it's a set and may have
 				// duplicates)
 				int labels = 1 + random.nextInt(MAX_LABELS_PER_STATE);
-				Set<Object> labelSet = new HashSet<Object>();
+				Set<Integer> labelSet = new HashSet<Integer>();
 				this.labelling.put(state, labelSet);
 				for (int label = 0; label < labels; label++) {
-					labelSet.add(javaFields[random.nextInt(javaFields.length)]);
+					labelSet.add(random.nextInt(fields.size())); //next int is exclusive
 				}
 			}
 		}
@@ -176,10 +190,8 @@ public class LabelledPartialTransitionSystem {
 			}
 
 			// Append colors by label
-			for (int i = 0; i < javaFields.length; i++) {
-				if (labelling.get(state).contains(javaFields[i])) {
-					toDot.append((i + 2) + ":");
-				}
+			for (Integer i : labelling.get(state)) {
+				toDot.append((i + 2) + ":");
 			}
 
 			// remove last :
@@ -214,8 +226,12 @@ public class LabelledPartialTransitionSystem {
 		return this.transitions;
 	}
 
-	public Map<Integer, Set<Object>> getLabelling() {
+	public Map<Integer, Set<Integer>> getLabelling() {
 		return this.labelling;
+	}
+	
+	public Map<String, Integer> getFields() {
+		return this.fields;
 	}
 
 }

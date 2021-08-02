@@ -44,10 +44,20 @@ public class ModelCheckerTest {
 		for (int i = 0; i < NUM_ITERATIONS; i++) {
 			LabelledPartialTransitionSystem pts = new LabelledPartialTransitionSystem();
 			String input = Formula.random().toString();
-			StateSets result = test(input, pts);
+			
+			ParseTree tree = parseCtl(input);
+			Formula formula = generator.visit(tree);
+			// System.out.println("Input formula:\n" + input);
+			
+			Model m = new Model(pts);
+			
+			StateSets result = m.check(formula);
 
 			System.out.println("Transition System:\n" + pts);
 			System.out.println("Input formula:\n" + input);
+			
+			m.printSubResult();
+			
 			System.out.println("Result:" + result);
 
 			toDot(pts, "Random" + i);
