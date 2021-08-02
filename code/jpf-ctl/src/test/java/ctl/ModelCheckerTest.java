@@ -49,7 +49,7 @@ public class ModelCheckerTest {
 			System.out.println("Transition System:\n" + pts);
 			System.out.println("Input formula:\n" + input);
 			System.out.println("Result:" + result);
-
+            
 			toDot(pts, "Random" + i);
 		}
 	}
@@ -188,7 +188,7 @@ public class ModelCheckerTest {
 		StateSets T = test("EF true", ptsT);
 		assertEquals(ptsT.getStates(), T.getSat());
 		assertEquals(true, T.getUnSat().isEmpty());
-
+        
 		LabelledPartialTransitionSystem ptsF = new LabelledPartialTransitionSystem();
 		StateSets F = test("EF false", ptsF);
 		assertEquals(ptsF.getStates(), F.getUnSat());
@@ -345,11 +345,38 @@ public class ModelCheckerTest {
 		Formula formula = generator.visit(tree);
 		// System.out.println("Input formula:\n" + input);
 		StateSets ss = new Model(pts).check(formula);
+	    
 		// System.out.println("Result:");
 		// System.out.println(ss);
 		return ss;
 	}
 
+	@Test
+	void checkCounterExample() {
+		LabelledPartialTransitionSystem pts = new LabelledPartialTransitionSystem();
+		
+		ParseTree tree = parseCtl("AX EX java.lang.Integer.MAX_VALUE");
+		Formula formula = generator.visit(tree);
+		Model m = new Model(pts);
+
+		StateSets T = m.check(formula);
+
+		Set<Integer> Sat = new HashSet<Integer>();
+		pts.getLabelling().entrySet().forEach(entry -> {
+			if (entry.getValue().contains(java.lang.Integer.MAX_VALUE)
+					|| entry.getValue().contains(java.lang.Integer.MIN_VALUE)) {
+				Sat.add(entry.getKey());
+			}
+		});
+
+		if(!T.getSat().contains(0))
+		{
+			System.out.print(m.getCounterExample(formula, 0).toString());
+		}
+        System.out.println("hello");
+		assertEquals(Sat, T.getSat());
+		
+	}
 	/**
 	 * 
 	 * Translates a syntactically correct CTL formula from its String form to a
