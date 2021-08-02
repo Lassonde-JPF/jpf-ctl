@@ -59,15 +59,21 @@ public class Model {
 	// Target Transition System
 	private final LabelledPartialTransitionSystem pts;
 	
+	
+	private Formula f; 
+	private String formulaResult;
 	private List<String> formulaStack;
 	
 
 	// Constructor 
-	public Model(LabelledPartialTransitionSystem pts) {
+	public Model(LabelledPartialTransitionSystem pts, Formula f) {
 		this.post = new HashMap<Integer, Set<Integer>>();
 		this.pre = new HashMap<Integer, Set<Integer>>();
 
 		this.pts = pts;
+		
+		this.f = f;
+		this.formulaResult = f.toString();
 		
 		formulaStack = new ArrayList<String>();
 	}
@@ -100,9 +106,11 @@ public class Model {
 	
 	private void buildSubResult(Formula subFormula, Set<Integer> Sat) {
 		
-		String result = "Formula: " + subFormula + "\n\tResult: " + Sat.toString();
+		//String result = "Formula: " + subFormula + "\n\tResult: " + Sat.toString();
 		
-		formulaStack.add(result);
+		formulaResult = f.toString().replaceAll(subFormula.toString().trim(), Sat.toString());
+		
+		formulaStack.add(formulaResult);
 	}
 	
 	public void printSubResult() {
