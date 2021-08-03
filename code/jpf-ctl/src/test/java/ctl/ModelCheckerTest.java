@@ -47,7 +47,6 @@ public class ModelCheckerTest {
 			
 			ParseTree tree = parseCtl(input);
 			Formula formula = generator.visit(tree);
-			// System.out.println("Input formula:\n" + input);
 			
 			Model m = new Model(pts);
 			
@@ -212,7 +211,7 @@ public class ModelCheckerTest {
 		// Should be all states which have a transition (i.e are a source node)
 		// TODO and not the sink state?
 		Set<Integer> expected = ptsT.getTransitions().stream()
-				.filter(t -> t.target != -2)
+				//.filter(t -> t.target != -2)
 				.map(t -> t.source)
 				.collect(Collectors.toSet());
 		assertEquals(expected, T.getSat());
@@ -350,13 +349,9 @@ public class ModelCheckerTest {
 	}
 
 	public StateSets test(String input, LabelledPartialTransitionSystem pts) {
-		// System.out.println("Transition System:\n" + pts);
 		ParseTree tree = parseCtl(input);
 		Formula formula = generator.visit(tree);
-		// System.out.println("Input formula:\n" + input);
 		StateSets ss = new Model(pts).check(formula);
-		// System.out.println("Result:");
-		// System.out.println(ss);
 		return ss;
 	}
 

@@ -1,7 +1,5 @@
 package algo;
 
-import java.lang.reflect.Field;
-
 /*
  * Copyright (C)  2021
  *
@@ -119,13 +117,13 @@ public class LabelledPartialTransitionSystem {
 		// but not at the same time..?
 		this.labelling = new HashMap<Integer, Set<Integer>>();
 		for (int state = 0; state < states; state++) {
+			Set<Integer> labelSet = new HashSet<Integer>();
+			this.labelling.put(state, labelSet);
 			// Do we give this state a labeling?
 			if (random.nextDouble() < LABELLED) {
 				// How many labels should this state have (roughly since it's a set and may have
 				// duplicates)
 				int labels = 1 + random.nextInt(MAX_LABELS_PER_STATE);
-				Set<Integer> labelSet = new HashSet<Integer>();
-				this.labelling.put(state, labelSet);
 				for (int label = 0; label < labels; label++) {
 					labelSet.add(random.nextInt(fields.size())); //next int is exclusive
 				}
