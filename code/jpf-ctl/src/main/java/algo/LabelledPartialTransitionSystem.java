@@ -119,8 +119,17 @@ public class LabelledPartialTransitionSystem {
 		}
 	}
 
+	
+	public LabelledPartialTransitionSystem(Set<Integer> states, Set<Transition> t, Map<Integer, Set<Object>> l) {
+		this.partial = states;
+		this.transitions = t;
+		this.labelling = l;
+	}
+	
+	
 	@Override
 	public String toString() {
+		
 		StringBuffer toString = new StringBuffer();
 		for (Transition transition : this.transitions) {
 			toString.append(transition);

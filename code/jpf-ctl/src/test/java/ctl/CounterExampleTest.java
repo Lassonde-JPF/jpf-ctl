@@ -44,7 +44,7 @@ public class CounterExampleTest {
 	void checkCounterExample() {
 		LabelledPartialTransitionSystem pts = new LabelledPartialTransitionSystem();
 		
-		ParseTree tree = parseCtl("AX EX java.lang.Integer.MAX_VALUE");
+		ParseTree tree = parseCtl("EX true");
 		Formula formula = generator.visit(tree);
 		Model m = new Model(pts);
 
@@ -57,21 +57,14 @@ public class CounterExampleTest {
 				Sat.add(entry.getKey());
 			}
 		});
-
+		
 		if(!T.getSat().contains(0))
 		{
+			System.out.print("\nCounter example: \n");
 			System.out.print(m.getCounterExample(formula, 0).toString());
+			
 		}
-//		LabelledPartialTransitionSystem pts = new LabelledPartialTransitionSystem();
-//		StateSets result = test("java.lang.Integer.MAX_VALUE || java.lang.Integer.MIN_VALUE", pts);
-//		Set<Integer> Sat = new HashSet<Integer>();
-//		pts.getLabelling().entrySet().forEach(entry -> {
-//			if (entry.getValue().contains(java.lang.Integer.MAX_VALUE)
-//					|| entry.getValue().contains(java.lang.Integer.MIN_VALUE)) {
-//				Sat.add(entry.getKey());
-//			}
-//		});
-//		assertEquals(Sat, result.getSat());
+
 		
 	}
 
