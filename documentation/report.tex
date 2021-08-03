@@ -1489,6 +1489,14 @@ Assume that $\varphi \not\equiv \FALSE$.  Without loss of generality, there exis
 \right .
 \]
 \end{corollary}
+
+\begin{proposition}
+\label{proposition:exists-always-not-fully-explored}
+Let $\varphi \not\equiv \FALSE$.  For all $s \in S \setminus F$, if $s \not\in \mathit{Unsat}(\varphi)$ then there exists $\pi \in \mathit{PoPaths}(s)$ such that for all $0 \leq i < |\pi|$, $\satisfaction{\varphi}(\pi[i]) \not= \bottom$.
+\end{proposition}
+\begin{proof}
+Assume that $\varphi \not\equiv \FALSE$.  Then there exists $s' \in \mathcal{S} \setminus S$ such that $\satisfaction{\varphi}(s') \not= \satisfaction{\FALSE}(s') = \bottom$.  Let $s \in S \setminus F$.  Then $s s' \in \mathit{PoPaths}(s)$ and $\satisfaction{\varphi}(s) \not= \bottom$ since $s \not\in \mathit{Unsat}(\varphi)$.
+\end{proof}
 \end{franck}
 
 \section{}
@@ -1808,8 +1816,8 @@ Since
 & \{\, s \in S \setminus F \mid \forall \pi \in \mathit{CoPaths}(s) \cup \mathit{PoPaths}(s) : \exists 1 \leq i < |\pi| : \satisfaction{\varphi}(\pi[i]) = \bottom \,\}\\
 = & \mathit{Unsat}(\varphi) \cup\\
 & \{\, s \in F \mid \mathit{post}(s) \not= \emptyset \wedge \forall s' \in \mathit{post}(s) : \forall \pi' \in \mathit{CoPaths}(s') \cup \mathit{PoPaths}(s') : \exists 0 \leq i < |\pi'| : \satisfaction{\varphi}(\pi'[i]) = \bottom\,\} \cup\\
-& \emptyset
-\comment{\textcolor{blue}{explain this step}}\\
+& 
+\comment{Proposition~\ref{proposition:exists-always-not-fully-explored}}\\
 = & \mathit{Unsat}(\varphi) \cup\\
 & \{\, s \in F \mid \mathit{post}(s) \not= \emptyset \wedge \forall s' \in \mathit{post}(s) : \satisfaction{\exists \always \varphi}(s') = \bottom  \,\}\\
 = & \mathit{Unsat}(\varphi) \cup\\
@@ -1891,33 +1899,19 @@ State~-1 is the initial state.  The states -1 and 0 are fully explored, and  sta
 \end{verbatim}
 The first three lines describe the transitions.  Each line contains the source of the transition followed by the target of the transition.  The last line contains the states that are not fully explored yet.
 
+\begin{franck}
+\section{Counterexamples and Witnesses}
+
+
+\end{franck}
+
+
+
 \bibliographystyle{plain}
 \bibliography{report}
 
 \end{document}
 
-%
-%\section{Normal forms for CTL}
-%
-%\description
-%The objective of this project is to develop a translation of CTL formulas to equivalent formulas in existential normal form and positive normal form for partial transition systems (as defined in the ``new semantics for CTL'' project).  Existential normal form is introduced in Definition~6.13 of the textbook and positive normal form is defined in Definition~6.15.  These normal forms may have to be adjusted to deal with partial transition systems.  
-%
-%\resources
-%\begin{itemize}
-%\item 
-%The textbook.
-%\end{itemize}
-%
-%\deliverables
-%\begin{itemize}
-%\item
-%Definitions of existential normal form and positive normal form for CTL for partial transition systems.
-%\item
-%A proof that for each CTL formula there exists an equivalent CTL formula in existential normal form in the context of partial transition systems (similar to the proof of Theorem~6.14 of the textbook, but considering partial transition systems and providing more details).  A similar result for positive normal form (see Theorem~6.16 of the textbook).
-%\item
-%A report containing the definitions, the proofs, and several examples illustrating how CTL formulas are translated into the normal forms.
-%\end{itemize}
-%
 %\section{Translation of CTL to normal forms}
 %
 %\description
@@ -1963,54 +1957,7 @@ The first three lines describe the transitions.  Each line contains the source o
 %A report describing the algorithm and its correctness proof.
 %\end{itemize}
 %
-%\section{JPF listener that writes a partial transition system to file}
-%
-%\description
-%The first objective of this project is to develop a listener for Java PathFinder (JPF) that writes its partial transition system to file.  Partial transition systems are defined in the ``new semantics for CTL'' project.  In Section~7.3 of the notes, a listener that writes a transition system to file has been developed.  This listener needs to be extended to the setting of partial transition systems.
-%
-%Consider the following partial transition system.
-%\begin{center}
-%\begin{tikzpicture}[yscale=0.9]
-%\node (start) at (0,3) {};
-%\node[rectangle,fill=red!20] (-1) at (1,2.5) {-1};
-%\node[rectangle,fill=red!20] (0) at (1,1) {0};
-%\node[circle,fill=red!20] (1) at (0,0) {1};
-%\node[circle,fill=red!20] (2) at (2,0) {2};
-%
-%\draw[->] (start)--(-1);
-%\draw[->] (-1)--(0);
-%\draw[->] (0)--(1);
-%\draw[->] (0)--(2);
-%\end{tikzpicture}
-%\end{center}
-%State~-1 is the initial state.  The states -1 and 0 are fully explored, and  states 1 and 2 are not fully explored.  The listener should produce a file, the name of which is the name of the system under test with ``.tra'' as suffix (see Section 7.4 of the notes), with the following content.
-%\begin{verbatim}
-%-1 -> 0
-%0 -> 1
-%0 -> 2
-%1 2
-%\end{verbatim}
-%The first three lines describe the transitions.  The last line contains the states that are not fully explored.
-%
-%The second objective of this project is to develop a listener for JPF that writes a graphical representation, using the DOT format, of a partial transition system to file.  In Section~7.4 of the notes, a similar listener is described.
-%
-%\resources
-%\begin{itemize}
-%\item 
-%\href{https://wiki.eecs.yorku.ca/course_archive/2019-20/W/4315/_media/notes.pdf}{Java PathFinder: a tool to detect bugs in Java code}.
-%\item
-%\href{https://github.com/javapathfinder/jpf-core/wiki}{The Java PathFinder website}.
-%\end{itemize}
-%
-%\deliverables
-%\begin{itemize}
-%\item 
-%Properly documented Java code of the listeners.
-%\item
-%A test suite, ideally using JPF's extension of JUnit, that rigorously tests the listeners.
-%\item
-%A report describing the design, implementation, and testing of the listeners.
-%\end{itemize}
+
 %
 %\section{Implementation of CTL model checking algorithm}
 %
@@ -2032,50 +1979,24 @@ The first three lines describe the transitions.  Each line contains the source o
 %\item
 %A report describing the design, implementation, and testing of the algorithm.
 %\end{itemize}
-%
-%\section{Dependencies between the projects}
-%
-%Several projects depend on other projects.  The diagram below depicts these dependencies.  If there is an arrow from one project to another, it means that the latter is dependent on the former.  As a consequence, the latter project needs (some of) the results of the former project.
-%
-%\begin{center}
-%\begin{tikzpicture}
-%\node (1) at (0,4) {1};
-%\node (2) at (0,3) {2};
-%\node (3) at (2,4) {3};
-%\node (4) at (2,3) {4};
-%\node (5) at (1,2) {5};
-%\node (6) at (3,2) {6};
-%\node (7) at (5,2) {7};
-%\node (8) at (3,1) {8};
-%
-%\draw[->] (1)--(2);
-%\draw[->] (2)--(5);
-%\draw[->] (3)--(4);
-%\draw[->] (4)--(5);
-%\draw[->] (4)--(6);
-%\draw[->] (5)--(8);
-%\draw[->] (6)--(8);
-%\draw[->] (7)--(8);
-%\end{tikzpicture}
-%\end{center}
-%
-%Because of these dependencies, deadlines of the projects differ.
-%
-%\begin{tabular}{rl}
-%project number & deadline\\
-%\hline
-%1 & March 5\\
-%2 & March 26\\
-%3 & March 5\\
-%4 & March 26\\
-%5 & April 9\\
-%6 & April 9\\
-%7 & April 9\\
-%8 & April 23 
-%\end{tabular}
-%
-%\end{document}
 
+
+Bruns and Godefroid study partial Kripke structures in \cite{BG}.  These differ from ordinary transition system in their labelling function.  In our notation, $L : S \times \mathit{AP} \to \{ \top, \bottom, ? \}$.
+
+According to Bruns and Godefroid, ``Obviously, any partial Kripke structure can be completed to obtain a traditional fully-defined Kripke structure, where $\varphi$ always evaluates to either true or false.  Some partial Kripke structures can only be completed to form Kripke structures that all satisfy the property $\varphi$, or to form Kripke structures that all violate $\varphi$ (this is the case, for instance but not exclusively, when $\varphi$ is a tautology or is unsatisfiable with a 2-valued interpretation).  Some other partial Kripke structures can be completed
+to form Kripke structures that satisfy φ as well as Kripke structures that violate $\varphi$.''
+
+Glenn Bruns and Patrice Godefroid
+Model Checking Partial State Spaces with 3-Valued Temporal Logics
+
+Glenn Bruns and Patrice Godefroid
+Generalized Model Checking: Reasoning about Partial State Spaces
+
+
+Kleene's strongest regular 3-valued propositional logic
+
+Stephen Cole Kleene. Introduction to Metamathematics. North Holland,
+1987.
 
 
 One may be tempted to assume that these non-fully explored states \emph{have} unexplored transitions that are not part of the transition relation $\rightarrow$.  We will \emph{not} make the assumption that states which are not fully explored \emph{must have} outgoing transitions (they \emph{may have} them) because it complicates our algorithm as we will explain next.
