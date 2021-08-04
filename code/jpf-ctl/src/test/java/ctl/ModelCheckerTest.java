@@ -281,7 +281,10 @@ public class ModelCheckerTest {
 		LabelledPartialTransitionSystem ptsF = new LabelledPartialTransitionSystem();
 		StateSets F = test("AX false", ptsF);
 		Set<Integer> expected = ptsF.getStates().stream()
-				.filter(s -> !ptsF.getTransitions().stream().map(t -> t.source).collect(Collectors.toSet()).contains(s))
+				.filter(s -> !ptsF.getTransitions().stream()
+						.map(t -> t.source)
+						.collect(Collectors.toSet())
+						.contains(s))
 				.collect(Collectors.toSet());
 		assertEquals(expected, F.getSat());
 	}
@@ -295,7 +298,9 @@ public class ModelCheckerTest {
 
 		LabelledPartialTransitionSystem ptsTF = new LabelledPartialTransitionSystem();
 		StateSets TF = test("true AU false", ptsTF);
-		//assertTrue(TF.getSat().isEmpty());
+		System.out.println("What it be: " + TF.getSat()); //TODO for some reason this is every state
+		assertTrue(TF.getSat().isEmpty());
+		
 
 		LabelledPartialTransitionSystem ptsFT = new LabelledPartialTransitionSystem();
 		StateSets FT = test("false AU true", ptsFT);

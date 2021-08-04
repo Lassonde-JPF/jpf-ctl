@@ -139,6 +139,17 @@ public class LabelledPartialTransitionSystem {
 			}
 		}
 	}
+	
+	//Constructor for debugging with specific transition system
+	public LabelledPartialTransitionSystem(int states, Set<Transition> transitions, Set<Integer> partial, Map<Integer, Set<Integer>> labelling, Map<String, Integer> fields) {
+		this.states = states;
+		stateSet = IntStream.range(0, states).boxed().collect(Collectors.toSet());
+		stateSet.add(SINK_STATE);
+		this.transitions = transitions;
+		this.partial = partial;
+		this.labelling = labelling;
+		this.fields = fields;
+	}
 
 	//TODO has not been tested whatsoever ... just a starting point
 	public LabelledPartialTransitionSystem(String fileName) throws IOException {
@@ -179,6 +190,7 @@ public class LabelledPartialTransitionSystem {
 	
 		lines.close();
 	}
+
 	
 	@Override
 	public String toString() {

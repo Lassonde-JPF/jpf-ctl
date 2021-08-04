@@ -27,6 +27,8 @@ import ctl.Or;
 import ctl.*;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -383,9 +385,8 @@ public class Model {
 					T.add(s);
 				});
 			}
-			Set<Integer> EU = pts.getStates().stream()
-					.filter(s -> !T.contains(s))
-					.collect(Collectors.toSet());
+			Set<Integer> EU = new HashSet<Integer>(pts.getStates());
+			EU.removeAll(T);
 
 			// Piece3: !EG!p2
 			List<Integer> F = pts.getStates().stream()
