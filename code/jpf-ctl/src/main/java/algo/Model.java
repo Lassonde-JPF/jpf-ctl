@@ -56,9 +56,6 @@ public class Model {
 	// Subset tables
 	private final Map<Formula, StateSets> subset;
 
-	// Sink State val
-	private static final int SINK_STATE = -2;
-
 	// Target Transition System
 	private final LabelledPartialTransitionSystem pts;
 
@@ -73,8 +70,7 @@ public class Model {
 
 		this.pts = pts;
 
-		formulaStack = new ArrayList<String>();
-
+		this.formulaStack = new ArrayList<String>();
 	}
 
 	/*
@@ -122,6 +118,9 @@ public class Model {
 	 * 
 	 */
 	public StateSets check(Formula formula) {
+		/*
+		 * Base Case - Lookup Table
+		 */
 		if (this.subset.containsKey(formula)) {
 			return this.subset.get(formula);
 		}
@@ -260,7 +259,7 @@ public class Model {
 			ExistsNext eN = (ExistsNext) formula;
 			StateSets S = check(eN.getFormula()); // recursive part
 			Set<Integer> Sat = pts.getTransitions().stream()
-					.filter(t -> S.getSat().contains(t.target) && t.target != SINK_STATE) // TODO added sink state ?
+					.filter(t -> S.getSat().contains(t.target))
 					.map(t -> t.source)
 					.collect(Collectors.toSet());
 			Set<Integer> unSat = new HashSet<Integer>(pts.getStates());
@@ -347,7 +346,7 @@ public class Model {
 			// States that DO NOT satisfy this formula CONTAIN a transition in which the
 			// TARGET is NOT CONTAINED in Sat(p1)
 			Set<Integer> unSat = pts.getTransitions().stream()
-					.filter(t -> !S.getSat().contains(t.target) && t.target != SINK_STATE) // TODO added sink state ?
+					.filter(t -> !S.getSat().contains(t.target))
 					.map(t -> t.source)
 					.collect(Collectors.toSet());
 

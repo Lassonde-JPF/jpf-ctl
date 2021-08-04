@@ -1,5 +1,11 @@
 package algo;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.Arrays;
+
 /*
  * Copyright (C)  2021
  *
@@ -22,8 +28,10 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Random;
 import java.util.Set;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
+import java.util.stream.Stream;
 
 /**
  * A class which represents a labelled partial transition system.
@@ -73,6 +81,7 @@ public class LabelledPartialTransitionSystem {
 		// The number of states that will be in this transition system
 		states = 1 + random.nextInt(MAX_STATES);
 		stateSet = IntStream.range(0, states).boxed().collect(Collectors.toSet());
+		stateSet.add(SINK_STATE);
 
 		/*
 		 * Randomly generates a set of states that will be considered 'not fully
@@ -131,6 +140,46 @@ public class LabelledPartialTransitionSystem {
 		}
 	}
 
+	//TODO has not been tested whatsoever ... just a starting point
+	public LabelledPartialTransitionSystem(String fileName) throws IOException {
+		Path p = Paths.get(fileName);
+		Stream<String> lines = Files.lines(p);
+		final String TRANSITION = "\\d+\\s->\\s\\d+";
+		final String PARTIAL = "(\\d+\\s?)+";
+		final String LABELLING = "\\d+:\\s(\\d+\\s?)+";
+		
+		// Transitions
+		this.transitions = lines
+				.filter(l -> l.matches(TRANSITION))
+				.map(l -> l.split("\\s->\\s"))
+				.map(l -> new Transition(Integer.parseInt(l[0]), Integer.parseInt(l[1])))
+				.collect(Collectors.toSet());
+		
+		// Labels
+		this.labelling = new HashMap<Integer, Set<Integer>>();
+		lines
+			.filter(l -> l.matches(LABELLING))
+			.map(l -> l.split(": "))
+			.forEach(l -> {
+				Set<Integer> labels = new HashSet<Integer>();
+				labels = Pattern.compile(" ").splitAsStream(l[1])
+						.map(e -> Integer.parseInt(e))
+						.collect(Collectors.toSet());
+				this.labelling.put(Integer.parseInt(l[0]), labels);
+			});
+				
+		// Partial States
+		lines
+			.filter(l -> l.matches(PARTIAL))
+			.forEach(l -> {
+				this.partial = Pattern.compile(" ").splitAsStream(l)
+						.map(e -> Integer.parseInt(e))
+						.collect(Collectors.toSet());
+			});
+	
+		lines.close();
+	}
+	
 	@Override
 	public String toString() {
 		StringBuffer toString = new StringBuffer();
