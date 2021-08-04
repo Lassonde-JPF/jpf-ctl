@@ -316,7 +316,7 @@ public class ModelCheckerTest {
 		assertTrue(FF.getSat().isEmpty());
 		
 		//Specific Tests
-		
+	
 		int states = 7;
 		
 		Set<Transition> transitions = new HashSet<Transition>();
@@ -333,17 +333,17 @@ public class ModelCheckerTest {
 		labelling.put(0, new HashSet<Integer>());
 		labelling.get(0).add(0);
 		labelling.put(1, new HashSet<Integer>());
-		labelling.get(0).add(0);
+		labelling.get(1).add(0);
 		labelling.put(2, new HashSet<Integer>());
-		labelling.get(0).add(0);
+		labelling.get(2).add(0);
 		labelling.put(3, new HashSet<Integer>());
-		labelling.get(0).add(0);
+		labelling.get(3).add(0);
 		labelling.put(4, new HashSet<Integer>());
-		labelling.get(0).add(0);
+		labelling.get(4).add(0);
 		labelling.put(5, new HashSet<Integer>());
-		labelling.get(0).add(1);
+		labelling.get(5).add(1);
 		labelling.put(6, new HashSet<Integer>());
-		labelling.get(0).add(1);
+		labelling.get(6).add(1);
 		
 		Map<String, Integer> fields = new HashMap<String, Integer>();
 		String[] fieldNames = new String[] {
@@ -370,6 +370,8 @@ public class ModelCheckerTest {
 		expectedUnSat.add(0);
 		expectedUnSat.add(1);
 		expectedUnSat.add(2);
+		
+		toDot(pts, "AU");
 		
 		assertEquals(expectedSat, result.getSat());
 		assertEquals(expectedUnSat, result.getUnSat());
