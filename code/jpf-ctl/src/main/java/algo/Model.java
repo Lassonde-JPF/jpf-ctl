@@ -216,11 +216,10 @@ public class Model {
 			T.stream().forEach(s -> count.computeIfAbsent(s, k -> Post(s).size()));
 			while (!E.isEmpty()) {
 				Integer sP = E.remove(0);
-				Set<Integer> preS = Pre(sP);
-				for (Integer s : preS) {
+				for (Integer s : Pre(sP)) {
 					if (T.contains(s)) {
 						count.compute(s, (k, v) -> v - 1);
-						if (count.get(s) == 0) {
+						if (count.get(s).equals(0)) {
 							T.remove(s);
 							E.add(s);
 						}
@@ -243,7 +242,9 @@ public class Model {
 			Set<Integer> T = new HashSet<Integer>(E);
 			while (!E.isEmpty()) {
 				Integer sP = E.remove(0);
-				Pre(sP).stream().filter(s -> !T.contains(s)).forEach(s -> {
+				Pre(sP).stream()
+				.filter(s -> !T.contains(s))
+				.forEach(s -> {
 					E.add(s);
 					T.add(s);
 				});
@@ -272,7 +273,9 @@ public class Model {
 			Set<Integer> T = new HashSet<Integer>(E);
 			while (!E.isEmpty()) {
 				Integer sP = E.remove(0);
-				Pre(sP).stream().filter(L.getSat()::contains).filter(s -> !T.contains(s)).forEach(s -> {
+				Pre(sP).stream().filter(L.getSat()::contains)
+				.filter(s -> !T.contains(s))
+				.forEach(s -> {
 					E.add(s);
 					T.add(s);
 				});
@@ -341,8 +344,6 @@ public class Model {
 			ForAllNext fN = (ForAllNext) formula;
 			StateSets S = check(fN.getFormula()); // recursive part
 
-			// States that DO NOT satisfy this formula CONTAIN a transition in which the
-			// TARGET is NOT CONTAINED in Sat(p1)
 			Set<Integer> unSat = pts.getTransitions().stream()
 					.filter(t -> !S.getSat().contains(t.target))
 					.map(t -> t.source)

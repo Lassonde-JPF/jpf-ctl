@@ -32,7 +32,7 @@ import error.FieldExists;
 public class ModelCheckerTest {
 	private Generator generator;
 	
-	private static final int NUM_ITERATIONS = 1;
+	private static final int NUM_ITERATIONS = 20;
 
 	/**
 	 * Creates a Generator object for use by each test case
