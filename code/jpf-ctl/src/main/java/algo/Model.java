@@ -45,10 +45,6 @@ import java.util.Map;
  * 
  */
 
-/**
- * TODO suggestion - why not have the model class either be static OR have it
- * contain an instance of a LabelledPartialTransitionpts?
- */
 public class Model {
 
 	// Post and Pre hashtables
@@ -367,7 +363,7 @@ public class Model {
 			ForAllUntil fAU = (ForAllUntil) formula;
 			StateSets L = check(fAU.getLeft());
 			StateSets R = check(fAU.getRight());
-
+			
 			// Piece1: (!p1 && !p2)
 			Set<Integer> AND = new HashSet<Integer>(L.getUnSat());
 			AND.retainAll(R.getUnSat());
@@ -398,8 +394,7 @@ public class Model {
 			G.stream().forEach(s -> count.computeIfAbsent(s, k -> Post(s).size()));
 			while (!F.isEmpty()) {
 				Integer sP = F.remove(0);
-				Set<Integer> preS = Pre(sP);
-				for (Integer s : preS) {
+				for (Integer s : Pre(sP)) {
 					if (G.contains(s)) {
 						count.compute(s, (k, v) -> v - 1);
 						if (count.get(s) == 0) {
@@ -409,11 +404,11 @@ public class Model {
 					}
 				}
 			}
-			Set<Integer> notF = new HashSet<Integer>(pts.getStates());
-			notF.removeAll(F);
+			Set<Integer> notG = new HashSet<Integer>(pts.getStates());
+			notG.removeAll(G);
 
 			// Piece4: Piece2 && Piece3
-			EU.retainAll(notF);
+			EU.retainAll(notG);
 
 			// Final cleanup
 			Set<Integer> unSat = new HashSet<Integer>(pts.getStates());

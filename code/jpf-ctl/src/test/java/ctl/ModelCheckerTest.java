@@ -211,10 +211,7 @@ public class ModelCheckerTest {
 	void checkExistsNext() {
 		LabelledPartialTransitionSystem ptsT = new LabelledPartialTransitionSystem();
 		StateSets T = test("EX true", ptsT);
-		// Should be all states which have a transition (i.e are a source node)
-		// TODO and not the sink state?
 		Set<Integer> expected = ptsT.getTransitions().stream()
-				//.filter(t -> t.target != -2)
 				.map(t -> t.source)
 				.collect(Collectors.toSet());
 		assertEquals(expected, T.getSat());
@@ -301,8 +298,7 @@ public class ModelCheckerTest {
 
 		LabelledPartialTransitionSystem ptsTF = new LabelledPartialTransitionSystem();
 		StateSets TF = test("true AU false", ptsTF);
-		//TODO for some reason this is every state
-		//assertTrue(TF.getSat().isEmpty());
+		assertTrue(TF.getSat().isEmpty());
 		
 
 		LabelledPartialTransitionSystem ptsFT = new LabelledPartialTransitionSystem();
@@ -369,6 +365,7 @@ public class ModelCheckerTest {
 		Set<Integer> expectedUnSat = new HashSet<Integer>();
 		expectedUnSat.add(0);
 		expectedUnSat.add(1);
+		expectedUnSat.add(-2);
 		expectedUnSat.add(2);
 		
 		toDot(pts, "AU");
