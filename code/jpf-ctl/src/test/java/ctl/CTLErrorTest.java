@@ -78,8 +78,6 @@ public class CTLErrorTest {
 		CTLError error = new CTLError();
 		input =  error.errorCheckAndRecover(input);
 		
-
-		
 		CTLLexer lexer = new CTLLexer(input);
 		CommonTokenStream tokens = new CommonTokenStream(lexer);
 		CTLParser parser = new CTLParser(tokens);
