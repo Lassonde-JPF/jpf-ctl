@@ -18,17 +18,13 @@ package algo;
  */
 
 import java.util.Set;
-import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import ctl.And;
 import ctl.False;
 import ctl.Formula;
 import ctl.Or;
 import ctl.*;
-import java.lang.reflect.Field;
 import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -420,6 +416,7 @@ public class Model {
 			StateSets S = check(n.getFormula());
 			return buildResult(formula, S.getUnSat(), S.getSat());
 		}
+		//This should be unreachable
 		System.err.println("This formula type is unknown");
 		return null;
 	}

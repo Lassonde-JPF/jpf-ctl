@@ -2,9 +2,16 @@ package error;
 
 import org.ctl.CTLBaseListener;
 import org.ctl.CTLParser;
+
+import ctl.AtomicProposition;
+
+import java.util.HashSet;
+import java.util.Set;
 import java.util.logging.*;
 
 public class FieldExists extends CTLBaseListener {
+	
+	static final Set<String> APs = new HashSet<String>();
 
 	@Override
 	public void enterAtomicProposition(CTLParser.AtomicPropositionContext ctx) {
@@ -16,6 +23,8 @@ public class FieldExists extends CTLBaseListener {
 
 		try {
 			Class.forName(className).getDeclaredField(fieldName);
+			
+			APs.add(ctx.getText());
 		} catch (ClassNotFoundException e) {
 			logger.warning(" Class '" + className + " ' cannot be found\n");
 			
