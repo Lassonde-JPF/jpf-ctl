@@ -5,6 +5,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -40,6 +41,49 @@ public class ModelCheckerTest {
 	@BeforeEach
 	void setUp() throws Exception {
 		generator = new Generator();
+	}
+	
+	@Test
+	void testLabelledPartialTransitionSystemConstructor() throws IOException {
+		String pathPrefix = "src/test/resources/testConstructor/";
+		String testLabelFileName = pathPrefix + "testLabelFile";
+		String testListenerFileName = pathPrefix + "testListenerFile";
+		
+		LabelledPartialTransitionSystem pts = new LabelledPartialTransitionSystem(testLabelFileName, testListenerFileName);
+		
+		Set<Transition> expectedTransitions = new HashSet<Transition>();
+		expectedTransitions.add(new Transition(-1, 0));
+		expectedTransitions.add(new Transition(0, 1));
+		expectedTransitions.add(new Transition(1, 2));
+		expectedTransitions.add(new Transition(1, 3));
+		expectedTransitions.add(new Transition(2, 4));
+		
+		Set<Integer> expectedPartial = new HashSet<Integer>();
+		expectedPartial.add(3);
+		expectedPartial.add(5);
+		
+		Map<Integer, Set<Integer>> expectedLabelling = new HashMap<Integer, Set<Integer>>();
+		expectedLabelling.put(0, new HashSet<Integer>());
+		expectedLabelling.get(0).add(0);
+		expectedLabelling.put(1, new HashSet<Integer>());
+		expectedLabelling.get(1).add(1);
+		expectedLabelling.put(2, new HashSet<Integer>());
+		expectedLabelling.get(2).add(1);
+		expectedLabelling.get(2).add(2);
+		expectedLabelling.put(3, new HashSet<Integer>());
+		expectedLabelling.get(3).add(1);
+		expectedLabelling.put(4, new HashSet<Integer>());
+		expectedLabelling.get(4).add(1);
+		
+		Map<String, Integer> expectedFields = new HashMap<String, Integer>();
+		expectedFields.put("init", 0);
+		expectedFields.put("algo.JavaFields.p1", 1);
+		expectedFields.put("algo.JavaFields.p2", 2);
+		
+		assertEquals(expectedTransitions, pts.getTransitions());
+		assertEquals(expectedPartial, pts.getPartial());
+		assertEquals(expectedLabelling, pts.getLabelling());
+		assertEquals(expectedFields, pts.getFields());
 	}
 
 	@Test

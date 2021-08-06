@@ -18,11 +18,49 @@ repositories {
     mavenCentral()
 }
 
+// find home directory
+ext.userHome = System.getProperty("user.home")
+
+// find JPF's site.properties
+Properties siteProperties = new Properties()
+try {
+    FileInputStream file = new FileInputStream("${userHome}/.jpf/site.properties")
+    siteProperties.load(file)
+    file.close()
+} catch (FileNotFoundException ignored) {
+    throw new GradleException("Please install jpf-core first and add the property 'jpf-core' to ${userHome}/.jpf pointing to the jpf-core installation")
+}
+
+// find jpf-core
+ext.jpfCoreExists = false
+ext.jpfCore = siteProperties.getProperty("jpf-core")
+if (jpfCore != null) {
+    jpfCore = jpfCore.replace('${user.home}', userHome)
+    jpfCoreExists = new File(jpfCore).exists()
+}
+if (!jpfCoreExists) {
+    throw new GradleException("${userHome}/.jpf/site.properties points to the jpf-core installation at ${jpfCore} but that directory does not exist")
+}
+
+// find jpf-label
+ext.jpfLabelExists = false
+ext.jpfLabel = siteProperties.getProperty("jpf-label")
+if (jpfLabel != null) {
+    jpfLabel = jpfLabel.replace('${user.home}', userHome)
+    jpfLabelExists = new File(jpfLabel).exists()
+}
+if (!jpfLabelExists) {
+    throw new GradleException("${userHome}/.jpf/site.properties points to the jpf-label installation at ${jpfLabel} but that directory does not exist")
+}
+
 dependencies {
 
     // Use JUnit test framework
 	testImplementation(platform('org.junit:junit-bom:5.7.2'))
 	testImplementation('org.junit.jupiter:junit-jupiter')
+	
+	//JPF implementation files
+    implementation files("${jpfLabel}/build/jpf-label.jar", "${jpfCore}/build/jpf.jar" )
 	
     // use ANTLR version 4
     antlr "org.antlr:antlr4:4.9.2" 

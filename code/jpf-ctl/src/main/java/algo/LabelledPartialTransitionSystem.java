@@ -150,44 +150,71 @@ public class LabelledPartialTransitionSystem {
 		this.fields = fields;
 	}
 
-	//TODO has not been tested whatsoever ... just a starting point
-	public LabelledPartialTransitionSystem(String fileName) throws IOException {
-		Path p = Paths.get(fileName);
-		Stream<String> lines = Files.lines(p);
-		final String TRANSITION = "\\d+\\s->\\s\\d+";
-		final String PARTIAL = "(\\d+\\s?)+";
-		final String LABELLING = "\\d+:\\s(\\d+\\s?)+";
+	//Actual Constructor for production
+	public LabelledPartialTransitionSystem(String jpfLabelFile, String listenerFile) throws IOException {
+		//Wrap path string with Path object
+		Path pathToListenerFile = Paths.get(listenerFile);
+		Path pathToJpfLabelFile = Paths.get(jpfLabelFile);
 		
-		// Transitions
-		this.transitions = lines
-				.filter(l -> l.matches(TRANSITION))
-				.map(l -> l.split("\\s->\\s"))
-				.map(l -> new Transition(Integer.parseInt(l[0]), Integer.parseInt(l[1])))
-				.collect(Collectors.toSet());
+		//Get files as stream (of lines)
+		Stream<String> listenerFileLines = Files.lines(pathToListenerFile);
+		Stream<String> jpfLabelFileLines = Files.lines(pathToJpfLabelFile);
 		
-		// Labels
-		this.labelling = new HashMap<Integer, Set<Integer>>();
-		lines
-			.filter(l -> l.matches(LABELLING))
-			.map(l -> l.split(": "))
-			.forEach(l -> {
-				Set<Integer> labels = new HashSet<Integer>();
-				labels = Pattern.compile(" ").splitAsStream(l[1])
+		// regex for different line types
+		final String TRANSITION = "-?\\d+\\s->\\s\\d+"; // 3 -> 4
+		final String TRANSITION_DELIMETER = "\\s->\\s";
+		final String PARTIAL = "(\\d+\\s?)+"; // 3 4 5 
+		final String PARTIAL_DELIMETER = "\\s";
+		final String MAPPING = "(\\d+=\"(([a-zA-Z_$][a-zA-Z\\d_$]*\\.)*[a-zA-Z_$][a-zA-Z\\d_$]*)\"\\s?)+"; // 2="something" 3="anotherthing"
+		final String MAPPING_DELIMETER = "\\s";
+		final String LABELLING = "\\d+:\\s(\\d+\\s?)+"; // 2: 3 4
+		final String LABELLING_DELIMETER = ":\\s";
+		
+		this.stateSet = new HashSet<Integer>();
+		this.transitions = new HashSet<Transition>();
+		// Listener File
+		listenerFileLines.forEach(line -> {
+			if (line.matches(TRANSITION)) {
+				String[] t = line.split(TRANSITION_DELIMETER);
+				int source = Integer.parseInt(t[0]);
+				int target = Integer.parseInt(t[1]);
+				this.stateSet.add(source);
+				this.stateSet.add(target);
+				this.transitions.add(new Transition(source, target));
+			}
+			if (line.matches(PARTIAL)) {
+				this.partial = Pattern.compile(PARTIAL_DELIMETER).splitAsStream(line)
 						.map(e -> Integer.parseInt(e))
 						.collect(Collectors.toSet());
-				this.labelling.put(Integer.parseInt(l[0]), labels);
-			});
-				
-		// Partial States
-		lines
-			.filter(l -> l.matches(PARTIAL))
-			.forEach(l -> {
-				this.partial = Pattern.compile(" ").splitAsStream(l)
-						.map(e -> Integer.parseInt(e))
-						.collect(Collectors.toSet());
-			});
+				this.stateSet.addAll(this.partial);
+			}
+		});
+		listenerFileLines.close();
+		
+		this.stateSet.add(SINK_STATE);
+		this.states = this.stateSet.size();
 	
-		lines.close();
+		// jpf-label File
+		this.labelling = new HashMap<Integer, Set<Integer>>();
+		this.fields = new HashMap<String, Integer>();
+		jpfLabelFileLines.forEach(line -> {
+			if (line.matches(LABELLING)) {
+				String[] lr = line.split(LABELLING_DELIMETER);
+				Set<Integer> labels = new HashSet<Integer>();
+				labels = Pattern.compile(MAPPING_DELIMETER).splitAsStream(lr[1])
+						.map(e -> Integer.parseInt(e))
+						.collect(Collectors.toSet());
+				this.labelling.put(Integer.parseInt(lr[0]), labels);
+			}
+			if (line.matches(MAPPING)) {
+				Pattern.compile(MAPPING_DELIMETER).splitAsStream(line).forEach(e -> {
+					String l = e.replace("\"", "");
+					String[] lr = l.split("=");
+					this.fields.put(lr[1].trim(), Integer.parseInt(lr[0]));
+				});
+			}
+		});
+		jpfLabelFileLines.close();
 	}
 
 	
@@ -210,6 +237,10 @@ public class LabelledPartialTransitionSystem {
 			}
 			toString.append("\n");
 		}
+		this.fields.entrySet().stream().forEach(e -> {
+			toString.append(e.getKey() + " -> " + e.getValue());
+			toString.append("\n");
+		});
 		return toString.toString();
 	}
 
@@ -290,6 +321,10 @@ public class LabelledPartialTransitionSystem {
 	
 	public Map<String, Integer> getFields() {
 		return this.fields;
+	}
+	
+	public Set<Integer> getPartial() {
+		return this.partial;
 	}
 
 }

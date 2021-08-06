@@ -11,7 +11,7 @@ import java.util.logging.*;
 
 public class FieldExists extends CTLBaseListener {
 	
-	static final Set<String> APs = new HashSet<String>();
+	private final Set<String> APs = new HashSet<String>();
 
 	@Override
 	public void enterAtomicProposition(CTLParser.AtomicPropositionContext ctx) {
@@ -33,4 +33,7 @@ public class FieldExists extends CTLBaseListener {
 		}
 	}
 
+	public Set<String> getAPs() {
+		return this.APs;
+	}
 }
