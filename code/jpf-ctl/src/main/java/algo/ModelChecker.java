@@ -2,6 +2,8 @@ package algo;
 
 import java.io.IOException;
 import java.util.Set;
+import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 import org.antlr.v4.runtime.CharStream;
 import org.antlr.v4.runtime.CharStreams;
@@ -19,6 +21,7 @@ import gov.nasa.jpf.Config;
 import gov.nasa.jpf.JPF;
 import gov.nasa.jpf.JPFConfigException;
 import gov.nasa.jpf.JPFException;
+import label.StateLabelText;
 import listeners.PartialTransitionSystemListener;
 
 public class ModelChecker {
@@ -34,8 +37,6 @@ public class ModelChecker {
 	String TargetSystem;
 
 	static final String[] args = new String[] {
-			"+cg.enumerate_random=true",
-			"+listener+=,listeners.PartialTransitionSystemListener", 
 			"+listener+=,label.StateLabelText" // TODO need to define the classpath (native) in jpf.properties
 	};
 
@@ -80,19 +81,27 @@ public class ModelChecker {
 			// site.properties
 			// configured extensions (jpf.properties), current directory (jpf.properies) and
 			// command line args ("+<key>=<value>" options and *.jpf)
-			Config conf = JPF.createConfig(args);
+			Config conf = JPF.createConfig(new String[]{});
 
 			// ... modify config according to your needs
-			conf.setProperty("my.property", "whatever");
-			conf.setTarget(prefix + TargetSystem);
-
+			conf.setTarget(TargetSystem);
+			conf.setProperty("cg.enumerate_random", "true");
+			
+			// build the label properties
+			//String RHS = labels.stream().collect(Collectors.joining("; "));
+			//conf.setProperty("label.class", RHS + ";"); // TODO probabaly going to have to map the APS by class -> field
+			
+			System.out.println("JPF config: " + conf);
+			
 			JPF jpf = new JPF(conf);
 
 			// ... explicitly create listeners (could be reused over multiple JPF runs)
 			PartialTransitionSystemListener ptsListener = new PartialTransitionSystemListener(jpf.getConfig(), jpf);
+			StateLabelText sltListener = new StateLabelText(jpf.getConfig());
 
 			// ... set your listeners
 			jpf.addListener(ptsListener);
+			jpf.addListener(sltListener);
 
 			jpf.run();
 			if (jpf.foundErrors()) {
