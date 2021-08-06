@@ -150,7 +150,14 @@ public class LabelledPartialTransitionSystem {
 		this.labelling = labelling;
 		this.fields = fields;
 	}
-
+	
+	public LabelledPartialTransitionSystem(Set<Integer> s, Set<Transition> t, Map<Integer, Set<Integer>> l)
+	{
+		this.partial = s;
+		this.transitions = t;
+		this.labelling = l;
+	}
+	
 	//TODO has not been tested whatsoever ... just a starting point
 	public LabelledPartialTransitionSystem(String fileName) throws IOException {
 		Path p = Paths.get(fileName);

@@ -39,35 +39,40 @@ public class CounterExampleTest {
 		generator = new Generator();
 	}
     
-
 	@Test
 	void checkCounterExample() {
-		LabelledPartialTransitionSystem pts = new LabelledPartialTransitionSystem();
-		
-		ParseTree tree = parseCtl("EX true");
-		Formula formula = generator.visit(tree);
-		Model m = new Model(pts);
 
-		StateSets T = m.check(formula);
-
-		Set<Integer> Sat = new HashSet<Integer>();
-		pts.getLabelling().entrySet().forEach(entry -> {
-			if (entry.getValue().contains(java.lang.Integer.MAX_VALUE)
-					|| entry.getValue().contains(java.lang.Integer.MIN_VALUE)) {
-				Sat.add(entry.getKey());
-			}
-		});
-		
-		if(!T.getSat().contains(0))
-		{
-			System.out.print("\nCounter example: \n");
-			System.out.print(m.getCounterExample(formula, 0).toString());
+			LabelledPartialTransitionSystem pts = new LabelledPartialTransitionSystem();
+			//String input = Formula.random().toString();
+			String input = "EX AX algo.JavaFields.p3";
+			ParseTree tree = parseCtl(input);
+			Formula formula = generator.visit(tree);
 			
-		}
+			Model m = new Model(pts);
+			
+			StateSets result = m.check(formula);
 
-		
+			System.out.println("Transition System:\n" + pts);
+			System.out.println("Input formula:\n" + input);
+			
+			m.printSubResult();
+			
+			System.out.println("Result:" + result);
+			
+			if(!result.getSat().contains(0))
+			{
+				System.out.print("\nThe post states of 0 in the given partial transition system: \n");
+				System.out.print(m.getPostStates(0).toString());
+				System.out.print("\nCounter example: \n");
+				System.out.print(m.getCounterExample(formula, 0).toString());
+				System.out.print("\nStates in counter example with the UnSat formula: \n");
+				System.out.print(m.getLabellingFormulaForEachState().toString());
+				
+				
+				
+			}
 	}
-
+	
 	public StateSets test(String input, LabelledPartialTransitionSystem pts) {
 		// System.out.println("Transition System:\n" + pts);
 		ParseTree tree = parseCtl(input);

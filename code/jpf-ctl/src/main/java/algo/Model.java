@@ -31,6 +31,8 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
@@ -54,6 +56,8 @@ public class Model {
 	// Post and Pre hashtables
 	private final Map<Integer, Set<Integer>> post;
 	private final Map<Integer, Set<Integer>> pre;
+	private final Map<Formula,Set<Integer>> unSatForEachFormula; 
+	private final Map<Integer,Formula> labellingFormulaForEachState;
 
 	// Subset tables
 	private final Map<Formula, StateSets> subset;
@@ -67,9 +71,10 @@ public class Model {
 	public Model(LabelledPartialTransitionSystem pts) {
 		this.post = new HashMap<Integer, Set<Integer>>();
 		this.pre = new HashMap<Integer, Set<Integer>>();
-
+		this.unSatForEachFormula = new HashMap<>();
+		this.labellingFormulaForEachState = new HashMap<>();
 		this.subset = new HashMap<Formula, StateSets>();
-
+		
 		this.pts = pts;
 
 		this.formulaStack = new ArrayList<String>();
@@ -100,7 +105,7 @@ public class Model {
 	}
 
 	private StateSets buildResult(Formula formula, Set<Integer> Sat, Set<Integer> unSat) {
-		String msg = "Formula: " + formula + "\n\tResult: " + Sat.toString();
+		String msg = "Formula: " + formula + "\n\tResult: (Sat) " + Sat.toString() + "\n\tResult: (UnSat) " + unSat.toString();
 		formulaStack.add(msg);
 		StateSets result = new StateSets(Sat, unSat);
 		this.subset.computeIfAbsent(formula, k -> result);
@@ -124,6 +129,7 @@ public class Model {
 		 * Base Case - Lookup Table
 		 */
 		if (this.subset.containsKey(formula)) {
+			
 			return this.subset.get(formula);
 		}
 
@@ -133,6 +139,7 @@ public class Model {
 		else if (formula instanceof True) {
 			Set<Integer> Sat = pts.getStates();
 			Set<Integer> unSat = new HashSet<Integer>();
+			unSatForEachFormula.put(formula,new HashSet<Integer>());
 			return buildResult(formula, Sat, unSat);
 		}
 		/*
@@ -141,6 +148,7 @@ public class Model {
 		else if (formula instanceof False) {
 			Set<Integer> Sat = new HashSet<Integer>();
 			Set<Integer> unSat = pts.getStates();
+			unSatForEachFormula.put(formula,pts.getStates());
 			return buildResult(formula, Sat, unSat);
 		}
 		/*
@@ -161,7 +169,9 @@ public class Model {
 			// build unsat
 			Set<Integer> unSat = new HashSet<Integer>(pts.getStates());
 			unSat.removeAll(Sat);
+			unSatForEachFormula.put(formula,pts.getStates());
 			return buildResult(formula, Sat, unSat);
+			
 		} else if (formula instanceof And) {
 			And f = (And) formula;
 			StateSets L = check(f.getLeft());
@@ -170,6 +180,7 @@ public class Model {
 			Sat.retainAll(R.getSat());
 			Set<Integer> unSat = new HashSet<Integer>(pts.getStates());
 			unSat.removeAll(Sat);
+			unSatForEachFormula.put(f,unSat);
 			return buildResult(formula, Sat, unSat);
 		} else if (formula instanceof Or) {
 			Or f = (Or) formula;
@@ -179,6 +190,7 @@ public class Model {
 			Sat.addAll(R.getSat());
 			Set<Integer> unSat = new HashSet<Integer>(pts.getStates());
 			unSat.removeAll(Sat);
+			unSatForEachFormula.put(f,unSat);
 			return buildResult(formula, Sat, unSat);
 		} else if (formula instanceof Implies) {
 			// !a or b
@@ -189,6 +201,7 @@ public class Model {
 			Sat.addAll(R.getSat());
 			Set<Integer> unSat = new HashSet<Integer>(pts.getStates());
 			unSat.removeAll(Sat);
+			unSatForEachFormula.put(f,unSat);
 			return buildResult(formula, Sat, unSat);
 		} else if (formula instanceof Iff) {
 			// (a && b) || (!a && !b)
@@ -207,6 +220,7 @@ public class Model {
 			// !( (a && b) || (!a && !b) )
 			Set<Integer> unSat = new HashSet<Integer>(pts.getStates());
 			unSat.removeAll(Sat);
+			unSatForEachFormula.put(f,unSat);
 			return buildResult(formula, Sat, unSat);
 		} else if (formula instanceof ExistsAlways) {
 			ExistsAlways f = (ExistsAlways) formula;
@@ -233,6 +247,7 @@ public class Model {
 			}
 			Set<Integer> unSat = new HashSet<Integer>(pts.getStates());
 			unSat.removeAll(T);
+			unSatForEachFormula.put(f,unSat);
 			return buildResult(formula, T, unSat);
 		}
 		/*
@@ -255,7 +270,7 @@ public class Model {
 
 			Set<Integer> unSat = new HashSet<Integer>(pts.getStates());
 			unSat.removeAll(T);
-
+			unSatForEachFormula.put(eE,unSat);
 			return buildResult(formula, T, unSat);
 		} else if (formula instanceof ExistsNext) {
 			ExistsNext eN = (ExistsNext) formula;
@@ -266,6 +281,7 @@ public class Model {
 					.collect(Collectors.toSet());
 			Set<Integer> unSat = new HashSet<Integer>(pts.getStates());
 			unSat.removeAll(Sat);
+			unSatForEachFormula.put(eN,unSat);
 			return buildResult(formula, Sat, unSat);
 		} else if (formula instanceof ExistsUntil) {
 			ExistsUntil eU = (ExistsUntil) formula;
@@ -283,6 +299,7 @@ public class Model {
 			}
 			Set<Integer> unSat = new HashSet<Integer>(pts.getStates());
 			unSat.removeAll(T);
+			unSatForEachFormula.put(eU,unSat);
 			return buildResult(formula, T, unSat);
 		}
 		/*
@@ -304,6 +321,7 @@ public class Model {
 			}
 			Set<Integer> Sat = new HashSet<Integer>(pts.getStates());
 			Sat.removeAll(T);
+			unSatForEachFormula.put(fA,T);
 			return buildResult(formula, Sat, T);
 		}
 		/*
@@ -336,6 +354,7 @@ public class Model {
 			}
 			Set<Integer> Sat = new HashSet<Integer>(pts.getStates());
 			Sat.removeAll(T);
+			unSatForEachFormula.put(fAF,T);
 			return buildResult(formula, Sat, T);
 		}
 		/*
@@ -354,6 +373,7 @@ public class Model {
 
 			Set<Integer> Sat = new HashSet<Integer>(pts.getStates());
 			Sat.removeAll(unSat);
+			unSatForEachFormula.put(fN,unSat);
 			return buildResult(formula, Sat, unSat);
 		}
 		/*
@@ -418,13 +438,316 @@ public class Model {
 			// Final cleanup
 			Set<Integer> unSat = new HashSet<Integer>(pts.getStates());
 			unSat.removeAll(EU);
+			unSatForEachFormula.put(fAU,unSat);
 			return buildResult(formula, EU, unSat);
 		} else if (formula instanceof Not) {
 			Not n = (Not) formula;
 			StateSets S = check(n.getFormula());
+			unSatForEachFormula.put(n,S.getSat());
 			return buildResult(formula, S.getUnSat(), S.getSat());
 		}
 		System.err.println("This formula type is unknown");
 		return null;
 	}
+	
+	public LabelledPartialTransitionSystem getCounterExample(Formula f, Integer s )
+	{
+		Set<Integer> counterExStates = new HashSet<>();
+		counterExStates.add(s);
+        Set<Integer> states = new HashSet<>();
+		states.add(s);
+		CounterExampleHelper(f, s, counterExStates);
+        
+		Set<Transition> newTSTransitions = this.getRelatedTransitions(counterExStates);
+		
+		Map<Integer, Set<Integer>> newTSLabelling = this.getRelatedLabellings(counterExStates);
+		
+		
+		LabelledPartialTransitionSystem newTS = new LabelledPartialTransitionSystem(counterExStates,newTSTransitions, newTSLabelling);
+		
+		 
+		return newTS;
+	}
+
+	private void CounterExampleHelper(Formula formula, Integer state, Set<Integer> list)
+	{
+    
+		
+   		/*
+		 * Base Case
+		 */
+		if (formula instanceof True) {
+			labellingFormulaForEachState.put(state, formula);
+			return;
+		}
+		/*
+		 * Base Case
+		 */
+		else if (formula instanceof False) {	
+			Set<Integer> formulaUnsat = unSatForEachFormula.get(formula);
+			labellingFormulaForEachState.put(state, formula);
+			list.addAll(formulaUnsat);
+			return;
+		}/*
+		 * Base Case
+		 */
+		else if (formula instanceof AtomicProposition) {
+			Set<Integer> formulaUnsat = unSatForEachFormula.get(formula);
+			if(formulaUnsat.contains(state))
+			{
+				//add to the list and break;
+				list.add(state);
+				labellingFormulaForEachState.put(state, formula);
+				return;
+			}
+						
+		}
+		else if (formula instanceof And) {
+			Formula left = ((And) formula).getLeft();
+			Formula right = ((And) formula).getRight();
+			
+			Set<Integer> subLeftFormulaUnsat = unSatForEachFormula.get(left);
+			Set<Integer> subRightFormulaUnsat = unSatForEachFormula.get(right);
+			labellingFormulaForEachState.put(state, formula);
+			//for (Iterator<Integer> it = states.iterator(); it.hasNext(); ) 
+		    {
+		       	//Integer n = it.next();
+				if(subLeftFormulaUnsat.contains(state))
+				{
+					list.add(state);
+					
+					CounterExampleHelper(left, state, list);
+				}else if(subRightFormulaUnsat.contains(state))
+				{
+					list.add(state);
+					
+					CounterExampleHelper(right, state, list);
+				}
+			}	
+
+		} else if (formula instanceof Or) {
+			Formula left = ((Or) formula).getLeft();
+			Formula right = ((Or) formula).getRight();
+           
+
+			Set<Integer> subLeftFormulaUnsat = unSatForEachFormula.get(left);
+			Set<Integer> subRightFormulaUnsat = unSatForEachFormula.get(right);
+			labellingFormulaForEachState.put(state, formula);
+			if(subLeftFormulaUnsat.contains(state) && subRightFormulaUnsat.contains(state))
+			{
+				list.add(state);
+				CounterExampleHelper(left, state, list);
+			}
+				
+			
+		} else if (formula instanceof Implies) {
+			Formula left = ((Implies) formula).getLeft();
+			Formula right = ((Implies) formula).getRight();
+			
+			Set<Integer> subLeftFormulaUnsat = unSatForEachFormula.get(left);
+			Set<Integer> subRightFormulaUnsat = unSatForEachFormula.get(right);
+			labellingFormulaForEachState.put(state, formula);
+			//for (Iterator<Integer> it = states.iterator(); it.hasNext(); ) 
+		    {
+		       	//Integer n = it.next();
+				if(subLeftFormulaUnsat.contains(state))
+				{
+					list.add(state);
+					CounterExampleHelper(left, state, list);
+				}else if(subRightFormulaUnsat.contains(state))
+				{
+					list.add(state);
+					CounterExampleHelper(right, state, list);
+				}
+			}	
+			
+		} else if (formula instanceof Iff) {
+			Formula left = ((Iff) formula).getLeft();
+			Formula right = ((Iff) formula).getRight();
+			Set<Integer> subLeftFormulaUnsat = unSatForEachFormula.get(left);
+			Set<Integer> subRightFormulaUnsat = unSatForEachFormula.get(right);
+			labellingFormulaForEachState.put(state, formula);
+			//for (Iterator<Integer> it = states.iterator(); it.hasNext(); ) 
+		    {
+		       	//Integer n = it.next();
+				if(subLeftFormulaUnsat.contains(state))
+				{
+					list.add(state);
+					CounterExampleHelper(left, state, list);
+				}else if(subRightFormulaUnsat.contains(state))
+				{
+					list.add(state);
+					CounterExampleHelper(right, state, list);
+				}
+			}	
+			
+		} else if (formula instanceof ExistsAlways) {
+			
+			//if the current state does not satisfy then the current state is the counter ex
+			//otherwise show all the states in all paths 
+			labellingFormulaForEachState.put(state, formula);
+		}
+		else if (formula instanceof ExistsEventually) {
+			//show all the states on all paths
+			labellingFormulaForEachState.put(state, formula);
+			
+		} else if (formula instanceof ExistsNext) 
+		{
+			Formula f = ((ExistsNext) formula).getFormula();
+			
+			labellingFormulaForEachState.put(state, formula);
+			Set<Integer> subPostStates = Post(state);
+		     
+		    Set<Integer> formulaUnsat = unSatForEachFormula.get(f);
+		
+			for (Iterator<Integer> it = subPostStates.iterator(); it.hasNext(); ) 
+			{
+		       	Integer s = it.next();
+				if(formulaUnsat.contains(s))
+				{
+					list.add(s);
+					CounterExampleHelper(f, s, list);
+				}					
+		    	
+			}
+		} else if (formula instanceof ExistsUntil) {
+
+		}
+		else if (formula instanceof ForAllAlways) {
+			//do this first
+			//one path one state in unsat sub formula 
+			Formula subFormula = ((ForAllAlways) formula).getFormula();
+			Set<Integer> subformulaUnsat = unSatForEachFormula.get(subFormula);
+			Map<Integer,Integer> parent = new HashMap<>();
+			Set<Integer> allReachableStates = this.getPath(state, parent);
+			for (Iterator<Integer> it = allReachableStates.iterator(); it.hasNext(); )
+			{
+				Integer n = it.next();
+				//find the parent nodes of the n and add to the list
+				CounterExampleHelper(subFormula, n, list);
+				return;
+			}
+			
+			
+		}
+		else if (formula instanceof ForAllEventually) {
+			Formula subFormula = ((ForAllEventually) formula).getFormula();
+			Set<Integer> subformulaUnsat = unSatForEachFormula.get(subFormula);
+			
+			//for (Iterator<Integer> it = states.iterator(); it.hasNext(); ) 
+		    {
+		       	//Integer n = it.next();
+				//find the path from state
+			}
+		    //go through the states of the path that non of the states on that path sat sub formula
+		 	//send one by one to the next recursive call
+			
+		}
+		else if (formula instanceof ForAllNext) {
+			Formula f = ((ForAllNext) formula).getFormula();
+			
+			Set<Integer> subPostStates = Post(state);
+			
+			labellingFormulaForEachState.put(state, formula);	    
+		    Set<Integer> formulaUnsat = unSatForEachFormula.get(f);
+
+			for (Iterator<Integer> it = subPostStates.iterator(); it.hasNext(); ) 
+			{
+		       	Integer s = it.next();
+				if(formulaUnsat.contains(s))
+				{
+					list.add(s);
+					CounterExampleHelper(f, s, list);
+					return;
+				}
+		    	
+			}		
+		}
+		else if (formula instanceof ForAllUntil) {
+			
+		} else if (formula instanceof Not) {
+			// ! AX = EX !
+		
+		} 
+	}
+	
+	private Set<Transition> getRelatedTransitions( Set<Integer> list)
+	{
+		Set<Transition> result = new HashSet<Transition>();
+		for (Iterator<Transition> it = this.pts.getTransitions().iterator(); it.hasNext(); ) 
+		{
+			Transition t = it.next();
+			if(list.contains(t.getSource()) && list.contains(t.getTarget()))
+			{
+				result.add(t);
+			}
+			
+		}
+		
+		return result;
+	}
+	
+	private Map<Integer, Set<Integer>> getRelatedLabellings( Set<Integer> list)
+	{
+		Map<Integer, Set<Integer>> result = new HashMap<>();
+		for (Iterator<Integer> it = this.pts.getLabelling().keySet().iterator(); it.hasNext(); ) 
+		{
+			Integer s = it.next();
+			if(list.contains(s))
+			{
+				result.put(s, this.pts.getLabelling().get(s));
+			}
+			
+		}
+		
+		return result;
+	}
+	
+	
+	public Map<Integer,Formula> getLabellingFormulaForEachState()
+	{
+		return this.labellingFormulaForEachState;
+	}
+	
+	public Set<Integer> getPostStates(Integer s)
+	{
+		return this.Post(s);
+	}
+	
+	private Set<Integer> getPath(Integer s, Map<Integer,Integer> parent)
+    {
+        // Mark all the vertices as not visited(By default
+        // set as false)
+        boolean visited[] = new boolean[pts.getStates().size()];
+        // Create a queue for BFS
+        LinkedList<Integer> queue = new LinkedList<Integer>();
+        Set<Integer> result = new HashSet<>();
+        
+        // Mark the current node as visited and enqueue it
+        visited[s]=true;
+        queue.add(s);
+ 
+        while (queue.size() != 0)
+        {
+            // Dequeue a vertex from queue and print it
+            s = queue.poll();
+            result.add(s);
+
+            // Get all adjacent vertices of the dequeued vertex s
+            // If a adjacent has not been visited, then mark it
+            // visited and enqueue it
+            Iterator<Integer> i = Post(s).iterator();
+            while (i.hasNext())
+            {
+                int n = i.next();
+                if (!visited[n])
+                {
+                	parent.put(n, s);
+                    visited[n] = true;
+                    queue.add(n);
+                }
+            }
+        }
+        return result;
+    }
 }
