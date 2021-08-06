@@ -180,6 +180,7 @@ public class PartialTransitionSystemListener extends SearchListenerAdapter {
 		}
 
 		writer.printf(sj.toString());
+		this.writer.close();
 	}
 
 	@Override

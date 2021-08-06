@@ -10,7 +10,7 @@ public class FullStackTest {
 
 	@Test
 	public void exampleTest() throws IOException {
-		ModelChecker mC = new ModelChecker("algo.JavaFields.p1 && algo.JavaFields.p2", "algo.Example");
+		ModelChecker mC = new ModelChecker("algo.Example.one || algo.Example.two", "algo.Example");
 	
 		mC.check();
 	}

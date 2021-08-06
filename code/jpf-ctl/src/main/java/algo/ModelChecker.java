@@ -17,6 +17,7 @@ import error.CTLError;
 import error.FieldExists;
 import gov.nasa.jpf.Config;
 import gov.nasa.jpf.JPF;
+import gov.nasa.jpf.JPF.Status;
 import gov.nasa.jpf.JPFConfigException;
 import gov.nasa.jpf.JPFException;
 import label.StateLabelText;
@@ -105,6 +106,7 @@ public class ModelChecker {
 			if (jpf.foundErrors()) {
 				// ... process property violations discovered by JPF
 			}
+			while (jpf.getStatus() != Status.DONE);
 		} catch (JPFConfigException cx) {
 			// ... handle configuration exception
 			// ... can happen before running JPF and indicates inconsistent configuration
@@ -122,14 +124,20 @@ public class ModelChecker {
 		
 		// At this point we know the files exist so now we need to load them...
 		
+		
+		
 		String jpfLabelFile = TargetSystem + ".lab";
 		String listenerFile = "listenerFile.tra";
 		
 		pts = new LabelledPartialTransitionSystem(jpfLabelFile, listenerFile);
 		
+		System.out.println(pts);
+		
 		Model m = new Model(pts);
 		
 		StateSets result = m.check(formula);
+		
+		System.out.println(result);
 		
 		return result.getSat().contains(0); //is the initial state satisfied ?
 	}
