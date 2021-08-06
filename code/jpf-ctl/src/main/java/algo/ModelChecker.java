@@ -28,6 +28,10 @@ public class ModelChecker {
 	LabelledPartialTransitionSystem pts;
 	
 	Set<String> labels;
+	
+	final String prefix = "src/test/resources/exampleClasses/"; 
+	
+	String TargetSystem;
 
 	static final String[] args = new String[] {
 			"+cg.enumerate_random=true",
@@ -43,6 +47,10 @@ public class ModelChecker {
 	 * (as a boolean for now)
 	 */
 	public ModelChecker(String Formula, String TargetSystem) {
+		System.out.println("Input Formula: " + Formula);
+		System.out.println("Input System: " + TargetSystem);
+		this.TargetSystem = TargetSystem;
+		
 		// Build and Check Formula before examining target system
 		CharStream input = CharStreams.fromString(Formula);
 		CTLError error = new CTLError();
@@ -61,6 +69,9 @@ public class ModelChecker {
 		labels = fE.getAPs();
 
 		this.formula = new Generator().visit(tree);
+		
+		System.out.println("Parsed Formula: " + this.formula);
+		System.out.println("APs: " + labels);
 	}
 
 	public boolean check() throws IOException {
@@ -73,6 +84,7 @@ public class ModelChecker {
 
 			// ... modify config according to your needs
 			conf.setProperty("my.property", "whatever");
+			conf.setTarget(prefix + TargetSystem);
 
 			JPF jpf = new JPF(conf);
 
@@ -104,7 +116,7 @@ public class ModelChecker {
 		// At this point we know the files exist so now we need to load them...
 		
 		String jpfLabelFile = "";
-		String listenerFile = "";
+		String listenerFile = "listenerFile.tra";
 		
 		pts = new LabelledPartialTransitionSystem(jpfLabelFile, listenerFile);
 		

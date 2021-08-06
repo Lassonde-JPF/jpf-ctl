@@ -3,8 +3,6 @@ package error;
 import org.ctl.CTLBaseListener;
 import org.ctl.CTLParser;
 
-import ctl.AtomicProposition;
-
 import java.util.HashSet;
 import java.util.Set;
 import java.util.logging.*;
