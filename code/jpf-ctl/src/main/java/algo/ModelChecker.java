@@ -2,8 +2,6 @@ package algo;
 
 import java.io.IOException;
 import java.util.Set;
-import java.util.regex.Pattern;
-import java.util.stream.Collectors;
 
 import org.antlr.v4.runtime.CharStream;
 import org.antlr.v4.runtime.CharStreams;
@@ -124,7 +122,7 @@ public class ModelChecker {
 		
 		// At this point we know the files exist so now we need to load them...
 		
-		String jpfLabelFile = "";
+		String jpfLabelFile = TargetSystem + ".lab";
 		String listenerFile = "listenerFile.tra";
 		
 		pts = new LabelledPartialTransitionSystem(jpfLabelFile, listenerFile);

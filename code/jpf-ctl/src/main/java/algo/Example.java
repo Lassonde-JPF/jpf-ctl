@@ -1,4 +1,4 @@
-package ctl;
+package algo;
 
 import java.util.Random;
 
