@@ -1,14 +1,20 @@
 package gui;
 
+import java.io.File;
+
 import javafx.application.Application;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
+import javafx.stage.FileChooser;
+import javafx.stage.FileChooser.ExtensionFilter;
 import javafx.stage.Stage;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
+import javafx.scene.control.Alert;
+import javafx.scene.control.Alert.AlertType;
 import javafx.scene.image.Image;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
@@ -18,7 +24,7 @@ import javafx.scene.layout.VBox;
 public class Jpf_Ctl_Gui extends Application {
 
 	private VBox root;
-	private String path;
+	private File file;
 
 	@Override
 	public void start(Stage primaryStage) {
@@ -66,7 +72,7 @@ public class Jpf_Ctl_Gui extends Application {
 			// file label
 			Label lbl_file = new Label("No File Chosen");
 			lbl_file.setPrefWidth(scene.getWidth());
-			lbl_file.setStyle("-fx-font-family: Clear Sans; -fx-fill: #eee4da;-fx-font-size: 16px; -fx-font-weight: bold;");
+			lbl_file.setStyle("-fx-font-family: Clear Sans; -fx-fill: #eee4da;-fx-font-size: 12px; -fx-font-weight: bold;");
 
 			//command line inputs
 			Label lbl_cmd = new Label("Command Line Input (Optional)");
@@ -85,12 +91,62 @@ public class Jpf_Ctl_Gui extends Application {
 			h_run.getChildren().add(btn_run);
 
 			//adding components to the root
-			root.getChildren().add(lbl_title);
-			root.getChildren().add(h_mid);
-			root.getChildren().add(lbl_file);
-			root.getChildren().add(lbl_cmd);
-			root.getChildren().add(txt_cmd);
-			root.getChildren().add(h_run);
+			root.getChildren().addAll(lbl_title, h_mid, lbl_file, lbl_cmd, txt_cmd, h_run);
+
+			//choose file button functionality
+			btn_chooseFile.setOnAction(e->{
+				FileChooser fc = new FileChooser();
+				fc.getExtensionFilters().add(new ExtensionFilter("Class Files", "*.class"));
+				
+				file = fc.showOpenDialog(primaryStage);
+				
+				if(file != null)
+					lbl_file.setText("File: "+file.getPath());
+				else
+					lbl_file.setText("No File Chosen");
+			});
+			
+			//run button functionality
+			btn_run.setOnAction(e->{
+				
+				//get all the info needed
+				String formula = txt_formula.getText().trim();
+				String cmd = txt_cmd.getText().trim();
+				Boolean rand = chk_random.isSelected();
+				
+				//error msg
+				Alert error = new Alert(AlertType.ERROR);
+				error.setHeaderText(null);
+				error.setTitle("Error!");
+				
+				
+				//check if a file is chosen and there is a formula
+				if (file == null)
+				{
+					//error msg
+					error.setContentText("Please Choose a File");
+					error.showAndWait();
+
+				} 
+				else if (txt_formula.getText().trim().isEmpty())
+				{
+					//error msg
+					error.setContentText("Please Enter a Formula");
+					error.showAndWait();
+				}
+				else
+				{
+					// check the other fields and call the model checking
+
+//					error.setAlertType(AlertType.INFORMATION);
+//					error.setTitle("Info");
+//					error.setContentText("Running With the Settings:\nFormula: "+formula+"\nConsider Randomness: "+ rand
+//							+"\nCommand Line Input:"+ cmd);
+//					error.showAndWait();
+				}
+				
+			});
+			
 
 			primaryStage.setScene(scene);
 			primaryStage.getIcons().add(new Image("file:src/main/java/gui/images/jpf-ctl-logo.png"));
