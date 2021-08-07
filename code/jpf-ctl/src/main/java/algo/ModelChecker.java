@@ -1,6 +1,9 @@
 package algo;
 
+import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.util.stream.Collectors;
 
 import org.antlr.v4.runtime.CharStream;
@@ -110,6 +113,8 @@ public class ModelChecker {
 			
 			StateSets result = m.check(formula);
 			
+			toDot(pts, "Account");
+			
 			System.out.println(result);
 			
 			return result.getSat().contains(0); //is the initial state satisfied ?
@@ -117,5 +122,18 @@ public class ModelChecker {
 			throw new ModelCheckingException("There was an error building the LabelledPartialTransitionSystem object" + e.getMessage());
 		}
 	}
+	
+	private static void toDot(LabelledPartialTransitionSystem pts, String fileName) {
+		String pathPrefix = "src/test/resources/toDot/";
+		File file = new File(pathPrefix + ModelChecker.class.getName() + "_" + fileName + ".dot");
+		try {
+			PrintWriter pw = new PrintWriter(file);
+			pw.print(pts.toDot());
+			pw.close();
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		}
+	}
+
 
 }

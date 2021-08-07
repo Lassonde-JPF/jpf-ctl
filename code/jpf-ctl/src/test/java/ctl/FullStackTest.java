@@ -1,5 +1,6 @@
 package ctl;
 
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.junit.jupiter.api.Test;
@@ -28,7 +29,7 @@ public class FullStackTest {
 		
 		try {
 			result = ModelChecker.validate("AG ! example.Main.negative", "example.Main");
-			assertTrue(result);
+			assertFalse(result);
 		} catch (ModelCheckingException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
