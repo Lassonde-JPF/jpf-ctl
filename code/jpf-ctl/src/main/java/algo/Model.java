@@ -568,25 +568,32 @@ public class Model {
 			
 			//if the current state does not satisfy then the current state is the counter ex
 			//otherwise show all the states in all paths 
-			Formula subFormula = ((ForAllAlways) formula).getFormula();
+			Formula subFormula = ((ExistsAlways) formula).getFormula();
 			Set<Integer> subformulaUnsat = unSatForEachFormula.get(subFormula);
-			Map<Integer,Integer> parent = new HashMap<>();
-			
+			labellingFormulaForEachState.put(state, formula);
 			if(subformulaUnsat.contains(state))
 			{
 				CounterExampleHelper(subFormula, state, list);
 			}
 			else
 			{
-			
+				Set<Integer> path = new HashSet<>();
+				getPath2(state,subformulaUnsat, path);
+				for (Iterator<Integer> it = path.iterator(); it.hasNext(); ) 
+				{
+					Integer s = it.next();
+					list.add(s);
+					if(subformulaUnsat.contains(s))
+					{
+						CounterExampleHelper(subFormula, s, list);
+					}					
+				}			
 			}
-			
 		}
 		else if (formula instanceof ForAllAlways) {
 			Formula subFormula = ((ForAllAlways) formula).getFormula();
 			Set<Integer> subformulaUnsat = unSatForEachFormula.get(subFormula);
-			Map<Integer,Integer> parent = new HashMap<>();
-			Integer unSatState = this.getUnSatState(state, parent,subformulaUnsat);
+			labellingFormulaForEachState.put(state, formula);
 			if(subformulaUnsat.contains(state))
 			{
 				CounterExampleHelper(subFormula, state, list);
@@ -595,15 +602,27 @@ public class Model {
 			{
 				
 				//find the parent nodes of the n and add to the list
+				Map<Integer,Integer> parent = new HashMap<>();
+				Integer unSatState = this.getUnSatState(state, parent,subformulaUnsat);
 				getParentNodes(list,parent,unSatState);
 				CounterExampleHelper(subFormula, unSatState, list);
-				return;
-						
 			}
 		}
 		else if (formula instanceof ExistsEventually) {
 			//show all the states on all paths
+			Formula subFormula = ((ExistsEventually)formula).getFormula();
+			Set<Integer> subformulaUnsat = unSatForEachFormula.get(subFormula);
 			labellingFormulaForEachState.put(state, formula);
+			Set<Integer> allReachableStates = this.getRechableStates(state);
+			for (Iterator<Integer> it = allReachableStates.iterator(); it.hasNext(); ) 
+			{
+				Integer s = it.next();
+				list.add(s);
+				if(subformulaUnsat.contains(s))
+				{
+					CounterExampleHelper(subFormula, s, list);
+				}
+			}
 			
 		}
 		else if (formula instanceof ForAllEventually) {
@@ -627,7 +646,10 @@ public class Model {
 			Set<Integer> subPostStates = Post(state);
 		     
 		    Set<Integer> formulaUnsat = unSatForEachFormula.get(f);
-		
+			if(subPostStates.isEmpty())
+			{
+				System.out.print("\nState " + state + " has no outgoing edges.\n");
+			}
 			for (Iterator<Integer> it = subPostStates.iterator(); it.hasNext(); ) 
 			{
 		       	Integer s = it.next();
@@ -635,12 +657,9 @@ public class Model {
 				{
 					list.add(s);
 					CounterExampleHelper(f, s, list);
-				}					
-		    	
+				}		    	
 			}
-		} 
-		
-		
+		} 		
 		else if (formula instanceof ForAllNext) {
 			Formula f = ((ForAllNext) formula).getFormula();
 			
@@ -648,7 +667,11 @@ public class Model {
 			
 			labellingFormulaForEachState.put(state, formula);	    
 		    Set<Integer> formulaUnsat = unSatForEachFormula.get(f);
-
+			
+			if(subPostStates.isEmpty())
+			{
+				System.out.print("\nState " + state + " has no outgoing edges.\n");
+			}
 			for (Iterator<Integer> it = subPostStates.iterator(); it.hasNext(); ) 
 			{
 		       	Integer s = it.next();
@@ -656,7 +679,7 @@ public class Model {
 				{
 					list.add(s);
 					CounterExampleHelper(f, s, list);
-					return;
+					break;
 				}
 		    	
 			}		
@@ -668,8 +691,9 @@ public class Model {
 
 		}
 		else if (formula instanceof Not) {
-			// ! AX = EX !
-		
+			// ! AX EX Red = EX !(EX Red) = EX AX !Red	
+//			Formula f = ((Not) formula).getFormula();
+//			labellingFormulaForEachState.put(state, formula);
 		} 
 	}
 	
@@ -681,9 +705,9 @@ public class Model {
 			return;
 		}
 		list.add(s);
-		System.out.println("In get Parent: " + s);
 		getParentNodes(list,parent,parentNode);
 	}
+	
 	private void getPath(Integer state, Set<Integer> subformulaUnsat,Set<Integer> path)
 	{
 		if(Post(state).isEmpty()) {
@@ -697,7 +721,6 @@ public class Model {
 				Integer n = it.next();
 				if(subformulaUnsat.contains(n) && !path.contains(n)) {
 					path.add(n);
-					System.out.println("in getPath :" + n);
 					getPath(n,subformulaUnsat,path);
 					return;
 				}
@@ -714,7 +737,28 @@ public class Model {
 		}
 		
 	}
-
+	
+	private void getPath2(Integer state, Set<Integer> subformulaUnsat,Set<Integer> path)
+	{
+		if(Post(state).isEmpty()) {
+			return;
+		}
+		else 
+		{			
+			for (Iterator<Integer> it = Post(state).iterator(); it.hasNext(); ) 
+			{
+				Integer n = it.next();
+				if(!path.contains(n))
+				{
+					path.add(n);
+					if(!subformulaUnsat.contains(n)) 
+					{
+						getPath(n,subformulaUnsat,path);
+					}
+				}
+			}			
+		}		
+	}
 	private Set<Transition> getRelatedTransitions( Set<Integer> list)
 	{
 		Set<Transition> result = new HashSet<Transition>();
@@ -798,5 +842,45 @@ public class Model {
             }
         }
         return s;
+    }
+
+	private Set<Integer> getRechableStates(Integer s)
+    {
+        // Mark all the vertices as not visited(By default
+        // set as false)
+		
+        
+        Set<Integer> visited = new HashSet<>();
+        // Create a queue for BFS
+        LinkedList<Integer> queue = new LinkedList<Integer>();
+        Set<Integer> result = new HashSet<>();
+        
+        // Mark the current node as visited and enqueue it
+        queue.add(s);
+        visited.add(s);
+
+        while (queue.size() != 0)
+        {
+            // Dequeue a vertex from queue and print it
+            s = queue.poll();
+    		result.add(s);
+			
+			
+            
+            // Get all adjacent vertices of the dequeued vertex s
+            // If a adjacent has not been visited, then mark it
+            // visited and enqueue it
+            Iterator<Integer> i = Post(s).iterator();
+            while (i.hasNext())
+            {
+                int n = i.next();
+                if (!visited.contains(n))
+                {
+                   	visited.add(n);
+                    queue.add(n);
+                }
+            }
+        }
+        return result;
     }
 }
