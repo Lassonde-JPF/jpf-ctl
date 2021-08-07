@@ -199,9 +199,13 @@ public class LabelledPartialTransitionSystem {
 			if (line.matches(LABELLING)) {
 				String[] lr = line.split(LABELLING_DELIMETER);
 				Set<Integer> labels = new HashSet<Integer>();
-				labels = Pattern.compile(MAPPING_DELIMETER).splitAsStream(lr[1]).map(e -> Integer.parseInt(e))
+				labels = Pattern.compile(MAPPING_DELIMETER).splitAsStream(lr[1])
+						.map(Integer::parseInt)
+						.filter(fields::containsValue)
 						.collect(Collectors.toSet());
-				this.labelling.put(Integer.parseInt(lr[0]), labels);
+				if (!labels.isEmpty()) {
+					this.labelling.put(Integer.parseInt(lr[0]), labels);
+				}
 			}
 			if (line.matches(MAPPING)) {
 				Pattern.compile(MAPPING_DELIMETER).splitAsStream(line).forEach(e -> {

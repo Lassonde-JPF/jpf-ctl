@@ -14,7 +14,20 @@ public class FullStackTest {
 		boolean result;
 
 		try {
-			result = ModelChecker.validate("algo.Example.one || algo.Example.two", "algo.Example");
+			result = ModelChecker.validate("example.Example.one || example.Example.two", "example.Example");
+			assertTrue(result);
+		} catch (ModelCheckingException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+	
+	@Test
+	public void accountTest() {
+		boolean result;
+		
+		try {
+			result = ModelChecker.validate("AG ! example.Main.negative", "example.Main");
 			assertTrue(result);
 		} catch (ModelCheckingException e) {
 			// TODO Auto-generated catch block
