@@ -172,6 +172,7 @@ public class LabelledPartialTransitionSystem {
 		
 		this.stateSet = new HashSet<Integer>();
 		this.transitions = new HashSet<Transition>();
+		this.partial = new HashSet<Integer>();
 		// Listener File
 		listenerFileLines.forEach(line -> {
 			if (line.matches(TRANSITION)) {
@@ -183,9 +184,9 @@ public class LabelledPartialTransitionSystem {
 				this.transitions.add(new Transition(source, target));
 			}
 			if (line.matches(PARTIAL)) {
-				this.partial = Pattern.compile(PARTIAL_DELIMETER).splitAsStream(line)
+				this.partial.addAll(Pattern.compile(PARTIAL_DELIMETER).splitAsStream(line)
 						.map(e -> Integer.parseInt(e))
-						.collect(Collectors.toSet());
+						.collect(Collectors.toSet()));
 				this.stateSet.addAll(this.partial);
 			}
 		});

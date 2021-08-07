@@ -1,7 +1,7 @@
 package algo;
 
 import java.io.IOException;
-import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.antlr.v4.runtime.CharStream;
 import org.antlr.v4.runtime.CharStreams;
@@ -15,29 +15,13 @@ import ctl.Formula;
 import ctl.Generator;
 import error.CTLError;
 import error.FieldExists;
+import error.ModelCheckingException;
 import gov.nasa.jpf.Config;
 import gov.nasa.jpf.JPF;
-import gov.nasa.jpf.JPF.Status;
 import gov.nasa.jpf.JPFConfigException;
 import gov.nasa.jpf.JPFException;
-import label.StateLabelText;
-import listeners.PartialTransitionSystemListener;
 
 public class ModelChecker {
-
-	Formula formula;
-
-	LabelledPartialTransitionSystem pts;
-	
-	Set<String> labels;
-	
-	final String prefix = "src/test/resources/exampleClasses/"; 
-	
-	String TargetSystem;
-
-	static final String[] args = new String[] {
-			"+listener+=,label.StateLabelText" // TODO need to define the classpath (native) in jpf.properties
-	};
 
 	/*
 	 * In order.. 1. ParseFormula 2. Get APs of interest 3. Build Properties for JPF
@@ -46,10 +30,9 @@ public class ModelChecker {
 	 * output files 7. Model Check the formula against the pts 8. return the result
 	 * (as a boolean for now)
 	 */
-	public ModelChecker(String Formula, String TargetSystem) {
+	public static boolean validate(String Formula, String TargetSystem) throws ModelCheckingException {
 		System.out.println("Input Formula: " + Formula);
 		System.out.println("Input System: " + TargetSystem);
-		this.TargetSystem = TargetSystem;
 		
 		// Build and Check Formula before examining target system
 		CharStream input = CharStreams.fromString(Formula);
@@ -65,16 +48,12 @@ public class ModelChecker {
 		ParseTreeWalker walker = new ParseTreeWalker();
 		FieldExists fE = new FieldExists();
 		walker.walk(fE, tree);
-		
-		labels = fE.getAPs();
 
-		this.formula = new Generator().visit(tree);
+		Formula formula = new Generator().visit(tree);
 		
-		System.out.println("Parsed Formula: " + this.formula);
-		System.out.println("APs: " + labels);
-	}
-
-	public boolean check() throws IOException {
+		System.out.println("Parsed Formula: " + formula);
+		System.out.println("APs: " + fE.getAPs());
+		
 		try {
 			// this initializes the JPF configuration from default.properties,
 			// site.properties
@@ -84,29 +63,25 @@ public class ModelChecker {
 
 			// ... modify config according to your needs
 			conf.setTarget(TargetSystem);
+			
+			// only needed if randomization is used
 			conf.setProperty("cg.enumerate_random", "true");
 			
 			// build the label properties
-			//String RHS = labels.stream().collect(Collectors.joining("; "));
-			//conf.setProperty("label.class", RHS + ";"); // TODO probabaly going to have to map the APS by class -> field
+			String fields = fE.getAPs().stream().collect(Collectors.joining("; "));
+			conf.setProperty("label.class", "label.BooleanStaticField");
+			conf.setProperty("label.BooleanStaticField.field", fields);
 			
-			System.out.println("JPF config: " + conf);
+			// set the listeners
+			conf.setProperty("listener", "label.StateLabelText,listeners.PartialTransitionSystemListener");
 			
 			JPF jpf = new JPF(conf);
-
-			// ... explicitly create listeners (could be reused over multiple JPF runs)
-			PartialTransitionSystemListener ptsListener = new PartialTransitionSystemListener(jpf.getConfig(), jpf);
-			StateLabelText sltListener = new StateLabelText(jpf.getConfig());
-
-			// ... set your listeners
-			jpf.addListener(ptsListener);
-			jpf.addListener(sltListener);
 
 			jpf.run();
 			if (jpf.foundErrors()) {
 				// ... process property violations discovered by JPF
+				throw new ModelCheckingException("JPF discovered an error: " + jpf.getLastError());
 			}
-			while (jpf.getStatus() != Status.DONE);
 		} catch (JPFConfigException cx) {
 			// ... handle configuration exception
 			// ... can happen before running JPF and indicates inconsistent configuration
@@ -123,23 +98,24 @@ public class ModelChecker {
 		}
 		
 		// At this point we know the files exist so now we need to load them...
-		
-		
-		
 		String jpfLabelFile = TargetSystem + ".lab";
-		String listenerFile = "listenerFile.tra";
+		String listenerFile = TargetSystem + ".tra";
 		
-		pts = new LabelledPartialTransitionSystem(jpfLabelFile, listenerFile);
-		
-		System.out.println(pts);
-		
-		Model m = new Model(pts);
-		
-		StateSets result = m.check(formula);
-		
-		System.out.println(result);
-		
-		return result.getSat().contains(0); //is the initial state satisfied ?
+		try {
+			LabelledPartialTransitionSystem pts = new LabelledPartialTransitionSystem(jpfLabelFile, listenerFile);
+			
+			System.out.println("Pts: " + pts);
+			
+			Model m = new Model(pts);
+			
+			StateSets result = m.check(formula);
+			
+			System.out.println(result);
+			
+			return result.getSat().contains(0); //is the initial state satisfied ?
+		} catch (IOException e) {
+			throw new ModelCheckingException("There was an error building the LabelledPartialTransitionSystem object" + e.getMessage());
+		}
 	}
 
 }

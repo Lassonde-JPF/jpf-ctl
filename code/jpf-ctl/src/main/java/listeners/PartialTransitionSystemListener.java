@@ -98,7 +98,7 @@ public class PartialTransitionSystemListener extends SearchListenerAdapter {
 	 * @param search the Search instance
 	 */
 	public void searchStarted(Search search) {
-		String name = "listenerFile.tra"; //search.getVM().getSUTName() + ".tra"; //TODO revert this
+		String name = search.getVM().getSUTName() + ".tra"; //TODO revert this
 		try {
 			this.writer = new PrintWriter(name);
 		} catch (FileNotFoundException e) {
