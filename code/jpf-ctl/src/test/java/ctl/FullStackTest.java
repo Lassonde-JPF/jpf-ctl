@@ -1,5 +1,7 @@
 package ctl;
 
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 import org.junit.jupiter.api.Test;
 
 import algo.ModelChecker;
@@ -9,9 +11,11 @@ public class FullStackTest {
 
 	@Test
 	public void exampleTest() {
-		
+		boolean result;
+
 		try {
-			boolean result = ModelChecker.validate("algo.Example.one || algo.Example.two", "algo.Example");
+			result = ModelChecker.validate("algo.Example.one || algo.Example.two", "algo.Example");
+			assertTrue(result);
 		} catch (ModelCheckingException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

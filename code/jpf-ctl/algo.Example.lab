@@ -1,1 +1,8 @@
-
+0="false__algo_Example_one" 1="false__algo_Example_two" 2="true__algo_Example_one" 3="true__algo_Example_two" 
+-1: 0 1
+0: 1 2
+1: 2 3
+2: 2 3
+3: 1 2
+4: 1 2
+5: 2 3

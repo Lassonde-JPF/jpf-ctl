@@ -42,14 +42,14 @@ public class LabelledPartialTransitionSystem {
 
 	// states that are not fully explored
 	private Set<Integer> partial;
-	
+
 	// transitions
 	private Set<Transition> transitions;
-	
+
 	// labelling of the states
 	private Map<Integer, Set<Integer>> labelling; // stateID -> indicies
-	private Map<String, Integer> fields; // qualifiedFieldNames -> indicies 
-	
+	private Map<String, Integer> fields; // qualifiedFieldNames -> indicies
+
 	// all states
 	private Set<Integer> stateSet;
 
@@ -96,7 +96,7 @@ public class LabelledPartialTransitionSystem {
 		/*
 		 * Randomly generates transitions between states (explored and not explored)
 		 */
-		final double TRANSITIONS = 2 * Math.log(states) / Math.pow(states, 1.5);//2 * Math.log(states) / states;
+		final double TRANSITIONS = 2 * Math.log(states) / Math.pow(states, 1.5);// 2 * Math.log(states) / states;
 		this.transitions = new HashSet<Transition>();
 		for (int source = 0; source < states; source++) {
 			for (int target = 0; target < states; target++) {
@@ -108,15 +108,11 @@ public class LabelledPartialTransitionSystem {
 				this.transitions.add(new Transition(source, SINK_STATE));
 			}
 		}
-		
+
 		// Field Setup
 		this.fields = new HashMap<String, Integer>();
-		String[] fieldNames = new String[] {
-			"algo.JavaFields.p1",
-			"algo.JavaFields.p2",
-			"algo.JavaFields.p3",
-			"algo.JavaFields.p4"
-		};
+		String[] fieldNames = new String[] { "algo.JavaFields.p1", "algo.JavaFields.p2", "algo.JavaFields.p3",
+				"algo.JavaFields.p4" };
 		for (int i = 0; i < fieldNames.length; i++) {
 			fields.put(fieldNames[i], i);
 		}
@@ -133,14 +129,15 @@ public class LabelledPartialTransitionSystem {
 				// duplicates)
 				int labels = 1 + random.nextInt(MAX_LABELS_PER_STATE);
 				for (int label = 0; label < labels; label++) {
-					labelSet.add(random.nextInt(fields.size())); //next int is exclusive
+					labelSet.add(random.nextInt(fields.size())); // next int is exclusive
 				}
 			}
 		}
 	}
-	
-	//Constructor for debugging with specific transition system
-	public LabelledPartialTransitionSystem(int states, Set<Transition> transitions, Set<Integer> partial, Map<Integer, Set<Integer>> labelling, Map<String, Integer> fields) {
+
+	// Constructor for debugging with specific transition system
+	public LabelledPartialTransitionSystem(int states, Set<Transition> transitions, Set<Integer> partial,
+			Map<Integer, Set<Integer>> labelling, Map<String, Integer> fields) {
 		this.states = states;
 		stateSet = IntStream.range(0, states).boxed().collect(Collectors.toSet());
 		stateSet.add(SINK_STATE);
@@ -150,26 +147,27 @@ public class LabelledPartialTransitionSystem {
 		this.fields = fields;
 	}
 
-	//Actual Constructor for production
+	// Actual Constructor for production
 	public LabelledPartialTransitionSystem(String jpfLabelFile, String listenerFile) throws IOException {
-		//Wrap path string with Path object
+		// Wrap path string with Path object
 		Path pathToListenerFile = Paths.get(listenerFile);
 		Path pathToJpfLabelFile = Paths.get(jpfLabelFile);
-		
-		//Get files as stream (of lines)
+
+		// Get files as stream (of lines)
 		Stream<String> listenerFileLines = Files.lines(pathToListenerFile);
 		Stream<String> jpfLabelFileLines = Files.lines(pathToJpfLabelFile);
-		
+
 		// regex for different line types
 		final String TRANSITION = "-?\\d+\\s->\\s\\d+"; // 3 -> 4
 		final String TRANSITION_DELIMETER = "\\s->\\s";
-		final String PARTIAL = "(\\d+\\s?)+"; // 3 4 5 
+		final String PARTIAL = "(\\d+\\s?)+"; // 3 4 5
 		final String PARTIAL_DELIMETER = "\\s";
-		final String MAPPING = "(\\d+=\"(([a-zA-Z_$][a-zA-Z\\d_$]*\\.)*[a-zA-Z_$][a-zA-Z\\d_$]*)\"\\s?)+"; // 2="something" 3="anotherthing"
+		final String MAPPING = "(\\d+=\"(([a-zA-Z_$][a-zA-Z\\d_$]*\\.)*[a-zA-Z_$][a-zA-Z\\d_$]*)\"\\s?)+"; // 2="something"
+																											// 3="anotherthing"
 		final String MAPPING_DELIMETER = "\\s";
 		final String LABELLING = "\\d+:\\s(\\d+\\s?)+"; // 2: 3 4
 		final String LABELLING_DELIMETER = ":\\s";
-		
+
 		this.stateSet = new HashSet<Integer>();
 		this.transitions = new HashSet<Transition>();
 		this.partial = new HashSet<Integer>();
@@ -184,17 +182,16 @@ public class LabelledPartialTransitionSystem {
 				this.transitions.add(new Transition(source, target));
 			}
 			if (line.matches(PARTIAL)) {
-				this.partial.addAll(Pattern.compile(PARTIAL_DELIMETER).splitAsStream(line)
-						.map(e -> Integer.parseInt(e))
+				this.partial.addAll(Pattern.compile(PARTIAL_DELIMETER).splitAsStream(line).map(e -> Integer.parseInt(e))
 						.collect(Collectors.toSet()));
 				this.stateSet.addAll(this.partial);
 			}
 		});
 		listenerFileLines.close();
-		
+
 		this.stateSet.add(SINK_STATE);
 		this.states = this.stateSet.size();
-	
+
 		// jpf-label File
 		this.labelling = new HashMap<Integer, Set<Integer>>();
 		this.fields = new HashMap<String, Integer>();
@@ -202,23 +199,25 @@ public class LabelledPartialTransitionSystem {
 			if (line.matches(LABELLING)) {
 				String[] lr = line.split(LABELLING_DELIMETER);
 				Set<Integer> labels = new HashSet<Integer>();
-				labels = Pattern.compile(MAPPING_DELIMETER).splitAsStream(lr[1])
-						.map(e -> Integer.parseInt(e))
+				labels = Pattern.compile(MAPPING_DELIMETER).splitAsStream(lr[1]).map(e -> Integer.parseInt(e))
 						.collect(Collectors.toSet());
 				this.labelling.put(Integer.parseInt(lr[0]), labels);
 			}
 			if (line.matches(MAPPING)) {
 				Pattern.compile(MAPPING_DELIMETER).splitAsStream(line).forEach(e -> {
 					String l = e.replace("\"", "");
-					String[] lr = l.split("=");
-					this.fields.put(lr[1].trim(), Integer.parseInt(lr[0]));
+					int index = Integer.parseInt(l.split("=")[0]);
+					String AP = l.split("=")[1];
+					String[] LR = AP.split("__");
+					if (LR[0].equals("true")) {
+						this.fields.put(LR[1].replace("_", "."), index);
+					}
 				});
 			}
 		});
 		jpfLabelFileLines.close();
 	}
 
-	
 	@Override
 	public String toString() {
 		StringBuffer toString = new StringBuffer();
@@ -319,11 +318,11 @@ public class LabelledPartialTransitionSystem {
 	public Map<Integer, Set<Integer>> getLabelling() {
 		return this.labelling;
 	}
-	
+
 	public Map<String, Integer> getFields() {
 		return this.fields;
 	}
-	
+
 	public Set<Integer> getPartial() {
 		return this.partial;
 	}
