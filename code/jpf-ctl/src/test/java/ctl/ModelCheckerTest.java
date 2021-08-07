@@ -63,8 +63,6 @@ public class ModelCheckerTest {
 		expectedPartial.add(5);
 		
 		Map<Integer, Set<Integer>> expectedLabelling = new HashMap<Integer, Set<Integer>>();
-		expectedLabelling.put(0, new HashSet<Integer>());
-		expectedLabelling.get(0).add(0);
 		expectedLabelling.put(1, new HashSet<Integer>());
 		expectedLabelling.get(1).add(1);
 		expectedLabelling.put(2, new HashSet<Integer>());
@@ -76,7 +74,6 @@ public class ModelCheckerTest {
 		expectedLabelling.get(4).add(1);
 		
 		Map<String, Integer> expectedFields = new HashMap<String, Integer>();
-		expectedFields.put("init", 0);
 		expectedFields.put("algo.JavaFields.p1", 1);
 		expectedFields.put("algo.JavaFields.p2", 2);
 		
