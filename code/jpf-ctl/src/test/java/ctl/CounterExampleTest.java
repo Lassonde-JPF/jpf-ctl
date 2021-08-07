@@ -44,7 +44,7 @@ public class CounterExampleTest {
 
 			LabelledPartialTransitionSystem pts = new LabelledPartialTransitionSystem();
 			//String input = Formula.random().toString();
-			String input = "EX AX algo.JavaFields.p3";
+			String input = "AG EX algo.JavaFields.p3";
 			ParseTree tree = parseCtl(input);
 			Formula formula = generator.visit(tree);
 			

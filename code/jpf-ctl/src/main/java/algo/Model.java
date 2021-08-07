@@ -222,6 +222,7 @@ public class Model {
 			unSat.removeAll(Sat);
 			unSatForEachFormula.put(f,unSat);
 			return buildResult(formula, Sat, unSat);
+			
 		} else if (formula instanceof ExistsAlways) {
 			ExistsAlways f = (ExistsAlways) formula;
 			Set<Integer> Sat = check(f.getFormula()).getSat();
@@ -619,26 +620,40 @@ public class Model {
 			Formula subFormula = ((ForAllAlways) formula).getFormula();
 			Set<Integer> subformulaUnsat = unSatForEachFormula.get(subFormula);
 			Map<Integer,Integer> parent = new HashMap<>();
-			Set<Integer> allReachableStates = this.getPath(state, parent);
-			for (Iterator<Integer> it = allReachableStates.iterator(); it.hasNext(); )
+			Set<Integer> allReachableStates = this.getReachableStates(state, parent);
+			if(subformulaUnsat.contains(state))
 			{
-				Integer n = it.next();
-				//find the parent nodes of the n and add to the list
-				CounterExampleHelper(subFormula, n, list);
-				return;
+				CounterExampleHelper(subFormula, state, list);
 			}
+			else
+			{
+				for (Iterator<Integer> it = allReachableStates.iterator(); it.hasNext(); )
+				{
+					Integer n = it.next();
+					if(subformulaUnsat.contains(n))
+					{
+						//find the parent nodes of the n and add to the list
+						getParentNodes(list,parent,n);
+						CounterExampleHelper(subFormula, n, list);
+						return;
+					}
+				}
 			
-			
+			}
 		}
 		else if (formula instanceof ForAllEventually) {
 			Formula subFormula = ((ForAllEventually) formula).getFormula();
 			Set<Integer> subformulaUnsat = unSatForEachFormula.get(subFormula);
+			Set<Integer> path = new HashSet<>();
+			labellingFormulaForEachState.put(state, formula);
+			getPath(state,subformulaUnsat, path);
+			for (Iterator<Integer> it = path.iterator(); it.hasNext(); ) 
+			{
+				Integer s = it.next();
+				list.add(s);
+				CounterExampleHelper(subFormula, s, list);
+			}		
 			
-			//for (Iterator<Integer> it = states.iterator(); it.hasNext(); ) 
-		    {
-		       	//Integer n = it.next();
-				//find the path from state
-			}
 		    //go through the states of the path that non of the states on that path sat sub formula
 		 	//send one by one to the next recursive call
 			
@@ -671,6 +686,48 @@ public class Model {
 		} 
 	}
 	
+	private void getParentNodes(Set<Integer> list, Map<Integer,Integer> parent, Integer s)
+	{
+		Integer parentNode = parent.get(s);
+		if(parentNode == null)
+		{
+			return;
+		}
+		list.add(s);
+		System.out.println("In get Parent: " + s);
+		getParentNodes(list,parent,parentNode);
+	}
+	private void getPath(Integer state, Set<Integer> subformulaUnsat,Set<Integer> path)
+	{
+		if(Post(state).isEmpty()) {
+			return;
+		}
+		else {
+			int i = 0;
+			
+			for (Iterator<Integer> it = Post(state).iterator(); it.hasNext(); ) 
+			{
+				Integer n = it.next();
+				if(subformulaUnsat.contains(n) && !path.contains(n)) {
+					path.add(n);
+					System.out.println("in getPath :" + n);
+					getPath(n,subformulaUnsat,path);
+					return;
+				}
+				else {
+					i++;
+				}
+				
+			}
+			if( i == Post(state).size())
+			{
+				path.remove(state);
+				
+			}	
+		}
+		
+	}
+
 	private Set<Transition> getRelatedTransitions( Set<Integer> list)
 	{
 		Set<Transition> result = new HashSet<Transition>();
@@ -714,25 +771,27 @@ public class Model {
 		return this.Post(s);
 	}
 	
-	private Set<Integer> getPath(Integer s, Map<Integer,Integer> parent)
+	private Set<Integer> getReachableStates(Integer s, Map<Integer,Integer> parent)
     {
         // Mark all the vertices as not visited(By default
         // set as false)
-        boolean visited[] = new boolean[pts.getStates().size()];
+		
+        
+        Map<Integer,Boolean> visited = new HashMap<>();
         // Create a queue for BFS
         LinkedList<Integer> queue = new LinkedList<Integer>();
         Set<Integer> result = new HashSet<>();
         
         // Mark the current node as visited and enqueue it
-        visited[s]=true;
         queue.add(s);
- 
+        visited.put(s, true);
+
         while (queue.size() != 0)
         {
             // Dequeue a vertex from queue and print it
             s = queue.poll();
             result.add(s);
-
+            System.out.println("In get reach: " + s);
             // Get all adjacent vertices of the dequeued vertex s
             // If a adjacent has not been visited, then mark it
             // visited and enqueue it
@@ -740,10 +799,10 @@ public class Model {
             while (i.hasNext())
             {
                 int n = i.next();
-                if (!visited[n])
+                if (!visited.containsKey(n))
                 {
                 	parent.put(n, s);
-                    visited[n] = true;
+                	visited.put(n, true);
                     queue.add(n);
                 }
             }
