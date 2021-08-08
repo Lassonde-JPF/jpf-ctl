@@ -15,10 +15,9 @@ public class FullStackTest {
 		boolean result;
 
 		try {
-			result = ModelChecker.validate("example.Example.one || example.Example.two", "example.Example");
+			result = ModelChecker.validate("example.Example.one || example.Example.two", "example.Example", "true");
 			assertTrue(result);
 		} catch (ModelCheckingException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
@@ -28,10 +27,9 @@ public class FullStackTest {
 		boolean result;
 		
 		try {
-			result = ModelChecker.validate("AG ! example.Main.negative", "example.Main");
+			result = ModelChecker.validate("AG ! example.Main.negative", "example.Main", "true");
 			assertFalse(result);
 		} catch (ModelCheckingException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
