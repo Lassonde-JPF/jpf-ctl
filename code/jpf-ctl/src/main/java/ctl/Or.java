@@ -29,7 +29,7 @@ package ctl;
 public class Or extends Formula {
 	private Formula left;
 	private Formula right;
-	
+
 	/**
 	 * Initializes this CTL formula as the disjunction (or) of the given {@code left} and {@code right} subformulas.
 	 * 
@@ -64,14 +64,24 @@ public class Or extends Formula {
 	public String toString() {
 		return "(" + this.left + " || " + this.right + ")";
 	}
-	
+
+	/**
+	 * Returns the left subformula of this formula.
+	 * 
+	 * @return the left subformula of this formula
+	 */
 	public Formula getLeft()
 	{
-    return left;
-    }
+		return this.left;
+	}
 
+	/**
+	 * Returns the right subformula of this formula.
+	 * 
+	 * @return the right subformula of this formula
+	 */
 	public Formula getRight()
 	{
-    return right;
- 	}  
+		return this.right;
+	}  
 }

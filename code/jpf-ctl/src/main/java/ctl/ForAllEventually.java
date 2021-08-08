@@ -61,6 +61,11 @@ public class ForAllEventually extends Formula {
 		return "AF " + this.formula;
 	}
 
+	/**
+	 * Returns the subformula of this formula.
+	 * 
+	 * @return the subformula of this formula
+	 */
 	public Formula getFormula()
 	{
 		return this.formula;

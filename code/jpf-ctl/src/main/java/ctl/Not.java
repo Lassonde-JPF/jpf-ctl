@@ -61,10 +61,13 @@ public class Not extends Formula {
 		return "! " + this.formula;
 	}
 	
+	/**
+	 * Returns the subformula of this formula.
+	 * 
+	 * @return the subformula of this formula
+	 */
 	public Formula getFormula()
 	{
-    return formula;
-    }
-
-	
+		return this.formula;
+	}
 }

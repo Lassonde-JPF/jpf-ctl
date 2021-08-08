@@ -60,7 +60,12 @@ public class ForAllNext extends Formula {
 	public String toString() {
 		return "AX " + this.formula;
 	}
-	
+
+	/**
+	 * Returns the subformula of this formula.
+	 * 
+	 * @return the subformula of this formula
+	 */
 	public Formula getFormula()
 	{
 		return this.formula;
