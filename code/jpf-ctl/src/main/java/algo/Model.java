@@ -46,59 +46,43 @@ import java.util.Map;
 /**
  * 
  * TODO suggestion - why not have the model class either be static OR have it
- * contain an instance of a LabelledPartialTransitionpts?
+ * contain an instance of a LabelledPartialTransitionsystem?
  */
 public class Model {
+	// transition system
+	private final TransitionSystem system;
+	
+	// cache of satisfaction sets of formulas
+	private final Map<Formula, BitSet> sat;
 
-	// Post and Pre hashtables
-	private Map<Integer, Set<Integer>> post;
-	private Map<Integer, Set<Integer>> pre;
-
-	// Target Transition System
-	private LabelledPartialTransitionSystem pts;
-
-	public Model(LabelledPartialTransitionSystem pts) {
-		this.post = new HashMap<Integer, Set<Integer>>();
-		this.pre = new HashMap<Integer, Set<Integer>>();
-
-		this.pts = pts;
-	}
-
-	/*
-	 * Returns the set of states that are successors to `state` and if not computed
-	 * before, adds the entry to a hashtable, post
+	/**
+	 * Initializes 
+	 * 
+	 * @param system 
 	 */
-	private Set<Integer> Post(Integer state) {
-		post.computeIfAbsent(state, k -> pts.getTransitions().stream().filter(t -> t.source == state).map(t -> t.target)
-				.distinct().collect(Collectors.toSet()));
-		return post.get(state);
+	public Model(TransitionSystem system) {
+		this.system = system;
+		this.sat = new HashMap<Formula, BitSet>();
 	}
 
-	/*
-	 * Returns the set of states that are predecessors to `state` and if not
-	 * computed before, adds the entry to a hashtable, pre
-	 */
-	private Set<Integer> Pre(Integer state) {
-		pre.computeIfAbsent(state, k -> pts.getTransitions().stream().filter(t -> t.target == state).map(t -> t.source)
-				.distinct().collect(Collectors.toSet()));
-		return pre.get(state);
-	}
+
 
 	/**
 	 * Returns the
 	 * 
-	 * @param pts
+	 * @param system
 	 * @param formula
 	 * @return
-	 * 
 	 */
-	public StateSets check(Formula formula) {
+	public BitSet check(Formula formula) {
+		if (this.sat.con)
+		
 		/*
 		 * Base case
 		 */
 		if (formula instanceof True) {
 			BitSet sat = new BitSet();
-			sat.set(0, pts.getNumberOfStates());
+			sat.set(0, system.getNumberOfStates());
 			return new StateSets(sat, new BitSet());
 		}
 		/*
@@ -106,7 +90,7 @@ public class Model {
 		 */
 		else if (formula instanceof False) {
 			BitSet unsat = new BitSet();
-			unsat.set(0, pts.getNumberOfStates());
+			unsat.set(0, system.getNumberOfStates());
 			return new StateSets(new BitSet(), unsat);
 		} 
 		/*
@@ -117,8 +101,8 @@ public class Model {
 			
 			BitSet sat = new BitSet();
 			BitSet unsat = new BitSet();
-			for (int state = 0; state < pts.getNumberOfStates; state++) {
-				if (pts.getLabelling.get(state).contains(label)) {
+			for (int state = 0; state < system.getNumberOfStates; state++) {
+				if (system.getLabelling.get(state).contains(label)) {
 					sat.set(state);
 				} else {
 					unsat.set(state);
@@ -139,10 +123,10 @@ public class Model {
 				//Object val = f.get(obj); // This is the "value" of the AP's field
 
 				// now we filter all states by those whose label contains this value
-				//Sat = pts.getStates().stream().filter(s -> pts.getLabelling().get(s).contains(val))
+				//Sat = system.getStates().stream().filter(s -> system.getLabelling().get(s).contains(val))
 						.collect(Collectors.toSet());
 
-				//unSat = new HashSet<Integer>(pts.getStates());
+				//unSat = new HashSet<Integer>(system.getStates());
 				//unSat.removeAll(Sat);
 
 				// This catch should never be triggered as we filter for these possibilities in
@@ -168,7 +152,7 @@ public class Model {
 			sat.or(right.getUnsat());
 			//Set<Integer> Sat = new HashSet<Integer>(L.sat);
 			//Sat.retainAll(R.sat);
-			//Set<Integer> unSat = new HashSet<Integer>(pts.getStates());
+			//Set<Integer> unSat = new HashSet<Integer>(system.getStates());
 			//unSat.removeAll(Sat);
 			return new StateSets(sat, unsat);
 		} else if (formula instanceof Or) {
@@ -178,7 +162,7 @@ public class Model {
 			StateSets R = check(f.getRight());
 			Set<Integer> Sat = new HashSet<Integer>(L.sat);
 			Sat.addAll(R.sat);
-			Set<Integer> unSat = new HashSet<Integer>(pts.getStates());
+			Set<Integer> unSat = new HashSet<Integer>(system.getStates());
 			unSat.removeAll(Sat);
 			return new StateSets(Sat, unSat);
 		} else if (formula instanceof Implies) {
@@ -188,7 +172,7 @@ public class Model {
 			StateSets R = check(f.getRight());
 			Set<Integer> Sat = new HashSet<Integer>(L.unsat);
 			Sat.addAll(R.sat);
-			Set<Integer> unSat = new HashSet<Integer>(pts.getStates());
+			Set<Integer> unSat = new HashSet<Integer>(system.getStates());
 			unSat.removeAll(Sat);
 			return new StateSets(Sat, unSat);
 		} else if (formula instanceof Iff) {
@@ -206,14 +190,14 @@ public class Model {
 			Set<Integer> Sat = new HashSet<Integer>(LSat);
 			Sat.addAll(RSat);
 			// !( (a && b) || (!a && !b) )
-			Set<Integer> unSat = new HashSet<Integer>(pts.getStates());
+			Set<Integer> unSat = new HashSet<Integer>(system.getStates());
 			unSat.removeAll(Sat);
 			return new StateSets(Sat, unSat);
 		} else if (formula instanceof ExistsAlways) {
 			ExistsAlways subFormula = ((ExistsAlways) formula).getFormula();
 			
 			BitSet sat = new BitSet();
-			sat.set(0, pts.getNumberOfStates());
+			sat.set(0, system.getNumberOfStates());
 			if (!subFormula instanceof True) {
 				BitSet subResult = check(subFormula).getSat();
 				BitSet previous;
@@ -233,7 +217,7 @@ public class Model {
 			BitSet unsat = new BitSet();
 			
 //			Set<Integer> Sat = check(f.getFormula()).sat;
-//			List<Integer> E = pts.getStates().stream().filter(s -> !Sat.contains(s)).collect(Collectors.toList());
+//			List<Integer> E = system.getStates().stream().filter(s -> !Sat.contains(s)).collect(Collectors.toList());
 //			Set<Integer> T = Sat;
 //
 //			int max = 0;
@@ -256,7 +240,7 @@ public class Model {
 //					}
 //				}
 //			}
-//			Set<Integer> unSat = new HashSet<Integer>(pts.getStates());
+//			Set<Integer> unSat = new HashSet<Integer>(system.getStates());
 //			unSat.removeAll(T);
 			return new StateSets(sat, unsat);
 		}
@@ -274,7 +258,7 @@ public class Model {
 				Integer sP = E.remove(0);
 				Set<Integer> preS = Pre(sP);
 				for (Integer s : preS) {
-					Set<Integer> lSatLessT = pts.getStates(); // "true" set
+					Set<Integer> lSatLessT = system.getStates(); // "true" set
 					lSatLessT.removeAll(T);
 					if (lSatLessT.contains(s)) {
 						E.add(s);
@@ -282,7 +266,7 @@ public class Model {
 					}
 				}
 			}
-			Set<Integer> unSat = new HashSet<Integer>(pts.getStates());
+			Set<Integer> unSat = new HashSet<Integer>(system.getStates());
 			unSat.removeAll(T);
 			return new StateSets(T, unSat);
 		} else if (formula instanceof ExistsNext) {
@@ -291,8 +275,8 @@ public class Model {
 			
 			BitSet sat = new BitSet();
 			if (subFormula instanceof True) {
-				for (int state = 0; state < pts.getNumberOfStates(); state++) {
-					if (pts.getProcessed().contains(state)) { // state is fully explored
+				for (int state = 0; state < system.getNumberOfStates(); state++) {
+					if (system.getProcessed().contains(state)) { // state is fully explored
 						if (!post.get(state).isEmpty()) { // post(state) is nonempty
 							sat.set(state);
 						}
@@ -301,7 +285,7 @@ public class Model {
 					}
 				}
 			} else {
-				for (int state = 0; state < pts.getNumberOfStates(); state++) {
+				for (int state = 0; state < system.getNumberOfStates(); state++) {
 					if (!post.get(state).and(sub.getSat()).isEmpty()) { // intersection of post(state) and Sat of subformula is nonempty
 						sat.nextSetBit(state);
 					}
@@ -310,9 +294,9 @@ public class Model {
 			
 			BitSet unsat = new BitSet();
 			if (subFormula instanceof False) {
-				unsat.set(0, pts.getNumberOfStates()); // all states
+				unsat.set(0, system.getNumberOfStates()); // all states
 			} else {
-				for (Integer state : pts.getProcessed()) {
+				for (Integer state : system.getProcessed()) {
 					if (post.get(state).andNot(sub.getUnsat()).isEmpty()) { // post(state) is subset of or equal to Unsat of subformula
 						unsat.set(state);
 					}
@@ -321,9 +305,9 @@ public class Model {
 			
 			//ExistsNext eN = (ExistsNext) formula;
 			//StateSets S = check(eN.getFormula()); // recursive part
-			//Set<Integer> Sat = pts.getTransitions().stream().filter(t -> S.sat.contains(t.target)).map(t -> t.source)
+			//Set<Integer> Sat = system.getTransitions().stream().filter(t -> S.sat.contains(t.target)).map(t -> t.source)
 			//		.collect(Collectors.toSet());
-			//Set<Integer> unSat = new HashSet<Integer>(pts.getStates());
+			//Set<Integer> unSat = new HashSet<Integer>(system.getStates());
 			//unSat.removeAll(Sat);
 			return new StateSets(sat, unsat);
 		} else if (formula instanceof ExistsUntil) {
@@ -345,7 +329,7 @@ public class Model {
 					}
 				}
 			}
-			Set<Integer> unSat = new HashSet<Integer>(pts.getStates());
+			Set<Integer> unSat = new HashSet<Integer>(system.getStates());
 			unSat.removeAll(T);
 			return new StateSets(T, unSat);
 		}
@@ -363,7 +347,7 @@ public class Model {
 				Integer sP = E.remove(0);
 				Set<Integer> preS = Pre(sP);
 				for (Integer s : preS) {
-					Set<Integer> lSatLessT = pts.getStates(); // "true"
+					Set<Integer> lSatLessT = system.getStates(); // "true"
 					lSatLessT.removeAll(T);
 					if (lSatLessT.contains(s)) {
 						E.add(s);
@@ -371,7 +355,7 @@ public class Model {
 					}
 				}
 			}
-			Set<Integer> Sat = new HashSet<Integer>(pts.getStates());
+			Set<Integer> Sat = new HashSet<Integer>(system.getStates());
 			Sat.removeAll(T);
 			return new StateSets(Sat, T);
 		}
@@ -383,7 +367,7 @@ public class Model {
 			ForAllEventually fAF = (ForAllEventually) formula;
 			// In this case we want the !p1 or the unsat states
 			Set<Integer> S = check(fAF.getFormula()).unsat;
-			List<Integer> E = pts.getStates().stream().filter(s -> !S.contains(s)).collect(Collectors.toList());
+			List<Integer> E = system.getStates().stream().filter(s -> !S.contains(s)).collect(Collectors.toList());
 			Set<Integer> T = S;
 
 			int max = 0;
@@ -406,7 +390,7 @@ public class Model {
 					}
 				}
 			}
-			Set<Integer> Sat = new HashSet<Integer>(pts.getStates());
+			Set<Integer> Sat = new HashSet<Integer>(system.getStates());
 			Sat.removeAll(T);
 			return new StateSets(Sat, T);
 
@@ -424,10 +408,10 @@ public class Model {
 
 			// States that DO NOT satisfy this formula CONTAIN a transition in which the
 			// TARGET is NOT CONTAINED in Sat(p1)
-			//Set<Integer> unSat = pts.getTransitions().stream().filter(t -> !S.sat.contains(t.target)).map(t -> t.source)
+			//Set<Integer> unSat = system.getTransitions().stream().filter(t -> !S.sat.contains(t.target)).map(t -> t.source)
 			//		.collect(Collectors.toSet());
 
-			//Set<Integer> Sat = new HashSet<Integer>(pts.getStates());
+			//Set<Integer> Sat = new HashSet<Integer>(system.getStates());
 			//Sat.removeAll(unSat);
 			//return new StateSets(Sat, unSat);
 		}
@@ -462,10 +446,10 @@ public class Model {
 					}
 				}
 			}
-			Set<Integer> EU = pts.getStates().stream().filter(s -> !T.contains(s)).collect(Collectors.toSet());
+			Set<Integer> EU = system.getStates().stream().filter(s -> !T.contains(s)).collect(Collectors.toSet());
 
 			// Piece3: !EG!p2
-			List<Integer> F = pts.getStates().stream().filter(s -> !R.unsat.contains(s)).collect(Collectors.toList());
+			List<Integer> F = system.getStates().stream().filter(s -> !R.unsat.contains(s)).collect(Collectors.toList());
 			Set<Integer> G = R.unsat;
 
 			int max = 0;
@@ -488,14 +472,14 @@ public class Model {
 					}
 				}
 			}
-			Set<Integer> notF = new HashSet<Integer>(pts.getStates());
+			Set<Integer> notF = new HashSet<Integer>(system.getStates());
 			notF.removeAll(F);
 
 			// Piece4: Piece2 && Piece3
 			EU.retainAll(notF);
 
 			// Final cleanup
-			Set<Integer> unSat = new HashSet<Integer>(pts.getStates());
+			Set<Integer> unSat = new HashSet<Integer>(system.getStates());
 			unSat.removeAll(EU);
 			return new StateSets(EU, unSat);
 		} else if (formula instanceof Not) {
