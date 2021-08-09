@@ -44,7 +44,7 @@ public class CounterExampleTest {
 
 			LabelledPartialTransitionSystem pts = new LabelledPartialTransitionSystem();
 			//String input = Formula.random().toString();
-			String input = "EF EX algo.JavaFields.p3";
+			String input = "AF EX algo.JavaFields.p3";
 			ParseTree tree = parseCtl(input);
 			Formula formula = generator.visit(tree);
 			
@@ -61,9 +61,8 @@ public class CounterExampleTest {
 			
 			if(!result.getSat().contains(0))
 			{
-				System.out.print("\nThe post states of 0 in the given partial transition system: \n");
-				System.out.print(m.getPostStates(0).toString());
-				System.out.print("\nCounter example: \n");
+
+				
 				System.out.print(m.getCounterExample(formula, 0).toString());
 				System.out.print("\nStates in counter example with the UnSat formula: \n");
 				System.out.print(m.getLabellingFormulaForEachState().toString());
