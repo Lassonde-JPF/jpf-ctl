@@ -13,7 +13,7 @@ import org.antlr.v4.runtime.CharStreams;
  *
  */
 public class MyError {
-	public static String inputString = "";
+	
 	// Hash set of Java reserved words
 	//HashSet<String> reservedWordsSet = new HashSet<>();
 	// Hash set of operators 
@@ -87,74 +87,6 @@ public class MyError {
 	
 
 
-	/**
-	 *  Inserts the Java reserved words into the reservedWordsSet Hash set.
-	 *  It also inserts the missing operators '&' and '|' into operatorsSet Hash set.
-	 *  
-	 *  @param input - input formula
-	 */
-	public MyError(CharStream input) 
-	{	
-		// adding Java reserve words to the hash set
-		/*
-		reservedWordsSet.add("abstract");
-		reservedWordsSet.add("assert");
-		reservedWordsSet.add("boolean");
-		reservedWordsSet.add("break");
-		reservedWordsSet.add("byte");
-		reservedWordsSet.add("case");
-		reservedWordsSet.add("catch");
-		reservedWordsSet.add("char");
-		reservedWordsSet.add("class");
-		reservedWordsSet.add("const");
-		reservedWordsSet.add("continue");
-		reservedWordsSet.add("default");
-		reservedWordsSet.add("do");
-		reservedWordsSet.add("double");
-		reservedWordsSet.add("else");
-		reservedWordsSet.add("enum");
-		reservedWordsSet.add("extends");
-		reservedWordsSet.add("final");
-		reservedWordsSet.add("finally");
-		reservedWordsSet.add("float");
-		reservedWordsSet.add("for");
-		reservedWordsSet.add("if");
-		reservedWordsSet.add("goto");
-		reservedWordsSet.add("implements");
-		reservedWordsSet.add("import");
-		reservedWordsSet.add("instanceof");
-		reservedWordsSet.add("int");
-		reservedWordsSet.add("interface");
-		reservedWordsSet.add("long");
-		reservedWordsSet.add("native");
-		reservedWordsSet.add("new");
-		reservedWordsSet.add("package");
-		reservedWordsSet.add("private");
-		reservedWordsSet.add("protected");
-		reservedWordsSet.add("public");
-		reservedWordsSet.add("return");
-		reservedWordsSet.add("short");
-		reservedWordsSet.add("static");
-		reservedWordsSet.add("strictfp");
-		reservedWordsSet.add("super");
-		reservedWordsSet.add("switch");
-		reservedWordsSet.add("synchronized");
-		reservedWordsSet.add("this");
-		reservedWordsSet.add("throw");
-		reservedWordsSet.add("throws");
-		reservedWordsSet.add("transient");
-		reservedWordsSet.add("try");
-		reservedWordsSet.add("void");
-		reservedWordsSet.add("volatile");
-		reservedWordsSet.add("while");
-		*/
-		
-		// adding missing operators to the hash set
-		operatorsSet.add('&');
-		operatorsSet.add('|');
-		
-		inputString = input.toString();
-	}
 	
 	
 	/**
@@ -163,10 +95,11 @@ public class MyError {
 	 * 
 	 * @return  recovered input if there is an error, the input formal otherwise.
 	 */
-	public  CharStream errorCheckAndRecover() 
+	public  CharStream errorCheckAndRecover(CharStream input) 
 	{
 		//the resulted input
 		StringBuilder res = new StringBuilder();
+		String inputString = input.toString();
 		//Split the input string by lines
 		String[] lines = inputString.split("\r\n|\r|\n");
 		int size = lines.length;

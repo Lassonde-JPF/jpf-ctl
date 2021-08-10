@@ -34,7 +34,7 @@ public class CTLErrorTest {
 	
 	@Test
 	void testFieldExists() {  
-		String ctl1	= " MAX_VALUE.MIN_VALUE &java.lang.Integer.MIC_VALUE|\njava.lang.Integer.k&C.MIN_VALUE ";	
+		String ctl1	= " MAX_VALUE.MIN_VALUE &java.lang.Integer.MIC_VALUE\n|java.lang.Integer.k&C.MIN_VALUE ";	
 		ParseTree tree = parseCtl(ctl1);
 		Formula formula1 = generator.visit(tree);
 		assertNotNull(formula1);
@@ -78,8 +78,8 @@ public class CTLErrorTest {
 	 */
 	private ParseTree parseCtl(String formula) {
 		CharStream input = CharStreams.fromString(formula);
-		MyError error = new MyError(input);
-		input =  error.errorCheckAndRecover();
+		MyError error = new MyError();
+		input =  error.errorCheckAndRecover(input);
 		
 
 		

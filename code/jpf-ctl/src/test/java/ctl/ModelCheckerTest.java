@@ -57,8 +57,8 @@ public class ModelCheckerTest {
 	 */
 	private ParseTree parseCtl(String formula) {
 		CharStream input = CharStreams.fromString(formula);
-		MyError error = new MyError(input);
-		input =  error.errorCheckAndRecover();
+		MyError error = new MyError();
+		input =  error.errorCheckAndRecover(input);
 		
 
 		
