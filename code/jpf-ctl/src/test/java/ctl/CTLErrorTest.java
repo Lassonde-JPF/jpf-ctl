@@ -30,7 +30,7 @@ public class CTLErrorTest {
 	
 	
 	
-	@Test
+	/*@Test
 	void testFieldExists() {
 		String ctl1	= " java.lang.Integer.MAX_VALUE  && java.lang.Integer.MAX_VALUE ";	
 		ParseTree tree = parseCtl(ctl1);
@@ -62,7 +62,7 @@ public class CTLErrorTest {
 		
 		assertNotNull(formula1);
 		
-	}
+	}*/
 
 	/**
 	 * 
