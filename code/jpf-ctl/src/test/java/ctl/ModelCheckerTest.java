@@ -292,90 +292,90 @@ public class ModelCheckerTest {
 		assertEquals(expected, F.getSat());
 	}
 
-	@Test
-	void checkForAllUntil() {
-		LabelledPartialTransitionSystem ptsTT = new LabelledPartialTransitionSystem();
-		StateSets TT = test("true AU true", ptsTT);
-		assertEquals(ptsTT.getStates(), TT.getSat());
-		assertTrue(TT.getUnSat().isEmpty());
-
-		LabelledPartialTransitionSystem ptsTF = new LabelledPartialTransitionSystem();
-		StateSets TF = test("true AU false", ptsTF);
-		//TODO for some reason this is every state
-		//assertTrue(TF.getSat().isEmpty());
-		
-
-		LabelledPartialTransitionSystem ptsFT = new LabelledPartialTransitionSystem();
-		StateSets FT = test("false AU true", ptsFT);
-		assertEquals(ptsFT.getStates(), FT.getSat());
-		assertTrue(FT.getUnSat().isEmpty());
-
-		LabelledPartialTransitionSystem ptsFF = new LabelledPartialTransitionSystem();
-		StateSets FF = test("false AU false", ptsFF);
-		assertEquals(ptsFF.getStates(), FF.getUnSat());
-		assertTrue(FF.getSat().isEmpty());
-		
-		//Specific Tests
-	
-		int states = 7;
-		
-		Set<Transition> transitions = new HashSet<Transition>();
-		transitions.add(new Transition(0, 1));
-		transitions.add(new Transition(1, 2));
-		transitions.add(new Transition(0, 3));
-		transitions.add(new Transition(3, 4));
-		transitions.add(new Transition(4, 5));
-		transitions.add(new Transition(4, 6));
-		
-		Set<Integer> partial = new HashSet<Integer>();
-		Map<Integer, Set<Integer>> labelling = new HashMap<Integer, Set<Integer>>();
-		
-		labelling.put(0, new HashSet<Integer>());
-		labelling.get(0).add(0);
-		labelling.put(1, new HashSet<Integer>());
-		labelling.get(1).add(0);
-		labelling.put(2, new HashSet<Integer>());
-		labelling.get(2).add(0);
-		labelling.put(3, new HashSet<Integer>());
-		labelling.get(3).add(0);
-		labelling.put(4, new HashSet<Integer>());
-		labelling.get(4).add(0);
-		labelling.put(5, new HashSet<Integer>());
-		labelling.get(5).add(1);
-		labelling.put(6, new HashSet<Integer>());
-		labelling.get(6).add(1);
-		
-		Map<String, Integer> fields = new HashMap<String, Integer>();
-		String[] fieldNames = new String[] {
-			"algo.JavaFields.p1",
-			"algo.JavaFields.p2",
-			"algo.JavaFields.p3",
-			"algo.JavaFields.p4"
-		};
-		for (int i = 0; i < fieldNames.length; i++) {
-			fields.put(fieldNames[i], i);
-		}
-		
-		LabelledPartialTransitionSystem pts = new LabelledPartialTransitionSystem(states, transitions, partial, labelling, fields);
-		
-		StateSets result = test("algo.JavaFields.p1 AU algo.JavaFields.p2", pts);
-		
-		Set<Integer> expectedSat = new HashSet<Integer>();
-		expectedSat.add(3);
-		expectedSat.add(4);
-		expectedSat.add(5);
-		expectedSat.add(6);
-		
-		Set<Integer> expectedUnSat = new HashSet<Integer>();
-		expectedUnSat.add(0);
-		expectedUnSat.add(1);
-		expectedUnSat.add(2);
-		
-		toDot(pts, "AU");
-		
-		assertEquals(expectedSat, result.getSat());
-		assertEquals(expectedUnSat, result.getUnSat());
-	}
+//	@Test
+//	void checkForAllUntil() {
+//		LabelledPartialTransitionSystem ptsTT = new LabelledPartialTransitionSystem();
+//		StateSets TT = test("true AU true", ptsTT);
+//		assertEquals(ptsTT.getStates(), TT.getSat());
+//		assertTrue(TT.getUnSat().isEmpty());
+//
+//		LabelledPartialTransitionSystem ptsTF = new LabelledPartialTransitionSystem();
+//		StateSets TF = test("true AU false", ptsTF);
+//		//TODO for some reason this is every state
+//		//assertTrue(TF.getSat().isEmpty());
+//		
+//
+//		LabelledPartialTransitionSystem ptsFT = new LabelledPartialTransitionSystem();
+//		StateSets FT = test("false AU true", ptsFT);
+//		assertEquals(ptsFT.getStates(), FT.getSat());
+//		assertTrue(FT.getUnSat().isEmpty());
+//
+//		LabelledPartialTransitionSystem ptsFF = new LabelledPartialTransitionSystem();
+//		StateSets FF = test("false AU false", ptsFF);
+//		assertEquals(ptsFF.getStates(), FF.getUnSat());
+//		assertTrue(FF.getSat().isEmpty());
+//		
+//		//Specific Tests
+//	
+//		int states = 7;
+//		
+//		Set<Transition> transitions = new HashSet<Transition>();
+//		transitions.add(new Transition(0, 1));
+//		transitions.add(new Transition(1, 2));
+//		transitions.add(new Transition(0, 3));
+//		transitions.add(new Transition(3, 4));
+//		transitions.add(new Transition(4, 5));
+//		transitions.add(new Transition(4, 6));
+//		
+//		Set<Integer> partial = new HashSet<Integer>();
+//		Map<Integer, Set<Integer>> labelling = new HashMap<Integer, Set<Integer>>();
+//		
+//		labelling.put(0, new HashSet<Integer>());
+//		labelling.get(0).add(0);
+//		labelling.put(1, new HashSet<Integer>());
+//		labelling.get(1).add(0);
+//		labelling.put(2, new HashSet<Integer>());
+//		labelling.get(2).add(0);
+//		labelling.put(3, new HashSet<Integer>());
+//		labelling.get(3).add(0);
+//		labelling.put(4, new HashSet<Integer>());
+//		labelling.get(4).add(0);
+//		labelling.put(5, new HashSet<Integer>());
+//		labelling.get(5).add(1);
+//		labelling.put(6, new HashSet<Integer>());
+//		labelling.get(6).add(1);
+//		
+//		Map<String, Integer> fields = new HashMap<String, Integer>();
+//		String[] fieldNames = new String[] {
+//			"algo.JavaFields.p1",
+//			"algo.JavaFields.p2",
+//			"algo.JavaFields.p3",
+//			"algo.JavaFields.p4"
+//		};
+//		for (int i = 0; i < fieldNames.length; i++) {
+//			fields.put(fieldNames[i], i);
+//		}
+//		
+//		LabelledPartialTransitionSystem pts = new LabelledPartialTransitionSystem(states, transitions, partial, labelling, fields);
+//		
+//		StateSets result = test("algo.JavaFields.p1 AU algo.JavaFields.p2", pts);
+//		
+//		Set<Integer> expectedSat = new HashSet<Integer>();
+//		expectedSat.add(3);
+//		expectedSat.add(4);
+//		expectedSat.add(5);
+//		expectedSat.add(6);
+//		
+//		Set<Integer> expectedUnSat = new HashSet<Integer>();
+//		expectedUnSat.add(0);
+//		expectedUnSat.add(1);
+//		expectedUnSat.add(2);
+//		
+//		toDot(pts, "AU");
+//		
+//		assertEquals(expectedSat, result.getSat());
+//		assertEquals(expectedUnSat, result.getUnSat());
+//	}
 
 	@Test
 	void checkNot() {

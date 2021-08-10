@@ -768,25 +768,51 @@ public class Model {
 		}
 		else if (formula instanceof ForAllUntil) {
 			//do this first
-			// fi AU ci
+			// a AU b
+			
 			Formula left = ((ForAllUntil)formula).getLeft();
 			Formula right = ((ForAllUntil)formula).getRight();
 			
 			Set<Integer> subLeftFormulaUnsat = unSatAndSatForEachFormula.get(left).getUnSat();
-			Set<Integer> subRightFormulaUnsat = unSatAndSatForEachFormula.get(right).getUnSat();
 			
 			insetToLabellingFormulaForEachStateMap(state, formula);
 			
 			if(subLeftFormulaUnsat.contains(state))
 			{
-				//does not satisfy fi
+				//does not satisfy a   
 				list.add(state);
-				
+				msg.append("\nThe state " + state + " does not satisfy the left subformula");
+				msg.append("\nA counter example to the state " + state + " for the left subformula (" + left.toString() + ") is: ");;
 				CounterExampleHelper(left, state, list, msg);
-			}else if(subRightFormulaUnsat.contains(state))
+			}else
 			{
-				//does not satisfy ci
-				CounterExampleHelper(right, state, list, msg);
+				//find a path where the contigues states satisfy a and the last state does not b
+				
+				Set<Integer> path = new HashSet<>();
+				Set<Integer> sat_a = unSatAndSatForEachFormula.get(left).getSat();
+				Set<Integer> sat_b = unSatAndSatForEachFormula.get(right).getSat();
+				getPath3(state, sat_a,sat_b,path);
+				path.add(state);
+			
+				if(path.size() == 1)
+				{
+					msg.append("\nThe state " + state + " has no outgoing edges");
+				}else
+				{				
+					msg.append("\nThe states on the path from state " + state + ": " + path.toString() );
+					printSatAndUnSatSets(state, right, path, msg);
+				}
+			
+				for (Iterator<Integer> it = path.iterator(); it.hasNext(); ) 
+				{
+					Integer s = it.next();
+					if(!sat_a.contains(s))
+					{
+						list.add(s);
+						msg.append("\nA counter example to the state " + s + " for the subformula (" + right.toString() + ") is: ");
+						CounterExampleHelper(right, s, list, msg);
+					}
+				}				
 			}
 			
 		}
@@ -794,6 +820,7 @@ public class Model {
 
 		}
 		else if (formula instanceof Not) {
+			// ! AX EX Red = EX !(EX Red) = EX AX !Red
 			Formula f = ((Not)formula).getFormula();
 			insetToLabellingFormulaForEachStateMap(state, formula);
 
@@ -968,6 +995,41 @@ public class Model {
 			}			
 		}		
 	}
+	
+	private void getPath3(Integer state, Set<Integer> Sata,Set<Integer> Satb,Set<Integer> path)
+	{
+		if(Post(state).isEmpty()) {
+			return;
+		}
+		else {
+			int i = 0;
+			
+			for (Iterator<Integer> it = Post(state).iterator(); it.hasNext(); ) 
+			{
+				
+				Integer n = it.next();
+				if(Sata.contains(n) && !path.contains(n)) {
+					path.add(n);
+					getPath3(n,Sata,Satb,path);					
+				}
+				else if(Satb.contains(n)) {
+					i++;
+					
+				}else if(!Sata.contains(n)&&!Satb.contains(n)) {
+					path.add(n);
+					return;
+				}
+				
+			}
+			if( i == Post(state).size())
+			{
+				path.remove(state);
+				
+			}	
+				
+		}
+		
+	}
 	private Set<Transition> getRelatedTransitions( Set<Integer> list)
 	{
 		Set<Transition> result = new HashSet<Transition>();
@@ -1123,4 +1185,5 @@ public class Model {
 		msg.append("\nThe states that do not satisfy the formula (" + subFormula + ") : ");
 		msg.append(unSat.toString());	
 	}
+	
 }
