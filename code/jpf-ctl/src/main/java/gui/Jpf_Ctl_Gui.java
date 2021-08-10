@@ -2,6 +2,8 @@ package gui;
 
 import java.io.File;
 
+import algo.ModelChecker;
+import error.ModelCheckingException;
 import javafx.application.Application;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -135,13 +137,39 @@ public class Jpf_Ctl_Gui extends Application {
 				}
 				else
 				{
-					// check the other fields and call the model checking
+					
+					error.setAlertType(AlertType.INFORMATION);
+					error.setTitle("Info");
+					error.setContentText("Running With the Settings:\nFormula: "+formula+"\nConsider Randomness: "+ rand
+							+"\nCommand Line Input:"+ cmd);
+					error.showAndWait();
 
-//					error.setAlertType(AlertType.INFORMATION);
-//					error.setTitle("Info");
-//					error.setContentText("Running With the Settings:\nFormula: "+formula+"\nConsider Randomness: "+ rand
-//							+"\nCommand Line Input:"+ cmd);
-//					error.showAndWait();
+					// check the other fields and call the model checking
+					String tmpFile = "example.Main";//file.toString();
+					
+					String checked = chk_random.isSelected() ? "true" : "false";
+
+					try {
+						boolean result = ModelChecker.validate(formula, tmpFile, checked);
+						
+						if (result) {
+							error.setAlertType(AlertType.INFORMATION);
+							error.setTitle("Success");
+							error.setContentText("Success!\nFormula: " + formula + " was verified for the target system.");
+							error.show();
+						} else { // also need to print counter example
+							error.setAlertType(AlertType.INFORMATION);
+							error.setTitle("Failed");
+							error.setContentText("Failed\nFormula: " + formula + " was not verified for the target system.");
+							error.show();
+						}
+					} catch (ModelCheckingException e1) {
+						error.setAlertType(AlertType.ERROR);
+						error.setTitle("Error");
+						error.setContentText("Error:! Something went wrong when model checking:\n" + e1.getMessage());
+						error.show();
+					}
+					
 				}
 				
 			});
