@@ -4,25 +4,39 @@
  * @author Matt Walker
  */
 
+buildscript {
+    dependencies {
+        classpath group: 'de.dynamicfiles.projects.gradle.plugins', name: 'javafx-gradle-plugin', version: '8.8.2'
+    }
+    repositories {
+        mavenLocal()
+        mavenCentral()
+    }
+}
+
 plugins {
     // Apply the java-library plugin to add support for Java Library
-    id 'java-library'
+    id 'java'
     // Apply the antlr plugin to add support for ANTLR4
     id 'antlr'
-    // javafx plugin for GUI
-    id 'org.openjfx.javafxplugin' version '0.0.8'
 }
 
 sourceCompatibility = '1.8'
 targetCompatibility = '1.8'
 
-javafx {
-    version = "15.0.1"
-    modules = [ 'javafx.controls' ]
+repositories {
+	mavenLocal()
+    mavenCentral()
 }
 
-repositories {
-    mavenCentral()
+apply plugin: 'javafx-gradle-plugin'
+
+jfx {
+    // Minimal requirement for jfxJar-task
+    mainClass = 'gui.Jpf_Ctl_Gui'
+
+    // Minimal requirement for jfxNative-task
+    vendor = 'jpf-ctl'
 }
 
 // find home directory
@@ -63,8 +77,9 @@ if (!jpfLabelExists) {
 dependencies {
 
     // Use JUnit test framework
-	testImplementation(platform('org.junit:junit-bom:5.7.2'))
-	testImplementation('org.junit.jupiter:junit-jupiter')
+	//testImplementation(platform('org.junit:junit-bom:5.7.2'))
+	testImplementation 'org.junit.jupiter:junit-jupiter-api:5.0.3'
+	testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.0.3'
 	
 	//JPF implementation files
     implementation files("${jpfLabel}/build/jpf-label.jar", "${jpfCore}/build/jpf.jar" )
