@@ -791,7 +791,7 @@ public class Model {
 				Set<Integer> path = new HashSet<>();
 				Set<Integer> sat_a = unSatAndSatForEachFormula.get(left).getSat();
 				Set<Integer> sat_b = unSatAndSatForEachFormula.get(right).getSat();
-				getPath3(state, sat_a,sat_b,path);
+				Integer unSatBState = getPath3(state,sat_a,sat_b,path);
 				path.add(state);
 			
 				if(path.size() == 1)
@@ -803,21 +803,62 @@ public class Model {
 					printSatAndUnSatSets(state, right, path, msg);
 				}
 			
-				for (Iterator<Integer> it = path.iterator(); it.hasNext(); ) 
-				{
-					Integer s = it.next();
-					if(!sat_a.contains(s))
-					{
-						list.add(s);
-						msg.append("\nA counter example to the state " + s + " for the subformula (" + right.toString() + ") is: ");
-						CounterExampleHelper(right, s, list, msg);
-					}
-				}				
+			
+				list.addAll(path);
+				msg.append("\nA counter example to the state " + unSatBState + " for the subformula (" + right.toString() + ") is: ");
+				CounterExampleHelper(right, unSatBState, list, msg);
+					
+						
 			}
 			
 		}
 		else if (formula instanceof ExistsUntil) {
-
+			// a AU b
+			
+			Formula left = ((ExistsUntil)formula).getLeft();
+			Formula right = ((ExistsUntil)formula).getRight();
+			
+			Set<Integer> subLeftFormulaUnsat = unSatAndSatForEachFormula.get(left).getUnSat();
+			
+			insetToLabellingFormulaForEachStateMap(state, " does not satisfy : " + formula.toString());
+			
+			if(subLeftFormulaUnsat.contains(state))
+			{
+				//does not satisfy a   
+				list.add(state);
+				msg.append("\nThe state " + state + " does not satisfy the left subformula");
+				msg.append("\nA counter example to the state " + state + " for the left subformula (" + left.toString() + ") is: ");;
+				CounterExampleHelper(left, state, list, msg);
+			}else
+			{
+				//find all paths where the contigues states satisfy a and the last state does not b
+				
+				Set<Integer> path = new HashSet<>();
+				Set<Integer> sat_a = unSatAndSatForEachFormula.get(left).getSat();
+				Set<Integer> sat_b = unSatAndSatForEachFormula.get(right).getSat();
+				getPath4(state,sat_a,sat_b,path);
+				path.add(state);
+			
+				if(path.size() == 1)
+				{
+					msg.append("\nThe state " + state + " has no outgoing edges");
+				}else
+				{				
+					msg.append("\nThe states on the path from state " + state + ": " + path.toString() );
+					printSatAndUnSatSets(state, right, path, msg);
+				}
+				list.addAll(path);
+				for (Iterator<Integer> it = path.iterator(); it.hasNext(); ) 
+				{
+			       	Integer s = it.next();
+					if(!sat_a.contains(s))
+					{
+						msg.append("\nA counter example to the state " + s + " for the subformula (" + right.toString() + ") is: ");
+						CounterExampleHelper(right, s, list, msg);
+					}
+					
+				}						
+			}
 		}
 		else if (formula instanceof Not) {
 			// ! AX EX Red = EX !(EX Red) = EX AX !Red
@@ -1341,7 +1382,43 @@ public class Model {
 		}		
 	}
 	
-	private void getPath3(Integer state, Set<Integer> Sata,Set<Integer> Satb,Set<Integer> path)
+	private Integer getPath3(Integer state, Set<Integer> Sata,Set<Integer> Satb,Set<Integer> path)
+	{
+		if(Post(state).isEmpty()) {
+			return state;
+		}
+		else {
+			int i = 0;
+			
+			for (Iterator<Integer> it = Post(state).iterator(); it.hasNext(); ) 
+			{
+				
+				Integer n = it.next();
+				if(Sata.contains(n) && !path.contains(n)) {
+					path.add(n);
+					getPath3(n,Sata,Satb,path);					
+				}
+				else if(Satb.contains(n)) {
+					i++;
+					
+				}else if(!Sata.contains(n)&&!Satb.contains(n)) {
+					path.add(n);
+					return n;
+				}
+				
+			}
+			if( i == Post(state).size())
+			{
+				path.remove(state);
+				
+			}	
+				
+		}
+		return state;
+		
+	}
+	
+	private void getPath4(Integer state, Set<Integer> Sata,Set<Integer> Satb,Set<Integer> path)
 	{
 		if(Post(state).isEmpty()) {
 			return;
@@ -1361,8 +1438,7 @@ public class Model {
 					i++;
 					
 				}else if(!Sata.contains(n)&&!Satb.contains(n)) {
-					path.add(n);
-					return;
+					path.add(n);				
 				}
 				
 			}
@@ -1373,8 +1449,8 @@ public class Model {
 			}	
 				
 		}
-		
 	}
+	
 	private Set<Transition> getRelatedTransitions( Set<Integer> list)
 	{
 		Set<Transition> result = new HashSet<Transition>();
