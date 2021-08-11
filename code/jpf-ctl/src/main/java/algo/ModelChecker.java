@@ -24,6 +24,12 @@ import gov.nasa.jpf.JPFException;
 
 public class ModelChecker {
 
+	/*
+	 * 1. Get name of system to test "example.Example"
+	 * 2. Get absolute path of system to test
+	 * 3. Use parent directory of absolute path as classpath
+	 * 4. Append the classpath as a property (argument might be better?)
+	 */
 	public static boolean validate(String Formula, String TargetSystem, String EnumerateRandom) throws ModelCheckingException {
 		
 		// Build and Check Formula before examining target system
@@ -42,12 +48,23 @@ public class ModelChecker {
 
 		// At this point we know the formula is correct. 
 		Formula formula = new Generator().visit(tree);
+	
+		int lastSlash = TargetSystem.lastIndexOf("/") + 1; 
+		if (lastSlash == 0) {
+			lastSlash = TargetSystem.lastIndexOf("\\") + 1;
+		}
+		// break apart absolute path
+		String classpath = TargetSystem.substring(0, lastSlash-1);
+		String target = TargetSystem.substring(lastSlash, TargetSystem.lastIndexOf("."));
+		
+		System.out.println("Classpath: " + classpath);
+		System.out.println("target: " + target);
 		
 		try {
-			Config conf = JPF.createConfig(new String[]{});
-
+			Config conf = JPF.createConfig(new String[]{"+classpath+=" + classpath});
+			
 			// ... modify config according to your needs
-			conf.setTarget(TargetSystem);
+			conf.setTarget(target);
 			
 			// only needed if randomization is used
 			conf.setProperty("cg.enumerate_random", EnumerateRandom);
@@ -61,6 +78,8 @@ public class ModelChecker {
 			conf.setProperty("listener", "label.StateLabelText,listeners.PartialTransitionSystemListener");
 			
 			JPF jpf = new JPF(conf);
+			
+			System.out.println("JPF Classpath: " + jpf.getConfig().getProperty("classpath"));
 
 			jpf.run();
 			if (jpf.foundErrors()) {
