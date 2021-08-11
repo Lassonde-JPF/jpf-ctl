@@ -1152,8 +1152,7 @@ public class Model {
 		    	
 			}		
 		}
-		else if (formula instanceof ExistsUntil) {
-			//do this first
+	else if (formula instanceof ExistsUntil) {
 			// a AU b
 			
 			Formula left = ((ExistsUntil)formula).getLeft();
@@ -1167,7 +1166,7 @@ public class Model {
 			{
 				//does not satisfy a   
 				list.add(state);
-				msg.append("\nThe state " + state + " does satisfy the left subformula");
+				msg.append("\nThe state " + state + " satisfies the left subformula");
 				msg.append("\nA witness to the state " + state + " for the left subformula (" + left.toString() + ") is: ");;
 				findWitness(left, state, list, msg);
 			}else
@@ -1177,7 +1176,7 @@ public class Model {
 				Set<Integer> path = new HashSet<>();
 				Set<Integer> sat_a = unSatAndSatForEachFormula.get(left).getSat();
 				Set<Integer> sat_b = unSatAndSatForEachFormula.get(right).getSat();
-				getPath3(state, sat_a,sat_b,path);
+				Integer satBState = getPath3(state,sat_a,sat_b,path);
 				path.add(state);
 			
 				if(path.size() == 1)
@@ -1189,21 +1188,62 @@ public class Model {
 					printSatAndUnSatSets(state, right, path, msg);
 				}
 			
-				for (Iterator<Integer> it = path.iterator(); it.hasNext(); ) 
-				{
-					Integer s = it.next();
-					if(!sat_a.contains(s))
-					{
-						list.add(s);
-						msg.append("\nA witness to the state " + s + " for the subformula (" + right.toString() + ") is: ");
-						findWitness(right, s, list, msg);
-					}
-				}				
+			
+				list.addAll(path);
+				msg.append("\nA witness to the state " + satBState + " for the subformula (" + right.toString() + ") is: ");
+				CounterExampleHelper(right, satBState, list, msg);
+					
+						
 			}
 			
 		}
 		else if (formula instanceof ForAllUntil) {
-
+			// a AU b
+			
+			Formula left = ((ForAllUntil)formula).getLeft();
+			Formula right = ((ForAllUntil)formula).getRight();
+			
+			Set<Integer> subLeftFormulaSat = unSatAndSatForEachFormula.get(left).getSat();
+			
+			insetToLabellingFormulaForEachStateMap(state, " satisfies : " + formula.toString());
+			
+			if(subLeftFormulaSat.contains(state))
+			{
+				//does not satisfy a   
+				list.add(state);
+				msg.append("\nThe state " + state + " satisfies the left subformula");
+				msg.append("\nA witness to the state " + state + " for the left subformula (" + left.toString() + ") is: ");;
+				CounterExampleHelper(left, state, list, msg);
+			}else
+			{
+				//find all paths where the contigues states satisfy a and the last state does not b
+				
+				Set<Integer> path = new HashSet<>();
+				Set<Integer> sat_a = unSatAndSatForEachFormula.get(left).getSat();
+				Set<Integer> sat_b = unSatAndSatForEachFormula.get(right).getSat();
+				getPath4(state,sat_a,sat_b,path);
+				path.add(state);
+			
+				if(path.size() == 1)
+				{
+					msg.append("\nThe state " + state + " has no outgoing edges");
+				}else
+				{				
+					msg.append("\nThe states on the path from state " + state + ": " + path.toString() );
+					printSatAndUnSatSets(state, right, path, msg);
+				}
+				list.addAll(path);
+				for (Iterator<Integer> it = path.iterator(); it.hasNext(); ) 
+				{
+			       	Integer s = it.next();
+					if(!sat_a.contains(s))
+					{
+						msg.append("\nA witness to the state " + s + " for the subformula (" + right.toString() + ") is: ");
+						CounterExampleHelper(right, s, list, msg);
+					}
+					
+				}						
+			}
 		}
 		else if (formula instanceof Not) {
 			// ! AX EX Red = EX !(EX Red) = EX AX !Red
@@ -1218,106 +1258,106 @@ public class Model {
 		} 
 	}
 
-	private void swapUnSatAndSatSets(Formula formula, Map<Formula, StateSets> map) {
-		Set<Integer> sat = map.get(formula).getSat();
-		Set<Integer> unSat = map.get(formula).getUnSat();
-		StateSets temp = new StateSets(unSat,sat);
-	    map.put(formula, temp);
-	
-		if (formula instanceof True) {
-			return;
-		}
-		/*
-		 * Base Case
-		 */
-		else if (formula instanceof False) {	
-			return;
-		}/*
-		 * Base Case
-		 */
-		else if (formula instanceof AtomicProposition) {
-			return;						
-		}
-		else if (formula instanceof And) {
-			Formula left = ((And)formula).getLeft();
-			swapUnSatAndSatSets(left, map);
-			Formula right = ((And)formula).getRight();
-			swapUnSatAndSatSets(right, map);
-		} else if (formula instanceof Or) {
-			Formula left = ((Or)formula).getLeft();
-			Formula right = ((Or)formula).getRight();
-			
-			swapUnSatAndSatSets(left,map);
-			swapUnSatAndSatSets(right,map);
-			
-		} else if (formula instanceof Implies) {
-			Formula left = ((Implies)formula).getLeft();
-			Formula right = ((Implies)formula).getRight();
-			
-			swapUnSatAndSatSets(left,map);
-			swapUnSatAndSatSets(right,map);
-			
-		} else if (formula instanceof Iff) {
-			Formula left = ((Iff)formula).getLeft();
-			Formula right = ((Iff)formula).getRight();
-			
-			swapUnSatAndSatSets(left,map);
-			swapUnSatAndSatSets(right,map);
-					
-		} else if (formula instanceof ExistsAlways) {
-			Formula f = ((ExistsAlways)formula).getFormula(); 
-
-			swapUnSatAndSatSets(f,map);
-		}
-		else if (formula instanceof ForAllAlways) {
-			Formula f = ((ForAllAlways)formula).getFormula(); 
-
-				swapUnSatAndSatSets(f,map);
-			
-		}
-		else if (formula instanceof ExistsEventually) {
-
-			Formula f = ((ExistsEventually)formula).getFormula(); 
-
-				swapUnSatAndSatSets(f,map);
-			
-		}
-		else if (formula instanceof ForAllEventually) {
-			Formula f = ((ForAllEventually)formula).getFormula(); 
-
-				swapUnSatAndSatSets(f,map);
-		}
-		else if (formula instanceof ExistsNext) 
-		{
-			Formula f = ((ExistsNext)formula).getFormula(); 
-
-				swapUnSatAndSatSets(f,map);
-		} 		
-		else if (formula instanceof ForAllNext) {
-			Formula f = ((ForAllNext)formula).getFormula(); 
-
-			swapUnSatAndSatSets(f,map);
-		}
-		else if (formula instanceof ForAllUntil) {
-			Formula left = ((ForAllUntil)formula).getLeft();
-			Formula right = ((ForAllUntil)formula).getRight();
-			
-			swapUnSatAndSatSets(left,map);
-			swapUnSatAndSatSets(right,map);
-		}
-		else if (formula instanceof ExistsUntil) {
-			Formula left = ((ExistsUntil)formula).getLeft();
-			Formula right = ((ExistsUntil)formula).getRight();
-			
-			swapUnSatAndSatSets(left,map);
-			swapUnSatAndSatSets(right,map);
-		}
-		else if (formula instanceof Not) {
-			Formula f = ((Not)formula).getFormula(); 
-
-			swapUnSatAndSatSets(f,map);
-		} 
-	}
+//	private void swapUnSatAndSatSets(Formula formula, Map<Formula, StateSets> map) {
+//		Set<Integer> sat = map.get(formula).getSat();
+//		Set<Integer> unSat = map.get(formula).getUnSat();
+//		StateSets temp = new StateSets(unSat,sat);
+//	    map.put(formula, temp);
+//	
+//		if (formula instanceof True) {
+//			return;
+//		}
+//		/*
+//		 * Base Case
+//		 */
+//		else if (formula instanceof False) {	
+//			return;
+//		}/*
+//		 * Base Case
+//		 */
+//		else if (formula instanceof AtomicProposition) {
+//			return;						
+//		}
+//		else if (formula instanceof And) {
+//			Formula left = ((And)formula).getLeft();
+//			swapUnSatAndSatSets(left, map);
+//			Formula right = ((And)formula).getRight();
+//			swapUnSatAndSatSets(right, map);
+//		} else if (formula instanceof Or) {
+//			Formula left = ((Or)formula).getLeft();
+//			Formula right = ((Or)formula).getRight();
+//			
+//			swapUnSatAndSatSets(left,map);
+//			swapUnSatAndSatSets(right,map);
+//			
+//		} else if (formula instanceof Implies) {
+//			Formula left = ((Implies)formula).getLeft();
+//			Formula right = ((Implies)formula).getRight();
+//			
+//			swapUnSatAndSatSets(left,map);
+//			swapUnSatAndSatSets(right,map);
+//			
+//		} else if (formula instanceof Iff) {
+//			Formula left = ((Iff)formula).getLeft();
+//			Formula right = ((Iff)formula).getRight();
+//			
+//			swapUnSatAndSatSets(left,map);
+//			swapUnSatAndSatSets(right,map);
+//					
+//		} else if (formula instanceof ExistsAlways) {
+//			Formula f = ((ExistsAlways)formula).getFormula(); 
+//
+//			swapUnSatAndSatSets(f,map);
+//		}
+//		else if (formula instanceof ForAllAlways) {
+//			Formula f = ((ForAllAlways)formula).getFormula(); 
+//
+//				swapUnSatAndSatSets(f,map);
+//			
+//		}
+//		else if (formula instanceof ExistsEventually) {
+//
+//			Formula f = ((ExistsEventually)formula).getFormula(); 
+//
+//				swapUnSatAndSatSets(f,map);
+//			
+//		}
+//		else if (formula instanceof ForAllEventually) {
+//			Formula f = ((ForAllEventually)formula).getFormula(); 
+//
+//				swapUnSatAndSatSets(f,map);
+//		}
+//		else if (formula instanceof ExistsNext) 
+//		{
+//			Formula f = ((ExistsNext)formula).getFormula(); 
+//
+//				swapUnSatAndSatSets(f,map);
+//		} 		
+//		else if (formula instanceof ForAllNext) {
+//			Formula f = ((ForAllNext)formula).getFormula(); 
+//
+//			swapUnSatAndSatSets(f,map);
+//		}
+//		else if (formula instanceof ForAllUntil) {
+//			Formula left = ((ForAllUntil)formula).getLeft();
+//			Formula right = ((ForAllUntil)formula).getRight();
+//			
+//			swapUnSatAndSatSets(left,map);
+//			swapUnSatAndSatSets(right,map);
+//		}
+//		else if (formula instanceof ExistsUntil) {
+//			Formula left = ((ExistsUntil)formula).getLeft();
+//			Formula right = ((ExistsUntil)formula).getRight();
+//			
+//			swapUnSatAndSatSets(left,map);
+//			swapUnSatAndSatSets(right,map);
+//		}
+//		else if (formula instanceof Not) {
+//			Formula f = ((Not)formula).getFormula(); 
+//
+//			swapUnSatAndSatSets(f,map);
+//		} 
+//	}
 	
 	private void getParentNodes(Set<Integer> list, Map<Integer,Integer> parent, Integer s)
 	{
