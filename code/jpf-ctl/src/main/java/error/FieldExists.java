@@ -3,11 +3,27 @@ package error;
 import org.ctl.CTLBaseListener;
 import org.ctl.CTLParser;
 
+import java.io.File;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.net.URLClassLoader;
 import java.util.HashSet;
 import java.util.Set;
 
 public class FieldExists extends CTLBaseListener {
 	public static final Set<String> APs = new HashSet<String>();
+	
+	private String classpath;
+	
+	public FieldExists(String classpath) {
+		super();
+		this.classpath = classpath;
+	}
+	
+	public FieldExists() {
+		super();
+	}
+
 	/**
 	 * This method verifies if the class/field name does exist in the package
 	 * If the fields does not exists, it prints the error messages on the console.
@@ -30,10 +46,19 @@ public class FieldExists extends CTLBaseListener {
 		
 		try 
 		{
-			Class.forName(className).getDeclaredField(fieldName);
+			if (classpath != null) {
+				File file = new File(classpath);
+				URL classUrl = file.toURI().toURL();
+				URL[] urls = new URL[]{classUrl};
+				ClassLoader ucl = new URLClassLoader(urls, getClass().getClassLoader());
+				Class.forName(className, false, ucl).getDeclaredField(fieldName);
+			} else {
+				Class.forName(className).getDeclaredField(fieldName);			
+			}
+			
 			APs.add(ctx.getText());
 		} 
-		catch (ClassNotFoundException e) 
+		catch (ClassNotFoundException | MalformedURLException e) 
 		{			  
 			underLineError(lines[lineNum - 1],charPositionInLine,lineNum, " Class '" + className + " ' cannot be found" );
 			throw new AtomicPropositionDoesNotExistException(" Class '" + className + " ' cannot be found\n");
@@ -42,7 +67,7 @@ public class FieldExists extends CTLBaseListener {
 		{
 			underLineError(lines[lineNum - 1],charPositionInLine + className.length() + 1, lineNum," Field '" + fieldName + " ' cannot be found" );
 			throw new AtomicPropositionDoesNotExistException(" Field '" + fieldName + " ' cannot be found\n");
-		}
+		} 
 	}
 	
 	/**

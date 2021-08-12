@@ -9,13 +9,15 @@ import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import javax.swing.filechooser.FileFilter;
 
+import algo.ModelChecker;
+import error.ModelCheckingException;
+
 @SuppressWarnings("serial")
 public class Interface extends JFrame {
 
 	private JPanel contentPane;
 	private File f;
 	private String path;
-
 
 	public Interface() 
 	{
@@ -152,6 +154,20 @@ public class Interface extends JFrame {
 					String formula = ta_formula.getText().trim();
 					String cmd = ta_cmd.getText().trim();
 					
+					try {
+						boolean result = ModelChecker.validate(formula, path, checked);
+						
+						System.out.println("Result: " + result);
+						
+						if (result) { // TODO display valid
+							
+						} else { // Display invalid + counter example
+							
+						}
+						
+					} catch (ModelCheckingException e1) {
+						e1.printStackTrace();
+					}
 					
 				}
 			}

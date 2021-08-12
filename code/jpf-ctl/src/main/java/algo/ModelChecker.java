@@ -24,7 +24,24 @@ import gov.nasa.jpf.JPFException;
 
 public class ModelChecker {
 
-	public static boolean validate(String Formula, String TargetSystem, String EnumerateRandom) throws ModelCheckingException {
+	public static boolean validate(String Formula, String path, String EnumerateRandom) throws ModelCheckingException {
+		
+		// Create classpath and target values from path
+		String classpath;
+		String target;
+		String targetPackage;
+		
+		int lastSlash = path.lastIndexOf("\\");
+		
+		classpath = path.substring(0, lastSlash);
+		
+		targetPackage = classpath.substring(classpath.lastIndexOf("\\")+1);
+		
+		target = targetPackage + "." + path.substring(lastSlash+1, path.lastIndexOf("."));
+		
+		System.out.println("classpath: " + classpath);
+		System.out.println("target: " + target);
+		System.out.println("Package: " + targetPackage);
 		
 		// Build and Check Formula before examining target system
 		CharStream input = CharStreams.fromString(Formula);
@@ -35,7 +52,7 @@ public class ModelChecker {
 
 		ParseTreeWalker walker = new ParseTreeWalker();
 		try {
-			walker.walk(new FieldExists(), tree);
+			//walker.walk(new FieldExists(classpath), tree); //TODO fix
 		} catch (AtomicPropositionDoesNotExistException e) {
 			throw new ModelCheckingException(e.getMessage());
 		}
@@ -44,10 +61,10 @@ public class ModelChecker {
 		Formula formula = new Generator().visit(tree);
 		
 		try {
-			Config conf = JPF.createConfig(new String[]{});
+			Config conf = JPF.createConfig(new String[]{"+classpath=" + classpath});
 
 			// ... modify config according to your needs
-			conf.setTarget(TargetSystem);
+			conf.setTarget(target);
 			
 			// only needed if randomization is used
 			conf.setProperty("cg.enumerate_random", EnumerateRandom);
@@ -73,8 +90,8 @@ public class ModelChecker {
 		}
 		
 		// At this point we know the files exist so now we need to load them...
-		String jpfLabelFile = TargetSystem + ".lab";
-		String listenerFile = TargetSystem + ".tra";
+		String jpfLabelFile = target + ".lab";
+		String listenerFile = target + ".tra";
 		
 		try {
 			LabelledPartialTransitionSystem pts = new LabelledPartialTransitionSystem(jpfLabelFile, listenerFile);
