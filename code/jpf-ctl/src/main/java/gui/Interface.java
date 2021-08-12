@@ -64,6 +64,8 @@ public class Interface extends JFrame {
 		JButton btn_choose = new JButton("Choose File");
 		btn_choose.setFont(new Font(Font.SANS_SERIF, Font.BOLD, 16));
 		btn_choose.setAlignmentX(JLabel.CENTER_ALIGNMENT);
+		
+		//run function for choose file button
 		btn_choose.addActionListener(new ActionListener(){
 			@Override
 			public void actionPerformed(ActionEvent e)
@@ -129,6 +131,8 @@ public class Interface extends JFrame {
 		JButton btn_run = new JButton("Run");
 		btn_run.setFont(new Font(Font.SANS_SERIF, Font.BOLD, 16));
 		btn_run.setBackground(new Color(0,153,0));
+		
+		//run function for run button
 		btn_run.addActionListener(new ActionListener(){
 			@Override
 			public void actionPerformed(ActionEvent e)
