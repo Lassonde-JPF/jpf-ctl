@@ -545,47 +545,38 @@ public class Model {
 				msg.append("\nThe state " + state + " does not satisfy the left and right subformulas");
 				msg.append("\nA counter example to the state " + state + " for the left subformula (" + left.toString() + ") is: ");
 				CounterExampleHelper(left, state, list, msg);
+				msg.append("\nA counter example to the state " + state + " for the right subformula (" + right.toString() + ") is: ");
+				CounterExampleHelper(right, state, list, msg);
 			}
 		} else if (formula instanceof Implies) {
 			Formula left = ((Implies) formula).getLeft();
 			Formula right = ((Implies) formula).getRight();
-			
-			Set<Integer> subLeftFormulaUnsat = unSatAndSatForEachFormula.get(left).getUnSat();
-			Set<Integer> subRightFormulaUnsat = unSatAndSatForEachFormula.get(right).getUnSat();
+
 			insetToLabellingFormulaForEachStateMap(state, " does not satisfy : " + formula.toString());
-			if(subLeftFormulaUnsat.contains(state))
-			{
-				list.add(state);
-				msg.append("\nThe state " + state + " does not satisfy the left subformula");
-				msg.append("\nA counter example to the state " + state + " for the left subformula (" + left.toString() + ") is: ");;
-				CounterExampleHelper(left, state, list, msg);
-			}else if(subRightFormulaUnsat.contains(state))
-			{
-				list.add(state);
-				msg.append("\nThe state " + state + " does not satisfy the right subformula");
-				msg.append("\nA counter example to the state " + state + " for the right subformula (" + right.toString() + ") is: ");
-				CounterExampleHelper(right, state, list, msg);
-			}	
+
+			list.add(state);
+			msg.append("\nThe state " + state + " satisfies the left subformula");
+			msg.append("\nA witness to the state " + state + " for the left subformula (" + left.toString() + ") is: ");;
+			findWitness(left, state, list, msg);
+			
+			msg.append("\nThe state " + state + " does not satisfy the right subformula");
+			msg.append("\nA counter example to the state " + state + " for the right subformula (" + right.toString() + ") is: ");
+			CounterExampleHelper(right, state, list, msg);
+				
 			
 		} else if (formula instanceof Iff) {
 			Formula left = ((Iff) formula).getLeft();
 			Formula right = ((Iff) formula).getRight();
-			Set<Integer> subLeftFormulaUnsat = unSatAndSatForEachFormula.get(left).getUnSat();
-			Set<Integer> subRightFormulaUnsat = unSatAndSatForEachFormula.get(right).getUnSat();
 			insetToLabellingFormulaForEachStateMap(state, " does not satisfy : " + formula.toString());
-			if(subLeftFormulaUnsat.contains(state))
-			{
-				list.add(state);
-				msg.append("\nThe state " + state + " does not satisfy the left subformula");
-				msg.append("\nA counter example to the state " + state + " for the left subformula (" + left.toString() + ") is: ");
-				CounterExampleHelper(left, state, list, msg);
-			}else if(subRightFormulaUnsat.contains(state))
-			{
-				list.add(state);
-				msg.append("\nThe state " + state + " does not satisfy the right subformula");
-				msg.append("\nA counter example to the state " + state + " for the right subformula (" + right.toString() + ") is: ");
-				CounterExampleHelper(right, state, list, msg);
-			}
+			
+			list.add(state);
+			msg.append("\nThe state " + state + " satisfies the left subformula");
+			msg.append("\nA witness to the state " + state + " for the left subformula (" + left.toString() + ") is: ");;
+			findWitness(left, state, list, msg);
+			
+			msg.append("\nThe state " + state + " does not satisfy the right subformula");
+			msg.append("\nA counter example to the state " + state + " for the right subformula (" + right.toString() + ") is: ");
+			CounterExampleHelper(right, state, list, msg);
 					
 		} else if (formula instanceof ExistsAlways) {
 			
@@ -919,9 +910,11 @@ public class Model {
 			if(subLeftFormulaSat.contains(state) && subRightFormulaSat.contains(state))
 			{
 				list.add(state);
-				msg.append("\nThe state " + state + " does satisfy the left and right subformula");
+				msg.append("\nThe state " + state + " satisfies the left and right subformulas");
 				msg.append("\nA witness to the state " + state + " for the left subformula (" + left.toString() + ") is: ");
 				findWitness(left, state, list, msg);
+				msg.append("\nA witness to the state " + state + " for the right subformula (" + right.toString() + ") is: ");
+				findWitness(right, state, list, msg);
 			}
 			
 		} else if (formula instanceof Or) {
@@ -949,13 +942,13 @@ public class Model {
 			Formula left = ((Implies) formula).getLeft();
 			Formula right = ((Implies) formula).getRight();
 			
-			Set<Integer> subLeftFormulaSat = unSatAndSatForEachFormula.get(left).getSat();
 			Set<Integer> subRightFormulaSat = unSatAndSatForEachFormula.get(right).getSat();
 			insetToLabellingFormulaForEachStateMap(state, " satisfies : " + formula.toString());
-			if(subLeftFormulaSat.contains(state) && subRightFormulaSat.contains(state))
+			
+			if(subRightFormulaSat.contains(state))
 			{
 				list.add(state);
-				msg.append("\nThe state " + state + " does satisfy the left subformula");
+				msg.append("\nThe state " + state + " satisfies the left subformula");
 				msg.append("\nA witness to the state " + state + " for the left subformula (" + left.toString() + ") is: ");;
 				findWitness(left, state, list, msg);
 			}
@@ -963,16 +956,21 @@ public class Model {
 		} else if (formula instanceof Iff) {
 			Formula left = ((Iff) formula).getLeft();
 			Formula right = ((Iff) formula).getRight();
+			
 			Set<Integer> subLeftFormulaSat = unSatAndSatForEachFormula.get(left).getSat();
 			Set<Integer> subRightFormulaSat = unSatAndSatForEachFormula.get(right).getSat();
 			insetToLabellingFormulaForEachStateMap(state, " satisfies : " + formula.toString());
+			
 			if(subLeftFormulaSat.contains(state) && subRightFormulaSat.contains(state))
 			{
 				list.add(state);
-				msg.append("\nThe state " + state + " does satisfy the left subformula");
+				msg.append("\nThe state " + state + " satisfies left and right subformulas");
 				msg.append("\nA witness to the state " + state + " for the left subformula (" + left.toString() + ") is: ");
 				findWitness(left, state, list, msg);
-			}					
+				msg.append("\nA witness to the state " + state + " for the right subformula (" + right.toString() + ") is: ");
+				findWitness(right, state, list, msg);
+			}	
+			
 		} else if (formula instanceof ForAllAlways) {
 			
 			//if the current state does not satisfy then the current state is the counter ex
@@ -1255,6 +1253,7 @@ public class Model {
 			msg.append("\nA counter example to the state " + state + " for the subformula (" + f.toString() + ") is: ");
 			
 			CounterExampleHelper(f, state, list, msg);
+			return;
 		} 
 	}
 
