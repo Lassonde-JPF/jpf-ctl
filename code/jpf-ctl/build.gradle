@@ -9,17 +9,10 @@ plugins {
     id 'java-library'
     // Apply the antlr plugin to add support for ANTLR4
     id 'antlr'
-    // javafx plugin for GUI
-    id 'org.openjfx.javafxplugin' version '0.0.8'
 }
 
 sourceCompatibility = '1.8'
 targetCompatibility = '1.8'
-
-javafx {
-    version = "15.0.1"
-    modules = [ 'javafx.controls' ]
-}
 
 repositories {
     mavenCentral()
