@@ -145,11 +145,12 @@ public class Jpf_Ctl_Gui extends Application {
 					error.showAndWait();
 
 					// check the other fields and call the model checking
+					String tmpFile = "example.Main";//file.toString();
 					
 					String checked = chk_random.isSelected() ? "true" : "false";
 
 					try {
-						boolean result = ModelChecker.validate(formula, file.getAbsolutePath(), checked);
+						boolean result = ModelChecker.validate(formula, tmpFile, checked);
 						
 						if (result) {
 							error.setAlertType(AlertType.INFORMATION);
