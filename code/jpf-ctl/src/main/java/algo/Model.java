@@ -565,18 +565,38 @@ public class Model {
 				
 			
 		} else if (formula instanceof Iff) {
+			//a != b
 			Formula left = ((Iff) formula).getLeft();
 			Formula right = ((Iff) formula).getRight();
+			Set<Integer> subLeftFormulaUnsat = unSatAndSatForEachFormula.get(left).getUnSat();
+			Set<Integer> subRightFormulaUnsat = unSatAndSatForEachFormula.get(right).getUnSat();
+			Set<Integer> subLeftFormulaSat = unSatAndSatForEachFormula.get(left).getSat();
+			Set<Integer> subRightFormulaSat = unSatAndSatForEachFormula.get(right).getSat();
+			
 			insetToLabellingFormulaForEachStateMap(state, " does not satisfy : " + formula.toString());
 			
-			list.add(state);
-			msg.append("\nThe state " + state + " satisfies the left subformula");
-			msg.append("\nA witness to the state " + state + " for the left subformula (" + left.toString() + ") is: ");;
-			findWitness(left, state, list, msg);
-			
-			msg.append("\nThe state " + state + " does not satisfy the right subformula");
-			msg.append("\nA counter example to the state " + state + " for the right subformula (" + right.toString() + ") is: ");
-			CounterExampleHelper(right, state, list, msg);
+			if(subLeftFormulaSat.contains(state) && subRightFormulaUnsat.contains(state))
+			{
+				list.add(state);
+				msg.append("\nThe state " + state + " satisfies the left subformula");
+				msg.append("\nA witness to the state " + state + " for the left subformula (" + left.toString() + ") is: ");;
+				findWitness(left, state, list, msg);
+				
+				msg.append("\nThe state " + state + " does not satisfy the right subformula");
+				msg.append("\nA counter example to the state " + state + " for the right subformula (" + right.toString() + ") is: ");
+				CounterExampleHelper(right, state, list, msg);
+			}
+			if(subLeftFormulaUnsat.contains(state) && subRightFormulaSat.contains(state))
+			{
+				list.add(state);
+				msg.append("\nThe state " + state + " does not satisfy the left subformula");
+				msg.append("\nA counter example to the state " + state + " for the left subformula (" + left.toString() + ") is: ");
+				CounterExampleHelper(left, state, list, msg);
+				
+				msg.append("\nThe state " + state + " satisfies the right subformula");
+				msg.append("\nA witness to the state " + state + " for the right subformula (" + right.toString() + ") is: ");;
+				findWitness(right, state, list, msg);
+			}
 					
 		} else if (formula instanceof ExistsAlways) {
 			
@@ -640,11 +660,16 @@ public class Model {
 					printSatAndUnSatSets(state,subFormula, allReachableStates, msg);						
 				}
 				
-				//find the parent nodes of the n and add to the list
+				//find the parent nodes of the unSatState and add to the list
 				Map<Integer,Integer> parent = new HashMap<>();
-				Integer unSatState = this.getUnSatState(state, parent,subformulaUnsat);
-				getParentNodes(list,parent,unSatState);
+				Integer unSatState = this.getUnSatOrSatState(state, parent,subformulaUnsat);
+				List<Integer> parentList = new LinkedList<>();
+				getParentNodes(parentList,parent,unSatState);
+				list.addAll(parentList);
+				parentList.add(state);
 				msg.append("\nThe state " + unSatState + " is one of the states that does not satisfy the subformula " + subFormula);
+				msg.append("\nThe path from state " + unSatState + " to state " + state + ": ");
+				printPath(parentList, msg);
 				msg.append("\nA counter example to the state " + unSatState + " for the subformula (" + subFormula.toString() + ") is: ");
 				CounterExampleHelper(subFormula, unSatState, list, msg);
 			}
@@ -939,19 +964,21 @@ public class Model {
 			}	
 			
 		} else if (formula instanceof Implies) {
+			//!(!a or b) = a and !b
+
 			Formula left = ((Implies) formula).getLeft();
 			Formula right = ((Implies) formula).getRight();
-			
-			Set<Integer> subRightFormulaSat = unSatAndSatForEachFormula.get(right).getSat();
 			insetToLabellingFormulaForEachStateMap(state, " satisfies : " + formula.toString());
 			
-			if(subRightFormulaSat.contains(state))
-			{
-				list.add(state);
-				msg.append("\nThe state " + state + " satisfies the left subformula");
-				msg.append("\nA witness to the state " + state + " for the left subformula (" + left.toString() + ") is: ");;
-				findWitness(left, state, list, msg);
-			}
+			list.add(state);
+			msg.append("\nThe state " + state + "does not satisfy the left subformula");
+			msg.append("\nA counter example to the state " + state + " for the left subformula (" + left.toString() + ") is: ");;
+			CounterExampleHelper(left, state, list, msg);
+			
+			msg.append("\nThe state " + state + " satisfies the right subformula");
+			msg.append("\nA witness to the state " + state + " for the right subformula (" + right.toString() + ") is: ");;
+			findWitness(right, state, list, msg);
+		
 			
 		} else if (formula instanceof Iff) {
 			Formula left = ((Iff) formula).getLeft();
@@ -973,11 +1000,70 @@ public class Model {
 			
 		} else if (formula instanceof ForAllAlways) {
 			
-			//if the current state does not satisfy then the current state is the counter ex
-			//otherwise show all the states in all paths 
+			//show all the states in all paths satisfies the subformula
 			Formula subFormula = ((ForAllAlways) formula).getFormula();
 			Set<Integer> subformulaSat = unSatAndSatForEachFormula.get(subFormula).getSat();
 			insetToLabellingFormulaForEachStateMap(state, " satisfies : " + formula.toString());
+
+			Set<Integer> allReachableStates = this.getRechableStates(state);
+			if(allReachableStates.isEmpty())
+			{
+				msg.append("\nThe state " + state + " has no outgoing edges");
+			}else
+			{				
+				msg.append("\nAll the reachable states from state " + state + ": " + allReachableStates.toString());
+				printSatAndUnSatSets(state,subFormula, allReachableStates, msg);						
+			}
+			
+			
+			for (Iterator<Integer> it = allReachableStates.iterator(); it.hasNext(); ) 
+			{
+				Integer s = it.next();
+				list.add(s);
+				if(subformulaSat.contains(s))
+				{
+					msg.append("\nA witness to the state " + s + " for the subformula (" + subFormula.toString() + ") is: ");
+					findWitness(subFormula, s, list, msg);									
+				}			
+			}
+		}
+		else if (formula instanceof  ExistsAlways) {
+			Formula subFormula = ((ExistsAlways) formula).getFormula();
+			Set<Integer> subformulaSat = unSatAndSatForEachFormula.get(subFormula).getSat();
+			insetToLabellingFormulaForEachStateMap(state, " satisfies : " + formula.toString());
+			
+			Set<Integer> path = new HashSet<>();
+			getPath2(state,subformulaSat, path);
+			path.add(state);	
+			
+			if(path.isEmpty())
+			{
+				msg.append("\nThe state " + state + " has no outgoing edges");
+					
+			}else
+			{				
+				msg.append("\nAll the reachable states from state " + state + ": " + path.toString());
+				printSatAndUnSatSets(state,subFormula, path, msg);
+			}	
+				
+			for (Iterator<Integer> it = path.iterator(); it.hasNext(); ) 
+			{
+				Integer s = it.next();
+				list.add(s);
+				if(subformulaSat.contains(s))
+				{
+					msg.append("\nA witness to the state " + s + " for the subformula (" + subFormula.toString() + ") is: ");
+					findWitness(subFormula, s, list, msg);									
+				}			
+			}				
+		}
+		else if (formula instanceof ForAllEventually) {
+			//show all the states on all paths
+			Formula subFormula = ((ForAllEventually)formula).getFormula();
+			Set<Integer> subformulaSat = unSatAndSatForEachFormula.get(subFormula).getSat();
+			insetToLabellingFormulaForEachStateMap(state, " satisfies : " + formula.toString());
+			
+			
 			if(subformulaSat.contains(state))
 			{
 				msg.append("\nThe state " + state + " is a witness");
@@ -1009,19 +1095,21 @@ public class Model {
 					}					
 				}			
 			}
+			
 		}
-		else if (formula instanceof  ExistsAlways) {
-			Formula subFormula = ((ExistsAlways) formula).getFormula();
+		else if (formula instanceof  ExistsEventually) {
+			Formula subFormula = ((ExistsEventually) formula).getFormula();
 			Set<Integer> subformulaSat = unSatAndSatForEachFormula.get(subFormula).getSat();
+			Set<Integer> path = new HashSet<>();
 			insetToLabellingFormulaForEachStateMap(state, " satisfies : " + formula.toString());
 			
 			if(subformulaSat.contains(state))
 			{
+				
 				msg.append("\nThe state " + state + " is a witness");
 				msg.append("\nA witness to the state " + state + " for the subformula (" + subFormula.toString() + ") is: ");
 				findWitness(subFormula, state, list, msg);
-			}
-			else
+			}else
 			{
 				Set<Integer> allReachableStates = this.getRechableStates(state);
 				if(allReachableStates.isEmpty())
@@ -1033,69 +1121,22 @@ public class Model {
 					printSatAndUnSatSets(state,subFormula, allReachableStates, msg);						
 				}
 				
-				//find the parent nodes of the n and add to the list
+				//find the parent nodes of the satState and add to the list
 				Map<Integer,Integer> parent = new HashMap<>();
-				Integer satState = this.getUnSatState(state, parent,subformulaSat);
-				getParentNodes(list,parent,satState);
-				msg.append("\nThe state " + satState + " is one of the states that does satisfy the subformula " + subFormula);
+				Integer satState = this.getUnSatOrSatState(state, parent,subformulaSat);
+				List<Integer> parentList = new LinkedList<>();
+				getParentNodes(parentList,parent,satState);
+				list.addAll(parentList);
+				parentList.add(state);
+				msg.append("\nThe state " + satState + " is one of the states that satisfies the subformula " + subFormula);
+				msg.append("\nThe path from state " + satState + " to state " + state + ": ");
+				printPath(parentList, msg);
 				msg.append("\nA witness to the state " + satState + " for the subformula (" + subFormula.toString() + ") is: ");
 				findWitness(subFormula, satState, list, msg);
-			}
-		}
-		else if (formula instanceof ForAllEventually) {
-			//show all the states on all paths
-			Formula subFormula = ((ForAllEventually)formula).getFormula();
-			Set<Integer> subformulaSat = unSatAndSatForEachFormula.get(subFormula).getSat();
-			insetToLabellingFormulaForEachStateMap(state, " satisfies : " + formula.toString());
-			Set<Integer> allReachableStates = this.getRechableStates(state);
-			allReachableStates.add(state);
 			
-			if(allReachableStates.size() == 1)
-			{
-				msg.append("\nThe state " + state + " has no outgoing edges");
-			}else
-			{				
-				msg.append("\nAll the reachable states from state " + state + ": " + allReachableStates.toString());
-				printSatAndUnSatSets(state,subFormula, allReachableStates, msg);
 				
 			}
-			
-			for (Iterator<Integer> it = allReachableStates.iterator(); it.hasNext(); ) 
-			{
-				Integer s = it.next();
-				list.add(s);
-				if(subformulaSat.contains(s))
-				{
-					msg.append("\nA witness to the state " + s + " for the subformula (" + subFormula.toString() + ") is: ");
-					findWitness(subFormula, s, list, msg);
-				}
-			}
-			
-		}
-		else if (formula instanceof  ExistsEventually) {
-			Formula subFormula = ((ExistsEventually) formula).getFormula();
-			Set<Integer> subformulaSat = unSatAndSatForEachFormula.get(subFormula).getSat();
-			Set<Integer> path = new HashSet<>();
-			insetToLabellingFormulaForEachStateMap(state, " satisfies : " + formula.toString());
-			getPath(state,subformulaSat, path);
-			path.add(state);
-			
-			if(path.size() == 1)
-			{
-				msg.append("\nThe state " + state + " has no outgoing edges");
-			}else
-			{				
-				msg.append("\nThe states on the path from state " + state + ": " + path.toString() );
-				printSatAndUnSatSets(state,subFormula, path, msg);
-			}
-			
-			for (Iterator<Integer> it = path.iterator(); it.hasNext(); ) 
-			{
-				Integer s = it.next();
-				list.add(s);
-				msg.append("\nA witness to the state " + s + " for the subformula (" + subFormula.toString() + ") is: ");
-				findWitness(subFormula, s, list, msg);
-			}		
+				
 		}
 		else if (formula instanceof ForAllNext) 
 		{
@@ -1257,108 +1298,7 @@ public class Model {
 		} 
 	}
 
-//	private void swapUnSatAndSatSets(Formula formula, Map<Formula, StateSets> map) {
-//		Set<Integer> sat = map.get(formula).getSat();
-//		Set<Integer> unSat = map.get(formula).getUnSat();
-//		StateSets temp = new StateSets(unSat,sat);
-//	    map.put(formula, temp);
-//	
-//		if (formula instanceof True) {
-//			return;
-//		}
-//		/*
-//		 * Base Case
-//		 */
-//		else if (formula instanceof False) {	
-//			return;
-//		}/*
-//		 * Base Case
-//		 */
-//		else if (formula instanceof AtomicProposition) {
-//			return;						
-//		}
-//		else if (formula instanceof And) {
-//			Formula left = ((And)formula).getLeft();
-//			swapUnSatAndSatSets(left, map);
-//			Formula right = ((And)formula).getRight();
-//			swapUnSatAndSatSets(right, map);
-//		} else if (formula instanceof Or) {
-//			Formula left = ((Or)formula).getLeft();
-//			Formula right = ((Or)formula).getRight();
-//			
-//			swapUnSatAndSatSets(left,map);
-//			swapUnSatAndSatSets(right,map);
-//			
-//		} else if (formula instanceof Implies) {
-//			Formula left = ((Implies)formula).getLeft();
-//			Formula right = ((Implies)formula).getRight();
-//			
-//			swapUnSatAndSatSets(left,map);
-//			swapUnSatAndSatSets(right,map);
-//			
-//		} else if (formula instanceof Iff) {
-//			Formula left = ((Iff)formula).getLeft();
-//			Formula right = ((Iff)formula).getRight();
-//			
-//			swapUnSatAndSatSets(left,map);
-//			swapUnSatAndSatSets(right,map);
-//					
-//		} else if (formula instanceof ExistsAlways) {
-//			Formula f = ((ExistsAlways)formula).getFormula(); 
-//
-//			swapUnSatAndSatSets(f,map);
-//		}
-//		else if (formula instanceof ForAllAlways) {
-//			Formula f = ((ForAllAlways)formula).getFormula(); 
-//
-//				swapUnSatAndSatSets(f,map);
-//			
-//		}
-//		else if (formula instanceof ExistsEventually) {
-//
-//			Formula f = ((ExistsEventually)formula).getFormula(); 
-//
-//				swapUnSatAndSatSets(f,map);
-//			
-//		}
-//		else if (formula instanceof ForAllEventually) {
-//			Formula f = ((ForAllEventually)formula).getFormula(); 
-//
-//				swapUnSatAndSatSets(f,map);
-//		}
-//		else if (formula instanceof ExistsNext) 
-//		{
-//			Formula f = ((ExistsNext)formula).getFormula(); 
-//
-//				swapUnSatAndSatSets(f,map);
-//		} 		
-//		else if (formula instanceof ForAllNext) {
-//			Formula f = ((ForAllNext)formula).getFormula(); 
-//
-//			swapUnSatAndSatSets(f,map);
-//		}
-//		else if (formula instanceof ForAllUntil) {
-//			Formula left = ((ForAllUntil)formula).getLeft();
-//			Formula right = ((ForAllUntil)formula).getRight();
-//			
-//			swapUnSatAndSatSets(left,map);
-//			swapUnSatAndSatSets(right,map);
-//		}
-//		else if (formula instanceof ExistsUntil) {
-//			Formula left = ((ExistsUntil)formula).getLeft();
-//			Formula right = ((ExistsUntil)formula).getRight();
-//			
-//			swapUnSatAndSatSets(left,map);
-//			swapUnSatAndSatSets(right,map);
-//		}
-//		else if (formula instanceof Not) {
-//			Formula f = ((Not)formula).getFormula(); 
-//
-//			swapUnSatAndSatSets(f,map);
-//		} 
-//	}
-	
-	private void getParentNodes(Set<Integer> list, Map<Integer,Integer> parent, Integer s)
+	private void getParentNodes(List<Integer> list, Map<Integer,Integer> parent, Integer s)
 	{
 		Integer parentNode = parent.get(s);
 		if(parentNode == null)
@@ -1368,6 +1308,8 @@ public class Model {
 		list.add(s);
 		getParentNodes(list,parent,parentNode);
 	}
+	
+	
 	
 	private void getPath(Integer state, Set<Integer> subformulaUnsat,Set<Integer> path)
 	{
@@ -1414,7 +1356,7 @@ public class Model {
 					path.add(n);
 					if(!subformulaUnsat.contains(n)) 
 					{
-						getPath(n,subformulaUnsat,path);
+						getPath2(n,subformulaUnsat,path);
 					}
 				}
 			}			
@@ -1471,7 +1413,7 @@ public class Model {
 				Integer n = it.next();
 				if(Sata.contains(n) && !path.contains(n)) {
 					path.add(n);
-					getPath3(n,Sata,Satb,path);					
+					getPath4(n,Sata,Satb,path);					
 				}
 				else if(Satb.contains(n)) {
 					i++;
@@ -1489,6 +1431,8 @@ public class Model {
 				
 		}
 	}
+	
+	
 	
 	private Set<Transition> getRelatedTransitions( Set<Integer> list)
 	{
@@ -1528,7 +1472,7 @@ public class Model {
 		return this.Post(s);
 	}
 	
-	private Integer getUnSatState(Integer s, Map<Integer,Integer> parent, Set<Integer> unSatSubFormula)
+	private Integer getUnSatOrSatState(Integer s, Map<Integer,Integer> parent, Set<Integer> unSatSubFormula)
     {
         // Mark all the vertices as not visited(By default
         // set as false)
@@ -1645,5 +1589,16 @@ public class Model {
 		msg.append("\nThe states that do not satisfy the formula (" + subFormula + ") : ");
 		msg.append(unSat.toString());	
 	}
-	
+	private void printPath(List<Integer> path, StringBuilder msg)
+	{
+		int size = path.size();
+		for(int i=0 ; i < size ; i++)
+		{
+			msg.append(path.get(i));
+			if(i != size - 1)
+			{
+				msg.append(" -> ");
+			}
+		}
+	}
 }
