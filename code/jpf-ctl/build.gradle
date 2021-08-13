@@ -72,6 +72,12 @@ generateGrammarSource {
     
 }
 
+jar {
+    manifest {
+        attributes 'Main-Class': 'gui.Interface'
+    }
+}
+
 test {
     useJUnitPlatform()
     

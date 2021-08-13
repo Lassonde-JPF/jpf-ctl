@@ -1,5 +1,6 @@
 package algo;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.stream.Collectors;
 
@@ -50,12 +51,12 @@ public class ModelChecker {
 		CTLParser parser = new CTLParser(new CommonTokenStream(new CTLLexer(input)));
 		ParseTree tree = parser.formula();
 
-		ParseTreeWalker walker = new ParseTreeWalker();
-		try {
-			//walker.walk(new FieldExists(classpath), tree); //TODO fix
-		} catch (AtomicPropositionDoesNotExistException e) {
-			throw new ModelCheckingException(e.getMessage());
-		}
+//		ParseTreeWalker walker = new ParseTreeWalker();
+//		try {
+//			//walker.walk(new FieldExists(classpath), tree); //TODO fix
+//		} catch (AtomicPropositionDoesNotExistException e) {
+//			throw new ModelCheckingException(e.getMessage());
+//		}
 
 		// At this point we know the formula is correct. 
 		Formula formula = new Generator().visit(tree);
@@ -63,6 +64,8 @@ public class ModelChecker {
 		try {
 			Config conf = JPF.createConfig(new String[]{"+classpath=" + classpath});
 
+			System.out.println("JPF Classpath: " + conf.getProperty("classpath"));
+			
 			// ... modify config according to your needs
 			conf.setTarget(target);
 			
@@ -93,15 +96,28 @@ public class ModelChecker {
 		String jpfLabelFile = target + ".lab";
 		String listenerFile = target + ".tra";
 		
+		// build pts
+		LabelledPartialTransitionSystem pts;
 		try {
-			LabelledPartialTransitionSystem pts = new LabelledPartialTransitionSystem(jpfLabelFile, listenerFile);
-			
-			StateSets result = new Model(pts).check(formula);
-			
-			return result.getSat().contains(0); //is the initial state satisfied ?
+			pts = new LabelledPartialTransitionSystem(jpfLabelFile, listenerFile);
 		} catch (IOException e) {
-			throw new ModelCheckingException("There was an error building the LabelledPartialTransitionSystem object" + e.getMessage());
+			throw new ModelCheckingException("There was an error building the LabelledPartialTransitionSystem object:\n" + e.getMessage());
 		}
+		
+		//cleanup files
+		File labFile = new File(jpfLabelFile);
+		if (!labFile.delete()) {
+			System.err.println("File: " + labFile.getName() + " was not deleted");
+		}
+		File traFile = new File(listenerFile);
+		if (!traFile.delete()) {
+			System.err.println("File: " + traFile.getName() + " was not deleted");
+		}
+		
+		//perform model check
+		StateSets result = new Model(pts).check(formula);
+		
+		return result.getSat().contains(0); //is the initial state satisfied ?
 	}
 
 }
