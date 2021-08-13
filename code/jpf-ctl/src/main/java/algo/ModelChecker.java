@@ -36,7 +36,7 @@ public class ModelChecker {
 	private static final String LAB_EXTENSION = ".lab";
 	private static final String TRA_EXTENSION = ".tra";
 
-	public static boolean validate(String Formula, String path, String EnumerateRandom, boolean pack, String[] args) throws ModelCheckingException {
+	public static boolean validate(String Formula, String path, String EnumerateRandom, boolean pack, String args) throws ModelCheckingException {
 		
 		// Create classpath and target values from path
 		String classpath;
@@ -80,13 +80,18 @@ public class ModelChecker {
 		Formula formula = new Generator().visit(tree);
 		
 		try {
-			Config conf = JPF.createConfig(args);
+			Config conf = JPF.createConfig(new String[]{});
 			
 			// ... modify config according to your needs
 			conf.setTarget(target);
 			
 			//Set classpath to parent folder
 			conf.setProperty("classpath", classpath);
+			
+			//Set args
+			if (!args.isEmpty()) {
+				conf.setProperty("target.args", args);
+			}
 			
 			// only needed if randomization is used
 			conf.setProperty("cg.enumerate_random", EnumerateRandom);
@@ -115,9 +120,9 @@ public class ModelChecker {
 				return false; // TODO perhaps an exception?
 			}
 		} catch (JPFConfigException cx) {
-			throw new ModelCheckingException("There was an error configuring JPF, please check your settings.");
+			throw new ModelCheckingException("There was an error configuring JPF, please check your settings: " + cx.getMessage());
 		} catch (JPFException jx) {
-			throw new ModelCheckingException("JPF encountered an internal error and was forced to terminate.");
+			throw new ModelCheckingException("JPF encountered an internal error and was forced to terminate." + jx.getMessage());
 		}
 		
 		// At this point we know the files exist so now we need to load them...

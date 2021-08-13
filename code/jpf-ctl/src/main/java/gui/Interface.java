@@ -165,12 +165,8 @@ public class Interface extends JFrame {
 					// get the values and do the run code
 					String checked = chk_randomness.isSelected() ? "true" : "false";
 					String formula = ta_formula.getText().trim();
-					String[] cmd;
-					try {
-						cmd = ta_cmd.getText().trim().split(" ");
-					} catch (Exception e1) {
-						cmd = new String[] {};
-					}
+					String cmd = ta_cmd.getText().trim();
+				
 					try {
 						boolean result = ModelChecker.validate(formula, path, checked, chk_package.isSelected(), cmd);
 
