@@ -39,12 +39,12 @@ public class Interface extends JFrame {
 
 		setSize(600, 400);
 		setResizable(false);
-		setTitle("JPF-CTL");
+		setTitle("jpf-ctl");
 
 		setLocationRelativeTo(null);
 
 		// center the frame
-		// setLayout(new BoxLayout(getContentPane(), BoxLayout.Y_AXIS));
+		setLayout(new BoxLayout(getContentPane(), BoxLayout.Y_AXIS));
 
 		// ImageIcon img = new ImageIcon("src/main/java/gui/images/jpf-ctl-logo.png");
 		// stage.setIconImage(img.getImage()); //super blurry
@@ -64,7 +64,7 @@ public class Interface extends JFrame {
 
 		// enter formula sub component
 		JPanel formulaPane = new JPanel();
-		formulaPane.setLayout(new GridLayout(4, 2, 10, 10));
+		formulaPane.setLayout(new GridLayout(5, 2, 10, 10));
 		formulaPane.setPreferredSize(new Dimension(this.getWidth(), 200));
 
 		JLabel lbl_formula = new JLabel("Enter Formula:");
@@ -77,19 +77,24 @@ public class Interface extends JFrame {
 		ta_formula.setBorder(BorderFactory.createLineBorder(Color.black));
 		ta_formula.setLineWrap(true);
 
-		JButton btn_choose = new JButton("Choose File");
-		btn_choose.setFont(new Font(Font.SANS_SERIF, Font.BOLD, 16));
+		JButton btn_choose = new JButton("No class selected");
+		btn_choose.setFont(new Font(Font.SANS_SERIF, Font.PLAIN, 12));
 		btn_choose.setAlignmentX(Component.CENTER_ALIGNMENT);
 
 		JCheckBox chk_randomness = new JCheckBox("Consider Randomness");
-		chk_randomness.setFont(new Font(Font.SANS_SERIF, Font.BOLD, 16));
+		chk_randomness.setFont(new Font(Font.SANS_SERIF, Font.PLAIN, 12));
+		chk_randomness.setAlignmentX(Component.CENTER_ALIGNMENT);
+		chk_randomness.setSelected(true); // true by default
+
+		JCheckBox chk_package = new JCheckBox("Class Contains Package Declaration");
+		chk_randomness.setFont(new Font(Font.SANS_SERIF, Font.PLAIN, 12));
 		chk_randomness.setAlignmentX(Component.CENTER_ALIGNMENT);
 
-		JLabel lbl_file = new JLabel("No File Chosen");
+		JLabel lbl_file = new JLabel("Choose Class:");
 		// lbl_file.setAlignmentX(JLabel.CENTER_ALIGNMENT);
-		lbl_file.setFont(new Font(Font.SANS_SERIF, Font.PLAIN, 12));
+		lbl_file.setFont(new Font(Font.SANS_SERIF, Font.BOLD, 16));
 
-		JLabel lbl_cmd = new JLabel("Command Line Input:");
+		JLabel lbl_cmd = new JLabel("Command Line Input (optional):");
 		// lbl_cmd.setAlignmentX(JLabel.CENTER_ALIGNMENT);
 		lbl_cmd.setFont(new Font(Font.SANS_SERIF, Font.BOLD, 16));
 
@@ -118,20 +123,18 @@ public class Interface extends JFrame {
 				if (returnVal == JFileChooser.APPROVE_OPTION) {
 					f = fc.getSelectedFile();
 					path = f.toString();
-					lbl_file.setText(path);
+					btn_choose.setText(path);
 				}
 			}
 		});
-		
-		formulaPane.add(lbl_formula);
-		formulaPane.add(btn_choose);
-		formulaPane.add(ta_formula);
-		formulaPane.add(chk_randomness);
 
-		formulaPane.add(lbl_file);
-		formulaPane.add(new JLabel());
+		formulaPane.add(lbl_formula);
+		formulaPane.add(lbl_file); // replace with actual label
+		formulaPane.add(ta_formula);
+		formulaPane.add(btn_choose);
+		formulaPane.add(chk_randomness);
+		formulaPane.add(chk_package);
 		formulaPane.add(lbl_cmd);
-		formulaPane.add(new JLabel());
 
 		// left text aligned lbl pane
 
@@ -151,26 +154,39 @@ public class Interface extends JFrame {
 		btn_run.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
+				JFrame frame = new JFrame();
 				if (ta_formula.getText().trim().isEmpty()) {
 					// joption pane for error
+					JOptionPane.showMessageDialog(frame, "Please input a formula");
 				} else if (f == null) {
 					// joptionpane for error
+					JOptionPane.showMessageDialog(frame, "Please select a file");
 				} else {
 					// get the values and do the run code
 					String checked = chk_randomness.isSelected() ? "true" : "false";
 					String formula = ta_formula.getText().trim();
-					String cmd = ta_cmd.getText().trim();
-
-					JFrame frame = new JFrame();
+					String[] cmd;
 					try {
-						boolean result = ModelChecker.validate(formula, path, checked);
+						cmd = ta_cmd.getText().trim().split(" ");
+					} catch (Exception e1) {
+						cmd = new String[] {};
+					}
+					try {
+						boolean result = ModelChecker.validate(formula, path, checked, chk_package.isSelected(), cmd);
 
 						System.out.println("Result: " + result);
 
-						if (result) { // TODO display valid
-							JOptionPane.showMessageDialog(frame, "Valid");
-						} else { // Display invalid + counter example
-							JOptionPane.showMessageDialog(frame, "Invalid");
+						if (result) {
+							String msg = "Model Checking Finished\n For the selected class:\t" + path
+									+ "\n And the written formula:\t" + formula
+									+ "\nIt has been determined that the formula holds in the initial state and is considered valid for this system.";
+							JOptionPane.showMessageDialog(frame, msg);
+						} else {
+							String msg = "Model Checking Finished\n For the selected class:\t" + path
+									+ "\n And the written formula:\t" + formula
+									+ "\nIt has been determined that the formula does not hold in the initial state and is considered invalid for this system."
+									+ "\nA counter example can be seen below:";
+							JOptionPane.showMessageDialog(frame, msg);
 						}
 
 					} catch (ModelCheckingException e1) {

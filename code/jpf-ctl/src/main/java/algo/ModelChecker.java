@@ -25,24 +25,29 @@ import gov.nasa.jpf.JPFException;
 
 public class ModelChecker {
 
-	public static boolean validate(String Formula, String path, String EnumerateRandom) throws ModelCheckingException {
+	public static boolean validate(String Formula, String path, String EnumerateRandom, boolean pack, String[] args) throws ModelCheckingException {
 		
 		// Create classpath and target values from path
 		String classpath;
 		String target;
-		String targetPackage;
 		
 		int lastSlash = path.lastIndexOf("\\");
-		
 		classpath = path.substring(0, lastSlash);
+		target = path.substring(lastSlash+1, path.lastIndexOf("."));
 		
-		targetPackage = classpath.substring(classpath.lastIndexOf("\\")+1);
-		
-		target = targetPackage + "." + path.substring(lastSlash+1, path.lastIndexOf("."));
+		/*
+		 * If there is a package then we need to modify the classpath and target
+		 * Specifically, we move the classpath up one directory and add
+		 * the directory we moved up to the target as a prefix delimeted by
+		 * a '.'
+		 */
+		if (pack) {
+			target = classpath.substring(classpath.lastIndexOf("\\")+1) + "." + target;
+			classpath = classpath.substring(0, classpath.lastIndexOf("\\"));
+		}
 		
 		System.out.println("classpath: " + classpath);
 		System.out.println("target: " + target);
-		System.out.println("Package: " + targetPackage);
 		
 		// Build and Check Formula before examining target system
 		CharStream input = CharStreams.fromString(Formula);
@@ -51,40 +56,50 @@ public class ModelChecker {
 		CTLParser parser = new CTLParser(new CommonTokenStream(new CTLLexer(input)));
 		ParseTree tree = parser.formula();
 
-//		ParseTreeWalker walker = new ParseTreeWalker();
-//		try {
-//			//walker.walk(new FieldExists(classpath), tree); //TODO fix
-//		} catch (AtomicPropositionDoesNotExistException e) {
-//			throw new ModelCheckingException(e.getMessage());
-//		}
+		ParseTreeWalker walker = new ParseTreeWalker();
+		try {
+			walker.walk(new FieldExists(classpath), tree); //TODO fix
+		} catch (AtomicPropositionDoesNotExistException e) {
+			//throw new ModelCheckingException(e.getMessage());
+		}
 
 		// At this point we know the formula is correct. 
 		Formula formula = new Generator().visit(tree);
 		
 		try {
-			Config conf = JPF.createConfig(new String[]{"+classpath=" + classpath});
-
-			System.out.println("JPF Classpath: " + conf.getProperty("classpath"));
+			Config conf = JPF.createConfig(args);
 			
 			// ... modify config according to your needs
 			conf.setTarget(target);
 			
+			//Set classpath to parent folder
+			conf.setProperty("classpath", classpath);
+			
 			// only needed if randomization is used
 			conf.setProperty("cg.enumerate_random", EnumerateRandom);
+			
+			// extension jpf-label
+			conf.setProperty("@using", "jpf-label");
+			
+			// set the listeners
+			conf.setProperty("listener", "label.StateLabelText,listeners.PartialTransitionSystemListener");
 			
 			// build the label properties
 			String fields = FieldExists.APs.stream().collect(Collectors.joining("; "));
 			conf.setProperty("label.class", "label.BooleanStaticField");
 			conf.setProperty("label.BooleanStaticField.field", fields);
 			
-			// set the listeners
-			conf.setProperty("listener", "label.StateLabelText,listeners.PartialTransitionSystemListener");
+			System.out.println("APs: " + fields);
 			
+			// This instantiates JPF but also adds the jpf.properties and other arguments to the config
 			JPF jpf = new JPF(conf);
+			
+			System.out.println("JPF Classpath: " + jpf.getConfig().getProperty("classpath"));
 
 			jpf.run();
 			if (jpf.foundErrors()) {
 				// If an error is found here then it is deadlock / racecondition etc. 
+				return false; // TODO perhaps an exception?
 			}
 		} catch (JPFConfigException cx) {
 			throw new ModelCheckingException("There was an error configuring JPF, please check your settings.");

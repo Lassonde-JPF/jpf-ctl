@@ -72,10 +72,16 @@ generateGrammarSource {
     
 }
 
-jar {
-    manifest {
-        attributes 'Main-Class': 'gui.Interface'
+task fatJar(type: Jar) {
+  manifest {
+    attributes 'Main-Class': 'gui.Interface'
+  }
+  archiveClassifier = "all"
+  from {
+    configurations.compile.collect { it.isDirectory() ? it : zipTree(it) }
+    configurations.runtimeClasspath.collect { it.isDirectory() ? it : zipTree(it) }
     }
+  with jar
 }
 
 test {
