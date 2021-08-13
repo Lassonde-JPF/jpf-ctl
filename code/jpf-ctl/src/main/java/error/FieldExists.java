@@ -46,6 +46,7 @@ public class FieldExists extends CTLBaseListener {
 		
 		try 
 		{
+			// In this case the target file does not reside on the default classpath
 			if (classpath != null) {
 				File file = new File(classpath);
 				URL classUrl = file.toURI().toURL();

@@ -1,5 +1,12 @@
 package algo;
 
+/**
+ * ModelChecker
+ * 
+ * @author Matt Walker
+ *
+ */
+
 import java.io.File;
 import java.io.IOException;
 import java.util.stream.Collectors;
@@ -24,13 +31,16 @@ import gov.nasa.jpf.JPFConfigException;
 import gov.nasa.jpf.JPFException;
 
 public class ModelChecker {
+	
+	private static final int INITIAL_STATE = 0;
+	private static final String LAB_EXTENSION = ".lab";
+	private static final String TRA_EXTENSION = ".tra";
 
 	public static boolean validate(String Formula, String path, String EnumerateRandom, boolean pack, String[] args) throws ModelCheckingException {
 		
 		// Create classpath and target values from path
 		String classpath;
 		String target;
-		
 		int lastSlash = path.lastIndexOf("\\");
 		classpath = path.substring(0, lastSlash);
 		target = path.substring(lastSlash+1, path.lastIndexOf("."));
@@ -45,7 +55,6 @@ public class ModelChecker {
 			target = classpath.substring(classpath.lastIndexOf("\\")+1) + "." + target;
 			classpath = classpath.substring(0, classpath.lastIndexOf("\\"));
 		}
-		
 		System.out.println("classpath: " + classpath);
 		System.out.println("target: " + target);
 		
@@ -56,6 +65,10 @@ public class ModelChecker {
 		CTLParser parser = new CTLParser(new CommonTokenStream(new CTLLexer(input)));
 		ParseTree tree = parser.formula();
 
+		/*
+		 * Perform Error Checking on input formula and gather APs for use 
+		 * with jpf-ctl
+		 */
 		ParseTreeWalker walker = new ParseTreeWalker();
 		try {
 			walker.walk(new FieldExists(classpath), tree); //TODO fix
@@ -108,8 +121,8 @@ public class ModelChecker {
 		}
 		
 		// At this point we know the files exist so now we need to load them...
-		String jpfLabelFile = target + ".lab";
-		String listenerFile = target + ".tra";
+		String jpfLabelFile = target + LAB_EXTENSION;
+		String listenerFile = target + TRA_EXTENSION;
 		
 		// build pts
 		LabelledPartialTransitionSystem pts;
@@ -132,7 +145,7 @@ public class ModelChecker {
 		//perform model check
 		StateSets result = new Model(pts).check(formula);
 		
-		return result.getSat().contains(0); //is the initial state satisfied ?
+		return result.getSat().contains(INITIAL_STATE); //is the initial state satisfied ?
 	}
 
 }
