@@ -146,7 +146,14 @@ public class LabelledPartialTransitionSystem {
 		this.labelling = labelling;
 		this.fields = fields;
 	}
-
+	
+	public LabelledPartialTransitionSystem(Set<Integer> s, Set<Transition> t, Map<Integer, Set<Integer>> l)
+	{
+		this.partial = s;
+		this.transitions = t;
+		this.labelling = l;
+	}
+	
 	// Actual Constructor for production
 	public LabelledPartialTransitionSystem(String jpfLabelFile, String listenerFile) throws IOException {
 		// Wrap path string with Path object
