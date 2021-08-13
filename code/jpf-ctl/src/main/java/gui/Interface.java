@@ -161,9 +161,9 @@ public class Interface extends JFrame {
 			public void actionPerformed(ActionEvent e) {
 			
 				//testing
-				outputPane( "Model Checking Finished\n For the selected class:\t" + "c:users/desktop/example.class"
-						+ "\n And the written formula:\t" + "AX true"
-						+ "\nIt has been determined that the formula holds in the initial state and is considered valid for this system.", "");
+//				outputPane( "Model Checking Finished\n For the selected class:\t" + "c:users/desktop/example.class"
+//						+ "\n And the written formula:\t" + "AX true"
+//						+ "\nIt has been determined that the formula holds in the initial state and is considered valid for this system.", "");
 				
 				JFrame frame = new JFrame();
 				if (ta_formula.getText().trim().isEmpty()) {
