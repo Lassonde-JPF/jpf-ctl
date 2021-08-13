@@ -182,7 +182,8 @@ public class LabelledPartialTransitionSystem {
 				this.transitions.add(new Transition(source, target));
 			}
 			if (line.matches(PARTIAL)) {
-				this.partial.addAll(Pattern.compile(PARTIAL_DELIMETER).splitAsStream(line).map(e -> Integer.parseInt(e))
+				this.partial.addAll(Pattern.compile(PARTIAL_DELIMETER).splitAsStream(line)
+						.map(e -> Integer.parseInt(e))
 						.collect(Collectors.toSet()));
 				this.stateSet.addAll(this.partial);
 			}

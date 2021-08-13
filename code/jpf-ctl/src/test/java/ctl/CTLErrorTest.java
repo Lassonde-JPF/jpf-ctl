@@ -1,8 +1,5 @@
 package ctl;
 
-
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-
 import org.antlr.v4.runtime.CharStream;
 import org.antlr.v4.runtime.CharStreams;
 import org.antlr.v4.runtime.CommonTokenStream;
@@ -11,7 +8,6 @@ import org.antlr.v4.runtime.tree.ParseTreeWalker;
 import org.ctl.CTLLexer;
 import org.ctl.CTLParser;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
 
 import error.CTLError;
 import error.FieldExists;
