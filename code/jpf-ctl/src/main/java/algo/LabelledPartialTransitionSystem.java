@@ -152,6 +152,7 @@ public class LabelledPartialTransitionSystem {
 		this.partial = s;
 		this.transitions = t;
 		this.labelling = l;
+		this.fields = new HashMap<>();
 	}
 	
 	// Actual Constructor for production
