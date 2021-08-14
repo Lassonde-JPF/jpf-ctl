@@ -159,12 +159,12 @@ public class Interface extends JFrame {
 		btn_run.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-			
-				//testing
+
+				// testing
 //				outputPane( "Model Checking Finished\n For the selected class:\t" + "c:users/desktop/example.class"
 //						+ "\n And the written formula:\t" + "AX true"
 //						+ "\nIt has been determined that the formula holds in the initial state and is considered valid for this system.", "");
-				
+
 				JFrame frame = new JFrame();
 				if (ta_formula.getText().trim().isEmpty()) {
 					// joption pane for error
@@ -177,26 +177,10 @@ public class Interface extends JFrame {
 					String checked = chk_randomness.isSelected() ? "true" : "false";
 					String formula = ta_formula.getText().trim();
 					String cmd = ta_cmd.getText().trim();
-				
+
 					try {
-						boolean result = ModelChecker.validate(formula, path, checked, chk_package.isSelected(), cmd);
-
-						System.out.println("Result: " + result);
-
-						if (result) {
-							String msg = "Model Checking Finished\n For the selected class:\t" + path
-									+ "\n And the written formula:\t" + formula
-									+ "\nIt has been determined that the formula holds in the initial state and is considered valid for this system.";
-							JOptionPane.showMessageDialog(frame, msg);
-							
-						} else {
-							String msg = "Model Checking Finished\n For the selected class:\t" + path
-									+ "\n And the written formula:\t" + formula
-									+ "\nIt has been determined that the formula does not hold in the initial state and is considered invalid for this system."
-									+ "\nA counter example can be seen below:";
-							JOptionPane.showMessageDialog(frame, msg);
-						}
-
+						JOptionPane.showMessageDialog(frame,
+								ModelChecker.validate(formula, path, checked, chk_package.isSelected(), cmd));
 					} catch (ModelCheckingException e1) {
 						JOptionPane.showMessageDialog(frame, "There was an error model checking:\n" + e1.getMessage());
 						e1.printStackTrace();
@@ -226,32 +210,31 @@ public class Interface extends JFrame {
 		// add(contentPane);
 	}
 
-	public void outputPane(String msg, String counterExample) 
-	{
+	public void outputPane(String msg, String counterExample) {
 		JFrame outputWindow = new JFrame();
 		outputWindow.setSize(800, 360);
 		outputWindow.setResizable(false);
 		outputWindow.setTitle("jpf-ctl-output");
 		outputWindow.setLocationRelativeTo(null);
-		
-		outputWindow.setLayout(new BoxLayout(outputWindow.getContentPane(), BoxLayout.Y_AXIS)); 
-		
+
+		outputWindow.setLayout(new BoxLayout(outputWindow.getContentPane(), BoxLayout.Y_AXIS));
+
 		JTextArea ta_output = new JTextArea();
 		ta_output.setText(msg);
-	    //ta_output.append("\n-----------------------");
+		// ta_output.append("\n-----------------------");
 		ta_output.setEditable(false);
 		ta_output.setLineWrap(true);
-		ta_output.setPreferredSize(new Dimension(750,250));
-		
+		ta_output.setPreferredSize(new Dimension(750, 250));
+
 		JScrollPane scroll = new JScrollPane(ta_output);
 		scroll.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED);
 		scroll.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED);
-		
+
 		JButton btn_save = new JButton("Save");
 		btn_save.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-			
+
 				JFileChooser fc = new JFileChooser();
 				fc.setFileFilter(new FileFilter() {
 					@Override
@@ -266,46 +249,43 @@ public class Interface extends JFrame {
 						else
 							return f.getName().toLowerCase().endsWith(".class");
 					}
-				});		
-				
+				});
+
 				int returnval = fc.showSaveDialog(btn_save);
-				
-				if(returnval == JFileChooser.APPROVE_OPTION)
-				{
+
+				if (returnval == JFileChooser.APPROVE_OPTION) {
 					File f = fc.getSelectedFile();
-					try 
-					{
+					try {
 						BufferedWriter out = new BufferedWriter(new FileWriter(f));
 						out.write(ta_output.getText()); // put the final string
 						out.close();
-						
-						JOptionPane.showMessageDialog(null, "File Saved", "Saved",
-								JOptionPane.INFORMATION_MESSAGE);
-						
-					} 
-					catch (IOException e1) {e1.printStackTrace();}
-				}		
-			}	
+
+						JOptionPane.showMessageDialog(null, "File Saved", "Saved", JOptionPane.INFORMATION_MESSAGE);
+
+					} catch (IOException e1) {
+						e1.printStackTrace();
+					}
+				}
+			}
 		});
-		
-		
+
 		JPanel savePane = new JPanel();
-		savePane.setLayout(new GridLayout(1,4,10,10));
+		savePane.setLayout(new GridLayout(1, 4, 10, 10));
 		savePane.setPreferredSize(new Dimension(750, 50));
 		savePane.add(new JLabel());
 		savePane.add(new JLabel());
 		savePane.add(new JLabel());
 		savePane.add(btn_save);
-		
+
 		JPanel contentPane = new JPanel();
 		contentPane.add(scroll);
 		contentPane.add(savePane);
-			
+
 		outputWindow.setContentPane(contentPane);
 		outputWindow.setVisible(true);
-		
+
 	}
-	
+
 	public static void main(String[] args) {
 		new Interface();
 	}
