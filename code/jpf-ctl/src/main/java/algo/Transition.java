@@ -24,8 +24,8 @@ package algo;
  * @author Matt Walker
  */
 public class Transition {
-	private final int source;
-	private final int target;
+	public final int source;
+	public final int target;
 
 	/**
 	 * 
