@@ -1,4 +1,4 @@
-package partialtransitionsystemlistener;
+package listeners;
 
 import gov.nasa.jpf.Config;
 import gov.nasa.jpf.JPF;
@@ -98,7 +98,7 @@ public class PartialTransitionSystemListener extends SearchListenerAdapter {
 	 * @param search the Search instance
 	 */
 	public void searchStarted(Search search) {
-		String name = search.getVM().getSUTName() + ".tra";
+		String name = search.getVM().getSUTName() + ".tra"; //TODO revert this
 		try {
 			this.writer = new PrintWriter(name);
 		} catch (FileNotFoundException e) {
@@ -180,6 +180,7 @@ public class PartialTransitionSystemListener extends SearchListenerAdapter {
 		}
 
 		writer.printf(sj.toString());
+		this.writer.close();
 	}
 
 	@Override

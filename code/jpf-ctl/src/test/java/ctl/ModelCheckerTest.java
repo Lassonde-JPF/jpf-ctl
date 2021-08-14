@@ -1,8 +1,15 @@
 package ctl;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -19,11 +26,14 @@ import org.ctl.CTLParser;
 import algo.LabelledPartialTransitionSystem;
 import algo.Model;
 import algo.StateSets;
+import algo.Transition;
 import error.CTLError;
 import error.FieldExists;
 
 public class ModelCheckerTest {
 	private Generator generator;
+	
+	private static final int NUM_ITERATIONS = 20;
 
 	/**
 	 * Creates a Generator object for use by each test case
@@ -32,13 +42,69 @@ public class ModelCheckerTest {
 	void setUp() throws Exception {
 		generator = new Generator();
 	}
+	
+	@Test
+	void testLabelledPartialTransitionSystemConstructor() throws IOException {
+		String pathPrefix = "src/test/resources/testConstructor/";
+		String testLabelFileName = pathPrefix + "testLabelFile";
+		String testListenerFileName = pathPrefix + "testListenerFile";
+		
+		LabelledPartialTransitionSystem pts = new LabelledPartialTransitionSystem(testLabelFileName, testListenerFileName);
+		
+		Set<Transition> expectedTransitions = new HashSet<Transition>();
+		expectedTransitions.add(new Transition(-1, 0));
+		expectedTransitions.add(new Transition(0, 1));
+		expectedTransitions.add(new Transition(1, 2));
+		expectedTransitions.add(new Transition(1, 3));
+		expectedTransitions.add(new Transition(2, 4));
+		
+		Set<Integer> expectedPartial = new HashSet<Integer>();
+		expectedPartial.add(3);
+		expectedPartial.add(5);
+		
+		Map<Integer, Set<Integer>> expectedLabelling = new HashMap<Integer, Set<Integer>>();
+		expectedLabelling.put(1, new HashSet<Integer>());
+		expectedLabelling.get(1).add(1);
+		expectedLabelling.put(2, new HashSet<Integer>());
+		expectedLabelling.get(2).add(1);
+		expectedLabelling.get(2).add(2);
+		expectedLabelling.put(3, new HashSet<Integer>());
+		expectedLabelling.get(3).add(1);
+		expectedLabelling.put(4, new HashSet<Integer>());
+		expectedLabelling.get(4).add(1);
+		
+		Map<String, Integer> expectedFields = new HashMap<String, Integer>();
+		expectedFields.put("algo.JavaFields.p1", 1);
+		expectedFields.put("algo.JavaFields.p2", 2);
+		
+		assertEquals(expectedTransitions, pts.getTransitions());
+		assertEquals(expectedPartial, pts.getPartial());
+		assertEquals(expectedLabelling, pts.getLabelling());
+		assertEquals(expectedFields, pts.getFields());
+	}
 
 	@Test
 	void checkRandom() {
-		// for (int i = 0; i < 25; i++) {
-		StateSets result = test(Formula.random().toString(), new LabelledPartialTransitionSystem());
-		assertNotNull(result);
-		// }
+		for (int i = 0; i < NUM_ITERATIONS; i++) {
+			LabelledPartialTransitionSystem pts = new LabelledPartialTransitionSystem();
+			String input = Formula.random().toString();
+			
+			ParseTree tree = parseCtl(input);
+			Formula formula = generator.visit(tree);
+			
+			Model m = new Model(pts);
+			
+			StateSets result = m.check(formula);
+
+			System.out.println("Transition System:\n" + pts);
+			System.out.println("Input formula:\n" + input);
+			
+			m.printSubResult();
+			
+			System.out.println("Result:" + result);
+
+			toDot(pts, "Random" + i);
+		}
 	}
 
 	@Test
@@ -186,8 +252,9 @@ public class ModelCheckerTest {
 	void checkExistsNext() {
 		LabelledPartialTransitionSystem ptsT = new LabelledPartialTransitionSystem();
 		StateSets T = test("EX true", ptsT);
-		// Should be all states which have a transition (i.e are a source node)
-		Set<Integer> expected = ptsT.getTransitions().stream().map(t -> t.source).collect(Collectors.toSet());
+		Set<Integer> expected = ptsT.getTransitions().stream()
+				.map(t -> t.source)
+				.collect(Collectors.toSet());
 		assertEquals(expected, T.getSat());
 
 		LabelledPartialTransitionSystem ptsF = new LabelledPartialTransitionSystem();
@@ -255,7 +322,10 @@ public class ModelCheckerTest {
 		LabelledPartialTransitionSystem ptsF = new LabelledPartialTransitionSystem();
 		StateSets F = test("AX false", ptsF);
 		Set<Integer> expected = ptsF.getStates().stream()
-				.filter(s -> !ptsF.getTransitions().stream().map(t -> t.source).collect(Collectors.toSet()).contains(s))
+				.filter(s -> !ptsF.getTransitions().stream()
+						.map(t -> t.source)
+						.collect(Collectors.toSet())
+						.contains(s))
 				.collect(Collectors.toSet());
 		assertEquals(expected, F.getSat());
 	}
@@ -265,23 +335,84 @@ public class ModelCheckerTest {
 		LabelledPartialTransitionSystem ptsTT = new LabelledPartialTransitionSystem();
 		StateSets TT = test("true AU true", ptsTT);
 		assertEquals(ptsTT.getStates(), TT.getSat());
-		assertEquals(true, TT.getUnSat().isEmpty());
+		assertTrue(TT.getUnSat().isEmpty());
 
 		LabelledPartialTransitionSystem ptsTF = new LabelledPartialTransitionSystem();
 		StateSets TF = test("true AU false", ptsTF);
-		// TODO this case I'm not sure. I tried all states which do not have a
-		// transition (which i believe is what is expected) though the actual result was
-		// different.
+		assertTrue(TF.getSat().isEmpty());
+		
 
 		LabelledPartialTransitionSystem ptsFT = new LabelledPartialTransitionSystem();
 		StateSets FT = test("false AU true", ptsFT);
 		assertEquals(ptsFT.getStates(), FT.getSat());
-		assertEquals(true, FT.getUnSat().isEmpty());
+		assertTrue(FT.getUnSat().isEmpty());
 
 		LabelledPartialTransitionSystem ptsFF = new LabelledPartialTransitionSystem();
 		StateSets FF = test("false AU false", ptsFF);
 		assertEquals(ptsFF.getStates(), FF.getUnSat());
-		assertEquals(true, FF.getSat().isEmpty());
+		assertTrue(FF.getSat().isEmpty());
+		
+		//Specific Tests
+	
+		int states = 7;
+		
+		Set<Transition> transitions = new HashSet<Transition>();
+		transitions.add(new Transition(0, 1));
+		transitions.add(new Transition(1, 2));
+		transitions.add(new Transition(0, 3));
+		transitions.add(new Transition(3, 4));
+		transitions.add(new Transition(4, 5));
+		transitions.add(new Transition(4, 6));
+		
+		Set<Integer> partial = new HashSet<Integer>();
+		Map<Integer, Set<Integer>> labelling = new HashMap<Integer, Set<Integer>>();
+		
+		labelling.put(0, new HashSet<Integer>());
+		labelling.get(0).add(0);
+		labelling.put(1, new HashSet<Integer>());
+		labelling.get(1).add(0);
+		labelling.put(2, new HashSet<Integer>());
+		labelling.get(2).add(0);
+		labelling.put(3, new HashSet<Integer>());
+		labelling.get(3).add(0);
+		labelling.put(4, new HashSet<Integer>());
+		labelling.get(4).add(0);
+		labelling.put(5, new HashSet<Integer>());
+		labelling.get(5).add(1);
+		labelling.put(6, new HashSet<Integer>());
+		labelling.get(6).add(1);
+		
+		Map<String, Integer> fields = new HashMap<String, Integer>();
+		String[] fieldNames = new String[] {
+			"algo.JavaFields.p1",
+			"algo.JavaFields.p2",
+			"algo.JavaFields.p3",
+			"algo.JavaFields.p4"
+		};
+		for (int i = 0; i < fieldNames.length; i++) {
+			fields.put(fieldNames[i], i);
+		}
+		
+		LabelledPartialTransitionSystem pts = new LabelledPartialTransitionSystem(states, transitions, partial, labelling, fields);
+		
+		StateSets result = test("algo.JavaFields.p1 AU algo.JavaFields.p2", pts);
+		
+		Set<Integer> expectedSat = new HashSet<Integer>();
+		expectedSat.add(3);
+		expectedSat.add(4);
+		expectedSat.add(5);
+		expectedSat.add(6);
+		
+		Set<Integer> expectedUnSat = new HashSet<Integer>();
+		expectedUnSat.add(0);
+		expectedUnSat.add(1);
+		expectedUnSat.add(-2);
+		expectedUnSat.add(2);
+		
+		toDot(pts, "AU");
+		
+		assertEquals(expectedSat, result.getSat());
+		assertEquals(expectedUnSat, result.getUnSat());
 	}
 
 	@Test
@@ -298,19 +429,36 @@ public class ModelCheckerTest {
 	}
 
 	@Test
-	void checkAtomicProposition() { // TODO LabelledPartialTransitionSystem needs to be fixed first
-		// StateSets result = test("java.lang.Integer.MAX_VALUE", new
-		// LabelledPartialTransitionSystem());
+	void checkAtomicProposition() {
+		LabelledPartialTransitionSystem pts = new LabelledPartialTransitionSystem();
+		StateSets result = test("java.lang.Integer.MAX_VALUE || java.lang.Integer.MIN_VALUE", pts);
+		Set<Integer> Sat = new HashSet<Integer>();
+		pts.getLabelling().entrySet().forEach(entry -> {
+			if (entry.getValue().contains(java.lang.Integer.MAX_VALUE)
+					|| entry.getValue().contains(java.lang.Integer.MIN_VALUE)) {
+				Sat.add(entry.getKey());
+			}
+		});
+		assertEquals(Sat, result.getSat());
+		toDot(pts, "checkAtomicProposition");
+	}
+
+	private void toDot(LabelledPartialTransitionSystem pts, String fileName) {
+		String pathPrefix = "src/test/resources/toDot/";
+		File file = new File(pathPrefix + ModelCheckerTest.class.getName() + "_" + fileName + ".dot");
+		try {
+			PrintWriter pw = new PrintWriter(file);
+			pw.print(pts.toDot());
+			pw.close();
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		}
 	}
 
 	public StateSets test(String input, LabelledPartialTransitionSystem pts) {
-		System.out.println("Transition System:\n" + pts);
 		ParseTree tree = parseCtl(input);
 		Formula formula = generator.visit(tree);
-		System.out.println("Input formula:\n" + input);
 		StateSets ss = new Model(pts).check(formula);
-		System.out.println("Result:");
-		System.out.println(ss);
 		return ss;
 	}
 

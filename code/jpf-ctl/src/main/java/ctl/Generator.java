@@ -34,7 +34,6 @@ import org.ctl.CTLParser.IffContext;
 import org.ctl.CTLParser.ImpliesContext;
 import org.ctl.CTLParser.NotContext;
 import org.ctl.CTLParser.OrContext;
-import org.ctl.CTLParser.FormulaContext;
 import org.ctl.CTLParser.TrueContext;
 
 /**
