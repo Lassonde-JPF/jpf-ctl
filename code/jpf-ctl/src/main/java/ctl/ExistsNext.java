@@ -17,6 +17,8 @@
 
 package ctl;
 
+import java.util.Set;
+
 /**
  * This class represents a CTL formula that is the exists next of a formula.
  * 
@@ -25,6 +27,7 @@ package ctl;
  * @author Jessie Leung
  * @author Paul Sison
  * @author Franck van Breugel
+ * @author Anto Nanah Ji
  */
 public class ExistsNext extends Formula {
 	private Formula formula;
@@ -60,8 +63,28 @@ public class ExistsNext extends Formula {
 	public String toString() {
 		return "EX " + this.formula;
 	}
-	
+
+	/**
+	 * Returns the subformula of this formula.
+	 * 
+	 * @return the subformula of this formula
+	 */
 	public Formula getFormula() {
 		return this.formula;
+	}
+	
+	@Override
+	public Set<String> getAtomicPropositions() {
+		return this.formula.getAtomicPropositions();
+	}
+	
+	@Override
+	public Formula simplify() {
+		Formula formula = this.formula.simplify();
+		if (formula instanceof False) {
+			return new False();
+		} else {
+			return new ExistsNext(formula);
+		}
 	}
 }

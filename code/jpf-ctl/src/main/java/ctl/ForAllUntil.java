@@ -17,6 +17,9 @@
 
 package ctl;
 
+import java.util.HashSet;
+import java.util.Set;
+
 /**
  * This class represents a CTL formula that is a for all until of two formulas.
  * 
@@ -25,6 +28,7 @@ package ctl;
  * @author Jessie Leung
  * @author Paul Sison
  * @author Franck van Breugel
+ * @author Anto Nanah Ji
  */
 public class ForAllUntil extends Formula {
 	private Formula left;
@@ -65,13 +69,42 @@ public class ForAllUntil extends Formula {
 		return "(" + this.left + " AU " + this.right + ")";
 	}
 	
-	public Formula getLeft()
-	{
-    return left;
-    }
+	/**
+	 * Returns the left subformula of this formula.
+	 * 
+	 * @return the left subformula of this formula
+	 */
+	public Formula getLeft() {
+		return this.left;
+	}
 
-	public Formula getRight()
-	{
-    return right;
- 	}  
+	/**
+	 * Returns the right subformula of this formula.
+	 * 
+	 * @return the right subformula of this formula
+	 */
+	public Formula getRight() {
+		return this.right;
+	}  
+	
+	@Override
+	public Set<String> getAtomicPropositions() {
+		Set<String> set = new HashSet<String>();
+		set.addAll(this.left.getAtomicPropositions());
+		set.addAll(this.right.getAtomicPropositions());
+		return set;
+	}
+	
+	@Override
+	public Formula simplify() {
+		Formula left = this.left.simplify();
+		Formula right = this.right.simplify();
+		if (right instanceof True) {
+			return new True();
+		} else if (right instanceof False) {
+			return new False();
+		} else {
+			return new ForAllUntil(left, right);
+		}
+	}
 }
