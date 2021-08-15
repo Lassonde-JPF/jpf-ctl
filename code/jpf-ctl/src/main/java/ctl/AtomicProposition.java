@@ -17,6 +17,9 @@
 
 package ctl;
 
+import java.util.HashSet;
+import java.util.Set;
+
 /**
  * This class represents the CTL state formula consisting of an atomic proposition.
  * 
@@ -56,5 +59,17 @@ public class AtomicProposition extends Formula {
 	@Override
 	public String toString() {
 		return this.name;
+	}
+	
+	@Override
+	public Set<String> getAtomicPropositions() {
+		Set<String> set = new HashSet<String>();
+		set.add(this.name);
+		return set;
+	}
+	
+	@Override
+	public Formula simplify() {
+		return this;
 	}
 }

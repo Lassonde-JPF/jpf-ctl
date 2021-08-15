@@ -17,6 +17,9 @@
 
 package ctl;
 
+import java.util.HashSet;
+import java.util.Set;
+
 /**
  * This class represents the CTL formula true.
  * 
@@ -46,5 +49,15 @@ public class True extends Formula {
 	@Override
 	public String toString() {
 		return "true";
+	}
+	
+	@Override
+	public Set<String> getAtomicPropositions() {
+		return new HashSet<String>();
+	}
+
+	@Override
+	public Formula simplify() {
+		return this;
 	}
 }

@@ -17,6 +17,9 @@
 
 package ctl;
 
+import java.util.HashSet;
+import java.util.Set;
+
 /**
  * This class represents a CTL formula that is an implication (implies) of two formulas.
  * 
@@ -25,6 +28,7 @@ package ctl;
  * @author Jessie Leung
  * @author Paul Sison
  * @author Franck van Breugel
+ * @author Anto Nanah Ji
  */
 public class Implies extends Formula {
 	private Formula left;
@@ -70,8 +74,7 @@ public class Implies extends Formula {
 	 * 
 	 * @return the left subformula of this formula
 	 */
-	public Formula getLeft()
-	{
+	public Formula getLeft() {
 		return this.left;
 	}
 
@@ -80,8 +83,30 @@ public class Implies extends Formula {
 	 * 
 	 * @return the right subformula of this formula
 	 */
-	public Formula getRight()
-	{
+	public Formula getRight() {
 		return this.right;
 	}  
+	
+	@Override
+	public Set<String> getAtomicPropositions() {
+		Set<String> set = new HashSet<String>();
+		set.addAll(this.left.getAtomicPropositions());
+		set.addAll(this.right.getAtomicPropositions());
+		return set;
+	}
+	
+	@Override
+	public Formula simplify() {
+		Formula left = this.left.simplify();
+		Formula right = this.right.simplify();
+		if (left instanceof False || right instanceof True) { 
+			return new True();
+		} else if (right instanceof False) { 
+			return (new Not(left)).simplify();
+		} else if (left instanceof True) {
+			return right;
+		} else {
+			return new Implies(left, right);
+		}
+	}
 }

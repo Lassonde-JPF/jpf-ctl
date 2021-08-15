@@ -17,6 +17,9 @@
 
 package ctl;
 
+import java.util.HashSet;
+import java.util.Set;
+
 /**
  * This class represents a CTL formula that is a disjunction (or) of two formulas.
  * 
@@ -25,6 +28,7 @@ package ctl;
  * @author Jessie Leung
  * @author Paul Sison
  * @author Franck van Breugel
+ * @author Anto Nanah Ji
  */
 public class Or extends Formula {
 	private Formula left;
@@ -70,8 +74,7 @@ public class Or extends Formula {
 	 * 
 	 * @return the left subformula of this formula
 	 */
-	public Formula getLeft()
-	{
+	public Formula getLeft() {
 		return this.left;
 	}
 
@@ -80,8 +83,30 @@ public class Or extends Formula {
 	 * 
 	 * @return the right subformula of this formula
 	 */
-	public Formula getRight()
-	{
+	public Formula getRight() {
 		return this.right;
 	}  
+	
+	@Override
+	public Set<String> getAtomicPropositions() {
+		Set<String> set = new HashSet<String>();
+		set.addAll(this.left.getAtomicPropositions());
+		set.addAll(this.right.getAtomicPropositions());
+		return set;
+	}
+	
+	@Override
+	public Formula simplify() {
+		Formula left = this.left.simplify();
+		Formula right = this.right.simplify();
+		if (left instanceof True || right instanceof True) {
+			return new True();
+		} else if (left instanceof False) {
+			return right;
+		} else if (right instanceof False) {
+			return left;
+		} else {
+			return new Or(left, right);
+		}
+	}
 }

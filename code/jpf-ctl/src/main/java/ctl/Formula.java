@@ -18,6 +18,7 @@
 package ctl;
 
 import java.util.Random;
+import java.util.Set;
 
 /**
  * This class represents the CTL formula.
@@ -31,13 +32,6 @@ import java.util.Random;
 public abstract class Formula {
 	private static final Random RANDOM = new Random();
 	
-	private static final String[] fieldNames = new String[] {
-			"algo.JavaFields.p1",
-			"algo.JavaFields.p2",
-			"algo.JavaFields.p3",
-			"algo.JavaFields.p4"
-	};
-	
 	/**
 	 * Returns a random formula of at most the given depth.
 	 * 
@@ -47,6 +41,7 @@ public abstract class Formula {
 	public static Formula random(int depth) {
 		final int BASE_CASES = 3;
 		final int INDUCTIVE_CASES = 13;
+		final int MAX_INDEX = 4;
 		
 		if (depth == 0) {
 			switch (RANDOM.nextInt(BASE_CASES)) {
@@ -55,7 +50,7 @@ public abstract class Formula {
 			case 1 :
 				return new False();
 			case 2 :
-				String name = fieldNames[new Random().nextInt(fieldNames.length-1)];//"C.f" + RANDOM.nextInt(MAX_INDEX + 1);
+				String name = "algo.Fields.p" + RANDOM.nextInt(MAX_INDEX + 1);
 				return new AtomicProposition(name);
 			default :
 				throw new IllegalArgumentException("Illegal argument for switch in base case");
@@ -67,7 +62,7 @@ public abstract class Formula {
 			case 1 :
 				return new False();
 			case 2 :
-				String name = fieldNames[new Random().nextInt(fieldNames.length-1)];//"C.f" + RANDOM.nextInt(MAX_INDEX + 1);
+				String name = "C.f" + RANDOM.nextInt(MAX_INDEX + 1);
 				return new AtomicProposition(name);
 			case 3 :
 				return new Not(Formula.random(depth - 1));
@@ -133,4 +128,18 @@ public abstract class Formula {
 	 * @return a string representation of this formula
 	 */
 	public abstract String toString();
+	
+	/**
+	 * Returns the set of names of the atomic propositions of this formula.
+	 * 
+	 * @return the set of names of the atomic propositions of this formula
+	 */
+	public abstract Set<String> getAtomicPropositions();
+	
+	/**
+	 * Returns a simplified formula that is equivalent to this formula.
+	 * 
+	 * @return a simplified formula that is equivalent to this formula
+	 */
+	public abstract Formula simplify();
 }

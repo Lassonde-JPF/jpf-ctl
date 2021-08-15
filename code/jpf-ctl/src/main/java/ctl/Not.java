@@ -17,6 +17,8 @@
 
 package ctl;
 
+import java.util.Set;
+
 /**
  * This class represents a CTL formula that is the negation (not) of a formula. 
  * 
@@ -25,6 +27,7 @@ package ctl;
  * @author Jessie Leung
  * @author Paul Sison
  * @author Franck van Breugel
+ * @author Anto Nanah Ji
  */
 public class Not extends Formula {
 	private Formula formula;
@@ -66,8 +69,28 @@ public class Not extends Formula {
 	 * 
 	 * @return the subformula of this formula
 	 */
-	public Formula getFormula()
-	{
+	public Formula getFormula() {
 		return this.formula;
+	}
+	
+	@Override
+	public Set<String> getAtomicPropositions() {
+		return this.formula.getAtomicPropositions();
+	}
+	
+	@Override
+	public Formula simplify() {
+		Formula formula = this.formula.simplify();
+		if (formula instanceof True) {
+			return new False();
+		} else if (formula instanceof False) {
+			return new True();
+		} else if (formula instanceof Not) {
+			Not not = (Not) formula;
+			Formula subFormula = not.getFormula();
+			return subFormula;
+		} else {
+			return new Not(formula);
+		}
 	}
 }
