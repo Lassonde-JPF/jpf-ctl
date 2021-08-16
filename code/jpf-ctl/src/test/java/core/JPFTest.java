@@ -66,8 +66,8 @@ class JPFTest {
 			assertTrue(jpfCore.isDirectory(), "jpf-core is not a directory");
 			
 			File build = new File(jpfCore, "build");
-			assertTrue(jpfCore.exists(), "build directory cannot be found");
-			assertTrue(jpfCore.isDirectory(), "build is not a directory");
+			assertTrue(build.exists(), "build directory cannot be found");
+			assertTrue(build.isDirectory(), "build is not a directory");
 			
 			File jpfJar = new File(build, "jpf.jar");
 			assertTrue(jpfJar.exists(), "jpf.jar file cannot be found");
