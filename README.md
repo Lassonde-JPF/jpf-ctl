@@ -7,14 +7,14 @@
 <!-- PROJECT LOGO -->
 <br />
 <p align="center">
-  <a href="https://github.com/Lassonde-JPF/jpf-ctl-extension">
+  <a href="https://github.com/Lassonde-JPF/jpf-ctl">
     <img src="resources/jpf-ctl-logo.png" alt="Logo" width="150" height="120">
   </a>
 
-  <h3 align="center">jpf-ctl-extension</h3>
+  <h3 align="center">jpf-ctl</h3>
 
   <p align="center">
-    jpf-ctl model checking of java code
+    CTL model checking of Java code
     <br />
     <a href=""><strong>Explore the docs »</strong></a>
     <br />
