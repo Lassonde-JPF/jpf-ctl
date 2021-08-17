@@ -89,12 +89,6 @@ The JUnit test [AccountTest](code/jpf-ctl/src/main/java/example/AccountTest.java
 
 Since jpf-ctl relies on jpf-core, the core of JPF, and jpf-core currently supports Java 8, only apps that use Java 8 constructs can be checked. Furthermore, jpf-core can only handle apps, that is, it needs a main method of a class as its starting point. Currently, jpf-ctl only supports static boolean fields as the basic building blocks of CTL formulas.
 
-### Built With
-
-- [Java](https://www.oracle.com/ca-en/java/technologies/javase/javase8-archive-downloads.html)
-- [jpf-core](https://github.com/javapathfinder/jpf-core)
-- [jpf-label](https://github.com/javapathfinder/jpf-label)
-
 ## Documentation
 
 Documentation for the jpf-ctl project can be found within the `/documentation` directory; however, the PDF version can be directly accessed using the following 
@@ -105,15 +99,18 @@ Documentation for the jpf-ctl project can be found within the `/documentation` d
 
 jpf-ctl is an extension for the Java Pathfinder program (accessible [here](https://github.com/javapathfinder/jpf-core)) and as such, is to be setup using the following normal steps for using a jpf extension. 
 
-### Prerequisites
+### Dependencies
 
-Depending on your desired use cases the number of prerequisites for using jpf-ctl can widely vary. Therefore, the following section will be divided based on whether you wish to _use_ jpf-ctl or _develop_ with jpf-ctl.
+Below, we distinguish two cases: you only *use* jpf-ctl and you further *develop* jpf-ctl.  In both cases, you need the following to run jpf-ctl.
+1. [java](https://www.oracle.com/ca-en/java/technologies/javase/javase8-archive-downloads.html)
+2. [jpf-core](https://github.com/javapathfinder/jpf-core)
+3. [jpf-label](https://github.com/javapathfinder/jpf-label)
 
-Regardless, the following prerequisites are absolutely required to run jpf-ctl
-1. [jpf](https://github.com/javapathfinder)
-2. [jpf-label](https://github.com/javapathfinder/jpf-label)
+#### Use jpf-ctl
 
-#### Normal Usage
+
+
+
 
 **Using Direct Source Code:**
 1. Clone the repository
