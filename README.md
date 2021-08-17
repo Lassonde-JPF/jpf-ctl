@@ -58,7 +58,7 @@
 
 
 <!-- ABOUT THE PROJECT -->
-## About The Project
+## About the Project
 
 The most common approach to finding errors in software is testing. However, testing is of limited use when checking *concurrent software* for errors. Hence, other techniques, including *model checking*, have been developed to supplement testing. We focus on Java as Java being one of the most widely used programming language. Presently, the most popular tool for model checking of Java code, [*Java PathFinder*](https://github.com/javapathfinder) (JPF), does not support the checking of properties expressed in temporal logics; instead, it checks properties such as deadlocks and data races. To resolve this, we present jpf-ctl, an extension of JPF which supports the checking of properties specified in *computational tree logic* (CTL). 
 
@@ -83,17 +83,17 @@ public boolean withdraw(double amount) {
 ```
 attempts to ensure that the balance never becomes negative. However, as the method is not synchronized, the balance may become negative. The Main class contains a static boolean field named negative which captures whether the balance of the account is negative. This field is regularly updated in the app.
 
-The JUnit test [AccountTest](code/jpf-ctl/src/main/java/example/AccountTest.java), which performs one million runs of the app with an initial balance of one, two Deposit threads, and two Withdraw threads, does not detect a negative balance. The property that the balance never becomes negative can be captured by the CTL formula AG !example.negative. This formula specifies that for every run of the Java code (*A* stands for "for all"), and for every state of such a run (*G* stands for "globally"), the static boolean field example.negative is false (! represents negation). As will be shown in the demo below, jpf-ctl determines that the CTL formula does not hold for this Java app, that is, the balance can become negative, and jpf-ctl will provide a counterexample that shows why the CTL formula does not hold.
+The JUnit test [AccountTest](code/jpf-ctl/src/main/java/example/AccountTest.java), which performs one million runs of the app with an initial balance of one, two Deposit threads, and two Withdraw threads, does *not* detect a negative balance. The property that the balance never becomes negative can be captured by the CTL formula AG !example.negative. This formula specifies that for every run of the Java code (*A* stands for "for all"), and for every state of such a run (*G* stands for "globally"), the static boolean field example.negative is false (! represents negation). As will be shown in the demo below, jpf-ctl is *successful* in determining that the CTL formula does not hold for this Java app, that is, the balance can become negative, and jpf-ctl will provide a counterexample that shows why the CTL formula does not hold.
 
+### Limitations
 
+Since jpf-ctl relies on jpf-core, the core of JPF, and jpf-core currently supports Java 8, only apps that use Java 8 constructs can be checked. Furthermore, jpf-core can only handle apps, that is, it needs a main method of a class as its starting point. Currently, jpf-ctl only supports static boolean fields as the basic building blocks of CTL formulas.
 
 ### Built With
 
-* [Java](https://www.java.com/en/)
-* [ANTLR4](https://www.antlr.org/)
-* [Gradle](https://gradle.org/)
-* [jpf](https://github.com/javapathfinder)
-* [jpf-label](https://github.com/javapathfinder/jpf-label)
+- [Java](https://www.oracle.com/ca-en/java/technologies/javase/javase8-archive-downloads.html)
+- [jpf-core](https://github.com/javapathfinder/jpf-core)
+- [jpf-label](https://github.com/javapathfinder/jpf-label)
 
 ## Documentation
 
