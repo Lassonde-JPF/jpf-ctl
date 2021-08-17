@@ -66,6 +66,7 @@ Let us consider a simple example. The class [Account](code/jpf-ctl/src/main/java
 - the initial balance of the bank account,
 - the number of Deposit threads that do one deposit transaction to the bank account, and
 - the number of Withdraw threads that do one withdrawal transaction to the back account.
+
 The withdraw method of the Account class
 ```java
 public boolean withdraw(double amount) {
@@ -80,7 +81,7 @@ public boolean withdraw(double amount) {
   }
 }
 ```
-attempts to ensure that the balance never becomes negative. 
+attempts to ensure that the balance never becomes negative. However, as the method is not synchronized, the balance may become negative. The Main class contains a static boolean field named negative which captures whether the balance of the account is negative. This field is regularly updated in the app.
 
 Specifically, the Java code is modeled as a state-transition graph. This kind of state modelling makes it possible to represent complex system states without the need to know the exact structure ahead of time. A custom lexer and parser as well as a novel model checking algorithm are utilized to determine if the CTL property is satisfied. When a property is determined to be violated by our algorithm, jpf-ctl will generate a report with a counterexample which can later be used by developers to identify the source of the error within their code. We will apply the resulting verification tool to multiple concurrent Java codes to evaluate the performance in terms of speed and scalability. GitHub is used as a source for such Java code. Finally, our CTL model checking tool (jpf-ctl) will allow developers to automatically verify that their Java code satisfies properties expressed in CTL and thus allow them to discover flaws in their code and prevent costly errors from emerging in the later stages of development.
 
