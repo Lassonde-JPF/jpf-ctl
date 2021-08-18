@@ -155,6 +155,26 @@ to JPF's site.properties file.
 
 ### jpf-ctl
 
+1. Clone jpf-ctl using Git: go the directory where you want to put jpf-ctl and issue the following command.
+
+```
+> git clone https://github.com/Lassonde-JPF/jpf-ctl.git
+Cloning into 'jpf-ctl'...
+remote: Enumerating objects: 3159, done.
+remote: Counting objects: 100% (1816/1816), done.
+remote: Compressing objects: 100% (1061/1061), done.
+remote: Total 3159 (delta 875), reused 1548 (delta 639), pack-reused 1343
+Receiving objects: 100% (3159/3159), 14.39 MiB | 1.17 MiB/s, done.
+Resolving deltas: 100% (1491/1491), done.
+```
+2. 2. Build jpf-ctl with the Gradle wrapper: inside the jpf-ctl directory, issue the following command.
+```
+> .\gradlew
+
+
+```
+## Dependencies when developing jpf-ctl
+
 
 
 **Using Direct Source Code:**
@@ -195,9 +215,9 @@ See the [open issues](https://github.com/Lassonde-JPF/jpf-ctl-extension/issues) 
 <!-- CONTRIBUTING -->
 ## Contributing
 
-If you are a developer who wishes to contribute to this project, please note that we do not have time to review minor changes such as variable renames, spelling mistakes, etc. If you would still wish to point these out, please create an issue rather than a PR.
+If you wish to contribute to jpf-ctl by addressing some of the [open issues](https://github.com/Lassonde-JPF/jpf-ctl-extension/issues) or suggesting new features, please note that we do not have time to review minor changes such as variable renames, spelling mistakes, etc. If you would wish to point these out, please create an issue rather than a pull request.
 
-1. Fork the Project
+1. Fork ctl-jpf 
 2. Create your Feature Branch (`git checkout -b feature/AmazingFeature`)
 3. Commit your Changes (`git commit -m 'Add some AmazingFeature'`)
 4. Push to the Branch (`git push origin feature/AmazingFeature`)
@@ -206,18 +226,20 @@ If you are a developer who wishes to contribute to this project, please note tha
 <!-- LICENSE -->
 ## License
 
-Distributed under the GNU General Public License v3. See `LICENSE` for more information.
+Distributed under the GNU General Public License v3. See [LICENSE](LICENSE.md) for more information.
 
 <!-- CONTACT -->
 ## Contact
+
 The following contacts are responsible for the development and management of the jpf-ctl project
 
 ### Development Team
-**Franck van Breugel** - _Software Engineer_ - [franck-van-breugel](https://github.com/franck-van-breugel) <br/>
-**Matt Walker** - _Software Engineer_ - [matthewwalk](https://github.com/matthewwalk)<br/>
-**Anto Nanah Ji** - _title_ - [antoNanahJi](https://github.com/antoNanahJi)<br/>
-**Parssa Khazra** - _title_ - [ParssaKhazra](https://github.com/ParssaKhazra)<br/>
-**Hongru Wang** - _title_ - [HongruWang](https://github.com/HongruWang-123)<br/>
+
+**Parssa Khazra** - [ParssaKhazra](https://github.com/ParssaKhazra)
+**Anto Nanah Ji** - [antoNanahJi](https://github.com/antoNanahJi)
+**Matt Walker** - [matthewwalk](https://github.com/matthewwalk)
+**Hongru Wang** - [HongruWang](https://github.com/HongruWang-123)
+**Franck van Breugel** - [franck-van-breugel](https://github.com/franck-van-breugel)
 
 <!-- MARKDOWN LINKS & IMAGES -->
 <!-- https://www.markdownguide.org/basic-syntax/#reference-style-links -->
