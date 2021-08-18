@@ -99,19 +99,11 @@ Documentation for the jpf-ctl project can be found within the `/documentation` d
 
 jpf-ctl is an extension for the Java Pathfinder program (accessible [here](https://github.com/javapathfinder/jpf-core)) and as such, is to be setup using the following normal steps for using a jpf extension. 
 
-### Dependencies
+## Dependencies when using jpf-ctl
 
-Below, we distinguish two cases: you only *use* jpf-ctl and you further *develop* jpf-ctl.  In both cases, you need the following to run jpf-ctl.
-1. [java](https://www.oracle.com/ca-en/java/technologies/javase/javase8-archive-downloads.html)
-2. [git](https://git-scm.com/downloads)
-3. [jpf-core](https://github.com/javapathfinder/jpf-core)
-4. [jpf-label](https://github.com/javapathfinder/jpf-label)
+### Java
 
-#### Use jpf-ctl
-
-##### Java
-
-Use Java's version 8 (we have successfully used 1.8.0_251, 1.8.0_281, and 1.8.0_301).  To check which version of Java (if any) is currently in use, issue the following command.
+Use [Java](https://www.oracle.com/ca-en/java/technologies/javase/javase8-archive-downloads.html)'s version 8 (we have successfully used 1.8.0_251, 1.8.0_281, and 1.8.0_301).  To check which version of Java (if any) is currently in use, issue the following command.
 ```
 > java -version
 java version "1.8.0_251"
@@ -119,21 +111,21 @@ Java(TM) SE Runtime Environment (build 1.8.0_251-b08)
 Java HotSpot(TM) 64-Bit Server VM (build 25.251-b08, mixed mode)
 ```
 
-##### Git
+### Git
 
-To check if any version of Git is currently in use, issue the following command.
+To check if any version of [Git](https://git-scm.com/downloads) is currently in use, issue the following command.
 ```
 > git --version
 git version 2.26.2.windows.1
 ```
 
-##### Java PathFinder (jpf-core)
+### Java PathFinder (jpf-core)
 
-Install jpf-core following the instructions on the [jpf-core wiki](https://github.com/javapathfinder/jpf-core/wiki/How-to-install-JPF). We recommend cloning the master branch using Git and building JPF with the Gradle wrapper. Note that some tests may fail. This should not prevent you from using JPF.
+Install [jpf-core](https://github.com/javapathfinder/jpf-core) following the instructions on the [jpf-core wiki](https://github.com/javapathfinder/jpf-core/wiki/How-to-install-JPF). We recommend cloning the master branch using Git and building JPF with the Gradle wrapper. Note that some tests may fail. This should not prevent you from using JPF.
 
-##### jpf-label
+### jpf-label
 
-1. Clone jpf-label using Git: go the directory where you want to put jpf-label and issue the following command.
+1. Clone [jpf-label](https://github.com/javapathfinder/jpf-label) using Git: go the directory where you want to put jpf-label and issue the following command.
 ```
 > git clone https://github.com/javapathfinder/jpf-label.git
 Cloning into 'jpf-label'...
@@ -161,7 +153,7 @@ jpf-label=<path to jpf-label's directory>
 ```
 to JPF's site.properties file.
 
-##### jpf-ctl
+### jpf-ctl
 
 
 
