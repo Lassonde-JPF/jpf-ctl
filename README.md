@@ -19,7 +19,7 @@
     <a href=""><strong>Explore the docs »</strong></a>
     <br />
     <br />
-    <a href="">View Demo</a>
+    <a href="https://www.youtube.com/watch?v=PPM_s8gelNo">Project Video</a>
     ·
     <a href="https://github.com/Lassonde-JPF/jpf-ctl-extension/issues">Report Bug</a>
     ·
