@@ -103,14 +103,29 @@ jpf-ctl is an extension for the Java Pathfinder program (accessible [here](https
 
 Below, we distinguish two cases: you only *use* jpf-ctl and you further *develop* jpf-ctl.  In both cases, you need the following to run jpf-ctl.
 1. [java](https://www.oracle.com/ca-en/java/technologies/javase/javase8-archive-downloads.html)
-2. [jpf-core](https://github.com/javapathfinder/jpf-core)
-3. [jpf-label](https://github.com/javapathfinder/jpf-label)
+2. [git](https://git-scm.com/downloads)
+3. [jpf-core](https://github.com/javapathfinder/jpf-core)
+4. [jpf-label](https://github.com/javapathfinder/jpf-label)
 
 #### Use jpf-ctl
 
+##### Java
 
+Use Java's version 8 (we have successfully used 1.8.0_251, 1.8.0_281, and 1.8.0_301).  To check which version of Java is currently in use, issue the following command.
+```
+java -version
+```
 
+##### Git
 
+To check if Git 
+```
+git --version
+```
+
+##### Java PathFinder (jpf-core)
+
+Install jpf-core following the instructions 
 
 **Using Direct Source Code:**
 1. Clone the repository
