@@ -111,21 +111,25 @@ Below, we distinguish two cases: you only *use* jpf-ctl and you further *develop
 
 ##### Java
 
-Use Java's version 8 (we have successfully used 1.8.0_251, 1.8.0_281, and 1.8.0_301).  To check which version of Java is currently in use, issue the following command.
+Use Java's version 8 (we have successfully used 1.8.0_251, 1.8.0_281, and 1.8.0_301).  To check which version of Java (if any) is currently in use, issue the following command.
 ```
-java -version
+> java -version
+java version "1.8.0_251"
+Java(TM) SE Runtime Environment (build 1.8.0_251-b08)
+Java HotSpot(TM) 64-Bit Server VM (build 25.251-b08, mixed mode)
 ```
 
 ##### Git
 
-To check if Git 
+To check any version of Git is currently in use, issue the following command.
 ```
-git --version
+> git --version
+git version 2.26.2.windows.1
 ```
 
 ##### Java PathFinder (jpf-core)
 
-Install jpf-core following the instructions 
+Install jpf-core following the instructions on the [jpf-core wiki](https://github.com/javapathfinder/jpf-core/wiki/How-to-install-JPF).  We recommend cloning the master branch.
 
 **Using Direct Source Code:**
 1. Clone the repository
