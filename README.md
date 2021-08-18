@@ -121,7 +121,7 @@ Java HotSpot(TM) 64-Bit Server VM (build 25.251-b08, mixed mode)
 
 ##### Git
 
-To check any version of Git is currently in use, issue the following command.
+To check if any version of Git is currently in use, issue the following command.
 ```
 > git --version
 git version 2.26.2.windows.1
