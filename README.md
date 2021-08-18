@@ -129,7 +129,41 @@ git version 2.26.2.windows.1
 
 ##### Java PathFinder (jpf-core)
 
-Install jpf-core following the instructions on the [jpf-core wiki](https://github.com/javapathfinder/jpf-core/wiki/How-to-install-JPF).  We recommend cloning the master branch.
+Install jpf-core following the instructions on the [jpf-core wiki](https://github.com/javapathfinder/jpf-core/wiki/How-to-install-JPF). We recommend cloning the master branch using Git and building JPF with the Gradle wrapper. Note that some tests may fail. This should not prevent you from using JPF.
+
+##### jpf-label
+
+1. Clone jpf-label using Git: go the directory where you want to put jpf-label and issue the following command.
+```
+> git clone https://github.com/javapathfinder/jpf-label.git
+Cloning into 'jpf-label'...
+remote: Enumerating objects: 153, done.
+remote: Counting objects: 100% (153/153), done.
+remote: Compressing objects: 100% (84/84), done.
+Receiving objects:  75% (115/153)sed 141 (delta 58), pack-reused 0
+Receiving objects: 100% (153/153), 107.48 KiB | 1.28 MiB/s, done.
+Resolving deltas: 100% (67/67), done.
+```
+2. Build jpf-label with the Gradle wrapper: inside the jpf-label directory, issue the following command.
+```
+> .\gradlew
+
+> Task :compileJava
+Note: C:\Users\montreal\Downloads\jpf-label\src\main\label\StateLabel.java uses unchecked or unsafe operations.
+Note: Recompile with -Xlint:unchecked for details.
+
+BUILD SUCCESSFUL in 47s
+4 actionable tasks: 4 executed
+```
+3. Add
+```
+jpf-label=<path to jpf-label's directory>
+```
+to JPF's site.properties file.
+
+##### jpf-ctl
+
+
 
 **Using Direct Source Code:**
 1. Clone the repository
