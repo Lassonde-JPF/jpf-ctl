@@ -229,7 +229,7 @@ If you wish to contribute to jpf-ctl by addressing some of the [open issues](htt
 
 1. Fork ctl-jpf. 
 2. Create your feature branch (`git checkout -b feature/AmazingFeature`).
-3. Commit your Changes (`git commit -m 'Add some AmazingFeature'`).
+3. Commit your changes (`git commit -m 'Add some AmazingFeature'`).
 4. Push to the branch (`git push origin feature/AmazingFeature`).
 5. Open a pull request.
 
