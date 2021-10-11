@@ -209,7 +209,7 @@ Resolving deltas: 100% (1122/1122), done.
 
 ## Documentation
 
-Documentation for the jpf-ctl project can be found within the `/documentation` directory; however, the PDF version can be directly accessed using the following 
+Documentation for jpf-ctl can be found within the [documentation](/documentation/) directory.  The PDF version can be directly accessed using the following 
 [link](/documentation/report.pdf)
 
 <!-- USAGE EXAMPLES -->
