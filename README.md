@@ -58,7 +58,7 @@
 
 
 <!-- ABOUT THE PROJECT -->
-## About the Project
+## About jpf-ctl
 
 The most common approach to finding errors in software is testing. However, testing is of limited use when checking *concurrent software* for errors. Hence, other techniques, including *model checking*, have been developed to supplement testing. We focus on Java as Java being one of the most widely used programming language. Presently, the most popular tool for model checking of Java code, [*Java PathFinder*](https://github.com/javapathfinder) (JPF), does not support the checking of properties expressed in temporal logics; instead, it checks properties such as deadlocks and data races. To resolve this, we present jpf-ctl, an extension of JPF which supports the checking of properties specified in *computational tree logic* (CTL). 
 
@@ -89,17 +89,7 @@ The JUnit test [AccountTest](code/jpf-ctl/src/main/java/example/AccountTest.java
 
 Since jpf-ctl relies on jpf-core, the core of JPF, and jpf-core currently supports Java 8, only apps that use Java 8 constructs can be checked. Furthermore, jpf-core can only handle apps, that is, it needs a main method of a class as its starting point. Currently, jpf-ctl only supports static boolean fields as the basic building blocks of CTL formulas.
 
-## Documentation
-
-Documentation for the jpf-ctl project can be found within the `/documentation` directory; however, the PDF version can be directly accessed using the following 
-[link](/documentation/report.pdf)
-
-<!-- GETTING STARTED -->
-## Getting Started
-
-jpf-ctl is an extension for the Java Pathfinder program (accessible [here](https://github.com/javapathfinder/jpf-core)) and as such, is to be setup using the following normal steps for using a jpf extension. 
-
-## Dependencies when using jpf-ctl
+## Installation instructions for using jpf-ctl
 
 ### Java
 
@@ -167,13 +157,13 @@ remote: Total 3159 (delta 875), reused 1548 (delta 639), pack-reused 1343
 Receiving objects: 100% (3159/3159), 14.39 MiB | 1.17 MiB/s, done.
 Resolving deltas: 100% (1491/1491), done.
 ```
-2. 2. Build jpf-ctl with the Gradle wrapper: inside the jpf-ctl directory, issue the following command.
+2. Build jpf-ctl with the Gradle wrapper: inside the jpf-ctl directory, issue the following command.
 ```
 > .\gradlew
 
 
 ```
-## Dependencies when developing jpf-ctl
+## Installation instructions for developing jpf-ctl
 
 
 
@@ -196,11 +186,31 @@ The following prerequisites are required to develop with jpf-ctl and are require
 * **[ANTLR4 (4.9.2)](https://github.com/antlr/antlr4/blob/master/doc/getting-started.md)** <br/>
   Used for developing/defining the grammar of CTL which jpf-ctl uses as properties to model check
 * **[jpf-nhandler](https://github.com/javapathfinder/jpf-nhandler)** <br/>
+
+
+```
+> git clone https://github.com/javapathfinder/jpf-nhandler.git
+Cloning into 'jpf-nhandler'...
+remote: Enumerating objects: 1882, done.
+remote: Counting objects: 100% (1882/1882), done.
+remote: Compressing objects: 100% (581/581), done.
+remote: Total 1882 (delta 1122), reused 1882 (delta 1122), pack-reused 0
+Receiving objects: 100% (1882/1882), 6.84 MiB | 1.18 MiB/s, done.
+Resolving deltas: 100% (1122/1122), done.
+```
+
+
+
   Used for testing the jpf-partial-transition-system-listener, specifically, to setup testing environments outside of JPF
 
 ### Installation
 
 << installation instructions >>
+
+## Documentation
+
+Documentation for the jpf-ctl project can be found within the `/documentation` directory; however, the PDF version can be directly accessed using the following 
+[link](/documentation/report.pdf)
 
 <!-- USAGE EXAMPLES -->
 ## Usage
