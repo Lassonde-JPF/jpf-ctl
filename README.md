@@ -241,14 +241,14 @@ Distributed under the GNU General Public License v3. See [LICENSE](LICENSE.md) f
 <!-- CONTACT -->
 ## Contact
 
-The following contacts are responsible for the development and management of the jpf-ctl project
+The following contacts are responsible for the development and management of the jpf-ctl.
 
 ### Development Team
 
-**Parssa Khazra** - [ParssaKhazra](https://github.com/ParssaKhazra)
-**Anto Nanah Ji** - [antoNanahJi](https://github.com/antoNanahJi)
-**Matt Walker** - [matthewwalk](https://github.com/matthewwalk)
-**Hongru Wang** - [HongruWang](https://github.com/HongruWang-123)
+**Parssa Khazra** - [ParssaKhazra](https://github.com/ParssaKhazra)  
+**Anto Nanah Ji** - [antoNanahJi](https://github.com/antoNanahJi)  
+**Matt Walker** - [matthewwalk](https://github.com/matthewwalk)  
+**Hongru Wang** - [HongruWang](https://github.com/HongruWang-123)  
 **Franck van Breugel** - [franck-van-breugel](https://github.com/franck-van-breugel)
 
 <!-- MARKDOWN LINKS & IMAGES -->
