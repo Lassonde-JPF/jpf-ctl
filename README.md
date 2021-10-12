@@ -19,7 +19,7 @@
     <a href=""><strong>Explore the docs »</strong></a>
     <br />
     <br />
-    <a href="">View Demo</a>
+    <a href="https://www.youtube.com/watch?v=PPM_s8gelNo">Project Video</a>
     ·
     <a href="https://github.com/Lassonde-JPF/jpf-ctl-extension/issues">Report Bug</a>
     ·
@@ -148,9 +148,9 @@ The following contacts are responsible for the development and management of the
 ### Development Team
 **Franck van Breugel** - _Software Engineer_ - [franck-van-breugel](https://github.com/franck-van-breugel) <br/>
 **Matt Walker** - _Software Engineer_ - [matthewwalk](https://github.com/matthewwalk)<br/>
-**Anto Nanah Ji** - _title_ - [antoNanahJi](https://github.com/antoNanahJi)<br/>
-**Parssa Khazra** - _title_ - [ParssaKhazra](https://github.com/ParssaKhazra)<br/>
-**Hongru Wang** - _title_ - [HongruWang](https://github.com/HongruWang-123)<br/>
+**Anto Nanah Ji** - _Software Engineer_ - [antoNanahJi](https://github.com/antoNanahJi)<br/>
+**Parssa Khazra** - _Software Engineer_ - [ParssaKhazra](https://github.com/ParssaKhazra)<br/>
+**Hongru Wang** - _Software Engineer_ - [HongruWang](https://github.com/HongruWang-123)<br/>
 
 <!-- MARKDOWN LINKS & IMAGES -->
 <!-- https://www.markdownguide.org/basic-syntax/#reference-style-links -->
