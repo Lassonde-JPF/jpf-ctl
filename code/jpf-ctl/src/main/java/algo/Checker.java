@@ -25,13 +25,15 @@ public class Checker {
 	private static final String LAB_EXTENSION = ".lab";
 	private static final String TRA_EXTENSION = ".tra";
 	
-	public Checker(StructuredCTLConfig config, Logger logger) {
+	public Checker(StructuredCTLConfig config) {
 		this.config = config;
-		this.logger = logger.with("CHECKER");
+		this.logger = new Logger(Checker.class.getName(), "Checker");
 	}
 	
 	public Result validate(Formula Formula, String path, String EnumerateRandom, boolean pack, String args)
 			throws ModelCheckingException {
+		
+		logger.info("Validation beginning with arguments:\n\tFormula: " + Formula + "\n\tPath: " + path);
 		
 		// Create classpath and target values from path
 		String classpath;
@@ -40,11 +42,6 @@ public class Checker {
 		classpath = path.substring(0, lastSlash);
 		target = path.substring(lastSlash + 1, path.lastIndexOf("."));
 
-		/*
-		 * If there is a package then we need to modify the classpath and target
-		 * Specifically, we move the classpath up one directory and add the directory we
-		 * moved up to the target as a prefix delimeted by a '.'
-		 */
 		if (pack) {
 			target = classpath.substring(classpath.lastIndexOf("\\") + 1) + "." + target;
 			classpath = classpath.substring(0, classpath.lastIndexOf("\\"));

@@ -37,9 +37,14 @@ public class StructuredCTLConfig {
 	String ALIAS = "[a-zA-Z_][a-zA-Z0-9_]*:\\s*[a-zA-Z_][a-zA-Z0-9_]*\\s*([a-zA-Z_$][a-zA-Z\\d_$]*\\.)*[a-zA-Z_$][a-zA-Z\\d_$]*";
 	String FORMULA = "[a-zA-Z_][a-zA-Z0-9_]*\\s*=\\s*[a-zA-Z_(][a-zA-Z0-9_()\\s]*";
 	
+	// Logging
+	Logger logger;
 	
-	public StructuredCTLConfig(String filePath, Logger logger) throws IOException {
+	public StructuredCTLConfig(String filePath) throws IOException {
+		// New logger
+		logger = new Logger(StructuredCTLConfig.class.getName(), "StructuredCTLConfig");
 		
+		// Path to actual .ctl file
 		Path pathToFile = Paths.get(filePath);
 		
 		// Compile into pattern as we will be checking multiple lines (matches)
@@ -52,7 +57,6 @@ public class StructuredCTLConfig {
 
 		Files.lines(pathToFile).map(String::trim).forEach(line -> {
 			if (ALIAS_PAT.matcher(line).matches()) {
-				System.out.println("ap: " + line);
 				String alias = line.split(":")[0].trim();
 				String fields = line.split(":")[1].trim();
 				Type type = Type.valueOf(fields.split("\\s")[0]);
@@ -76,7 +80,6 @@ public class StructuredCTLConfig {
 				this.labels.computeIfAbsent(alias, k -> new Label(type, qualifiedName));
 			}
 			if (FORMULA_PAT.matcher(line).matches()) {
-				System.out.println(line);
 				String alias = line.split("=")[0].trim();
 				String formula = line.split("=")[1].trim();
 				

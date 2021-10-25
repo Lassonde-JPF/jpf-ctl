@@ -5,13 +5,12 @@ import java.util.logging.FileHandler;
 
 public class Logger {
 	
-	java.util.logging.Logger logger;
+	private java.util.logging.Logger logger;
+	private String prefix;
 	
-	String prefix;
-	
-	public Logger(String className) {
-		logger = java.util.logging.Logger.getLogger(className);
-		prefix = "";
+	public Logger(String className, String prefix) {
+		this.logger = java.util.logging.Logger.getLogger(className);
+		this.prefix = "[" + prefix + "] ";
 	}
 
 	public void info(String msg) {
@@ -28,11 +27,6 @@ public class Logger {
 	
 	public void fine(String msg) {
 		logger.fine(this.prefix + msg);
-	}
-	
-	public Logger with(String prefix) {
-		this.prefix = "[" + prefix + "]\t";
-		return this;
 	}
 	
 	public boolean setOutputFile(String fileName) {

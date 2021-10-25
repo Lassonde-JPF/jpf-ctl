@@ -42,7 +42,7 @@ public class ModelChecker {
 	public static String validate(String Formula, String path, String EnumerateRandom, boolean pack, String args)
 			throws ModelCheckingException {
 
-		Logger logger = new Logger(ModelChecker.class.getName());
+		Logger logger = new Logger(ModelChecker.class.getName(), "ModelChecker");
 		
 		// Create classpath and target values from path
 		String classpath;

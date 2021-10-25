@@ -10,6 +10,8 @@ import logging.Logger;
 
 public class Main {
 	
+	public static boolean test;
+	
 	// main entry loop for command line version
 	public static void main(String[] args) {
 		
@@ -17,20 +19,20 @@ public class Main {
 		String targetPath = args[1];
 		
 		// Initialize logging service/obj
-		Logger logger = new Logger(Main.class.getName());
+		Logger logger = new Logger(Main.class.getName(), "Main");
 		logger.setOutputFile("jpf-ctl-" + System.currentTimeMillis());
-		logger.fine("Model Checking Started");
+		logger.info("Model Checking Started");
 		
 		// Load config
 		StructuredCTLConfig config = null;
 		try {
-			config = new StructuredCTLConfig(configPath, logger);
+			config = new StructuredCTLConfig(configPath);
 		} catch (Exception e) {
-			logger.severe("Error loading config file: " + configPath);
+			logger.severe("Error loading config file " + configPath + "\n" + e);
 		}
 		
 		// Build checker and results object(s)
-		Checker checker = new Checker(config, logger);
+		Checker checker = new Checker(config);
 		List<Result> results = new ArrayList<Result>();
 		
 		// Check each formula defined in config
@@ -38,7 +40,8 @@ public class Main {
 			try {
 				results.add(checker.validate(f, targetPath, "true", true, ""));
 			} catch (Exception e) {
-				logger.severe("Error validating formula " + f);
+				logger.severe("Error validating formula " + f + "\n");
+				e.printStackTrace();
 			}
 		}
 		
