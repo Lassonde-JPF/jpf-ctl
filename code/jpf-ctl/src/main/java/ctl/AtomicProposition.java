@@ -20,6 +20,8 @@ package ctl;
 import java.util.HashSet;
 import java.util.Set;
 
+import config.Type;
+
 /**
  * This class represents the CTL state formula consisting of an atomic proposition.
  * 
@@ -28,29 +30,30 @@ import java.util.Set;
  * @author Jessie Leung
  * @author Paul Sison
  * @author Franck van Breugel
+ * @author Matthew Walker
  */
 public class AtomicProposition extends Formula {
-	private String name;
+	private String alias;
 
 	/**
 	 * Initializes this CTL formula as an atomic proposition with the given name.
 	 * 
 	 * @param name the name of this atomic proposition
 	 */
-	public AtomicProposition(String name) {
-		this.name = name;
+	public AtomicProposition(String alias) {
+		this.alias = alias;
 	}
-
+	
 	@Override
 	public int hashCode() {
-		return this.name.hashCode();
+		return this.alias.hashCode();
 	}
 
 	@Override
 	public boolean equals(Object object) {
 		if (object != null && this.getClass() == object.getClass()) {
 			AtomicProposition other = (AtomicProposition) object;
-			return this.name.equals(other.name);
+			return this.alias.equals(other.alias);
 		} else {
 			return false;
 		}
@@ -58,13 +61,13 @@ public class AtomicProposition extends Formula {
 
 	@Override
 	public String toString() {
-		return this.name;
+		return this.alias;
 	}
 	
 	@Override
 	public Set<String> getAtomicPropositions() {
 		Set<String> set = new HashSet<String>();
-		set.add(this.name);
+		set.add(this.toString());
 		return set;
 	}
 	

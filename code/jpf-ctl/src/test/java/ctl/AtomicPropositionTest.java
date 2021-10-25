@@ -39,7 +39,7 @@ public class AtomicPropositionTest extends BaseTest {
 //	 */
 //	@Test
 //	public void testKoreanName() {
-//		String atomicProposition = "자.바.클.래.스";
+//		String atomicProposition = "ìž�.ë°”.í�´.ëž˜.ìŠ¤";
 //		Formula expected = new AtomicProposition(atomicProposition);
 //		ParseTree tree = parse(atomicProposition);
 //		Formula actual = this.generator.visit(tree);
@@ -52,7 +52,7 @@ public class AtomicPropositionTest extends BaseTest {
 //	 */
 //	@Test
 //	public void testVietnameseName() {
-//		String atomicProposition = "cụcCứt.cụcCứt";
+//		String atomicProposition = "cá»¥cCá»©t.cá»¥cCá»©t";
 //		Formula expected = new AtomicProposition(atomicProposition);
 //		ParseTree tree = parse(atomicProposition);
 //		Formula actual = this.generator.visit(tree);

@@ -1,44 +1,38 @@
 package algo;
 
-/**
- * ModelChecker
- * 
- * @author Matt Walker
- *
- */
-
 import java.io.File;
 import java.io.IOException;
 import java.util.stream.Collectors;
 
-import org.antlr.v4.runtime.CharStream;
-import org.antlr.v4.runtime.CharStreams;
-import org.antlr.v4.runtime.CommonTokenStream;
-import org.antlr.v4.runtime.tree.ParseTree;
-import org.antlr.v4.runtime.tree.ParseTreeWalker;
-import org.ctl.CTLLexer;
-import org.ctl.CTLParser;
-
+import config.LabelledPartialTransitionSystem;
+import config.Result;
+import config.StructuredCTLConfig;
 import ctl.Formula;
-import ctl.Generator;
-import error.AtomicPropositionDoesNotExistException;
-import error.CTLError;
 import error.FieldExists;
 import error.ModelCheckingException;
 import gov.nasa.jpf.Config;
 import gov.nasa.jpf.JPF;
 import gov.nasa.jpf.JPFConfigException;
 import gov.nasa.jpf.JPFException;
+import logging.Logger;
 
-public class ModelChecker {
-
+public class Checker {
+	
+	private StructuredCTLConfig config;
+	private Logger logger;
+	
 	private static final int INITIAL_STATE = 0;
 	private static final String LAB_EXTENSION = ".lab";
 	private static final String TRA_EXTENSION = ".tra";
-
-	public static String validate(String Formula, String path, String EnumerateRandom, boolean pack, String args)
+	
+	public Checker(StructuredCTLConfig config, Logger logger) {
+		this.config = config;
+		this.logger = logger.with("CHECKER");
+	}
+	
+	public Result validate(Formula Formula, String path, String EnumerateRandom, boolean pack, String args)
 			throws ModelCheckingException {
-
+		
 		// Create classpath and target values from path
 		String classpath;
 		String target;
@@ -55,28 +49,6 @@ public class ModelChecker {
 			target = classpath.substring(classpath.lastIndexOf("\\") + 1) + "." + target;
 			classpath = classpath.substring(0, classpath.lastIndexOf("\\"));
 		}
-		System.out.println("classpath: " + classpath);
-		System.out.println("target: " + target);
-
-		// Build and Check Formula before examining target system
-		CharStream input = CharStreams.fromString(Formula);
-		input = new CTLError().errorCheckAndRecover(input);
-
-		CTLParser parser = new CTLParser(new CommonTokenStream(new CTLLexer(input)));
-		ParseTree tree = parser.formula();
-
-		/*
-		 * Perform Error Checking on input formula and gather APs for use with jpf-ctl
-		 */
-		ParseTreeWalker walker = new ParseTreeWalker();
-		try {
-			walker.walk(new FieldExists(classpath), tree); // TODO fix
-		} catch (AtomicPropositionDoesNotExistException e) {
-			// throw new ModelCheckingException(e.getMessage());
-		}
-
-		// At this point we know the formula is correct.
-		Formula formula = new Generator().visit(tree);
 
 		try {
 			Config conf = JPF.createConfig(new String[] {});
@@ -100,26 +72,23 @@ public class ModelChecker {
 
 			// set the listeners
 			conf.setProperty("listener", "label.StateLabelText,listeners.PartialTransitionSystemListener");
-
+			
 			// build the label properties
 			String fields = FieldExists.APs.stream().collect(Collectors.joining("; "));
 			conf.setProperty("label.class", "label.BooleanStaticField");
 			conf.setProperty("label.BooleanStaticField.field", fields);
 
-			System.out.println("APs: " + fields);
-
 			// This instantiates JPF but also adds the jpf.properties and other arguments to
 			// the config
 			JPF jpf = new JPF(conf);
-
-			System.out.println("JPF Classpath: " + jpf.getConfig().getProperty("classpath"));
-
+			
 			jpf.run();
 			if (jpf.foundErrors()) {
-				return "Model Checking Finished\n For the selected class:\t" + path + "\n And the written formula:\t"
-						+ formula
+				String msg = "Model Checking Finished\n For the selected class:\t" + path + "\n And the written formula:\t"
+						+ Formula
 						+ "\nIt has been determined that the target system contains an error that needs to be resolved before model checking can commence"
 						+ "\nThe error can be seen below:\n" + jpf.getLastError();
+				return new Result(msg, false);
 			}
 		} catch (JPFConfigException cx) {
 			throw new ModelCheckingException(
@@ -145,33 +114,36 @@ public class ModelChecker {
 		// cleanup files
 		File labFile = new File(jpfLabelFile);
 		if (!labFile.delete()) {
-			System.err.println("File: " + labFile.getName() + " was not deleted");
+			logger.severe("File: " + labFile.getName() + " was not deleted");
 		}
 		File traFile = new File(listenerFile);
 		if (!traFile.delete()) {
-			System.err.println("File: " + traFile.getName() + " was not deleted");
+			logger.severe("File: " + traFile.getName() + " was not deleted");
 		}
 
 		// perform model check
 		Model m = new Model(pts);
 
+		boolean valid = m.check(Formula).getSat().contains(INITIAL_STATE);
+		
 		// success
-		if (m.check(formula).getSat().contains(INITIAL_STATE)) {
-			return "Model Checking Finished\n For the selected class:\t" + target + "\n And the written formula:\t"
+		if (valid) {
+			String msg = "Model Checking Finished\n For the selected class:\t" + target + "\n And the written formula:\t"
 					+ Formula
 					+ "\nIt has been determined that the formula holds in the initial state and is considered valid for this system.";
+			return new Result(msg, valid);
 		}
 
 		// fail
 		try {
-			return "Model Checking Finished\n For the selected class:\t" + path + "\n And the written formula:\t"
-					+ formula
+			String msg = "Model Checking Finished\n For the selected class:\t" + path + "\n And the written formula:\t"
+					+ Formula
 					+ "\nIt has been determined that the formula does not hold in the initial state and is considered invalid for this system."
-					+ "\nA counter example can be seen below:\n" + m.getCounterExample(formula, INITIAL_STATE);
+					+ "\nA counter example can be seen below:\n" + m.getCounterExample(Formula, INITIAL_STATE);
+			return new Result(msg, valid);
 		} catch (Exception e) {
 			throw new ModelCheckingException(
 					"Someting went wrong when building the counter example:\n" + e.getMessage());
 		}
 	}
-
 }

@@ -23,10 +23,10 @@ import org.junit.jupiter.api.Test;
 import org.ctl.CTLLexer;
 import org.ctl.CTLParser;
 
-import algo.LabelledPartialTransitionSystem;
 import algo.Model;
 import algo.StateSets;
 import algo.Transition;
+import config.LabelledPartialTransitionSystem;
 import error.CTLError;
 import error.FieldExists;
 
@@ -99,7 +99,7 @@ public class ModelCheckerTest {
 			System.out.println("Transition System:\n" + pts);
 			System.out.println("Input formula:\n" + input);
 			
-			m.printSubResult();
+			//m.printSubResult();
 			
 			System.out.println("Result:" + result);
 

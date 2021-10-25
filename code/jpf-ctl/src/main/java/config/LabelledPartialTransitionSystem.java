@@ -1,4 +1,4 @@
-package algo;
+package config;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -31,6 +31,8 @@ import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
+
+import algo.Transition;
 
 /**
  * A class which represents a labelled partial transition system.

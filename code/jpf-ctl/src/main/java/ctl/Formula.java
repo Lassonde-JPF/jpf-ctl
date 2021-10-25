@@ -20,6 +20,8 @@ package ctl;
 import java.util.Random;
 import java.util.Set;
 
+import config.Type;
+
 /**
  * This class represents the CTL formula.
  * 
@@ -50,8 +52,8 @@ public abstract class Formula {
 			case 1 :
 				return new False();
 			case 2 :
-				String name = "algo.Fields.p" + RANDOM.nextInt(MAX_INDEX + 1);
-				return new AtomicProposition(name);
+				String alias = "a" + RANDOM.nextInt(MAX_INDEX+1);
+				return new AtomicProposition(alias);
 			default :
 				throw new IllegalArgumentException("Illegal argument for switch in base case");
 			}
@@ -62,8 +64,8 @@ public abstract class Formula {
 			case 1 :
 				return new False();
 			case 2 :
-				String name = "C.f" + RANDOM.nextInt(MAX_INDEX + 1);
-				return new AtomicProposition(name);
+				String alias = "b" + RANDOM.nextInt(MAX_INDEX+1);
+				return new AtomicProposition(alias);
 			case 3 :
 				return new Not(Formula.random(depth - 1));
 			case 4: 

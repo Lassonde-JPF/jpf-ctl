@@ -17,6 +17,8 @@
 
 package ctl;
 
+import java.util.Map;
+
 import org.ctl.CTLBaseVisitor;
 import org.ctl.CTLParser.AndContext;
 import org.ctl.CTLParser.AtomicPropositionContext;
@@ -35,6 +37,8 @@ import org.ctl.CTLParser.ImpliesContext;
 import org.ctl.CTLParser.NotContext;
 import org.ctl.CTLParser.OrContext;
 import org.ctl.CTLParser.TrueContext;
+
+import config.StructuredCTLConfig;
 
 /**
  * Generates an abstract syntax tree from a parse tree.
@@ -151,7 +155,7 @@ public class Generator extends CTLBaseVisitor<Formula> {
 	 */	
 	@Override
 	public Formula visitAtomicProposition(AtomicPropositionContext context) {
-		return new AtomicProposition(context.ATOMIC_PROPOSITION().toString());
+		return new AtomicProposition(context.ATOMIC_PROPOSITION().getText());
 	}
 
 	/**

@@ -30,7 +30,6 @@ import javax.swing.WindowConstants;
 import javax.swing.border.EmptyBorder;
 import javax.swing.filechooser.FileFilter;
 
-import algo.ModelChecker;
 import error.ModelCheckingException;
 
 @SuppressWarnings("serial")

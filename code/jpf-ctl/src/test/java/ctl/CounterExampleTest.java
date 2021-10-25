@@ -20,9 +20,9 @@ import org.junit.jupiter.api.Test;
 import org.ctl.CTLLexer;
 import org.ctl.CTLParser;
 
-import algo.LabelledPartialTransitionSystem;
 import algo.Model;
 import algo.StateSets;
+import config.LabelledPartialTransitionSystem;
 import error.CTLError;
 import error.FieldExists;
 
@@ -55,7 +55,7 @@ public class CounterExampleTest {
 			System.out.println("Transition System:\n" + pts);
 			System.out.println("Input formula:\n" + input);
 			
-			m.printSubResult();
+			//m.printSubResult();
 			
 			System.out.println("Result:" + result);
 			
@@ -66,15 +66,9 @@ public class CounterExampleTest {
 	}
 	
 	public StateSets test(String input, LabelledPartialTransitionSystem pts) {
-		// System.out.println("Transition System:\n" + pts);
 		ParseTree tree = parseCtl(input);
 		Formula formula = generator.visit(tree);
-		// System.out.println("Input formula:\n" + input);
-		StateSets ss = new Model(pts).check(formula);
-	
-		// System.out.println("Result:");
-		// System.out.println(ss);
-		return ss;
+		return new Model(pts).check(formula);
 	}
 	
     	/**

@@ -19,6 +19,8 @@ package algo;
 
 import java.util.Set;
 import java.util.stream.Collectors;
+
+import config.LabelledPartialTransitionSystem;
 import ctl.And;
 import ctl.False;
 import ctl.Formula;
@@ -103,10 +105,6 @@ public class Model {
 		StateSets result = new StateSets(Sat, unSat);
 		this.subset.computeIfAbsent(formula, k -> result);
 		return result;
-	}
-
-	public void printSubResult() {
-		formulaStack.stream().forEach(System.out::println);
 	}
 
 	/**
