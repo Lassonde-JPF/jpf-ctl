@@ -1,6 +1,7 @@
 package algo;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import config.Result;
@@ -14,14 +15,21 @@ public class Main {
 	
 	// main entry loop for command line version
 	public static void main(String[] args) {
-		
-		String configPath = args[0];
-		String targetPath = args[1];
-		
 		// Initialize logging service/obj
 		Logger logger = new Logger(Main.class.getName(), "Main");
 		logger.setOutputFile("jpf-ctl-" + System.currentTimeMillis());
 		logger.info("Model Checking Started");
+		
+		if (!Main.checkArgs(args)) {
+			logger.severe("Invalid arguments supplied: " + Arrays.toString(args));
+			System.exit(0);
+		}
+		
+		String configPath = args[0];
+		String targetPath = args[1];
+		String enumerateRandom = args[2];
+		boolean pack = Boolean.getBoolean(args[3]);
+		String targetArgs = args[4];
 		
 		// Load config
 		StructuredCTLConfig config = null;
@@ -38,10 +46,9 @@ public class Main {
 		// Check each formula defined in config
 		for (Formula f : config.getFormulae()) {
 			try {
-				results.add(checker.validate(f, targetPath, "true", true, ""));
+				results.add(checker.validate(f, targetPath, enumerateRandom, pack, targetArgs));
 			} catch (Exception e) {
 				logger.severe("Error validating formula " + f + "\n");
-				e.printStackTrace();
 			}
 		}
 		
@@ -49,6 +56,11 @@ public class Main {
 		for (Result r : results) {
 			System.out.println(r.getMessage());
 		}
+	}
+	
+	//TODO This needs to be refactored to actually check
+	public static boolean checkArgs(String[] args) {
+		return args.length == 5;
 	}
 	
 }

@@ -71,9 +71,8 @@ public class Checker {
 			conf.setProperty("listener", "label.StateLabelText,listeners.PartialTransitionSystemListener");
 			
 			// build the label properties
-			String fields = FieldExists.APs.stream().collect(Collectors.joining("; "));
 			conf.setProperty("label.class", "label.BooleanStaticField");
-			conf.setProperty("label.BooleanStaticField.field", fields);
+			conf.setProperty("label.BooleanStaticField.field", null);
 
 			// This instantiates JPF but also adds the jpf.properties and other arguments to
 			// the config

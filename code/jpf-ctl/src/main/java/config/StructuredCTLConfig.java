@@ -35,7 +35,7 @@ public class StructuredCTLConfig {
 	
 	// Regex 
 	String ALIAS = "[a-zA-Z_][a-zA-Z0-9_]*:\\s*[a-zA-Z_][a-zA-Z0-9_]*\\s*([a-zA-Z_$][a-zA-Z\\d_$]*\\.)*[a-zA-Z_$][a-zA-Z\\d_$]*";
-	String FORMULA = "[a-zA-Z_][a-zA-Z0-9_]*\\s*=\\s*[a-zA-Z_(][a-zA-Z0-9_()\\s]*";
+	String FORMULA = "[a-zA-Z_][a-zA-Z0-9_]*\\s*=\\s*[a-zA-Z_(!][a-zA-Z0-9_()!\\s]*";
 	
 	// Logging
 	Logger logger;
@@ -92,7 +92,7 @@ public class StructuredCTLConfig {
 				this.formulae.add(f);
 			}
 		});
-		
+		logger.info("Atomic Propositions Defined:\n" + this.labels.toString() + "\nFormulae Defined:\n" + this.formulae.toString());
 	}
 	
 	public List<Formula> getFormulae() {

@@ -1,3 +1,3 @@
-a: BooleanStaticField main.java.algo.Main.test
+a: BooleanStaticField exampleClasses.Main.negative
 
-f=EXa
+f=AG!a

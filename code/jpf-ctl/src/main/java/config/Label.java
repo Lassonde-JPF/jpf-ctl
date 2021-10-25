@@ -17,4 +17,9 @@ public class Label {
 		return this.qualifiedName;
 	}
 	
+	@Override
+	public String toString() {
+		return this.type + " " + this.qualifiedName;
+	}
+	
 }
