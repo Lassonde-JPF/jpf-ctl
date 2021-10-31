@@ -1,4 +1,4 @@
-package config;
+package label;
 
 public class Label {
 	private Type type;

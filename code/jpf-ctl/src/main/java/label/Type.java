@@ -1,4 +1,4 @@
-package config;
+package label;
 
 public enum Type {
 	Initial,

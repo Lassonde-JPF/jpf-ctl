@@ -12,7 +12,7 @@ import gov.nasa.jpf.Config;
 import gov.nasa.jpf.JPF;
 import gov.nasa.jpf.JPFConfigException;
 import gov.nasa.jpf.JPFException;
-import config.Type;
+import label.Type;
 import logging.Logger;
 
 public class Checker {

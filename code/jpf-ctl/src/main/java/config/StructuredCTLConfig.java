@@ -26,9 +26,9 @@ import ctl.AtomicProposition;
 import ctl.Formula;
 import ctl.Generator;
 import error.CTLError;
+import label.Label;
+import label.Type;
 import logging.Logger;
-
-import config.Type;
 
 public class StructuredCTLConfig {
 	
