@@ -6,9 +6,12 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 import org.antlr.v4.runtime.CharStream;
 import org.antlr.v4.runtime.CharStreams;
@@ -32,6 +35,7 @@ public class StructuredCTLConfig {
 	// Config Attributes
 	Map<String, Label> labels;
 	List<Formula> formulae;
+	Set<Type> types;
 	
 	// Regex 
 	String ALIAS = "[a-zA-Z_][a-zA-Z0-9_]*:\\s*[a-zA-Z_][a-zA-Z0-9_]*\\s*([a-zA-Z_$][a-zA-Z\\d_$]*\\.)*[a-zA-Z_$][a-zA-Z\\d_$]*";
@@ -54,6 +58,8 @@ public class StructuredCTLConfig {
 		// Initialize attributes
 		labels = new HashMap<String, Label>();
 		formulae = new ArrayList<Formula>();
+		types = new HashSet<Type>();
+
 
 		Files.lines(pathToFile).map(String::trim).forEach(line -> {
 			if (ALIAS_PAT.matcher(line).matches()) {
@@ -77,6 +83,8 @@ public class StructuredCTLConfig {
 					case SynchronizedStaticMethod:
 					case ThrownException:
 				}
+
+				this.types.add(type);
 				this.labels.computeIfAbsent(alias, k -> new Label(type, qualifiedName));
 			}
 			if (FORMULA_PAT.matcher(line).matches()) {
@@ -93,6 +101,26 @@ public class StructuredCTLConfig {
 			}
 		});
 		logger.info("Atomic Propositions Defined:\n" + this.labels.toString() + "\nFormulae Defined:\n" + this.formulae.toString());
+	}
+	
+	public Set<Type> getUniqueTypes() { // TODO rename -> only returns types that have label defs
+		return this.types.stream()
+				.filter(type -> !type.equals(Type.Initial))
+				.filter(type -> !type.equals(Type.End))
+				.collect(Collectors.toSet());
+	}
+	
+	public String getLabelClasses() {
+		return this.types.stream()
+				.map(t -> "label." + t.toString())
+				.collect(Collectors.joining("; "));
+	}
+	
+	public String getLabelsOfType(Type t) {
+		return this.labels.values().stream()
+				.filter(v -> v.getType().equals(t))
+				.map(Label::getQualifiedName)
+				.collect(Collectors.joining("; "));
 	}
 	
 	public List<Formula> getFormulae() {

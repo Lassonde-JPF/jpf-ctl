@@ -48,7 +48,8 @@ public class Main {
 			try {
 				results.add(checker.validate(f, targetPath, enumerateRandom, pack, targetArgs));
 			} catch (Exception e) {
-				logger.severe("Error validating formula " + f + "\n");
+				logger.severe("Error validating formula " + f);
+				e.printStackTrace();
 			}
 		}
 		

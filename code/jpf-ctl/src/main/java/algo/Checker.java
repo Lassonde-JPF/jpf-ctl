@@ -2,18 +2,17 @@ package algo;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.stream.Collectors;
 
 import config.LabelledPartialTransitionSystem;
 import config.Result;
 import config.StructuredCTLConfig;
 import ctl.Formula;
-import error.FieldExists;
 import error.ModelCheckingException;
 import gov.nasa.jpf.Config;
 import gov.nasa.jpf.JPF;
 import gov.nasa.jpf.JPFConfigException;
 import gov.nasa.jpf.JPFException;
+import config.Type;
 import logging.Logger;
 
 public class Checker {
@@ -68,15 +67,23 @@ public class Checker {
 			conf.setProperty("@using", "jpf-label");
 
 			// set the listeners
-			conf.setProperty("listener", "label.StateLabelText,listeners.PartialTransitionSystemListener");
+			conf.setProperty("listener", "label.StateLabelText;listeners.PartialTransitionSystemListener");
 			
+		
 			// build the label properties
-			conf.setProperty("label.class", "label.BooleanStaticField");
-			conf.setProperty("label.BooleanStaticField.field", null);
-
+			conf.setProperty("label.class", config.getLabelClasses());
+			for (Type t : config.getUniqueTypes()) {
+				conf.setProperty(Type.labelDef(t), config.getLabelsOfType(t)); // TODO causing jpf exception (second arg)
+			}
 			// This instantiates JPF but also adds the jpf.properties and other arguments to
 			// the config
 			JPF jpf = new JPF(conf);
+			
+			//Print for now the labels and stuff just debugging ya feel?
+			System.out.println("label.class = " + jpf.getConfig().getProperty("label.class"));
+			for (Type t : config.getUniqueTypes()) {
+				System.out.println(Type.labelDef(t) + " = " + jpf.getConfig().getProperty(Type.labelDef(t)));
+			}
 			
 			jpf.run();
 			if (jpf.foundErrors()) {
@@ -89,9 +96,11 @@ public class Checker {
 		} catch (JPFConfigException cx) {
 			throw new ModelCheckingException(
 					"There was an error configuring JPF, please check your settings: " + cx.getMessage());
+			
 		} catch (JPFException jx) {
+			jx.printStackTrace();
 			throw new ModelCheckingException(
-					"JPF encountered an internal error and was forced to terminate." + jx.getMessage());
+					"JPF encountered an internal error and was forced to terminate... \n" + jx.getMessage());
 		}
 
 		// At this point we know the files exist so now we need to load them...
@@ -108,14 +117,14 @@ public class Checker {
 		}
 
 		// cleanup files
-		File labFile = new File(jpfLabelFile);
-		if (!labFile.delete()) {
-			logger.severe("File: " + labFile.getName() + " was not deleted");
-		}
-		File traFile = new File(listenerFile);
-		if (!traFile.delete()) {
-			logger.severe("File: " + traFile.getName() + " was not deleted");
-		}
+//		File labFile = new File(jpfLabelFile);
+//		if (!labFile.delete()) {
+//			logger.severe("File: " + labFile.getName() + " was not deleted");
+//		}
+//		File traFile = new File(listenerFile);
+//		if (!traFile.delete()) {
+//			logger.severe("File: " + traFile.getName() + " was not deleted");
+//		}
 
 		// perform model check
 		Model m = new Model(pts);
