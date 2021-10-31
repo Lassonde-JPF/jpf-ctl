@@ -1,7 +1,6 @@
 package algo;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import config.Result;
@@ -53,7 +52,7 @@ public class Main {
 		List<Result> results = new ArrayList<Result>();
 		
 		// Check each formula defined in config
-		for (Formula f : config.getFormulae().values()) {
+		for (Formula f : config.getFormulae()) {
 			try {
 				results.add(checker.validate(f, targetPath, enumerateRandom, pack, targetArgs));
 			} catch (Exception e) {
