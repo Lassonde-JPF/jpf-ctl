@@ -64,6 +64,9 @@ dependencies {
 	
     // use ANTLR version 4
     antlr "org.antlr:antlr4:4.9.2" 
+    
+    // Input parsing
+    compile 'commons-cli:commons-cli:1.5.0'
 }
 
 generateGrammarSource {

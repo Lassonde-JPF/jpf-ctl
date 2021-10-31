@@ -5,8 +5,9 @@ import java.util.logging.FileHandler;
 
 public class Logger {
 	
-	private java.util.logging.Logger logger;
 	private String prefix;
+	
+	private java.util.logging.Logger logger;
 	
 	public Logger(String className, String prefix) {
 		this.logger = java.util.logging.Logger.getLogger(className);

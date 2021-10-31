@@ -60,7 +60,6 @@ public class StructuredCTLConfig {
 		formulae = new ArrayList<Formula>();
 		types = new HashSet<Type>();
 
-
 		Files.lines(pathToFile).map(String::trim).forEach(line -> {
 			if (ALIAS_PAT.matcher(line).matches()) {
 				String alias = line.split(":")[0].trim();
@@ -68,27 +67,16 @@ public class StructuredCTLConfig {
 				Type type = Type.valueOf(fields.split("\\s")[0]);
 				String qualifiedName = fields.split("\\s")[1];
 				
-				// TODO implement - for now assume true
-				switch (type) {
-					case Initial:
-					case End:
-					case BooleanStaticField:
-					case IntegerStaticField:
-					case BooleanLocalVariable:
-					case IntegerLocalVariable:
-					case InvokedMethod:
-					case ReturnedBooleanMethod:
-					case ReturnedIntegerMethod:
-					case ReturnedVoidMethod:
-					case SynchronizedStaticMethod:
-					case ThrownException:
+				boolean valid = Type.validate(type, qualifiedName);
+				if (!valid) {
+					logger.severe("Unable to validate atomic proposition " + alias);
 				}
 
 				this.types.add(type);
 				this.labels.computeIfAbsent(alias, k -> new Label(type, qualifiedName));
 			}
 			if (FORMULA_PAT.matcher(line).matches()) {
-				String alias = line.split("=")[0].trim();
+				String alias = line.split("=")[0].trim(); // TODO consider removing alias for formula
 				String formula = line.split("=")[1].trim();
 				
 				CharStream input = CharStreams.fromString(formula);
@@ -100,7 +88,7 @@ public class StructuredCTLConfig {
 				this.formulae.add(f);
 			}
 		});
-		logger.info("Atomic Propositions Defined:\n" + this.labels.toString() + "\nFormulae Defined:\n" + this.formulae.toString());
+		logger.info("\n\tAtomic Propositions Defined:\n\t\t" + this.labels.toString() + "\n\tFormulae Defined:\n\t\t" + this.formulae.toString());
 	}
 	
 	public Set<Type> getUniqueTypes() { // TODO rename -> only returns types that have label defs
