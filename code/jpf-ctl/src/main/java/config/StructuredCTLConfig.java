@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.regex.Pattern;
 
 import org.antlr.v4.runtime.CharStream;
@@ -23,15 +24,16 @@ import ctl.AtomicProposition;
 import ctl.Formula;
 import ctl.Generator;
 import error.CTLError;
+import label.Label;
+import label.Type;
 import logging.Logger;
-
-import config.Type;
 
 public class StructuredCTLConfig {
 	
 	// Config Attributes
 	Map<String, Label> labels;
-	List<Formula> formulae;
+	Map<String, Formula> formulae;
+	Set<Type> types;
 	
 	// Regex 
 	String ALIAS = "[a-zA-Z_][a-zA-Z0-9_]*:\\s*[a-zA-Z_][a-zA-Z0-9_]*\\s*([a-zA-Z_$][a-zA-Z\\d_$]*\\.)*[a-zA-Z_$][a-zA-Z\\d_$]*";
@@ -53,7 +55,7 @@ public class StructuredCTLConfig {
 		
 		// Initialize attributes
 		labels = new HashMap<String, Label>();
-		formulae = new ArrayList<Formula>();
+		formulae = new HashMap<String, Formula>();
 
 		Files.lines(pathToFile).map(String::trim).forEach(line -> {
 			if (ALIAS_PAT.matcher(line).matches()) {
@@ -62,25 +64,15 @@ public class StructuredCTLConfig {
 				Type type = Type.valueOf(fields.split("\\s")[0]);
 				String qualifiedName = fields.split("\\s")[1];
 				
-				// TODO implement - for now assume true
-				switch (type) {
-					case Initial:
-					case End:
-					case BooleanStaticField:
-					case IntegerStaticField:
-					case BooleanLocalVariable:
-					case IntegerLocalVariable:
-					case InvokedMethod:
-					case ReturnedBooleanMethod:
-					case ReturnedIntegerMethod:
-					case ReturnedVoidMethod:
-					case SynchronizedStaticMethod:
-					case ThrownException:
+				boolean valid = Type.validate(type, qualifiedName);
+				if (!valid) {
+					logger.severe("Unable to validate atomic proposition " + alias);
 				}
+				
 				this.labels.computeIfAbsent(alias, k -> new Label(type, qualifiedName));
 			}
 			if (FORMULA_PAT.matcher(line).matches()) {
-				String alias = line.split("=")[0].trim();
+				String alias = line.split("=")[0].trim(); // TODO consider removing alias for formula
 				String formula = line.split("=")[1].trim();
 				
 				CharStream input = CharStreams.fromString(formula);
@@ -89,13 +81,13 @@ public class StructuredCTLConfig {
 				
 				Formula f = new Generator().visit(pT);
 				
-				this.formulae.add(f);
+				this.formulae.computeIfAbsent(alias, k -> f);
 			}
 		});
-		logger.info("Atomic Propositions Defined:\n" + this.labels.toString() + "\nFormulae Defined:\n" + this.formulae.toString());
+		logger.info("\n\tAtomic Propositions Defined:\n\t\t" + this.labels.toString() + "\n\tFormulae Defined:\n\t\t" + this.formulae.toString());
 	}
 	
-	public List<Formula> getFormulae() {
+	public Map<String, Formula> getFormulae() {
 		return this.formulae;
 	}
 	

@@ -1,12 +1,15 @@
 package logging;
 
 import java.io.IOException;
+import java.util.logging.ConsoleHandler;
 import java.util.logging.FileHandler;
+import java.util.logging.Formatter;
 
 public class Logger {
 	
-	private java.util.logging.Logger logger;
 	private String prefix;
+	
+	private java.util.logging.Logger logger;
 	
 	public Logger(String className, String prefix) {
 		this.logger = java.util.logging.Logger.getLogger(className);

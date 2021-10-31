@@ -9,27 +9,36 @@ import config.StructuredCTLConfig;
 import ctl.Formula;
 import logging.Logger;
 
+import org.apache.commons.cli.*;
+
 public class Main {
 	
-	public static boolean test;
+	private static final String JPF_CTL = "jpf-ctl";
 	
 	// main entry loop for command line version
 	public static void main(String[] args) {
+		
+		// Parse command line arguments.
+		Options options = buildOptions(args);
+		CommandLine cmd = null;
+		try {
+			cmd = new DefaultParser().parse(options, args);
+		} catch (ParseException e) {
+			new HelpFormatter().printHelp(JPF_CTL, options);
+			System.exit(1);
+		}
+
+		// Load args as objects
+		String configPath = cmd.getOptionValue("configPath");
+		String targetPath = cmd.getOptionValue("targetPath");
+		String targetArgs = cmd.getOptionValue("targetArgs");
+		String enumerateRandom = cmd.hasOption("e") ? "True" : "False";
+		boolean pack = cmd.hasOption("p");
+		
 		// Initialize logging service/obj
 		Logger logger = new Logger(Main.class.getName(), "Main");
-		logger.setOutputFile("jpf-ctl-" + System.currentTimeMillis());
+		logger.setOutputFile(JPF_CTL + "-" + System.currentTimeMillis());
 		logger.info("Model Checking Started");
-		
-		if (!Main.checkArgs(args)) {
-			logger.severe("Invalid arguments supplied: " + Arrays.toString(args));
-			System.exit(0);
-		}
-		
-		String configPath = args[0];
-		String targetPath = args[1];
-		String enumerateRandom = args[2];
-		boolean pack = Boolean.getBoolean(args[3]);
-		String targetArgs = args[4];
 		
 		// Load config
 		StructuredCTLConfig config = null;
@@ -44,7 +53,7 @@ public class Main {
 		List<Result> results = new ArrayList<Result>();
 		
 		// Check each formula defined in config
-		for (Formula f : config.getFormulae()) {
+		for (Formula f : config.getFormulae().values()) {
 			try {
 				results.add(checker.validate(f, targetPath, enumerateRandom, pack, targetArgs));
 			} catch (Exception e) {
@@ -58,9 +67,20 @@ public class Main {
 		}
 	}
 	
-	//TODO This needs to be refactored to actually check
-	public static boolean checkArgs(String[] args) {
-		return args.length == 5;
+	
+	public static Options buildOptions(String[] args) {
+		Options options = new Options();
+		
+		// Required Options
+		options.addRequiredOption("c", "configPath", true, "config gile path");
+		options.addRequiredOption("t", "targetPath", true, "target file path");
+		
+		// Optional Options 
+		options.addOption(new Option("e", "enumerateRandom", false, "consider randomness"));
+		options.addOption(new Option("p", "package", false, "target contains package declaration"));
+		options.addOption(new Option("args", "targetArgs", true, "cmd line arguments for target"));
+		
+		return options;
 	}
 	
 }

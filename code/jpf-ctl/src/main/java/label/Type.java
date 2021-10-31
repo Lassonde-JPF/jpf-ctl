@@ -1,4 +1,7 @@
-package config;
+package label;
+
+// TODO refactor via ctl package 
+// Inherit type
 
 public enum Type {
 	Initial,
@@ -12,5 +15,12 @@ public enum Type {
 	ReturnedIntegerMethod,
 	ReturnedVoidMethod,
 	SynchronizedStaticMethod,
-	ThrownException
+	ThrownException;
+
+	public static boolean validate(Type type, String qualifiedName) {
+		return true;
+	}
 }
+
+
+
