@@ -17,8 +17,6 @@
 
 package ctl;
 
-import java.util.Map;
-
 import org.ctl.CTLBaseVisitor;
 import org.ctl.CTLParser.AndContext;
 import org.ctl.CTLParser.AtomicPropositionContext;
@@ -37,8 +35,6 @@ import org.ctl.CTLParser.ImpliesContext;
 import org.ctl.CTLParser.NotContext;
 import org.ctl.CTLParser.OrContext;
 import org.ctl.CTLParser.TrueContext;
-
-import config.StructuredCTLConfig;
 
 /**
  * Generates an abstract syntax tree from a parse tree.

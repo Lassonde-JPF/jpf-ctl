@@ -20,8 +20,6 @@ package ctl;
 import java.util.HashSet;
 import java.util.Set;
 
-import label.Type;
-
 /**
  * This class represents the CTL state formula consisting of an atomic proposition.
  * 

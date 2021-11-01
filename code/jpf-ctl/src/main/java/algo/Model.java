@@ -1210,7 +1210,7 @@ public class Model {
 			
 			insetToLabellingFormulaForEachStateMap(state, " satisfies : " + formula.toString());
 			
-			Set<Integer> path = new HashSet<>();		
+			//Set<Integer> path = new HashSet<>();		
 			
 			if(subformulaSat.contains(state))
 			{

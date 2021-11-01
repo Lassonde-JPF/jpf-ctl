@@ -1,6 +1,9 @@
 package config;
 
+import java.io.File;
 import java.io.IOException;
+import java.net.URL;
+import java.net.URLClassLoader;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -20,12 +23,9 @@ import org.antlr.v4.runtime.tree.ParseTree;
 import org.ctl.CTLLexer;
 import org.ctl.CTLParser;
 
-import java.util.regex.Matcher;
 
-import ctl.AtomicProposition;
 import ctl.Formula;
 import ctl.Generator;
-import error.CTLError;
 import label.Label;
 import label.Type;
 import logging.Logger;
@@ -36,6 +36,8 @@ public class StructuredCTLConfig {
 	Map<String, Label> labels;
 	List<Formula> formulae;
 	Set<Type> types;
+	Target target;
+	String targetArgs, enumerateRandom;
 	
 	// Regex 
 	String ALIAS = "[a-zA-Z_][a-zA-Z0-9_]*:\\s*[a-zA-Z_][a-zA-Z0-9_]*\\s*([a-zA-Z_$][a-zA-Z\\d_$]*\\.)*[a-zA-Z_$][a-zA-Z\\d_$]*";
@@ -44,12 +46,12 @@ public class StructuredCTLConfig {
 	// Logging
 	Logger logger;
 	
-	public StructuredCTLConfig(String filePath) throws IOException {
+	public StructuredCTLConfig(File configFile, File targetFile, String targetArgs, String enumerateRandom) throws IOException, ClassNotFoundException {
 		// New logger
 		logger = new Logger(StructuredCTLConfig.class.getName(), "StructuredCTLConfig");
 		
 		// Path to actual .ctl file
-		Path pathToFile = Paths.get(filePath);
+		Path pathToFile = Paths.get(configFile.getPath());
 		
 		// Compile into pattern as we will be checking multiple lines (matches)
 		Pattern ALIAS_PAT = Pattern.compile(ALIAS);
@@ -76,7 +78,7 @@ public class StructuredCTLConfig {
 				this.labels.computeIfAbsent(alias, k -> new Label(type, qualifiedName));
 			}
 			if (FORMULA_PAT.matcher(line).matches()) {
-				String alias = line.split("=")[0].trim(); // TODO consider removing alias for formula
+				//String alias = line.split("=")[0].trim(); // TODO consider removing alias for formula
 				String formula = line.split("=")[1].trim();
 				
 				CharStream input = CharStreams.fromString(formula);
@@ -89,6 +91,30 @@ public class StructuredCTLConfig {
 			}
 		});
 		logger.info("\n\tAtomic Propositions Defined:\n\t\t" + this.labels.toString() + "\n\tFormulae Defined:\n\t\t" + this.formulae.toString());
+	
+		String className, packageName, path;
+		URL[] url;
+		try {
+			className = targetFile.getName().split("\\.")[0];
+			path = targetFile.getParentFile().getPath();
+			url = new URL[] {
+					targetFile.getParentFile().toURI().toURL()
+			};
+			Class.forName(className, false, new URLClassLoader(url));
+			this.target = new Target(className, path);
+		} catch (NoClassDefFoundError | ClassNotFoundException e) {
+			packageName = targetFile.getParentFile().getName();
+			className = packageName + "." + targetFile.getName().split("\\.")[0];
+			path = targetFile.getParentFile().getParentFile().getPath();
+			url = new URL[] {
+					targetFile.getParentFile().getParentFile().toURI().toURL()
+			};
+			Class.forName(className, false, new URLClassLoader(url));
+			this.target = new Target(className, packageName, path);
+		}
+		
+		this.targetArgs = targetArgs;
+		this.enumerateRandom = enumerateRandom;
 	}
 	
 	public Set<Type> getUniqueTypes() { // TODO rename -> only returns types that have label defs
@@ -115,8 +141,16 @@ public class StructuredCTLConfig {
 		return this.formulae;
 	}
 	
-	public Label getLabel(String alias) {
-		return labels.get(alias);
+	public Target getTarget() {
+		return this.target;
+	}
+	
+	public String getTargetArgs() {
+		return this.targetArgs;
+	}
+	
+	public String getEnumerateRandom() {
+		return this.enumerateRandom;
 	}
 	
 }

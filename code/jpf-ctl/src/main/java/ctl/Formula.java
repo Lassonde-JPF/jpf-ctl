@@ -20,8 +20,6 @@ package ctl;
 import java.util.Random;
 import java.util.Set;
 
-import label.Type;
-
 /**
  * This class represents the CTL formula.
  * 
