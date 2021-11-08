@@ -107,3 +107,7 @@ test {
         }
     }
 }
+
+clean.doFirst {
+    delete "${rootDir}/logs"
+}

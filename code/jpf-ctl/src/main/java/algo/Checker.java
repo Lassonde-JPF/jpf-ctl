@@ -41,7 +41,7 @@ public class Checker {
 
 		Target target = this.config.getTarget();
 
-		for (Formula f : this.config.getFormulae()) {
+		for (Formula f : this.config.getFormulae().values()) {
 
 			logger.info("Validation beginning with arguments:\n\tFormula: " + f + "\n\tPath: " + target.getPath());
 
@@ -50,7 +50,6 @@ public class Checker {
 
 				// ... modify config according to your needs
 				conf.setTarget(target.getName());
-				System.out.println(target);
 
 				// Set classpath to target class
 				conf.setProperty("classpath", target.getPath());
@@ -71,19 +70,10 @@ public class Checker {
 				// build the label properties
 				conf.setProperty("label.class", config.getLabelClasses());
 				for (Type t : config.getUniqueTypes()) {
-					conf.setProperty(Type.labelDef(t), config.getLabelsOfType(t)); // TODO causing jpf exception (second
-																					// arg)
+					conf.setProperty(Type.labelDef(t), config.getLabelsOfType(t));
 				}
 
-				// This instantiates JPF but also adds the jpf.properties and other arguments to
-				// the config
 				JPF jpf = new JPF(conf);
-
-				// Print for now the labels and stuff just debugging ya feel?
-				System.out.println("label.class = " + jpf.getConfig().getProperty("label.class"));
-				for (Type t : config.getUniqueTypes()) {
-					System.out.println(Type.labelDef(t) + " = " + jpf.getConfig().getProperty(Type.labelDef(t)));
-				}
 
 				jpf.run();
 				if (jpf.foundErrors()) {
@@ -103,25 +93,23 @@ public class Checker {
 						"JPF encountered an internal error and was forced to terminate... \n" + jx.getMessage());
 			}
 
-			// At this point we know the files exist so now we need to load them...
-			String jpfLabelFile = target + LAB_EXTENSION;
-			String listenerFile = target + TRA_EXTENSION;
+			File labFile = new File(target + LAB_EXTENSION);
+			File traFile = new File(target + TRA_EXTENSION);
 
 			// build pts
 			LabelledPartialTransitionSystem pts;
 			try {
-				pts = new LabelledPartialTransitionSystem(jpfLabelFile, listenerFile);
+				pts = new LabelledPartialTransitionSystem(labFile.getCanonicalPath(), traFile.getCanonicalPath());
 			} catch (IOException e) {
 				throw new ModelCheckingException(
 						"There was an error building the LabelledPartialTransitionSystem object:\n" + e.getMessage());
 			}
 
 			// cleanup files
-			File labFile = new File(jpfLabelFile);
+			
 			if (!labFile.delete()) {
 				logger.severe("File: " + labFile.getName() + " was not deleted");
 			}
-			File traFile = new File(listenerFile);
 			if (!traFile.delete()) {
 				logger.severe("File: " + traFile.getName() + " was not deleted");
 			}

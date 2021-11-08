@@ -8,6 +8,9 @@ build
 src/test/resources/toDot/*.dot
 src/test/resources/toDot/*.pdf
 
+# Ignore logs
+logs
+
 # Ignore output
 *.tra
 *.lab

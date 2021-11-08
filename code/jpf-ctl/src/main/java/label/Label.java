@@ -9,6 +9,11 @@ public class Label {
 		this.qualifiedName = qualifiedName;
 	}
 	
+	public Label(Type type) {
+		this.type = type;
+		this.qualifiedName = "";
+	}
+	
 	public Type getType() {
 		return this.type;
 	}

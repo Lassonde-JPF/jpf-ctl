@@ -12,6 +12,9 @@ import org.apache.commons.cli.*;
 public class Main {
 
 	private static final String JPF_CTL = "jpf-ctl";
+	private static final String CTL_EXTENSION = "ctl";
+	private static final String CLASS_EXTENSION = "class";
+	private static final String DOT = ".";
 
 	// main entry loop for command line version
 	public static void main(String[] args) {
@@ -34,13 +37,35 @@ public class Main {
 		try {
 			cmd = new DefaultParser().parse(options, args);
 
+			// Check that config file exists and is correct
 			String configPath = cmd.getOptionValue("configPath");
+			try {
+				String extension = configPath.substring(configPath.lastIndexOf(DOT) + 1);
+				if (!extension.equals(CTL_EXTENSION)) {
+					throw new ParseException("file has the wrong extension, expected '" + CTL_EXTENSION + "' for "
+							+ configPath + " but was " + extension);
+				}
+			} catch (IndexOutOfBoundsException e) {
+				throw new ParseException(
+						"file does not contain an extension, expected '" + CTL_EXTENSION + "' for " + configPath);
+			}
 			configFile = new File(configPath);
 			if (!configFile.exists()) {
 				throw new ParseException("could not find file specified by: " + configPath);
 			}
 
+			// Check that target file exists and is correct
 			String targetPath = cmd.getOptionValue("targetPath");
+			try {
+				String extension = targetPath.substring(targetPath.lastIndexOf(DOT) + 1);
+				if (!extension.equals(CLASS_EXTENSION)) {
+					throw new ParseException("file has the wrong extension, expected '" + CLASS_EXTENSION + "' for "
+							+ targetPath + " but was " + extension);
+				}
+			} catch (IndexOutOfBoundsException e) {
+				throw new ParseException(
+						"file does not contain an extension, expected '" + CLASS_EXTENSION + "' for " + configPath);
+			}
 			targetFile = new File(targetPath);
 			if (!targetFile.exists()) {
 				throw new ParseException("could not find file specified by: " + targetPath);
@@ -50,13 +75,17 @@ public class Main {
 			enumerateRandom = cmd.hasOption("e") ? "true" : "false";
 		} catch (ParseException e) {
 			new HelpFormatter().printHelp(JPF_CTL, options);
+			System.out.println(e.getMessage());
 			System.exit(1);
 		}
 
 		// Initialize logging service/obj
 		Logger logger = new Logger(Main.class.getName(), "Main");
-		logger.setOutputFile(JPF_CTL + "-" + System.currentTimeMillis());
-		logger.info("Model Checking Started");
+		try {
+			logger.setOutputFile(JPF_CTL + "-" + System.currentTimeMillis());
+		} catch (Exception e) {
+			logger.severe("Error adding file handler to logger" + e);
+		}
 
 		// Load config
 		StructuredCTLConfig config = null;
@@ -64,6 +93,7 @@ public class Main {
 			config = new StructuredCTLConfig(configFile, targetFile, targetArgs, enumerateRandom);
 		} catch (Exception e) {
 			logger.severe("Error building CTL specification: " + e);
+			e.printStackTrace();
 			System.exit(1);
 		}
 
