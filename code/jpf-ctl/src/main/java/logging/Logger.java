@@ -6,7 +6,7 @@ import java.util.logging.FileHandler;
 
 public class Logger {
 	
-	private static final String LOG_EXTENSION = ".log";
+	private static final String LOG_EXTENSION = ".log.dtd";
 	
 	private String prefix;
 	private boolean enabled;
@@ -51,6 +51,7 @@ public class Logger {
 		File logFile = new File("logs/" + fileName + LOG_EXTENSION);
 		logFile.getParentFile().mkdirs();
 		logger.addHandler(new FileHandler(logFile.getCanonicalPath(), 8096, 1, true));
+		logger.setUseParentHandlers(true);
 	}
 
 }

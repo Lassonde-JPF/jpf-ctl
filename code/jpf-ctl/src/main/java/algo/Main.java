@@ -96,6 +96,8 @@ public class Main {
 			e.printStackTrace();
 			System.exit(1);
 		}
+		
+		logger.info("config\n" + config.toString());
 
 		// Build checker and results object(s)
 		Checker checker = new Checker(config);
@@ -105,7 +107,7 @@ public class Main {
 			List<Result> results = checker.validate();
 			// Relay results back to user
 			for (Result r : results) {
-				System.out.println(r.getMessage());
+				logger.info("Result: " + r);
 			}
 		} catch (Exception e) {
 			logger.severe("Error performing validation " + e);

@@ -15,7 +15,34 @@ public enum Type {
 	ThrownException;
 
 	public static boolean validate(Type type, String qualifiedName) {
-		return true;
+		switch (type) {
+		case BooleanLocalVariable:
+			break;
+		case BooleanStaticField:
+			break;
+		case End:
+		case Initial:
+			return true;
+		case IntegerLocalVariable:
+			break;
+		case IntegerStaticField:
+			break;
+		case InvokedMethod:
+			break;
+		case ReturnedBooleanMethod:
+			break;
+		case ReturnedIntegerMethod:
+			break;
+		case ReturnedVoidMethod:
+			break;
+		case SynchronizedStaticMethod:
+			break;
+		case ThrownException:
+			break;
+		default:
+			return false;
+		}
+		return false;
 	}
 	
 	public static String labelDef(Type type) {

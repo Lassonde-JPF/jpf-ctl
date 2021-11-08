@@ -4,7 +4,6 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map.Entry;
 
 import config.LabelledPartialTransitionSystem;
 import config.Result;
@@ -16,9 +15,7 @@ import gov.nasa.jpf.Config;
 import gov.nasa.jpf.JPF;
 import gov.nasa.jpf.JPFConfigException;
 import gov.nasa.jpf.JPFException;
-import label.StateLabelText;
 import label.Type;
-import listeners.PartialTransitionSystemListener;
 import logging.Logger;
 
 public class Checker {
@@ -77,11 +74,7 @@ public class Checker {
 
 				jpf.run();
 				if (jpf.foundErrors()) {
-					String msg = "Model Checking Finished\n For the selected class:\t" + target.getName()
-							+ "\n And the written formula:\t" + f
-							+ "\nIt has been determined that the target system contains an error that needs to be resolved before model checking can commence"
-							+ "\nThe error can be seen below:\n" + jpf.getLastError();
-					results.add(new Result(msg, false));
+					results.add(new Result(target, f, jpf.getLastError().toString(), false));
 				}
 			} catch (JPFConfigException cx) {
 				throw new ModelCheckingException(
@@ -119,21 +112,8 @@ public class Checker {
 
 			boolean valid = m.check(f).getSat().contains(INITIAL_STATE);
 
-			// success
-			if (valid) {
-				String msg = "Model Checking Finished\n For the selected class:\t" + target.getName()
-						+ "\n And the written formula:\t" + f
-						+ "\nIt has been determined that the formula holds in the initial state and is considered valid for this system.";
-				results.add(new Result(msg, valid));
-			}
-
-			// fail
 			try {
-				String msg = "Model Checking Finished\n For the selected class:\t" + target.getName()
-						+ "\n And the written formula:\t" + f
-						+ "\nIt has been determined that the formula does not hold in the initial state and is considered invalid for this system."
-						+ "\nA counter example can be seen below:\n" + m.getCounterExample(f, INITIAL_STATE);
-				results.add(new Result(msg, valid));
+				results.add(new Result(target, f, valid ? null : m.getCounterExample(f, INITIAL_STATE), valid));
 			} catch (Exception e) {
 				throw new ModelCheckingException(
 						"Someting went wrong when building the counter example:\n" + e.getMessage());

@@ -7,10 +7,8 @@ import java.net.URLClassLoader;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
@@ -41,14 +39,14 @@ public class StructuredCTLConfig {
 	String targetArgs, enumerateRandom;
 	
 	// Individual Regex 
-	String VARIABLE_NAME = "[a-zA-Z_$][a-zA-Z_$0-9]*";
-	String TYPE = "[a-zA-Z]+";
+	String VARIABLE_NAME = "[\\p{L}_$][\\p{L}\\p{N}_$]*";
+	String TYPE = "[\\p{L}]+"; 
 	String QUALIFIED_NAME = "([\\p{L}_$][\\p{L}\\p{N}_$]*\\.)*[\\p{L}_$][\\p{L}\\p{N}_$]*";
 	String FORMULA = "[a-zA-Z_(!][a-zA-Z0-9_()!\\s]*";
 	
 	// Line Matchers
 	String ALIAS = "^" + VARIABLE_NAME + ":\\s" + TYPE + "(\\s" + QUALIFIED_NAME + ")*$";
-	String CTL_FORMULA = "^" + VARIABLE_NAME + "\\s=\\s" + FORMULA + "$";
+	String CTL_FORMULA = "^" + VARIABLE_NAME + "\\s*=\\s*" + FORMULA + "$";
 	
 	// Logging
 	Logger logger;
@@ -106,8 +104,7 @@ public class StructuredCTLConfig {
 				this.formulae.computeIfAbsent(alias, k -> f);
 			}
 		});
-		logger.info("\n\tAtomic Propositions Defined:\n\t\t" + this.labels.toString() + "\n\tFormulae Defined:\n\t\t" + this.formulae.toString());
-	
+
 		// Build Target Object
 		String className, packageName, path;
 		URL[] url;
@@ -177,8 +174,8 @@ public class StructuredCTLConfig {
 		for (Entry<String, Label> e : this.labels.entrySet()) {
 			tmp += e.getKey() + ": " + e.getValue() + "\n"; 
 		}
-		for (Formula f : this.formulae.values()) {
-			tmp += f + "\n";
+		for (Entry<String, Formula> e : this.formulae.entrySet()) {
+			tmp += e.getKey() + "=" + e.getValue() + "\n";
 		}
 		tmp += this.target + "\n";
 		tmp += "Target Arguments: " + this.targetArgs + "\n";

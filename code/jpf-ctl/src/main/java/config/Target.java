@@ -21,7 +21,7 @@ public class Target {
 	@Override
 	public String toString() {
 		return "Target Name: " + this.name + "\nTarget Path: " + this.path
-				+ (this.hasPackage ? "\nPackage Name:" + this.packageName : "");
+				+ (this.hasPackage ? "\nPackage Name: " + this.packageName : "");
 	}
 
 	public String getName() {
