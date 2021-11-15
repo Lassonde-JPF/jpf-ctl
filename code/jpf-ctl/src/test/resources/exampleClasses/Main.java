@@ -31,5 +31,9 @@ public class Main {
 			negative = account.getBalance() < 0;
 		}
 	}
+	
+	public static boolean returnsTrue() {
+		return true;
+	}
 
 }

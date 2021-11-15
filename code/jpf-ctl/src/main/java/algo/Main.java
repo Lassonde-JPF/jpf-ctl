@@ -19,7 +19,7 @@ public class Main {
 	// main entry loop for command line version
 	public static void main(String[] args) {
 
-		// Parse command line arguments.
+		// Parse command line arguments
 		Options options = new Options();
 
 		// Required Options
@@ -28,6 +28,7 @@ public class Main {
 
 		// Optional Options
 		options.addOption(new Option("e", "enumerateRandom", false, "consider randomness"));
+		options.addOption(new Option("l", "logging", false, "enable logging"));
 		options.addOption(new Option("args", "targetArgs", true, "cmd line arguments for target"));
 
 		// Parse Options
@@ -71,8 +72,10 @@ public class Main {
 				throw new ParseException("could not find file specified by: " + targetPath);
 			}
 
+			// build remaining arguments
 			targetArgs = cmd.getOptionValue("targetArgs");
 			enumerateRandom = cmd.hasOption("e") ? "true" : "false";
+			Logger.setEnabled(cmd.hasOption("l"));
 		} catch (ParseException e) {
 			new HelpFormatter().printHelp(JPF_CTL, options);
 			System.out.println(e.getMessage());
@@ -84,7 +87,7 @@ public class Main {
 		try {
 			logger.setOutputFile(JPF_CTL + "-" + System.currentTimeMillis());
 		} catch (Exception e) {
-			logger.severe("Error adding file handler to logger" + e);
+			logger.severe("Error adding file handler to logger, logs will not be saved for this execution" + e);
 		}
 
 		// Load config
@@ -96,7 +99,7 @@ public class Main {
 			e.printStackTrace();
 			System.exit(1);
 		}
-		
+
 		logger.info("config\n" + config.toString());
 
 		// Build checker and results object(s)

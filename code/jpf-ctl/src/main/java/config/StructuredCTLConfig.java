@@ -8,11 +8,8 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.Set;
-import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 import org.antlr.v4.runtime.CharStream;
@@ -21,32 +18,23 @@ import org.antlr.v4.runtime.CommonTokenStream;
 import org.antlr.v4.runtime.tree.ParseTree;
 import org.ctl.CTLLexer;
 import org.ctl.CTLParser;
-
+import org.label.LabelLexer;
+import org.label.LabelParser;
 
 import ctl.Formula;
 import ctl.Generator;
-import label.Label;
-import label.Type;
 import logging.Logger;
+
+import label.Label;
 
 public class StructuredCTLConfig {
 	
 	// Config Attributes
 	Map<String, Label> labels;
 	Map<String, Formula> formulae;
-	Set<Type> types;
+
 	Target target;
 	String targetArgs, enumerateRandom;
-	
-	// Individual Regex 
-	String VARIABLE_NAME = "[\\p{L}_$][\\p{L}\\p{N}_$]*";
-	String TYPE = "[\\p{L}]+"; 
-	String QUALIFIED_NAME = "([\\p{L}_$][\\p{L}\\p{N}_$]*\\.)*[\\p{L}_$][\\p{L}\\p{N}_$]*";
-	String FORMULA = "[a-zA-Z_(!][a-zA-Z0-9_()!\\s]*";
-	
-	// Line Matchers
-	String ALIAS = "^" + VARIABLE_NAME + ":\\s" + TYPE + "(\\s" + QUALIFIED_NAME + ")*$";
-	String CTL_FORMULA = "^" + VARIABLE_NAME + "\\s*=\\s*" + FORMULA + "$";
 	
 	// Logging
 	Logger logger;
@@ -58,40 +46,27 @@ public class StructuredCTLConfig {
 		// Path to actual .ctl file
 		Path pathToFile = Paths.get(configFile.getPath());
 		
-		// Compile into pattern as we will be checking multiple lines (matches)
-		Pattern ALIAS_PAT = Pattern.compile(ALIAS);
-		Pattern FORMULA_PAT = Pattern.compile(CTL_FORMULA);
-		
 		// Initialize attributes
-		labels = new HashMap<String, Label>();
 		formulae = new HashMap<String, Formula>();
-		types = new HashSet<Type>();
+		labels = new HashMap<String, Label>();
 
 		// Build formulae and atomic proposition labels
 		Files.lines(pathToFile).map(String::trim).forEach(line -> {
 			// Atomic Proposition
-			if (ALIAS_PAT.matcher(line).matches()) {
+			if (line.contains(":")) {
 				String alias = line.split(":\\s")[0].trim();
-				String fields = line.split(":\\s")[1].trim();
+				String fields = line.substring(line.indexOf(":")+1).trim();
 				
-				Label label;
+				CharStream input = CharStreams.fromString(fields);
 				
-				String BINARY_TYPE = TYPE + "\\s" + QUALIFIED_NAME;
-				if (Pattern.compile(BINARY_TYPE).matcher(fields).matches()) {
-					Type type = Type.valueOf(fields.split("\\s")[0]);
-					String qualifiedName = fields.split("\\s")[1];
-					label = new Label(type, qualifiedName);
-					this.types.add(type);
-				} else {
-					Type type = Type.valueOf(fields);
-					label = new Label(type);
-					this.types.add(type);
-				}
+				ParseTree pT = new LabelParser(new CommonTokenStream(new LabelLexer(input))).label();
+				
+				Label l = new label.Generator().visit(pT);
 
-				this.labels.computeIfAbsent(alias, k -> label);
+				this.labels.computeIfAbsent(alias, k -> l);
 			}
 			// Formula
-			if (FORMULA_PAT.matcher(line).matches()) {
+			if (line.contains("=")) {
 				String alias = line.split("=")[0].trim(); 
 				String formula = line.split("=")[1].trim();
 				
@@ -132,25 +107,17 @@ public class StructuredCTLConfig {
 		this.enumerateRandom = enumerateRandom;
 	}
 	
-	public Set<Type> getUniqueTypes() { // TODO rename -> only returns types that have label defs
-		return this.types.stream()
-				.filter(type -> !type.equals(Type.Initial))
-				.filter(type -> !type.equals(Type.End))
-				.collect(Collectors.toSet());
-	}
-	
 	public String getLabelClasses() {
-		return this.types.stream()
-				.map(t -> "label." + t.toString())
-				.collect(Collectors.joining("; "));
+		return this.labels.values().stream()
+				.map(Label::classDef)
+				.distinct()
+				.collect(Collectors.joining(";"));
 	}
 	
-	public String getLabelsOfType(Type t) {
-		return this.labels.values().stream()
-				.filter(v -> v.getType().equals(t))
-				.map(Label::getQualifiedName)
-				.collect(Collectors.joining("; "));
+	public Map<String, Label> getLabels() {
+		return this.labels;
 	}
+	
 	
 	public Map<String, Formula> getFormulae() {
 		return this.formulae;

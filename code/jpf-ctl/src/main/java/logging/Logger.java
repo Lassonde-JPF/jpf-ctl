@@ -7,44 +7,43 @@ import java.util.logging.FileHandler;
 public class Logger {
 	
 	private static final String LOG_EXTENSION = ".log.dtd";
+	private static boolean enabled = false;
 	
 	private String prefix;
-	private boolean enabled;
 	private java.util.logging.Logger logger;
 	
 	public Logger(String className, String prefix) {
 		this.logger = java.util.logging.Logger.getLogger(className);
 		this.prefix = "[" + prefix + "] ";
-		this.enabled = true;
 	}
 
 	public void info(String msg) {
-		if (this.enabled) {
-			logger.info(this.prefix + msg);
+		if (Logger.enabled) {
+			logger.info(this.prefix + msg + "\n");
 		}
 	}
 	
 	public void warning(String msg) {
-		if (this.enabled) {
-			logger.warning(this.prefix + msg);
+		if (Logger.enabled) {
+			logger.warning(this.prefix + msg + "\n");
 		}
 	}
 	
 	public void severe(String msg) {
-		if (this.enabled) {
-			logger.severe(this.prefix + msg);
+		if (Logger.enabled) {
+			logger.severe(this.prefix + msg + "\n");
 		}
 	}
 	
 	public void fine(String msg) {
-		if (this.enabled) {
-			logger.fine(this.prefix + msg);
+		if (Logger.enabled) {
+			logger.fine(this.prefix + msg + "\n");
 		}
 	}
 	
-	public boolean setEnabled(boolean val) {
-		this.enabled = val;
-		return this.enabled;
+	public static boolean setEnabled(boolean val) {
+		Logger.enabled = val;
+		return Logger.enabled;
 	}
 	
 	public void setOutputFile(String fileName) throws SecurityException, IOException {
@@ -52,6 +51,10 @@ public class Logger {
 		logFile.getParentFile().mkdirs();
 		logger.addHandler(new FileHandler(logFile.getCanonicalPath(), 8096, 1, true));
 		logger.setUseParentHandlers(true);
+	}
+	
+	public java.util.logging.Logger getRawLogger() {
+		return this.logger;
 	}
 
 }

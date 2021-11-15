@@ -15,7 +15,7 @@ import gov.nasa.jpf.Config;
 import gov.nasa.jpf.JPF;
 import gov.nasa.jpf.JPFConfigException;
 import gov.nasa.jpf.JPFException;
-import label.Type;
+import label.BinaryLabel;
 import logging.Logger;
 
 public class Checker {
@@ -59,17 +59,31 @@ public class Checker {
 				// only needed if randomization is used
 				conf.setProperty("cg.enumerate_random", config.getEnumerateRandom());
 
-				conf.setProperty("@using", "jpf-ctl"); // SHouldn't be requires as it's defined in jpf.properties
+				// set extensions
+				conf.setProperty("@using", "jpf-ctl"); // Shouldn't be required as it's defined in jpf.properties
 
 				// Set Listeners
 				conf.setProperty("listener", "label.StateLabelText;listeners.PartialTransitionSystemListener");
 
 				// build the label properties
 				conf.setProperty("label.class", config.getLabelClasses());
-				for (Type t : config.getUniqueTypes()) {
-					conf.setProperty(Type.labelDef(t), config.getLabelsOfType(t));
-				}
-
+				config.getLabels().values().stream()
+					.filter(BinaryLabel.class::isInstance)
+					.map(BinaryLabel.class::cast)
+					.forEach(bL -> {
+						String prev = conf.getProperty(bL.labelDef());
+						conf.setProperty(bL.labelDef(), prev == null ? bL.labelVal() : prev + ";" + bL.labelVal());
+					});
+				
+				//print this for debugging rn
+				System.out.println("label.class=" + conf.getProperty("label.class"));
+				config.getLabels().values().stream()
+					.filter(BinaryLabel.class::isInstance)
+					.map(BinaryLabel.class::cast)
+					.map(BinaryLabel::labelDef)
+					.distinct()
+					.forEach(lD -> System.out.println(lD + "=" + conf.getProperty(lD)));
+				
 				JPF jpf = new JPF(conf);
 
 				jpf.run();
@@ -99,7 +113,6 @@ public class Checker {
 			}
 
 			// cleanup files
-			
 			if (!labFile.delete()) {
 				logger.severe("File: " + labFile.getName() + " was not deleted");
 			}
