@@ -24,7 +24,7 @@ import algo.Model;
 import algo.StateSets;
 import config.LabelledPartialTransitionSystem;
 import error.CTLError;
-import error.FieldExists;
+import error.LabelChecker;
 
 public class CounterExampleTest {
     	private Generator generator;
@@ -90,8 +90,8 @@ public class CounterExampleTest {
 
 		ParseTree tree = parser.formula();
 
-		ParseTreeWalker walker = new ParseTreeWalker();
-		walker.walk(new FieldExists(), tree);
+		//ParseTreeWalker walker = new ParseTreeWalker();
+		//walker.walk(new LabelChecker(), tree);
 
 		return tree;
 	}

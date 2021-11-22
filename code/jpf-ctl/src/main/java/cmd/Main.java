@@ -1,4 +1,4 @@
-package algo;
+package cmd;
 
 import java.io.File;
 import java.util.List;
@@ -8,6 +8,8 @@ import config.StructuredCTLConfig;
 import logging.Logger;
 
 import org.apache.commons.cli.*;
+
+import algo.Checker;
 
 public class Main {
 

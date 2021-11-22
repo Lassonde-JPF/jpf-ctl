@@ -21,4 +21,5 @@ public class BooleanLocalVariable extends BinaryLabel {
 	public String labelVal() {
 		return this.qualifiedName + parameterTypes + ":" + variableName;
 	}
+	
 }

@@ -1,5 +1,9 @@
 package label;
 
+import java.util.List;
+import java.util.regex.Pattern;
+import java.util.stream.Collectors;
+
 import org.label.LabelBaseVisitor;
 import org.label.LabelParser;
 
@@ -17,51 +21,58 @@ public class Generator extends LabelBaseVisitor<Label> {
 
 	@Override
 	public Label visitBooleanStaticField(LabelParser.BooleanStaticFieldContext ctx) {
-		return new BooleanStaticField(ctx.QUALIFIEDNAME().getText());
+		return new BooleanStaticField(ctx.referenceType().getText());
 	}
 
 	@Override
 	public Label visitIntegerStaticField(LabelParser.IntegerStaticFieldContext ctx) {
-		return new IntegerStaticField(ctx.QUALIFIEDNAME().getText());
+		return new IntegerStaticField(ctx.referenceType().getText());
 	}
 
 	@Override
 	public Label visitBooleanLocalVariable(LabelParser.BooleanLocalVariableContext ctx) {
-		return new BooleanLocalVariable(ctx.QUALIFIEDNAME().getText(), ctx.PARAMETERS().getText(), ctx.IDENTIFIER().getText());
+		return new BooleanLocalVariable(ctx.referenceType().getText(), ctx.parameters().getText(), ctx.variableType().getText());
 	}
 
 	@Override
 	public Label visitIntegerLocalVariable(LabelParser.IntegerLocalVariableContext ctx) {
-		return new IntegerLocalVariable(ctx.QUALIFIEDNAME().getText(), ctx.PARAMETERS().getText(), ctx.IDENTIFIER().getText());
+		return new IntegerLocalVariable(ctx.referenceType().getText(), ctx.parameters().getText(), ctx.variableType().getText());
 	}
 
 	@Override
 	public Label visitInvokedMethod(LabelParser.InvokedMethodContext ctx) {
-		return new InvokedMethod(ctx.QUALIFIEDNAME().getText(), ctx.PARAMETERS().getText());
+		return new InvokedMethod(ctx.referenceType().getText(), ctx.parameters().getText());
 	}
 
 	@Override
 	public Label visitReturnedVoidMethod(LabelParser.ReturnedVoidMethodContext ctx) {
-		return new ReturnedVoidMethod(ctx.QUALIFIEDNAME().getText(), ctx.PARAMETERS().getText());
+		return new ReturnedVoidMethod(ctx.referenceType().getText(), ctx.parameters().getText());
 	}
 
 	@Override
 	public Label visitReturnedBooleanMethod(LabelParser.ReturnedBooleanMethodContext ctx) {
-		return new ReturnedBooleanMethod(ctx.QUALIFIEDNAME().getText(), ctx.PARAMETERS().getText());
+		return new ReturnedBooleanMethod(ctx.referenceType().getText(), ctx.parameters().getText());
 	}
 
 	@Override
 	public Label visitReturnedIntegerMethod(LabelParser.ReturnedIntegerMethodContext ctx) {
-		return new ReturnedIntegerMethod(ctx.QUALIFIEDNAME().getText(), ctx.PARAMETERS().getText());
+		return new ReturnedIntegerMethod(ctx.referenceType().getText(), ctx.parameters().getText());
 	}
 
 	@Override
 	public Label visitThrownException(LabelParser.ThrownExceptionContext ctx) {
-		return new ThrownException(ctx.QUALIFIEDNAME().getText());
+		return new ThrownException(ctx.referenceType().getText());
 	}
 
 	@Override
 	public Label visitSynchronizedStaticMethod(LabelParser.SynchronizedStaticMethodContext ctx) {
-		return new SynchronizedStaticMethod(ctx.QUALIFIEDNAME().getText(), ctx.PARAMETERS().getText());
+		return new SynchronizedStaticMethod(ctx.referenceType().getText(), ctx.parameters().getText());
 	}
+	
+	
+	@SuppressWarnings("unused")
+	private List<String> extractParameters(String parameterString) {
+		return Pattern.compile(",").splitAsStream(parameterString).collect(Collectors.toList());
+	}
+	
 }

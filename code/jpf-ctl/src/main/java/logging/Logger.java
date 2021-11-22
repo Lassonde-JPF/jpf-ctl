@@ -46,10 +46,11 @@ public class Logger {
 		return Logger.enabled;
 	}
 	
+	// Set Formatter (default xml)
 	public void setOutputFile(String fileName) throws SecurityException, IOException {
 		File logFile = new File("logs/" + fileName + LOG_EXTENSION);
 		logFile.getParentFile().mkdirs();
-		logger.addHandler(new FileHandler(logFile.getCanonicalPath(), 8096, 1, true));
+		logger.addHandler(new FileHandler(logFile.getCanonicalPath(), 0, 1, true));
 		logger.setUseParentHandlers(true);
 	}
 	

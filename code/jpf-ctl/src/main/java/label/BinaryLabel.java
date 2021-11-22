@@ -15,6 +15,11 @@ public abstract class BinaryLabel implements Label {
 		return BinaryLabel.label_prefix + this.name;
 	} 
 	
+	@Override
+	public String toString() {
+		return this.name + "__" + this.labelVal().replaceAll("\\.", "_");
+	}
+	
 	public abstract String labelDef();
 	
 	public abstract String labelVal();

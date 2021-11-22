@@ -28,7 +28,7 @@ import algo.StateSets;
 import algo.Transition;
 import config.LabelledPartialTransitionSystem;
 import error.CTLError;
-import error.FieldExists;
+import error.LabelChecker;
 
 public class ModelCheckerTest {
 	private Generator generator;
@@ -481,8 +481,8 @@ public class ModelCheckerTest {
 
 		ParseTree tree = parser.formula();
 
-		ParseTreeWalker walker = new ParseTreeWalker();
-		walker.walk(new FieldExists(), tree);
+		//ParseTreeWalker walker = new ParseTreeWalker();
+		//walker.walk(new LabelChecker(), tree);
 
 		return tree;
 	}

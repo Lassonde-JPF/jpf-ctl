@@ -25,7 +25,7 @@ import ctl.Formula;
 import ctl.Generator;
 import error.AtomicPropositionDoesNotExistException;
 import error.CTLError;
-import error.FieldExists;
+import error.LabelChecker;
 import error.ModelCheckingException;
 import gov.nasa.jpf.Config;
 import gov.nasa.jpf.JPF;
@@ -71,12 +71,12 @@ public class ModelChecker {
 		/*
 		 * Perform Error Checking on input formula and gather APs for use with jpf-ctl
 		 */
-		ParseTreeWalker walker = new ParseTreeWalker();
-		try {
-			walker.walk(new FieldExists(classpath), tree); // TODO fix
-		} catch (AtomicPropositionDoesNotExistException e) {
-			// throw new ModelCheckingException(e.getMessage());
-		}
+//		ParseTreeWalker walker = new ParseTreeWalker();
+//		try {
+//			walker.walk(new FieldExists(), tree); // TODO fix
+//		} catch (AtomicPropositionDoesNotExistException e) {
+//			// throw new ModelCheckingException(e.getMessage());
+//		}
 
 		// At this point we know the formula is correct.
 		Formula formula = new Generator().visit(tree);
@@ -105,9 +105,9 @@ public class ModelChecker {
 			conf.setProperty("listener", "label.StateLabelText,listeners.PartialTransitionSystemListener");
 			
 			// build the label properties
-			String fields = FieldExists.APs.stream().collect(Collectors.joining("; "));
-			conf.setProperty("label.class", "label.BooleanStaticField");
-			conf.setProperty("label.BooleanStaticField.field", fields);
+			//String fields = FieldExists.APs.stream().collect(Collectors.joining("; "));
+			//conf.setProperty("label.class", "label.BooleanStaticField");
+			//conf.setProperty("label.BooleanStaticField.field", fields);
 
 			// This instantiates JPF but also adds the jpf.properties and other arguments to
 			// the config

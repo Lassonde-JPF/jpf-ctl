@@ -7,7 +7,9 @@ import java.net.URLClassLoader;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.stream.Collectors;
@@ -26,15 +28,18 @@ import ctl.Generator;
 import logging.Logger;
 
 import label.Label;
+import error.LabelChecker;
+import error.LabelDoesNotExistException;
 
 public class StructuredCTLConfig {
 	
 	// Config Attributes
-	Map<String, Label> labels;
-	Map<String, Formula> formulae;
+	private Map<String, Label> labels;
+	private Map<String, Formula> formulae;
+	private List<ParseTree> formulaeTrees;
 
-	Target target;
-	String targetArgs, enumerateRandom;
+	private Target target;
+	private String targetArgs, enumerateRandom;
 	
 	// Logging
 	Logger logger;
@@ -48,44 +53,50 @@ public class StructuredCTLConfig {
 		
 		// Initialize attributes
 		formulae = new HashMap<String, Formula>();
+		formulaeTrees = new ArrayList<ParseTree>();
 		labels = new HashMap<String, Label>();
 
 		// Build formulae and atomic proposition labels
 		Files.lines(pathToFile).map(String::trim).forEach(line -> {
 			// Atomic Proposition
 			if (line.contains(":")) {
-				String alias = line.split(":\\s")[0].trim();
-				String fields = line.substring(line.indexOf(":")+1).trim();
-				
-				CharStream input = CharStreams.fromString(fields);
-				
+				String alias = line.substring(0, line.indexOf(":")).trim();
+				String label = line.substring(line.indexOf(":") + 1).trim();
+		
+				CharStream input = CharStreams.fromString(label);
 				ParseTree pT = new LabelParser(new CommonTokenStream(new LabelLexer(input))).label();
-				
 				Label l = new label.Generator().visit(pT);
-
+				
 				this.labels.computeIfAbsent(alias, k -> l);
 			}
 			// Formula
 			if (line.contains("=")) {
-				String alias = line.split("=")[0].trim(); 
-				String formula = line.split("=")[1].trim();
+				String alias = line.substring(0, line.indexOf("=")).trim(); 
+				String formula = line.substring(line.indexOf("=") + 1).trim();
 				
 				CharStream input = CharStreams.fromString(formula);
-				
 				ParseTree pT = new CTLParser(new CommonTokenStream(new CTLLexer(input))).formula();
-				
 				Formula f = new Generator().visit(pT);
-				
+
 				this.formulae.computeIfAbsent(alias, k -> f);
 			}
 		});
-
+		
+		// Check correctness
+		for (ParseTree pT : formulaeTrees) {
+			try {
+				LabelChecker.checkLabelsExist(this.labels.keySet(), pT);
+			} catch (LabelDoesNotExistException e) {
+				logger.warning(e.getMessage());
+			}
+		}
+		
 		// Build Target Object
 		String className, packageName, path;
 		URL[] url;
 		try {
 			className = targetFile.getName().split("\\.")[0];
-			path = targetFile.getParentFile().getPath();
+			path = targetFile.getParentFile().getCanonicalPath();
 			url = new URL[] {
 					targetFile.getParentFile().toURI().toURL()
 			};
@@ -94,7 +105,7 @@ public class StructuredCTLConfig {
 		} catch (NoClassDefFoundError | ClassNotFoundException e) {
 			packageName = targetFile.getParentFile().getName();
 			className = packageName + "." + targetFile.getName().split("\\.")[0];
-			path = targetFile.getParentFile().getParentFile().getPath();
+			path = targetFile.getParentFile().getParentFile().getCanonicalPath();
 			url = new URL[] {
 					targetFile.getParentFile().getParentFile().toURI().toURL()
 			};
@@ -118,7 +129,6 @@ public class StructuredCTLConfig {
 		return this.labels;
 	}
 	
-	
 	public Map<String, Formula> getFormulae() {
 		return this.formulae;
 	}
@@ -137,10 +147,11 @@ public class StructuredCTLConfig {
 	
 	@Override
 	public String toString() {
-		String tmp = "";
+		String tmp = "Atomic Propositions:\n";
 		for (Entry<String, Label> e : this.labels.entrySet()) {
 			tmp += e.getKey() + ": " + e.getValue() + "\n"; 
 		}
+		tmp += "Formulae:\n";
 		for (Entry<String, Formula> e : this.formulae.entrySet()) {
 			tmp += e.getKey() + "=" + e.getValue() + "\n";
 		}

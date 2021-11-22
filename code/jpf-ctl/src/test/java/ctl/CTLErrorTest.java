@@ -10,7 +10,7 @@ import org.ctl.CTLParser;
 import org.junit.jupiter.api.BeforeEach;
 
 import error.CTLError;
-import error.FieldExists;
+import error.LabelChecker;
 
 
 public class CTLErrorTest {
@@ -79,8 +79,8 @@ public class CTLErrorTest {
 		
 		ParseTree tree = parser.formula();
 		
-		ParseTreeWalker walker = new ParseTreeWalker();
-		walker.walk(new FieldExists(), tree);
+		//ParseTreeWalker walker = new ParseTreeWalker();
+		//walker.walk(new LabelChecker(), tree);
 
 		return tree;
 	}

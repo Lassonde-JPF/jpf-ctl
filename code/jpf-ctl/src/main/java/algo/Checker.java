@@ -59,12 +59,6 @@ public class Checker {
 				// only needed if randomization is used
 				conf.setProperty("cg.enumerate_random", config.getEnumerateRandom());
 
-				// set extensions
-				conf.setProperty("@using", "jpf-ctl"); // Shouldn't be required as it's defined in jpf.properties
-
-				// Set Listeners
-				conf.setProperty("listener", "label.StateLabelText;listeners.PartialTransitionSystemListener");
-
 				// build the label properties
 				conf.setProperty("label.class", config.getLabelClasses());
 				config.getLabels().values().stream()
@@ -74,15 +68,6 @@ public class Checker {
 						String prev = conf.getProperty(bL.labelDef());
 						conf.setProperty(bL.labelDef(), prev == null ? bL.labelVal() : prev + ";" + bL.labelVal());
 					});
-				
-				//print this for debugging rn
-				System.out.println("label.class=" + conf.getProperty("label.class"));
-				config.getLabels().values().stream()
-					.filter(BinaryLabel.class::isInstance)
-					.map(BinaryLabel.class::cast)
-					.map(BinaryLabel::labelDef)
-					.distinct()
-					.forEach(lD -> System.out.println(lD + "=" + conf.getProperty(lD)));
 				
 				JPF jpf = new JPF(conf);
 
