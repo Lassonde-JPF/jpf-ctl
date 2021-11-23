@@ -35,7 +35,7 @@ import org.ctl.CTLParser;
  * @author Parssa Khazra
  * @author Hongru Wang
  */
-public class BaseTest {
+public abstract class BaseTest {
 	protected Generator generator;
 
 	/**
