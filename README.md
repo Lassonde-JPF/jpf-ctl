@@ -8,7 +8,7 @@
 - [Installation instructions for using jpf-ctl](#Installation-instructions-for-using-jpf-ctl)
   - [Java](#Java)
   - [Git](#Git)
-  - [Java PathFinder (jpf-core)](#Java-PathFinder-\(jpf-core\))
+  - [Java PathFinder (jpf-core)](#<Java-PathFinder-(jpf-core)>)
   - [jpf-label](#jpf-label)
   - [jpf-ctl](#jpf-ctl)
 - [Installation instructions for developing jpf-ctl](#Installation-instructions-for-developing-jpf-ctl)
@@ -16,7 +16,7 @@
   - [jpf-nhandler](#jpf-nhandler)
 - [Using jpf-ctl](#Using-jpf-ctl)
 - [Contributing to jpf-ctl](#Contributing-to-jpf-ctl)
-- [License](License)
+- [License](#License)
 - [Contact](#Contact)
 
 ## About jpf-ctl
