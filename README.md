@@ -7,7 +7,7 @@
   <h3 align="center">jpf-ctl</h3>
 </p>
 
-- About jpf-ctl
+- [About jpf-ctl](#About-jpf-ctl)
   - Limitations
 - Installation instructions for using jpf-ctl
   - Java
