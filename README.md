@@ -1,31 +1,27 @@
 <!-- PROJECT LOGO -->
-
-
-![jpf-ctl logo](resources/jpf-ctl-logo.png)
-
-
 <p align="center">
   <a href="https://github.com/Lassonde-JPF/jpf-ctl">
-    <img src="resources/jpf-ctl-logo.png" alt="Logo" width="150" height="120">
+    <img src="resources/jpf-ctl-logo.png" alt="jpf-ctl logo" width="150" height="120">
   </a>
 
   <h3 align="center">jpf-ctl</h3>
-
-  <p align="center">
-    CTL model checking of Java code
-    <br />
-    <a href=""><strong>Explore the docs »</strong></a>
-    <br />
-    <br />
-    <a href="">View Demo</a>
-    ·
-    <a href="https://github.com/Lassonde-JPF/jpf-ctl-extension/issues">Report Bug</a>
-    ·
-    <a href="https://github.com/Lassonde-JPF/jpf-ctl-extension/issues">Request Feature</a>
-  </p>
 </p>
 
-
+- About jpf-ctl
+  - Limitations
+- Installation instructions for using jpf-ctl
+  - Java
+  - Git
+  - Java PathFinder (jpf-core)
+  - jpf-label
+  - jpf-ctl
+- Installation instructions for developing jpf-ctl
+  - ANTLR4
+  - jpf-nhandler
+- Using jpf-ctl
+- Contributing to jpf-ctl
+- License
+- Contact
 
 <!-- TABLE OF CONTENTS -->
 <details open="open">
@@ -53,9 +49,6 @@
   </ol>
 </details>
 
-
-
-<!-- ABOUT THE PROJECT -->
 ## About jpf-ctl
 
 The most common approach to finding errors in software is testing. However, testing is of limited use when checking *concurrent software* for errors. Hence, other techniques, including *model checking*, have been developed to supplement testing. We focus on Java as Java is one of the most widely used programming languages. Presently, the most popular tool for model checking of Java code, [*Java PathFinder*](https://github.com/javapathfinder) (JPF), does not support the checking of properties expressed in temporal logics; instead, it checks properties such as deadlocks and data races. To resolve this, we present jpf-ctl, an extension of JPF which supports the checking of properties specified in *computational tree logic* (CTL). 
@@ -214,20 +207,16 @@ to JPF's site.properties file.
 
 JPF's extension jpf-nhandler is used to test a listener of jpf-ctl.
 
-
-
 ## Documentation
 
 Documentation for jpf-ctl can be found within the [documentation](/documentation/) directory.  The PDF version can be directly accessed using the following 
 [link](/documentation/report.pdf).
 
-<!-- USAGE EXAMPLES -->
-## Usage
+## Using jpf-ctl
 
 << how to use >>
 
-<!-- CONTRIBUTING -->
-## Contributing
+## Contributing to jpf-ctl
 
 If you wish to contribute to jpf-ctl by addressing some of the [open issues](https://github.com/Lassonde-JPF/jpf-ctl-extension/issues) or suggesting new features, please note that we do not have time to review minor changes such as variable renames, spelling mistakes, etc. If you would wish to point these out, please create an issue rather than a pull request.
 
@@ -237,12 +226,10 @@ If you wish to contribute to jpf-ctl by addressing some of the [open issues](htt
 4. Push to the branch (`git push origin feature/AmazingFeature`).
 5. Open a pull request.
 
-<!-- LICENSE -->
 ## License
 
 Distributed under the GNU General Public License v3. See [LICENSE](LICENSE.md) for more information.
 
-<!-- CONTACT -->
 ## Contact
 
 The following contacts are responsible for the development and management of the jpf-ctl.
@@ -255,15 +242,3 @@ The following contacts are responsible for the development and management of the
 **Hongru Wang** - [HongruWang](https://github.com/HongruWang-123)  
 **Franck van Breugel** - [franck-van-breugel](https://github.com/franck-van-breugel)
 
-<!-- MARKDOWN LINKS & IMAGES -->
-<!-- https://www.markdownguide.org/basic-syntax/#reference-style-links -->
-[contributors-shield]: https://img.shields.io/github/contributors/othneildrew/Best-README-Template.svg?style=for-the-badge
-[contributors-url]: https://github.com/Lassonde-JPF/jpf-ctl-extension/graphs/contributors
-[forks-shield]: https://img.shields.io/github/forks/othneildrew/Best-README-Template.svg?style=for-the-badge
-[forks-url]: https://github.com/Lassonde-JPF/jpf-ctl-extension/network/members
-[stars-shield]: https://img.shields.io/github/stars/othneildrew/Best-README-Template.svg?style=for-the-badge
-[stars-url]: https://github.com/Lassonde-JPF/jpf-ctl-extension/stargazers
-[issues-shield]: https://img.shields.io/github/issues/othneildrew/Best-README-Template.svg?style=for-the-badge
-[issues-url]: https://github.com/Lassonde-JPF/jpf-ctl-extension/issues
-[license-shield]: https://img.shields.io/github/license/othneildrew/Best-README-Template.svg?style=for-the-badge
-[license-url]: https://github.com/Lassonde-JPF/jpf-ctl-extension/blob/main/LICENSE
