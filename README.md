@@ -164,49 +164,59 @@ Resolving deltas: 100% (1491/1491), done.
 BUILD SUCCESSFUL in 25s
 6 actionable tasks: 6 executed
 ```
+3. Add
+```
+jpf-ctl=<path to jpf-ctl's directory>
+```
+to JPF's site.properties file.
+
 ## Installation instructions for developing jpf-ctl
 
-In addition to [these](#Installation-instructions-for-using-jpf-ctl) instructions, 
+Start with [these](#Installation-instructions-for-using-jpf-ctl) instructions.  Continue with the following. 
 
-**Using Direct Source Code:**
-1. Clone the repository
-2. Navigate to the build directory
-3. Run `gradlew build`
-4. Navigate to the `build/libs` directory
-5. Open a command window here
-6. Run jpf-ctl using `java -jar jpf-ctl-all.jar`
+### ANTLR4 
 
-**Through downloading a release**
-1. Download the latest version of jpf-ctl 
-2. Place the downloaded jar in some location on your machine
-3. Run jpf-ctl using `java -jar jpf-ctl-all.jar`
+Install [ANTLR4](https://github.com/antlr/antlr4/blob/master/doc/getting-started.md) (we have successfully used version 4.9.2).  ANTLR4 is used to parse CTL formulas.
 
-#### Development
-The following prerequisites are required to develop with jpf-ctl and are required _in addition to_ the normal usage requirements defined above
+### jpf-nhandler
 
-* **[ANTLR4 (4.9.2)](https://github.com/antlr/antlr4/blob/master/doc/getting-started.md)** <br/>
-  Used for developing/defining the grammar of CTL which jpf-ctl uses as properties to model check
-* **[jpf-nhandler](https://github.com/javapathfinder/jpf-nhandler)** <br/>
-
+1. Clone [jpf-nhandler](https://github.com/javapathfinder/jpf-nhandler) using Git: go the directory where you want to put jpf-nhandler and issue the following command.
 
 ```
 > git clone https://github.com/javapathfinder/jpf-nhandler.git
 Cloning into 'jpf-nhandler'...
-remote: Enumerating objects: 1882, done.
-remote: Counting objects: 100% (1882/1882), done.
-remote: Compressing objects: 100% (581/581), done.
-remote: Total 1882 (delta 1122), reused 1882 (delta 1122), pack-reused 0
-Receiving objects: 100% (1882/1882), 6.84 MiB | 1.18 MiB/s, done.
-Resolving deltas: 100% (1122/1122), done.
+remote: Enumerating objects: 1954, done.
+remote: Counting objects: 100% (1954/1954), done.
+remote: Compressing objects: 100% (628/628), done.
+remote: Total 1954 (delta 1152), reused 1932 (delta 1138), pack-reused 0
+Receiving objects:  99% (1935/1954), 8.25 MiB | 1.17 MiB/s
+Receiving objects: 100% (1954/1954), 8.81 MiB | 1.17 MiB/s, done.
+Resolving deltas: 100% (1152/1152), done.
 ```
+2. Build jpf-nhandler with the Gradle wrapper: inside the jpf-nhandler directory, issue the following command.
+```
+> .\gradlew
+
+> Task :compileJava
+C:\Users\montreal\Downloads\tmp\jpf-nhandler\src\main\java\nhandler\conversion\jpf2jvm\JPF2JVMGenericConverter.java:227: warning: sun.reflect.ReflectionFactory is internal proprietary API and may be removed in a future release
+        ctor = sun.reflect.ReflectionFactory.getReflectionFactory().newConstructorForSerialization(cl, Object.class.getConstructor());
+                          ^
+Note: Some input files use unchecked or unsafe operations.
+Note: Recompile with -Xlint:unchecked for details.
+1 warning
+
+BUILD SUCCESSFUL in 29s
+4 actionable tasks: 4 executed
+```
+3. Add
+```
+jpf-nhandler=<path to jpf-nhandler's directory>
+```
+to JPF's site.properties file.
+
+JPF's extension jpf-nhandler is used to test a listener of jpf-ctl.
 
 
-
-  Used for testing the jpf-partial-transition-system-listener, specifically, to setup testing environments outside of JPF
-
-### Installation
-
-<< installation instructions >>
 
 ## Documentation
 
