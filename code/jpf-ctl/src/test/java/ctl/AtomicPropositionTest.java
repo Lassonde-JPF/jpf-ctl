@@ -34,58 +34,6 @@ import org.junit.jupiter.api.Test;
  */
 public class AtomicPropositionTest extends BaseTest {
 	
-//	/**
-//	 * Tests an atomic proposition consisting of Korean characters.
-//	 */
-//	@Test
-//	public void testKoreanName() {
-//		String atomicProposition = "자.바.클.래.스";
-//		Formula expected = new AtomicProposition(atomicProposition);
-//		ParseTree tree = parse(atomicProposition);
-//		Formula actual = this.generator.visit(tree);
-//		assertNotNull(actual);
-//		assertEquals(expected, actual);
-//	}
-	
-//	/**
-//	 * Tests an atomic proposition consisting of Vietnamese characters.
-//	 */
-//	@Test
-//	public void testVietnameseName() {
-//		String atomicProposition = "cụcCứt.cụcCứt";
-//		Formula expected = new AtomicProposition(atomicProposition);
-//		ParseTree tree = parse(atomicProposition);
-//		Formula actual = this.generator.visit(tree);
-//		assertNotNull(actual);
-//		assertEquals(expected, actual);
-//	}
-	
-//	/**
-//	 * Tests an atomic proposition that starts with a number.
-//	 */
-//	@Test
-//	public void testNumberFirst() {
-//		String atomicProposition = "1java.awt";
-//		Formula expected = new AtomicProposition(atomicProposition);
-//		ParseTree tree = parse(atomicProposition);
-//		Formula actual = this.generator.visit(tree);
-//		assertNotNull(actual);
-//		assertEquals(expected, actual);
-//	}
-	
-//	/**
-//	 * Tests an atomic proposition that starts with a special character.
-//	 */
-//	@Test
-//	public void testSpecialCharacterFirst() {
-//		String atomicProposition = "#java.awt";
-//		Formula expected = new AtomicProposition(atomicProposition);
-//		ParseTree tree = parse(atomicProposition);
-//		Formula actual = this.generator.visit(tree);
-//		assertNotNull(actual);
-//		assertEquals(expected, actual);
-//	}
-	
 	/**
 	 * Tests a very long atomic proposition.
 	 */
