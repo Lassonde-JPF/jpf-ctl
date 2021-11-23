@@ -161,11 +161,12 @@ Resolving deltas: 100% (1491/1491), done.
 ```
 > .\gradlew
 
-
+BUILD SUCCESSFUL in 25s
+6 actionable tasks: 6 executed
 ```
 ## Installation instructions for developing jpf-ctl
 
-
+In addition to [these](#Installation-instructions-for-using-jpf-ctl) instructions, 
 
 **Using Direct Source Code:**
 1. Clone the repository
