@@ -1,5 +1,9 @@
 <!-- PROJECT LOGO -->
-<br />
+
+
+![jpf-ctl logo](resources/jpf-ctl-logo.png)
+
+
 <p align="center">
   <a href="https://github.com/Lassonde-JPF/jpf-ctl">
     <img src="resources/jpf-ctl-logo.png" alt="Logo" width="150" height="120">
