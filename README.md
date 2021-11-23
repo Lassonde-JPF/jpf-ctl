@@ -6,14 +6,14 @@
 - [About jpf-ctl](#About-jpf-ctl)
   - [Limitations](#Limitations)
 - Installation instructions for using jpf-ctl
-  - Java
-  - Git
-  - Java PathFinder (jpf-core)
-  - jpf-label
-  - jpf-ctl
-- Installation instructions for developing jpf-ctl
-  - ANTLR4
-  - jpf-nhandler
+  - [Java](#Java)
+  - [Git](#Git)
+  - [Java PathFinder (jpf-core)](#Java-PathFinder-(jpf-core))
+  - [jpf-label](#jpf-label)
+  - [jpf-ctl](#jpf-ctl)
+- [Installation instructions for developing jpf-ctl](#Installation-instructions-for-developing-jpf-ctl)
+  - [ANTLR4](#ANTLR4)
+  - [jpf-nhandler](#jpf-nhandler)
 - [Using jpf-ctl](#Using-jpf-ctl)
 - [Contributing to jpf-ctl](#Contributing-to-jpf-ctl)
 - [License](License)
@@ -202,7 +202,7 @@ Distributed under the GNU General Public License v3. See [LICENSE](LICENSE.md) f
 
 ## Contact
 
-The following contacts are responsible for the development and management of the jpf-ctl.
+The following contacts are responsible for the development and management of jpf-ctl.
 
 ### Development Team
 
