@@ -1,14 +1,10 @@
 <!-- PROJECT LOGO -->
 <p align="center">
-  <a href="https://github.com/Lassonde-JPF/jpf-ctl">
     <img src="resources/jpf-ctl-logo.png" alt="jpf-ctl logo" width="150" height="120">
-  </a>
-
-  <h3 align="center">jpf-ctl</h3>
 </p>
 
 - [About jpf-ctl](#About-jpf-ctl)
-  - Limitations
+  - [Limitations](#Limitations)
 - Installation instructions for using jpf-ctl
   - Java
   - Git
