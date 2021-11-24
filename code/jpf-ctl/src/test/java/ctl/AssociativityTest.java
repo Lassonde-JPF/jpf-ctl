@@ -22,7 +22,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import org.antlr.v4.runtime.tree.ParseTree;
 
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.RepeatedTest;
 
 /**
  * Tests that the binary operators are left or right associative.
@@ -39,115 +39,101 @@ public class AssociativityTest extends BaseTest {
 	/**
 	 * Tests that the or operator is left associative.
 	 */
-	@Test
+	@RepeatedTest(TIMES)
 	public void testOr() {
-		for (int c = 0; c < CASES; c++) {
-			// generate three random abstract syntax trees
-			Formula first = Formula.random();
-			Formula second = Formula.random();
-			Formula third = Formula.random();
-			// combine the three
-			Formula expected = new Or(new Or(first, second), third);
-			// create its string representation without parentheses
-			String formula = first.toString() + " || " + second.toString() + " || " + third.toString();
-			// obtain the parse tree
-			ParseTree tree = parse(formula);
-			// generate an abstract syntax tree from the parse tree
-			Formula actual = this.generator.visit(tree);
-			assertNotNull(actual);
-			assertEquals(expected, actual);
-		}
+		// generate three random abstract syntax trees
+		Formula first = Formula.random();
+		Formula second = Formula.random();
+		Formula third = Formula.random();
+		// combine the three
+		Formula expected = new Or(new Or(first, second), third);
+		// create its string representation without parentheses
+		String formula = first.toString() + " || " + second.toString() + " || " + third.toString();
+		// obtain the parse tree
+		ParseTree tree = parse(formula);
+		// generate an abstract syntax tree from the parse tree
+		Formula actual = this.generator.visit(tree);
+		assertNotNull(actual);
+		assertEquals(expected, actual);
 	}
 
 	/**
 	 * Tests that the and operator is left associative.
 	 */
-	@Test
+	@RepeatedTest(TIMES)
 	public void testAnd() {
-		for (int c = 0; c < CASES; c++) {
-			Formula first = Formula.random();
-			Formula second = Formula.random();
-			Formula third = Formula.random();
-			Formula expected = new And(new And(first, second), third);
-			String formula = first.toString() + " && " + second.toString() + " && " + third.toString();
-			ParseTree tree = parse(formula);
-			Formula actual = this.generator.visit(tree);
-			assertNotNull(actual);
-			assertEquals(expected, actual);
-		}
+		Formula first = Formula.random();
+		Formula second = Formula.random();
+		Formula third = Formula.random();
+		Formula expected = new And(new And(first, second), third);
+		String formula = first.toString() + " && " + second.toString() + " && " + third.toString();
+		ParseTree tree = parse(formula);
+		Formula actual = this.generator.visit(tree);
+		assertNotNull(actual);
+		assertEquals(expected, actual);
 	}
 
 	/**
 	 * Tests that the equivalence (iff) operator is left associative.
 	 */
-	@Test
+	@RepeatedTest(TIMES)
 	public void testIff() {
-		for (int c = 0; c < CASES; c++) {
-			Formula first = Formula.random();
-			Formula second = Formula.random();
-			Formula third = Formula.random();
-			Formula expected = new Iff(new Iff(first, second), third);
-			String formula = first.toString() + " <-> " + second.toString() + " <-> " + third.toString();
-			ParseTree tree = parse(formula);
-			Formula actual = this.generator.visit(tree);
-			assertNotNull(actual);
-			assertEquals(expected, actual);
-		}
+		Formula first = Formula.random();
+		Formula second = Formula.random();
+		Formula third = Formula.random();
+		Formula expected = new Iff(new Iff(first, second), third);
+		String formula = first.toString() + " <-> " + second.toString() + " <-> " + third.toString();
+		ParseTree tree = parse(formula);
+		Formula actual = this.generator.visit(tree);
+		assertNotNull(actual);
+		assertEquals(expected, actual);
 	}
 
 	/**
 	 * Tests that the implies operator is right associative.
 	 */
-	@Test
+	@RepeatedTest(TIMES)
 	public void testImplies() {
-		for (int c = 0; c < CASES; c++) {
-			Formula first = Formula.random();
-			Formula second = Formula.random();
-			Formula third = Formula.random();
-			Formula expected = new Implies(first,new Implies(second, third));
-			String formula = first.toString() + " -> " + second.toString() + " -> " + third.toString();
-			ParseTree tree = parse(formula);
-			Formula actual = this.generator.visit(tree);
-			assertNotNull(actual);
-			assertEquals(expected, actual);
-		}
+		Formula first = Formula.random();
+		Formula second = Formula.random();
+		Formula third = Formula.random();
+		Formula expected = new Implies(first,new Implies(second, third));
+		String formula = first.toString() + " -> " + second.toString() + " -> " + third.toString();
+		ParseTree tree = parse(formula);
+		Formula actual = this.generator.visit(tree);
+		assertNotNull(actual);
+		assertEquals(expected, actual);
 	}
 
-	
 	/**
 	 * Tests that the EA operator is right associative.
 	 */
-	@Test
+	@RepeatedTest(TIMES)
 	public void testExistsUntil() {
-		for (int c = 0; c < CASES; c++) {
-			Formula first = Formula.random();
-			Formula second = Formula.random();
-			Formula third = Formula.random();
-			Formula expected = new ExistsUntil(first,new ExistsUntil(second, third));
-			String formula = first.toString() + " EU " + second.toString() + " EU " + third.toString();
-			ParseTree tree = parse(formula);
-			Formula actual = this.generator.visit(tree);
-			assertNotNull(actual);
-			assertEquals(expected, actual);
-		}
+		Formula first = Formula.random();
+		Formula second = Formula.random();
+		Formula third = Formula.random();
+		Formula expected = new ExistsUntil(first,new ExistsUntil(second, third));
+		String formula = first.toString() + " EU " + second.toString() + " EU " + third.toString();
+		ParseTree tree = parse(formula);
+		Formula actual = this.generator.visit(tree);
+		assertNotNull(actual);
+		assertEquals(expected, actual);
 	}
-	
 	
 	/**
 	 * Tests that the AU operator is right associative.
 	 */
-	@Test
+	@RepeatedTest(TIMES)
 	public void testForAllUntil() {
-		for (int c = 0; c < CASES; c++) {
-			Formula first = Formula.random();
-			Formula second = Formula.random();
-			Formula third = Formula.random();
-			Formula expected = new ForAllUntil(first,new ForAllUntil(second, third));
-			String formula = first.toString() + " AU " + second.toString() + " AU " + third.toString();
-			ParseTree tree = parse(formula);
-			Formula actual = this.generator.visit(tree);
-			assertNotNull(actual);
-			assertEquals(expected, actual);
-		}
+		Formula first = Formula.random();
+		Formula second = Formula.random();
+		Formula third = Formula.random();
+		Formula expected = new ForAllUntil(first,new ForAllUntil(second, third));
+		String formula = first.toString() + " AU " + second.toString() + " AU " + third.toString();
+		ParseTree tree = parse(formula);
+		Formula actual = this.generator.visit(tree);
+		assertNotNull(actual);
+		assertEquals(expected, actual);
 	}
 }

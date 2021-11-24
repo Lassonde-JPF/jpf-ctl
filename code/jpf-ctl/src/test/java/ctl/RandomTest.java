@@ -22,7 +22,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import org.antlr.v4.runtime.tree.ParseTree;
 
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.RepeatedTest;
 
 /**
  * Generates a random abstract syntax tree, parses its textual representation,
@@ -36,9 +36,8 @@ public class RandomTest extends BaseTest {
 	/**
 	 * The test.
 	 */
-	@Test
+	@RepeatedTest(TIMES)
 	void test() {
-	    for (int c = 0; c < CASES; c++) {
 	        // generate a random abstract syntax tree
 	        Formula randomFormula = Formula.random();
 	        // obtain the parse tree of the textual representation of the abstract syntax tree
@@ -47,6 +46,5 @@ public class RandomTest extends BaseTest {
 	        Formula formula = generator.visit(tree);
 	        assertNotNull(formula);
 	        assertEquals(randomFormula, formula);
-	    }
 	}
 }

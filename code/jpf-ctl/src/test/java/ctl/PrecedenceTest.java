@@ -22,7 +22,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import org.antlr.v4.runtime.tree.ParseTree;
 
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.RepeatedTest;
 
 /**
  * Tests that the precedence of operators.
@@ -39,9 +39,8 @@ public class PrecedenceTest extends BaseTest {
     /**
      * Tests that the and operator has a higher precedence than the or operator.
      */
-    @Test
+    @RepeatedTest(TIMES)
     public void testAndOr() {
-        for (int c = 0; c < CASES; c++) {
             // generate three random abstract syntax trees
             Formula first = Formula.random();
             Formula second = Formula.random();
@@ -67,15 +66,13 @@ public class PrecedenceTest extends BaseTest {
             actual = generator.visit(tree);
             assertNotNull(actual);
             assertEquals(expected, actual);
-        }
     }
 
     /**
      * Tests that the and operator has a higher precedence than the implies operator.
      */
-    @Test
+    @RepeatedTest(TIMES)
     public void testAndImplies() {
-        for (int c = 0; c < CASES; c++) {
             Formula first = Formula.random();
             Formula second = Formula.random();
             Formula third = Formula.random();
@@ -92,15 +89,13 @@ public class PrecedenceTest extends BaseTest {
             actual = generator.visit(tree);
             assertNotNull(actual);
             assertEquals(expected, actual);
-        }
     }
 
     /**
      * Tests that the and operator has a higher precedence than the iff operator.
      */
-    @Test
+    @RepeatedTest(TIMES)
     public void testAndIff() {
-        for (int c = 0; c < CASES; c++) {
             Formula first = Formula.random();
             Formula second = Formula.random();
             Formula third = Formula.random();
@@ -117,16 +112,14 @@ public class PrecedenceTest extends BaseTest {
             actual = generator.visit(tree);
             assertNotNull(actual);
             assertEquals(expected, actual);
-        }
     }
 
     /**
      * Tests that the not operator has a higher precedence than the and operator.
      */
-    @Test
+    @RepeatedTest(TIMES)
     public void testAndNot() {
-        for (int c = 0; c < CASES; c++) {
-            Formula first = Formula.random();
+             Formula first = Formula.random();
             Formula second = Formula.random();
             Formula expected = new And(new Not(first), second);
             String formula = "! " + first.toString() + " && " + second.toString();
@@ -134,33 +127,13 @@ public class PrecedenceTest extends BaseTest {
             Formula actual = generator.visit(tree);
             assertNotNull(actual);
             assertEquals(expected, actual);
-        }
-    }
-
-//    /**
-//     * Tests that the AX operator has a higher precedence than the and operator.
-//     */
-//    @Test
-//    public void testAndForAllNext() {
-//        for (int c = 0; c < CASES; c++)
-//        {
-//            Formula first = Formula.random();
-//            Formula second = Formula.random();
-//            Formula expected = new And(new ForAllNext(first), second);
-//            String formula = "AX " + first.toString() + " && " + second.toString();
-//            ParseTree tree = parseCtl(formula);
-//            Formula actual = generator.visit(tree);
-//            assertNotNull(actual);
-//            assertEquals(expected, actual);
-//        }
-//    }
+     }
 
     /**
      * Tests that the AG operator has a higher precedence than the and operator.
      */
-    @Test
+    @RepeatedTest(TIMES)
     public void testAndForAllAlways() {
-        for (int c = 0; c < CASES; c++) {
             Formula first = Formula.random();
             Formula second = Formula.random();
             Formula expected = new And(new ForAllAlways(first), second);
@@ -169,15 +142,13 @@ public class PrecedenceTest extends BaseTest {
             Formula actual = generator.visit(tree);
             assertNotNull(actual);
             assertEquals(expected, actual);
-        }
     }
 
     /**
      * Tests that the AF operator has a higher precedence than the and operator.
      */
-    @Test
+    @RepeatedTest(TIMES)
     public void testAndForAllEventually() {
-        for (int c = 0; c < CASES; c++) {
             Formula first = Formula.random();
             Formula second = Formula.random();
             Formula expected = new And(new ForAllEventually(first), second);
@@ -186,32 +157,13 @@ public class PrecedenceTest extends BaseTest {
             Formula actual = generator.visit(tree);
             assertNotNull(actual);
             assertEquals(expected, actual);
-        }
     }
-
-//    /**
-//     * Tests that the EX operator has a higher precedence than the and operator.
-//     */
-//    @Test
-//    public void testAndExistsNext() {
-//        for (int c = 0; c < CASES; c++) {
-//            Formula first = Formula.random();
-//            Formula second = Formula.random();
-//            Formula expected = new And(new ExistsNext(first), second);
-//            String formula = "EX " + first.toString() + " && " + second.toString();
-//            ParseTree tree = parseCtl(formula);
-//            Formula actual = generator.visit(tree);
-//            assertNotNull(actual);
-//            assertEquals(expected, actual);
-//        }
-//    }
 
     /**
      * Tests that the EG operator has a higher precedence than the and operator.
      */
-    @Test
+    @RepeatedTest(TIMES)
     public void testAndExistsAlways() {
-        for (int c = 0; c < CASES; c++) {
             Formula first = Formula.random();
             Formula second = Formula.random();
             Formula expected = new And(new ExistsAlways(first), second);
@@ -220,15 +172,13 @@ public class PrecedenceTest extends BaseTest {
             Formula actual = generator.visit(tree);
             assertNotNull(actual);
             assertEquals(expected, actual);
-        }
     }
 
     /**
      * Tests that the EF operator has a higher precedence than the and operator.
      */
-    @Test
+    @RepeatedTest(TIMES)
     public void testAndExistsEventually() {
-        for (int c = 0; c < CASES; c++) {
             Formula first = Formula.random();
             Formula second = Formula.random();
             Formula expected = new And(new ExistsEventually(first), second);
@@ -237,15 +187,13 @@ public class PrecedenceTest extends BaseTest {
             Formula actual = generator.visit(tree);
             assertNotNull(actual);
             assertEquals(expected, actual);
-        }
     }
 
     /**
      * Tests that the AU operator has a higher precedence than the and operator.
      */
-    @Test
+    @RepeatedTest(TIMES)
     public void testAndForAllUntil() {
-        for (int c = 0; c < CASES; c++) {
             Formula first = Formula.random();
             Formula second = Formula.random();
             Formula third = Formula.random();
@@ -262,15 +210,13 @@ public class PrecedenceTest extends BaseTest {
             actual = generator.visit(tree);
             assertNotNull(actual);
             assertEquals(expected, actual);
-        }
     }
 
     /**
      * Tests that the EU operator has a higher precedence than the and operator.
      */
-    @Test
+    @RepeatedTest(TIMES)
     public void testAndExistsUntil() {
-        for (int c = 0; c < CASES; c++) {
             Formula first = Formula.random();
             Formula second = Formula.random();
             Formula third = Formula.random();
@@ -287,15 +233,13 @@ public class PrecedenceTest extends BaseTest {
             actual = generator.visit(tree);
             assertNotNull(actual);
             assertEquals(expected, actual);
-        }
     }
 
     /**
      * Tests that the or operator has a higher precedence than the implies operator.
      */
-    @Test
+    @RepeatedTest(TIMES)
     public void testImpliesOr() {
-        for (int c = 0; c < CASES; c++) {
             Formula first = Formula.random();
             Formula second = Formula.random();
             Formula third = Formula.random();
@@ -312,15 +256,13 @@ public class PrecedenceTest extends BaseTest {
             actual = generator.visit(tree);
             assertNotNull(actual);
             assertEquals(expected, actual);
-        }
     }
 
     /**
      * Tests that the implies operator has a higher precedence than the iff operator.
      */
-    @Test
+    @RepeatedTest(TIMES)
     public void testImpliesIff() {
-        for (int c = 0; c < CASES; c++) {
             Formula first = Formula.random();
             Formula second = Formula.random();
             Formula third = Formula.random();
@@ -337,32 +279,13 @@ public class PrecedenceTest extends BaseTest {
             actual = generator.visit(tree);
             assertNotNull(actual);
             assertEquals(expected, actual);
-        }
     }
-
-//    /**
-//     * Tests that the AX operator has a higher precedence than the implies operator.
-//     */
-//    @Test
-//    public void testImpliesForAllNext() {
-//        for (int c = 0; c < CASES; c++) {
-//            Formula first = Formula.random();
-//            Formula second = Formula.random();
-//            Formula expected = new Implies( new ForAllNext(first), second);
-//            String formula = "AX " + first.toString() + " -> " + second.toString();
-//            ParseTree tree = parseCtl(formula);
-//            Formula actual = generator.visit(tree);
-//            assertNotNull(actual);
-//            assertEquals(expected, actual);
-//        }
-//    }
 
     /**
      * Tests that the not operator has a higher precedence than the implies operator.
      */
-    @Test
+    @RepeatedTest(TIMES)
     public void testImpliesNot() {
-        for (int c = 0; c < CASES; c++) {
             Formula first = Formula.random();
             Formula second = Formula.random();
             Formula expected = new Implies(new Not(first), second);
@@ -371,15 +294,13 @@ public class PrecedenceTest extends BaseTest {
             Formula actual = generator.visit(tree);
             assertNotNull(actual);
             assertEquals(expected, actual);
-        }
     }
 
     /**
      * Tests that the AG operator has a higher precedence than the implies operator.
      */
-    @Test
+    @RepeatedTest(TIMES)
     public void testImpliesForAllAlways() {
-        for (int c = 0; c < CASES; c++) {
             Formula first = Formula.random();
             Formula second = Formula.random();
             Formula expected = new Implies(new ForAllAlways(first), second);
@@ -388,16 +309,14 @@ public class PrecedenceTest extends BaseTest {
             Formula actual = generator.visit(tree);
             assertNotNull(actual);
             assertEquals(expected, actual);
-        }
     }
 
     /**
      * Tests that the AF operator has a higher precedence than the implies operator.
      */
-    @Test
+    @RepeatedTest(TIMES)
     public void testImpliesForAllEventually() {
-        for (int c = 0; c < CASES; c++) {
-            Formula first = Formula.random();
+             Formula first = Formula.random();
             Formula second = Formula.random();
             Formula expected = new Implies( new ForAllEventually(first), second);
             String formula = "AF " + first.toString() + " -> " + second.toString();
@@ -405,32 +324,13 @@ public class PrecedenceTest extends BaseTest {
             Formula actual = generator.visit(tree);
             assertNotNull(actual);
             assertEquals(expected, actual);
-        }
     }
-
-//    /**
-//     * Tests that the EX operator has a higher precedence than the implies operator.
-//     */
-//    @Test
-//    public void testImpliesExistsNext() {
-//        for (int c = 0; c < CASES; c++) {
-//            Formula first = Formula.random();
-//            Formula second = Formula.random();
-//            Formula expected = new Implies( new ExistsNext(first), second);
-//            String formula = "EX " + first.toString() + " -> " + second.toString();
-//            ParseTree tree = parseCtl(formula);
-//            Formula actual = generator.visit(tree);
-//            assertNotNull(actual);
-//            assertEquals(expected, actual);
-//        }
-//    }
 
     /**
      * Tests that the EG operator has a higher precedence than the implies operator.
      */
-    @Test
+    @RepeatedTest(TIMES)
     public void testImpliesExistsAlways() {
-        for (int c = 0; c < CASES; c++) {
             Formula first = Formula.random();
             Formula second = Formula.random();
             Formula expected = new Implies(new ExistsAlways(first), second);
@@ -439,15 +339,13 @@ public class PrecedenceTest extends BaseTest {
             Formula actual = generator.visit(tree);
             assertNotNull(actual);
             assertEquals(expected, actual);
-        }
     }
 
     /**
      * Tests that the EF operator has a higher precedence than the implies operator.
      */
-    @Test
+    @RepeatedTest(TIMES)
     public void testImpliesExistsEventually() {
-        for (int c = 0; c < CASES; c++) {
             Formula first = Formula.random();
             Formula second = Formula.random();
             Formula expected = new Implies(new ExistsEventually(first), second);
@@ -456,16 +354,14 @@ public class PrecedenceTest extends BaseTest {
             Formula actual = generator.visit(tree);
             assertNotNull(actual);
             assertEquals(expected, actual);
-        }
     }
 
     /**
      * Tests that the AU operator has a higher precedence than the implies operator.
      */
-    @Test
+    @RepeatedTest(TIMES)
     public void testImpliesForAllUntil() {
-        for (int c = 0; c < CASES; c++) {
-            Formula first = Formula.random();
+             Formula first = Formula.random();
             Formula second = Formula.random();
             Formula third = Formula.random();
             Formula expected = new Implies(first, new ForAllUntil(second, third));
@@ -481,15 +377,13 @@ public class PrecedenceTest extends BaseTest {
             actual = generator.visit(tree);
             assertNotNull(actual);
             assertEquals(expected, actual);
-        }
     }
 
     /**
      * Tests that the EU operator has a higher precedence than the implies operator.
      */
-    @Test
+    @RepeatedTest(TIMES)
     public void testImpliesExistsUntil() {
-        for (int c = 0; c < CASES; c++) {
             Formula first = Formula.random();
             Formula second = Formula.random();
             Formula third = Formula.random();
@@ -506,15 +400,13 @@ public class PrecedenceTest extends BaseTest {
             actual = generator.visit(tree);
             assertNotNull(actual);
             assertEquals(expected, actual);
-        }
     }
 
     /**
      * Tests that the or operator has a higher precedence than the iff operator.
      */
-    @Test
+    @RepeatedTest(TIMES)
     public void testIffOr() {
-        for (int c = 0; c < CASES; c++) {
             Formula first = Formula.random();
             Formula second = Formula.random();
             Formula third = Formula.random();
@@ -531,33 +423,13 @@ public class PrecedenceTest extends BaseTest {
             actual = generator.visit(tree);
             assertNotNull(actual);
             assertEquals(expected, actual);
-        }
     }
-
-//    /**
-//     * Tests that the AX operator has a higher precedence than the iff operator.
-//     */
-//    @Test
-//    public void testIffForAllNext() {
-//        for (int c = 0; c < CASES; c++) {
-//            Formula first = Formula.random();
-//            Formula second = Formula.random();
-//            Formula third = Formula.random();
-//            Formula expected = new Iff(new Iff( new ForAllNext(first), second), third);
-//            String formula = "AX "+first.toString() + " <-> " + second.toString() + " <-> " + third.toString();
-//            ParseTree tree = parseCtl(formula);
-//            Formula actual = generator.visit(tree);
-//            assertNotNull(actual);
-//            assertEquals(expected, actual);
-//        }
-//    }
 
     /**
      * Tests that the not operator has a higher precedence than the iff operator.
      */
-    @Test
+    @RepeatedTest(TIMES)
     public void testIffNot() {
-        for (int c = 0; c < CASES; c++) {
             Formula first = Formula.random();
             Formula second = Formula.random();
             Formula third = Formula.random();
@@ -567,15 +439,13 @@ public class PrecedenceTest extends BaseTest {
             Formula actual = generator.visit(tree);
             assertNotNull(actual);
             assertEquals(expected, actual);
-        }
     }
 
     /**
      * Tests that the AG operator has a higher precedence than the iff operator.
      */
-    @Test
+    @RepeatedTest(TIMES)
     public void testIffForAllAlways() {
-        for (int c = 0; c < CASES; c++) {
             Formula first = Formula.random();
             Formula second = Formula.random();
             Formula third = Formula.random();
@@ -585,15 +455,13 @@ public class PrecedenceTest extends BaseTest {
             Formula actual = generator.visit(tree);
             assertNotNull(actual);
             assertEquals(expected, actual);
-        }
     }
 
     /**
      * Tests that the AF operator has a higher precedence than the iff operator.
      */
-    @Test
+    @RepeatedTest(TIMES)
     public void testIffForAllEventually() {
-        for (int c = 0; c < CASES; c++) {
             Formula first = Formula.random();
             Formula second = Formula.random();
             Formula expected = new Iff(new ForAllEventually(first), second);
@@ -602,32 +470,13 @@ public class PrecedenceTest extends BaseTest {
             Formula actual = generator.visit(tree);
             assertNotNull(actual);
             assertEquals(expected, actual);
-        }
     }
-
-//    /**
-//     * Tests that the EX operator has a higher precedence than the iff operator.
-//     */
-//    @Test
-//    public void testIffExistsNext()    {
-//        for (int c = 0; c < CASES; c++) {
-//            Formula first = Formula.random();
-//            Formula second = Formula.random();
-//            Formula expected = new Iff(new ExistsNext(first), second);
-//            String formula = "EX " + first.toString() + " <-> " + second.toString();
-//            ParseTree tree = parse(formula);
-//            Formula actual = generator.visit(tree);
-//            assertNotNull(actual);
-//            assertEquals(expected, actual);
-//        }
-//    }
 
     /**
      * Tests that the EG operator has a higher precedence than the iff operator.
      */
-    @Test
+    @RepeatedTest(TIMES)
     public void testIffExistsAlways() {
-        for (int c = 0; c < CASES; c++) {
             Formula first = Formula.random();
             Formula second = Formula.random();
             Formula expected = new Iff(new ExistsAlways(first), second);
@@ -636,15 +485,13 @@ public class PrecedenceTest extends BaseTest {
             Formula actual = generator.visit(tree);
             assertNotNull(actual);
             assertEquals(expected, actual);
-        }
     }
 
     /**
      * Tests that the EF operator has a higher precedence than the iff operator.
      */
-    @Test
+    @RepeatedTest(TIMES)
     public void testIffExistsEventually() {
-        for (int c = 0; c < CASES; c++) {
             Formula first = Formula.random();
             Formula second = Formula.random();
             Formula expected = new Iff(new ExistsEventually(first), second);
@@ -653,15 +500,13 @@ public class PrecedenceTest extends BaseTest {
             Formula actual = generator.visit(tree);
             assertNotNull(actual);
             assertEquals(expected, actual);
-        }
     }
 
     /**
      * Tests that the AU operator has a higher precedence than the iff operator.
      */
-    @Test
+    @RepeatedTest(TIMES)
     public void testIffForAllUntil() {
-        for (int c = 0; c < CASES; c++) {
             Formula first = Formula.random();
             Formula second = Formula.random();
             Formula third = Formula.random();
@@ -678,15 +523,13 @@ public class PrecedenceTest extends BaseTest {
             actual = generator.visit(tree);
             assertNotNull(actual);
             assertEquals(expected, actual);
-        }
     }
 
     /**
      * Tests that the EU operator has a higher precedence than the iff operator.
      */
-    @Test
+    @RepeatedTest(TIMES)
     public void testIffExistsUntil() {
-        for (int c = 0; c < CASES; c++) {
             Formula first = Formula.random();
             Formula second = Formula.random();
             Formula third = Formula.random();
@@ -703,15 +546,13 @@ public class PrecedenceTest extends BaseTest {
             actual = generator.visit(tree);
             assertNotNull(actual);
             assertEquals(expected, actual);
-        }
     }
 
     /**
      * Tests that the not operator has a higher precedence than the or operator.
      */
-    @Test
+    @RepeatedTest(TIMES)
     public void testOrNot() {
-        for (int c = 0; c < CASES; c++) {
             Formula first = Formula.random();
             Formula second = Formula.random();
             Formula expected = new Or(new Not(first), second);
@@ -720,32 +561,13 @@ public class PrecedenceTest extends BaseTest {
             Formula actual = generator.visit(tree);
             assertNotNull(actual);
             assertEquals(expected, actual);
-        }
     }
-
-//    /**
-//     * Tests that the AX operator has a higher precedence than the or operator.
-//     */
-//    @Test
-//    public void testOrForAllNext() {
-//        for (int c = 0; c < CASES; c++) {
-//            Formula first = Formula.random();
-//            Formula second = Formula.random();
-//            Formula expected = new Or(new ForAllNext(first), second);
-//            String formula = "AX " + first.toString() + " || " + second.toString();
-//            ParseTree tree = parse(formula);
-//            Formula actual = generator.visit(tree);
-//            assertNotNull(actual);
-//            assertEquals(expected, actual);
-//        }
-//    }
 
     /**
      * Tests that the AG operator has a higher precedence than the or operator.
      */
-    @Test
+    @RepeatedTest(TIMES)
     public void testOrForAllAlways() {
-        for (int c = 0; c < CASES; c++) {
             Formula first = Formula.random();
             Formula second = Formula.random();
             Formula expected = new Or(new ForAllAlways(first), second);
@@ -754,15 +576,13 @@ public class PrecedenceTest extends BaseTest {
             Formula actual = generator.visit(tree);
             assertNotNull(actual);
             assertEquals(expected, actual);
-        }
     }
 
     /**
      * Tests that the AF operator has a higher precedence than the or operator.
      */
-    @Test
+    @RepeatedTest(TIMES)
     public void testOrForAllEventually() {
-        for (int c = 0; c < CASES; c++) {
             Formula first = Formula.random();
             Formula second = Formula.random();
             Formula expected = new Or(new ForAllEventually(first), second);
@@ -771,32 +591,13 @@ public class PrecedenceTest extends BaseTest {
             Formula actual = generator.visit(tree);
             assertNotNull(actual);
             assertEquals(expected, actual);
-        }
     }
-
-//    /**
-//     * Tests that the EX operator has a higher precedence than the or operator.
-//     */
-//    @Test
-//    public void testOrExistsNext() {
-//        for (int c = 0; c < CASES; c++) {
-//            Formula first = Formula.random();
-//            Formula second = Formula.random();
-//            Formula expected = new Or(new ExistsNext(first), second);
-//            String formula = "EX " + first.toString() + " || " + second.toString();
-//            ParseTree tree = parse(formula);
-//            Formula actual = generator.visit(tree);
-//            assertNotNull(actual);
-//            assertEquals(expected, actual);
-//        }
-//    }
 
     /**
      * Tests that the EG operator has a higher precedence than the or operator.
      */
-    @Test
+    @RepeatedTest(TIMES)
     public void testOrExistsAlways() {
-        for (int c = 0; c < CASES; c++) {
             Formula first = Formula.random();
             Formula second = Formula.random();
             Formula expected = new Or(new ExistsAlways(first), second);
@@ -805,15 +606,13 @@ public class PrecedenceTest extends BaseTest {
             Formula actual = generator.visit(tree);
             assertNotNull(actual);
             assertEquals(expected, actual);
-        }
     }
 
     /**
      * Tests that the EF operator has a higher precedence than the or operator.
      */
-    @Test
+    @RepeatedTest(TIMES)
     public void testOrExistsEventually() {
-        for (int c = 0; c < CASES; c++) {
             Formula first = Formula.random();
             Formula second = Formula.random();
             Formula expected = new Or(new ExistsEventually(first), second);
@@ -822,15 +621,13 @@ public class PrecedenceTest extends BaseTest {
             Formula actual = generator.visit(tree);
             assertNotNull(actual);
             assertEquals(expected, actual);
-        }
     }
 
     /**
      * Tests that the AU operator has a higher precedence than the or operator.
      */
-    @Test
+    @RepeatedTest(TIMES)
     public void testOrForAllUntil() {
-        for (int c = 0; c < CASES; c++) {
             Formula first = Formula.random();
             Formula second = Formula.random();
             Formula third = Formula.random();
@@ -847,15 +644,13 @@ public class PrecedenceTest extends BaseTest {
             actual = generator.visit(tree);
             assertNotNull(actual);
             assertEquals(expected, actual);
-        }
     }
 
     /**
      * Tests that the EU operator has a higher precedence than the or operator.
      */
-    @Test
+    @RepeatedTest(TIMES)
     public void testOrExistsUntil() {
-        for (int c = 0; c < CASES; c++) {
             Formula first = Formula.random();
             Formula second = Formula.random();
             Formula third = Formula.random();
@@ -872,15 +667,13 @@ public class PrecedenceTest extends BaseTest {
             actual = generator.visit(tree);
             assertNotNull(actual);
             assertEquals(expected, actual);
-        }
     }
 
     /**
      * Tests that the AU operator has a higher precedence than the EU operator.
      */
-    @Test
+    @RepeatedTest(TIMES)
     public void testForAllUntilExistsUntil() {
-        for (int c = 0; c < CASES; c++) {
             Formula first = Formula.random();
             Formula second = Formula.random();
             Formula third = Formula.random();
@@ -897,15 +690,13 @@ public class PrecedenceTest extends BaseTest {
             actual = generator.visit(tree);
             assertNotNull(actual);
             assertEquals(expected, actual);
-        }
     }
 
     /**
      * Tests that the not operator has a higher precedence than the AU operator.
      */
-    @Test
+    @RepeatedTest(TIMES)
     public void testForAllUntilNot() {
-        for (int c = 0; c < CASES; c++) {
             Formula first = Formula.random();
             Formula second = Formula.random();
             Formula expected = new ForAllUntil(new Not(first), second);
@@ -914,32 +705,13 @@ public class PrecedenceTest extends BaseTest {
             Formula actual = generator.visit(tree);
             assertNotNull(actual);
             assertEquals(expected, actual);
-        }
     }
-
-//    /**
-//     * Tests that the AX operator has a higher precedence than the AU operator.
-//     */
-//    @Test
-//    public void testForAllUntilForAllNext() {
-//        for (int c = 0; c < CASES; c++) {
-//            Formula first = Formula.random();
-//            Formula second = Formula.random();
-//            Formula expected = new ForAllUntil(new ForAllNext(first), second);
-//            String formula = "AX "+ first.toString() + " AU " + second.toString() ;
-//            ParseTree tree = parse(formula);
-//            Formula actual = generator.visit(tree);
-//            assertNotNull(actual);
-//            assertEquals(expected, actual);
-//        }
-//    }
 
     /**
      * Tests that the AG operator has a higher precedence than the AU operator.
      */
-    @Test
+    @RepeatedTest(TIMES)
     public void testForAllUntilForAllAlways() {
-        for (int c = 0; c < CASES; c++) {
             Formula first = Formula.random();
             Formula second = Formula.random();
             Formula expected = new ForAllUntil(new ForAllAlways(first), second);
@@ -948,15 +720,13 @@ public class PrecedenceTest extends BaseTest {
             Formula actual = generator.visit(tree);
             assertNotNull(actual);
             assertEquals(expected, actual);
-        }
     }
 
     /**
      * Tests that the AF operator has a higher precedence than the AU operator.
      */
-    @Test
+    @RepeatedTest(TIMES)
     public void testForAllUntilForAllEventually() {
-        for (int c = 0; c < CASES; c++) {
             Formula first = Formula.random();
             Formula second = Formula.random();
             Formula expected = new ForAllUntil(new ForAllEventually(first), second);
@@ -965,32 +735,13 @@ public class PrecedenceTest extends BaseTest {
             Formula actual = generator.visit(tree);
             assertNotNull(actual);
             assertEquals(expected, actual);
-        }
     }
-
-//    /**
-//     * Tests that the EX operator has a higher precedence than the AU operator.
-//     */
-//    @Test
-//    public void testForAllUntilExistsNext() {
-//        for (int c = 0; c < CASES; c++) {
-//            Formula first = Formula.random();
-//            Formula second = Formula.random();
-//            Formula expected = new ForAllUntil(new ExistsNext(first), second);
-//            String formula = "EX " + first.toString() + " AU " + second.toString() ;
-//            ParseTree tree = parse(formula);
-//            Formula actual = generator.visit(tree);
-//            assertNotNull(actual);
-//            assertEquals(expected, actual);
-//        }
-//    }
 
     /**
      * Tests that the EG operator has a higher precedence than the AU operator.
      */
-    @Test
+    @RepeatedTest(TIMES)
     public void testForAllUntilExistsAlways() {
-        for (int c = 0; c < CASES; c++) {
             Formula first = Formula.random();
             Formula second = Formula.random();
             Formula expected = new ForAllUntil(new ExistsAlways(first), second);
@@ -999,15 +750,13 @@ public class PrecedenceTest extends BaseTest {
             Formula actual = generator.visit(tree);
             assertNotNull(actual);
             assertEquals(expected, actual);
-        }
     }
 
     /**
      * Tests that the EF operator has a higher precedence than the AU operator.
      */
-    @Test
+    @RepeatedTest(TIMES)
     public void testForAllUntilExistsEventually() {
-        for (int c = 0; c < CASES; c++) {
             Formula first = Formula.random();
             Formula second = Formula.random();
             Formula expected = new ForAllUntil(new ExistsEventually(first), second);
@@ -1016,15 +765,13 @@ public class PrecedenceTest extends BaseTest {
             Formula actual = generator.visit(tree);
             assertNotNull(actual);
             assertEquals(expected, actual);
-        }
     }
 
     /**
      * Tests that the not operator has a higher precedence than the EU operator.
      */
-    @Test
+    @RepeatedTest(TIMES)
     public void testExistsUntilNot() {
-        for (int c = 0; c < CASES; c++) {
             Formula first = Formula.random();
             Formula second = Formula.random();
             Formula expected = new ExistsUntil(new Not(first), second);
@@ -1033,32 +780,13 @@ public class PrecedenceTest extends BaseTest {
             Formula actual = generator.visit(tree);
             assertNotNull(actual);
             assertEquals(expected, actual);
-        }
     }
-
-//    /**
-//     * Tests that the AX operator has a higher precedence than the EU operator.
-//     */
-//    @Test
-//    public void testExistsUntilForAllNext() {
-//        for (int c = 0; c < CASES; c++) {
-//            Formula first = Formula.random();
-//            Formula second = Formula.random();
-//            Formula expected = new ExistsUntil(new ForAllNext(first), second);
-//            String formula = "AX " + first.toString() + " EU " + second.toString() ;
-//            ParseTree tree = parse(formula);
-//            Formula actual = generator.visit(tree);
-//            assertNotNull(actual);
-//            assertEquals(expected, actual);
-//        }
-//    }
 
     /**
      * Tests that the AG operator has a higher precedence than the EU operator.
      */
-    @Test
+    @RepeatedTest(TIMES)
     public void testExistsUntilForAllAlways() {
-        for (int c = 0; c < CASES; c++) {
             Formula first = Formula.random();
             Formula second = Formula.random();
             Formula expected = new ExistsUntil(new ForAllAlways(first), second);
@@ -1067,15 +795,13 @@ public class PrecedenceTest extends BaseTest {
             Formula actual = generator.visit(tree);
             assertNotNull(actual);
             assertEquals(expected, actual);
-        }
     }
 
     /**
      * Tests that the AF operator has a higher precedence than the EU operator.
      */
-    @Test
+    @RepeatedTest(TIMES)
     public void testExistsUntilForAllEventually() {
-        for (int c = 0; c < CASES; c++) {
             Formula first = Formula.random();
             Formula second = Formula.random();
             Formula expected = new ExistsUntil(new ForAllEventually(first), second);
@@ -1084,32 +810,13 @@ public class PrecedenceTest extends BaseTest {
             Formula actual = generator.visit(tree);
             assertNotNull(actual);
             assertEquals(expected, actual);
-        }
     }
-
-//    /**
-//     * Tests that the EX operator has a higher precedence than the EU operator.
-//     */
-//    @Test
-//    public void testExistsUntilExistsNext() {
-//        for (int c = 0; c < CASES; c++) {
-//            Formula first = Formula.random();
-//            Formula second = Formula.random();
-//            Formula expected = new ExistsUntil(new ExistsNext(first), second);
-//            String formula = "EX "+ first.toString() + " EU " + second.toString() ;
-//            ParseTree tree = parse(formula);
-//            Formula actual = generator.visit(tree);
-//            assertNotNull(actual);
-//            assertEquals(expected, actual);
-//        }
-//    }
 
     /**
      * Tests that the EG operator has a higher precedence than the EU operator.
      */
-    @Test
+    @RepeatedTest(TIMES)
     public void testExistsUntilExistsAlways() {
-        for (int c = 0; c < CASES; c++) {
             Formula first = Formula.random();
             Formula second = Formula.random();
             Formula expected = new ExistsUntil(new ExistsAlways(first), second);
@@ -1118,15 +825,13 @@ public class PrecedenceTest extends BaseTest {
             Formula actual = generator.visit(tree);
             assertNotNull(actual);
             assertEquals(expected, actual);
-        }
     }
 
     /**
      * Tests that the EF operator has a higher precedence than the EU operator.
      */
-    @Test
+    @RepeatedTest(TIMES)
     public void testExistsUntilExistsEventually() {
-        for (int c = 0; c < CASES; c++) {
             Formula first = Formula.random();
             Formula second = Formula.random();
             Formula expected = new ExistsUntil(new ExistsEventually(first), second);
@@ -1135,6 +840,5 @@ public class PrecedenceTest extends BaseTest {
             Formula actual = generator.visit(tree);
             assertNotNull(actual);
             assertEquals(expected, actual);
-        }
     }
 }

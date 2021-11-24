@@ -39,9 +39,9 @@ public abstract class BaseTest {
 	protected Generator generator;
 
 	/**
-	 * Number of random cases that are considered in each test.
+	 * Number of times tests that involve randomness are repeated.
 	 */
-	protected static final int CASES = 1000;
+	protected static final int TIMES = 1000;
 
 	/**
 	 * Initializes this test.
