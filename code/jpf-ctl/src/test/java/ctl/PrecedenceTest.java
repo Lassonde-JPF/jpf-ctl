@@ -20,8 +20,6 @@ package ctl;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-import org.antlr.v4.runtime.tree.ParseTree;
-
 import org.junit.jupiter.api.RepeatedTest;
 
 /**
@@ -49,10 +47,8 @@ public class PrecedenceTest extends BaseTest {
             Formula expected = new Or(first, new And(second, third));
             // create its string representation without parentheses
             String formula = first + " || " + second + " && " + third;
-            // obtain the parse tree
-            ParseTree tree = parse(formula);
-            // generate an abstract syntax tree from the parse tree
-            Formula actual = generate(tree);
+            // obtain the abstract syntax tree
+            Formula actual = parse(formula);
             assertNotNull(actual);
             assertEquals(expected, actual);
 
@@ -60,10 +56,8 @@ public class PrecedenceTest extends BaseTest {
             expected = new Or(new And(first, second), third);
             // create its string representation without parentheses
             formula = first + " && " + second + " || " + third;
-            // obtain the parse tree
-            tree = parse(formula);
-            // generate an abstract syntax tree from the parse tree
-            actual = generate(tree);
+            // obtain the abstract syntax tree
+            actual = parse(formula);
             assertNotNull(actual);
             assertEquals(expected, actual);
     }
@@ -78,15 +72,13 @@ public class PrecedenceTest extends BaseTest {
             Formula third = Formula.random();
             Formula expected = new Implies(new And(first, second), third);
             String formula = first + " && " + second + " -> " + third;
-            ParseTree tree = parse(formula);
-            Formula actual = generate(tree);
+            Formula actual = parse(formula);
             assertNotNull(actual);
             assertEquals(expected, actual);
 
             expected = new Implies(first, new And(second, third));
             formula = first + " -> " + second + " && " + third;
-            tree = parse(formula);
-            actual = generate(tree);
+            actual = parse(formula);
             assertNotNull(actual);
             assertEquals(expected, actual);
     }
@@ -101,15 +93,13 @@ public class PrecedenceTest extends BaseTest {
             Formula third = Formula.random();
             Formula expected = new Iff(new And(first, second), third);
             String formula = first + " && " + second + " <-> " + third;
-            ParseTree tree = parse(formula);
-            Formula actual = generate(tree);
+            Formula actual = parse(formula);
             assertNotNull(actual);
             assertEquals(expected, actual);
 
             expected = new Iff(first, new And(second, third));
             formula = first + " <-> " + second + " && " + third;
-            tree = parse(formula);
-            actual = generate(tree);
+            actual = parse(formula);
             assertNotNull(actual);
             assertEquals(expected, actual);
     }
@@ -123,8 +113,7 @@ public class PrecedenceTest extends BaseTest {
             Formula second = Formula.random();
             Formula expected = new And(new Not(first), second);
             String formula = "! " + first + " && " + second;
-            ParseTree tree = parse(formula);
-            Formula actual = generate(tree);
+            Formula actual = parse(formula);
             assertNotNull(actual);
             assertEquals(expected, actual);
      }
@@ -138,8 +127,7 @@ public class PrecedenceTest extends BaseTest {
             Formula second = Formula.random();
             Formula expected = new And(new ForAllAlways(first), second);
             String formula = "AG " + first + " && " + second;
-            ParseTree tree = parse(formula);
-            Formula actual = generate(tree);
+            Formula actual = parse(formula);
             assertNotNull(actual);
             assertEquals(expected, actual);
     }
@@ -153,8 +141,7 @@ public class PrecedenceTest extends BaseTest {
             Formula second = Formula.random();
             Formula expected = new And(new ForAllEventually(first), second);
             String formula = "AF " + first + " && " + second;
-            ParseTree tree = parse(formula);
-            Formula actual = generate(tree);
+            Formula actual = parse(formula);
             assertNotNull(actual);
             assertEquals(expected, actual);
     }
@@ -168,8 +155,7 @@ public class PrecedenceTest extends BaseTest {
             Formula second = Formula.random();
             Formula expected = new And(new ExistsAlways(first), second);
             String formula = "EG " + first + " && " + second;
-            ParseTree tree = parse(formula);
-            Formula actual = generate(tree);
+            Formula actual = parse(formula);
             assertNotNull(actual);
             assertEquals(expected, actual);
     }
@@ -183,8 +169,7 @@ public class PrecedenceTest extends BaseTest {
             Formula second = Formula.random();
             Formula expected = new And(new ExistsEventually(first), second);
             String formula = "EF " + first + " && " + second;
-            ParseTree tree = parse(formula);
-            Formula actual = generate(tree);
+            Formula actual = parse(formula);
             assertNotNull(actual);
             assertEquals(expected, actual);
     }
@@ -199,15 +184,13 @@ public class PrecedenceTest extends BaseTest {
             Formula third = Formula.random();
             Formula expected = new And(new ForAllUntil(first, second), third);
             String formula = first + " AU " + second + " && " + third;
-            ParseTree tree = parse(formula);
-            Formula actual = generate(tree);
+            Formula actual = parse(formula);
             assertNotNull(actual);
             assertEquals(expected, actual);
 
             expected = new And(first, new ForAllUntil(second, third));
             formula = first + " && " + second + " AU " + third;
-            tree = parse(formula);
-            actual = generate(tree);
+            actual = parse(formula);
             assertNotNull(actual);
             assertEquals(expected, actual);
     }
@@ -222,15 +205,13 @@ public class PrecedenceTest extends BaseTest {
             Formula third = Formula.random();
             Formula expected = new And(new ExistsUntil(first, second), third);
             String formula = first + " EU " + second + " && " + third;
-            ParseTree tree = parse(formula);
-            Formula actual = generate(tree);
+            Formula actual = parse(formula);
             assertNotNull(actual);
             assertEquals(expected, actual);
 
             expected = new And(first, new ExistsUntil(second, third));
             formula = first + " && " + second + " EU " + third;
-            tree = parse(formula);
-            actual = generate(tree);
+            actual = parse(formula);
             assertNotNull(actual);
             assertEquals(expected, actual);
     }
@@ -245,15 +226,13 @@ public class PrecedenceTest extends BaseTest {
             Formula third = Formula.random();
             Formula expected = new Implies(first, new Or(second, third));
             String formula = first + " -> " + second + " || " + third;
-            ParseTree tree = parse(formula);
-            Formula actual = generate(tree);
+            Formula actual = parse(formula);
             assertNotNull(actual);
             assertEquals(expected, actual);
 
             expected = new Implies(new Or(first, second), third);
             formula = first + " || " + second + " -> " + third;
-            tree = parse(formula);
-            actual = generate(tree);
+            actual = parse(formula);
             assertNotNull(actual);
             assertEquals(expected, actual);
     }
@@ -268,15 +247,13 @@ public class PrecedenceTest extends BaseTest {
             Formula third = Formula.random();
             Formula expected = new Iff(new Implies(first, second), third);
             String formula = first + " -> " + second + " <-> " + third;
-            ParseTree tree = parse(formula);
-            Formula actual = generate(tree);
+            Formula actual = parse(formula);
             assertNotNull(actual);
             assertEquals(expected, actual);
 
             expected = new Iff(first, new Implies(second, third));
             formula = first + " <-> " + second + " -> " + third;
-            tree = parse(formula);
-            actual = generate(tree);
+            actual = parse(formula);
             assertNotNull(actual);
             assertEquals(expected, actual);
     }
@@ -290,8 +267,7 @@ public class PrecedenceTest extends BaseTest {
             Formula second = Formula.random();
             Formula expected = new Implies(new Not(first), second);
             String formula = "! "+first + " -> " + second;
-            ParseTree tree = parse(formula);
-            Formula actual = generate(tree);
+            Formula actual = parse(formula);
             assertNotNull(actual);
             assertEquals(expected, actual);
     }
@@ -305,8 +281,7 @@ public class PrecedenceTest extends BaseTest {
             Formula second = Formula.random();
             Formula expected = new Implies(new ForAllAlways(first), second);
             String formula = "AG "+first + " -> " + second;
-            ParseTree tree = parse(formula);
-            Formula actual = generate(tree);
+            Formula actual = parse(formula);
             assertNotNull(actual);
             assertEquals(expected, actual);
     }
@@ -316,12 +291,11 @@ public class PrecedenceTest extends BaseTest {
      */
     @RepeatedTest(TIMES)
     public void testImpliesForAllEventually() {
-             Formula first = Formula.random();
+            Formula first = Formula.random();
             Formula second = Formula.random();
             Formula expected = new Implies( new ForAllEventually(first), second);
             String formula = "AF " + first + " -> " + second;
-            ParseTree tree = parse(formula);
-            Formula actual = generate(tree);
+            Formula actual = parse(formula);
             assertNotNull(actual);
             assertEquals(expected, actual);
     }
@@ -335,8 +309,7 @@ public class PrecedenceTest extends BaseTest {
             Formula second = Formula.random();
             Formula expected = new Implies(new ExistsAlways(first), second);
             String formula = "EG " + first + " -> " + second;
-            ParseTree tree = parse(formula);
-            Formula actual = generate(tree);
+            Formula actual = parse(formula);
             assertNotNull(actual);
             assertEquals(expected, actual);
     }
@@ -350,8 +323,7 @@ public class PrecedenceTest extends BaseTest {
             Formula second = Formula.random();
             Formula expected = new Implies(new ExistsEventually(first), second);
             String formula = "EF " + first + " -> " + second;
-            ParseTree tree = parse(formula);
-            Formula actual = generate(tree);
+            Formula actual = parse(formula);
             assertNotNull(actual);
             assertEquals(expected, actual);
     }
@@ -366,15 +338,13 @@ public class PrecedenceTest extends BaseTest {
             Formula third = Formula.random();
             Formula expected = new Implies(first, new ForAllUntil(second, third));
             String formula = first + " -> " + second + " AU " + third;
-            ParseTree tree = parse(formula);
-            Formula actual = generate(tree);
+            Formula actual = parse(formula);
             assertNotNull(actual);
             assertEquals(expected, actual);
 
             expected = new Implies(new ForAllUntil(first, second), third);
             formula = first + " AU " + second + " -> " + third;
-            tree = parse(formula);
-            actual = generate(tree);
+            actual = parse(formula);
             assertNotNull(actual);
             assertEquals(expected, actual);
     }
@@ -389,15 +359,13 @@ public class PrecedenceTest extends BaseTest {
             Formula third = Formula.random();
             Formula expected = new Implies(first, new ExistsUntil(second, third));
             String formula = first + " -> " + second + " EU " + third;
-            ParseTree tree = parse(formula);
-            Formula actual = generate(tree);
+            Formula actual = parse(formula);
             assertNotNull(actual);
             assertEquals(expected, actual);
 
             expected = new Implies(new ExistsUntil(first, second), third);
             formula = first + " EU " + second + " -> " + third;
-            tree = parse(formula);
-            actual = generate(tree);
+            actual = parse(formula);
             assertNotNull(actual);
             assertEquals(expected, actual);
     }
@@ -412,15 +380,13 @@ public class PrecedenceTest extends BaseTest {
             Formula third = Formula.random();
             Formula expected = new Iff(first, new Or(second, third));
             String formula = first + " <-> " + second + " || " + third;
-            ParseTree tree = parse(formula);
-            Formula actual = generate(tree);
+            Formula actual = parse(formula);
             assertNotNull(actual);
             assertEquals(expected, actual);
 
             expected = new Iff(new Or(first, second), third);
             formula = first + " || " + second + " <-> " + third;
-            tree = parse(formula);
-            actual = generate(tree);
+            actual = parse(formula);
             assertNotNull(actual);
             assertEquals(expected, actual);
     }
@@ -435,8 +401,7 @@ public class PrecedenceTest extends BaseTest {
             Formula third = Formula.random();
             Formula expected = new Iff(new Not(first), second);
             String formula = "! " + first + " <-> " + second;
-            ParseTree tree = parse(formula);
-            Formula actual = generate(tree);
+            Formula actual = parse(formula);
             assertNotNull(actual);
             assertEquals(expected, actual);
     }
@@ -451,8 +416,7 @@ public class PrecedenceTest extends BaseTest {
             Formula third = Formula.random();
             Formula expected = new Iff(new ForAllAlways(first), second);
             String formula = "AG "+first + " <-> " + second;
-            ParseTree tree = parse(formula);
-            Formula actual = generate(tree);
+            Formula actual = parse(formula);
             assertNotNull(actual);
             assertEquals(expected, actual);
     }
@@ -466,8 +430,7 @@ public class PrecedenceTest extends BaseTest {
             Formula second = Formula.random();
             Formula expected = new Iff(new ForAllEventually(first), second);
             String formula = "AF " + first + " <-> " + second;
-            ParseTree tree = parse(formula);
-            Formula actual = generate(tree);
+            Formula actual = parse(formula);
             assertNotNull(actual);
             assertEquals(expected, actual);
     }
@@ -481,8 +444,7 @@ public class PrecedenceTest extends BaseTest {
             Formula second = Formula.random();
             Formula expected = new Iff(new ExistsAlways(first), second);
             String formula = "EG " + first + " <-> " + second;
-            ParseTree tree = parse(formula);
-            Formula actual = generate(tree);
+            Formula actual = parse(formula);
             assertNotNull(actual);
             assertEquals(expected, actual);
     }
@@ -496,8 +458,7 @@ public class PrecedenceTest extends BaseTest {
             Formula second = Formula.random();
             Formula expected = new Iff(new ExistsEventually(first), second);
             String formula = "EF " + first + " <-> " + second;
-            ParseTree tree = parse(formula);
-            Formula actual = generate(tree);
+            Formula actual = parse(formula);
             assertNotNull(actual);
             assertEquals(expected, actual);
     }
@@ -512,15 +473,13 @@ public class PrecedenceTest extends BaseTest {
             Formula third = Formula.random();
             Formula expected = new Iff(first, new ForAllUntil(second, third));
             String formula = first + " <-> " + second + " AU " + third;
-            ParseTree tree = parse(formula);
-            Formula actual = generate(tree);
+            Formula actual = parse(formula);
             assertNotNull(actual);
             assertEquals(expected, actual);
 
             expected = new Iff(new ForAllUntil(first, second), third);
             formula = first + " AU " + second + " <-> " + third;
-            tree = parse(formula);
-            actual = generate(tree);
+            actual = parse(formula);
             assertNotNull(actual);
             assertEquals(expected, actual);
     }
@@ -535,15 +494,13 @@ public class PrecedenceTest extends BaseTest {
             Formula third = Formula.random();
             Formula expected = new Iff(first, new ExistsUntil(second, third));
             String formula = first + " <-> " + second + " EU " + third;
-            ParseTree tree = parse(formula);
-            Formula actual = generate(tree);
+            Formula actual = parse(formula);
             assertNotNull(actual);
             assertEquals(expected, actual);
 
             expected = new Iff(new ExistsUntil(first, second), third);
             formula = first + " EU " + second + " <-> " + third;
-            tree = parse(formula);
-            actual = generate(tree);
+            actual = parse(formula);
             assertNotNull(actual);
             assertEquals(expected, actual);
     }
@@ -557,8 +514,7 @@ public class PrecedenceTest extends BaseTest {
             Formula second = Formula.random();
             Formula expected = new Or(new Not(first), second);
             String formula = "! " + first  +" || " + second;
-            ParseTree tree = parse(formula);
-            Formula actual = generate(tree);
+            Formula actual = parse(formula);
             assertNotNull(actual);
             assertEquals(expected, actual);
     }
@@ -572,8 +528,7 @@ public class PrecedenceTest extends BaseTest {
             Formula second = Formula.random();
             Formula expected = new Or(new ForAllAlways(first), second);
             String formula = "AG " + first + " || " + second;
-            ParseTree tree = parse(formula);
-            Formula actual = generate(tree);
+            Formula actual = parse(formula);
             assertNotNull(actual);
             assertEquals(expected, actual);
     }
@@ -587,8 +542,7 @@ public class PrecedenceTest extends BaseTest {
             Formula second = Formula.random();
             Formula expected = new Or(new ForAllEventually(first), second);
             String formula = "AF " + first + " || " + second;
-            ParseTree tree = parse(formula);
-            Formula actual = generate(tree);
+            Formula actual = parse(formula);
             assertNotNull(actual);
             assertEquals(expected, actual);
     }
@@ -602,8 +556,7 @@ public class PrecedenceTest extends BaseTest {
             Formula second = Formula.random();
             Formula expected = new Or(new ExistsAlways(first), second);
             String formula = "EG " + first + " || " + second;
-            ParseTree tree = parse(formula);
-            Formula actual = generate(tree);
+            Formula actual = parse(formula);
             assertNotNull(actual);
             assertEquals(expected, actual);
     }
@@ -617,8 +570,7 @@ public class PrecedenceTest extends BaseTest {
             Formula second = Formula.random();
             Formula expected = new Or(new ExistsEventually(first), second);
             String formula = "EF " + first + " || " + second;
-            ParseTree tree = parse(formula);
-            Formula actual = generate(tree);
+            Formula actual = parse(formula);
             assertNotNull(actual);
             assertEquals(expected, actual);
     }
@@ -633,15 +585,13 @@ public class PrecedenceTest extends BaseTest {
             Formula third = Formula.random();
             Formula expected = new Or(new ForAllUntil(first, second), third);
             String formula = first + " AU " + second + " || " + third;
-            ParseTree tree = parse(formula);
-            Formula actual = generate(tree);
+            Formula actual = parse(formula);
             assertNotNull(actual);
             assertEquals(expected, actual);
 
             expected = new Or(first, new ForAllUntil(second, third));
             formula = first + " || " + second + " AU " + third;
-            tree = parse(formula);
-            actual = generate(tree);
+            actual = parse(formula);
             assertNotNull(actual);
             assertEquals(expected, actual);
     }
@@ -656,15 +606,13 @@ public class PrecedenceTest extends BaseTest {
             Formula third = Formula.random();
             Formula expected = new Or(new ExistsUntil(first, second), third);
             String formula = first + " EU " + second + " || " + third;
-            ParseTree tree = parse(formula);
-            Formula actual = generate(tree);
+            Formula actual = parse(formula);
             assertNotNull(actual);
             assertEquals(expected, actual);
 
             expected = new Or(first, new ExistsUntil(second, third));
             formula = first + " || " + second + " EU " + third;
-            tree = parse(formula);
-            actual = generate(tree);
+            actual = parse(formula);
             assertNotNull(actual);
             assertEquals(expected, actual);
     }
@@ -679,15 +627,13 @@ public class PrecedenceTest extends BaseTest {
             Formula third = Formula.random();
             Formula expected = new ExistsUntil(first, new ForAllUntil(second,third));
             String formula = first + " EU " + second + " AU " + third;
-            ParseTree tree = parse(formula);
-            Formula actual = generate(tree);
+            Formula actual = parse(formula);
             assertNotNull(actual);
             assertEquals(expected, actual);
 
             expected = new ExistsUntil(new ForAllUntil(first, second), third);
             formula = first + " AU " + second + " EU " + third;
-            tree = parse(formula);
-            actual = generate(tree);
+            actual = parse(formula);
             assertNotNull(actual);
             assertEquals(expected, actual);
     }
@@ -701,8 +647,7 @@ public class PrecedenceTest extends BaseTest {
             Formula second = Formula.random();
             Formula expected = new ForAllUntil(new Not(first), second);
             String formula = "! " + first + " AU " + second ;
-            ParseTree tree = parse(formula);
-            Formula actual = generate(tree);
+            Formula actual = parse(formula);
             assertNotNull(actual);
             assertEquals(expected, actual);
     }
@@ -716,8 +661,7 @@ public class PrecedenceTest extends BaseTest {
             Formula second = Formula.random();
             Formula expected = new ForAllUntil(new ForAllAlways(first), second);
             String formula = "AG "+ first + " AU " + second ;
-            ParseTree tree = parse(formula);
-            Formula actual = generate(tree);
+            Formula actual = parse(formula);
             assertNotNull(actual);
             assertEquals(expected, actual);
     }
@@ -731,8 +675,7 @@ public class PrecedenceTest extends BaseTest {
             Formula second = Formula.random();
             Formula expected = new ForAllUntil(new ForAllEventually(first), second);
             String formula = "AF " + first + " AU " + second ;
-            ParseTree tree = parse(formula);
-            Formula actual = generate(tree);
+            Formula actual = parse(formula);
             assertNotNull(actual);
             assertEquals(expected, actual);
     }
@@ -746,8 +689,7 @@ public class PrecedenceTest extends BaseTest {
             Formula second = Formula.random();
             Formula expected = new ForAllUntil(new ExistsAlways(first), second);
             String formula = "EG " + first + " AU " + second ;
-            ParseTree tree = parse(formula);
-            Formula actual = generate(tree);
+            Formula actual = parse(formula);
             assertNotNull(actual);
             assertEquals(expected, actual);
     }
@@ -761,8 +703,7 @@ public class PrecedenceTest extends BaseTest {
             Formula second = Formula.random();
             Formula expected = new ForAllUntil(new ExistsEventually(first), second);
             String formula = "EF " + first + " AU " + second ;
-            ParseTree tree = parse(formula);
-            Formula actual = generate(tree);
+            Formula actual = parse(formula);
             assertNotNull(actual);
             assertEquals(expected, actual);
     }
@@ -776,8 +717,7 @@ public class PrecedenceTest extends BaseTest {
             Formula second = Formula.random();
             Formula expected = new ExistsUntil(new Not(first), second);
             String formula = "! " + first + " EU " + second ;
-            ParseTree tree = parse(formula);
-            Formula actual = generate(tree);
+            Formula actual = parse(formula);
             assertNotNull(actual);
             assertEquals(expected, actual);
     }
@@ -791,8 +731,7 @@ public class PrecedenceTest extends BaseTest {
             Formula second = Formula.random();
             Formula expected = new ExistsUntil(new ForAllAlways(first), second);
             String formula = "AG " + first + " EU " + second ;
-            ParseTree tree = parse(formula);
-            Formula actual = generate(tree);
+            Formula actual = parse(formula);
             assertNotNull(actual);
             assertEquals(expected, actual);
     }
@@ -806,8 +745,7 @@ public class PrecedenceTest extends BaseTest {
             Formula second = Formula.random();
             Formula expected = new ExistsUntil(new ForAllEventually(first), second);
             String formula = "AF "+ first + " EU " + second ;
-            ParseTree tree = parse(formula);
-            Formula actual = generate(tree);
+            Formula actual = parse(formula);
             assertNotNull(actual);
             assertEquals(expected, actual);
     }
@@ -821,8 +759,7 @@ public class PrecedenceTest extends BaseTest {
             Formula second = Formula.random();
             Formula expected = new ExistsUntil(new ExistsAlways(first), second);
             String formula = "EG "+ first + " EU " + second ;
-            ParseTree tree = parse(formula);
-            Formula actual = generate(tree);
+            Formula actual = parse(formula);
             assertNotNull(actual);
             assertEquals(expected, actual);
     }
@@ -836,8 +773,7 @@ public class PrecedenceTest extends BaseTest {
             Formula second = Formula.random();
             Formula expected = new ExistsUntil(new ExistsEventually(first), second);
             String formula = "EF " + first + " EU " + second ;
-            ParseTree tree = parse(formula);
-            Formula actual = generate(tree);
+            Formula actual = parse(formula);
             assertNotNull(actual);
             assertEquals(expected, actual);
     }

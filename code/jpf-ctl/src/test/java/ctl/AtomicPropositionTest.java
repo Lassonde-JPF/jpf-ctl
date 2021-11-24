@@ -20,8 +20,6 @@ package ctl;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-import org.antlr.v4.runtime.tree.ParseTree;
-
 import org.junit.jupiter.api.Test;
 
 /**
@@ -41,8 +39,7 @@ public class AtomicPropositionTest extends BaseTest {
 	public void testVeryLongPackageNames() {
 		String atomicProposition = "java.a.b.c.d.e.f.g.h.i.j.k.l.m.n.o.p.q.r.s.t.u.v.w.x.y.z";
 		Formula expected = new AtomicProposition(atomicProposition);
-		ParseTree tree = parse(atomicProposition);
-		Formula actual = generate(tree);
+		Formula actual = parse(atomicProposition);
 		assertNotNull(actual);
 		assertEquals(expected, actual);
 	}
@@ -54,57 +51,49 @@ public class AtomicPropositionTest extends BaseTest {
 	public void testJDKName() {
 		String atomicProposition = "java.lang.Object";
 		Formula expected = new AtomicProposition(atomicProposition);
-		ParseTree tree = parse(atomicProposition);
-		Formula actual = generate(tree);
+		Formula actual = parse(atomicProposition);
 		assertNotNull(actual);
 		assertEquals(expected, actual);
 
 		atomicProposition = "java.util.AbstractCollection";
 		expected = new AtomicProposition(atomicProposition);
-		tree = parse(atomicProposition);
-		actual = generate(tree);
+		actual = parse(atomicProposition);
 		assertNotNull(actual);
 		assertEquals(expected, actual);
 
 		atomicProposition = "java.util.AbstractList";
 		expected = new AtomicProposition(atomicProposition);
-		tree = parse(atomicProposition);
-		actual = generate(tree);
+		actual = parse(atomicProposition);
 		assertNotNull(actual);
 		assertEquals(expected, actual);
 
 		atomicProposition = "java.util.ArrayList";
 		expected = new AtomicProposition(atomicProposition);
-		tree = parse(atomicProposition);
-		actual = generate(tree);
+		actual = parse(atomicProposition);
 		assertNotNull(actual);
 		assertEquals(expected, actual);
 
 		atomicProposition = "java.util.AbstractQueue";
 		expected = new AtomicProposition(atomicProposition);
-		tree = parse(atomicProposition);
-		actual = generate(tree);
+		actual = parse(atomicProposition);
 		assertNotNull(actual);
 		assertEquals(expected, actual);
 
 		atomicProposition = "java.util.concurrent.PriorityBlockingQueue";
 		expected = new AtomicProposition(atomicProposition);
-		tree = parse(atomicProposition);
-		actual = generate(tree);
+		actual = parse(atomicProposition);
 		assertNotNull(actual);
 		assertEquals(expected, actual);
 
 		atomicProposition = "java.util.concurrent.LinkedBlockingDeque";
 		expected = new AtomicProposition(atomicProposition);
-		tree = parse(atomicProposition);
-		actual = generate(tree);
+		actual = parse(atomicProposition);
 		assertNotNull(actual);
 		assertEquals(expected, actual);
 
 		atomicProposition = "java.security.spec.ECPoint";
 		expected = new AtomicProposition(atomicProposition);
-		tree = parse(atomicProposition);
-		actual = generate(tree);
+		actual = parse(atomicProposition);
 		assertNotNull(actual);
 		assertEquals(expected, actual);
 	}

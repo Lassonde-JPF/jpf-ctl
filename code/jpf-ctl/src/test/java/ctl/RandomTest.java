@@ -20,8 +20,6 @@ package ctl;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-import org.antlr.v4.runtime.tree.ParseTree;
-
 import org.junit.jupiter.api.RepeatedTest;
 
 /**
@@ -40,10 +38,8 @@ public class RandomTest extends BaseTest {
 	void test() {
 	        // generate a random abstract syntax tree
 	        Formula randomFormula = Formula.random();
-	        // obtain the parse tree of the textual representation of the abstract syntax tree
-	        ParseTree tree = parse(randomFormula.toString());
-	        // generate an abstract syntax tree from the parse tree
-	        Formula formula = generate(tree);
+	        // obtain the abstract syntax tree of the textual representation of the abstract syntax tree
+	        Formula formula = parse(randomFormula.toString());
 	        assertNotNull(formula);
 	        assertEquals(randomFormula, formula);
 	}

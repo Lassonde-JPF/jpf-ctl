@@ -38,7 +38,7 @@ import org.ctl.CTLParser;
 public abstract class BaseTest {
 
 	/**
-	 * Generates formula from parse tree.
+	 * Generates abstract syntax tree from parse tree.
 	 */
 	private static final Generator generator = new Generator();
 
@@ -48,28 +48,18 @@ public abstract class BaseTest {
 	protected static final int TIMES = 1000;
 
 	/**
-	 * Translates a syntactically correct CTL formula from its string representation to a
-	 * parse tree.
+	 * Translates a syntactically correct CTL formula from its string representation to an
+	 * abstract syntax tree.
 	 * 
 	 * @param formula CTL formula
-	 * @return parse tree corresponding to the given CTL formula
+	 * @return the abstract syntax corresponding to the given CTL formula
 	 */
-	public static ParseTree parse(String formula) {
+	public static Formula parse(String formula) {
 		CharStream input = CharStreams.fromString(formula);
 		CTLLexer lexer = new CTLLexer(input);
 		CommonTokenStream tokens = new CommonTokenStream(lexer);
 		CTLParser parser = new CTLParser(tokens);
 		ParseTree tree = parser.formula();
-		return tree;
-	}
-
-	/**
-	 * Generates a CTL formula from the given parse tree.
-	 * 
-	 * @param tree a parse tree
-	 * @return CTL formula corresponding to the given parse tree
-	 */
-	public static Formula generate(ParseTree tree) {
 		return generator.visit(tree);
 	}
 }

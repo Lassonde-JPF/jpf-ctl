@@ -20,8 +20,6 @@ package ctl;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-import org.antlr.v4.runtime.tree.ParseTree;
-
 import org.junit.jupiter.api.RepeatedTest;
 
 /**
@@ -49,10 +47,8 @@ public class AssociativityTest extends BaseTest {
 		Formula expected = new Or(new Or(first, second), third);
 		// create its string representation without parentheses
 		String formula = first + " || " + second + " || " + third;
-		// obtain the parse tree
-		ParseTree tree = parse(formula);
-		// generate an abstract syntax tree from the parse tree
-		Formula actual = generate(tree);
+		// obtain the abstract syntax tree
+		Formula actual = parse(formula);
 		assertNotNull(actual);
 		assertEquals(expected, actual);
 	}
@@ -67,8 +63,7 @@ public class AssociativityTest extends BaseTest {
 		Formula third = Formula.random();
 		Formula expected = new And(new And(first, second), third);
 		String formula = first + " && " + second + " && " + third;
-		ParseTree tree = parse(formula);
-		Formula actual = generate(tree);
+		Formula actual = parse(formula);
 		assertNotNull(actual);
 		assertEquals(expected, actual);
 	}
@@ -83,8 +78,7 @@ public class AssociativityTest extends BaseTest {
 		Formula third = Formula.random();
 		Formula expected = new Iff(new Iff(first, second), third);
 		String formula = first + " <-> " + second + " <-> " + third;
-		ParseTree tree = parse(formula);
-		Formula actual = generate(tree);
+		Formula actual = parse(formula);
 		assertNotNull(actual);
 		assertEquals(expected, actual);
 	}
@@ -99,8 +93,7 @@ public class AssociativityTest extends BaseTest {
 		Formula third = Formula.random();
 		Formula expected = new Implies(first,new Implies(second, third));
 		String formula = first + " -> " + second + " -> " + third;
-		ParseTree tree = parse(formula);
-		Formula actual = generate(tree);
+		Formula actual = parse(formula);
 		assertNotNull(actual);
 		assertEquals(expected, actual);
 	}
@@ -115,8 +108,7 @@ public class AssociativityTest extends BaseTest {
 		Formula third = Formula.random();
 		Formula expected = new ExistsUntil(first,new ExistsUntil(second, third));
 		String formula = first + " EU " + second + " EU " + third;
-		ParseTree tree = parse(formula);
-		Formula actual = generate(tree);
+		Formula actual = parse(formula);
 		assertNotNull(actual);
 		assertEquals(expected, actual);
 	}
@@ -131,8 +123,7 @@ public class AssociativityTest extends BaseTest {
 		Formula third = Formula.random();
 		Formula expected = new ForAllUntil(first,new ForAllUntil(second, third));
 		String formula = first + " AU " + second + " AU " + third;
-		ParseTree tree = parse(formula);
-		Formula actual = generate(tree);
+		Formula actual = parse(formula);
 		assertNotNull(actual);
 		assertEquals(expected, actual);
 	}
