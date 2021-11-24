@@ -43,7 +43,7 @@ public class RandomTest extends BaseTest {
 	        // obtain the parse tree of the textual representation of the abstract syntax tree
 	        ParseTree tree = parse(randomFormula.toString());
 	        // generate an abstract syntax tree from the parse tree
-	        Formula formula = generator.visit(tree);
+	        Formula formula = generate(tree);
 	        assertNotNull(formula);
 	        assertEquals(randomFormula, formula);
 	}

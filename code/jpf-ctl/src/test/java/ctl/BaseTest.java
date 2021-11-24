@@ -36,19 +36,16 @@ import org.ctl.CTLParser;
  * @author Hongru Wang
  */
 public abstract class BaseTest {
-	protected Generator generator;
+
+	/**
+	 * Generates formula from parse tree.
+	 */
+	private static final Generator generator = new Generator();
 
 	/**
 	 * Number of times tests that involve randomness are repeated.
 	 */
 	protected static final int TIMES = 1000;
-
-	/**
-	 * Initializes this test.
-	 */
-	public BaseTest() {
-		this.generator = new Generator();
-	}
 
 	/**
 	 * Translates a syntactically correct CTL formula from its string representation to a
@@ -64,5 +61,15 @@ public abstract class BaseTest {
 		CTLParser parser = new CTLParser(tokens);
 		ParseTree tree = parser.formula();
 		return tree;
+	}
+
+	/**
+	 * Generates a CTL formula from the given parse tree.
+	 * 
+	 * @param tree a parse tree
+	 * @return CTL formula corresponding to the given parse tree
+	 */
+	public static Formula generate(ParseTree tree) {
+		return generator.visit(tree);
 	}
 }

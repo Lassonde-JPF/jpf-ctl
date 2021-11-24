@@ -48,11 +48,11 @@ public class AssociativityTest extends BaseTest {
 		// combine the three
 		Formula expected = new Or(new Or(first, second), third);
 		// create its string representation without parentheses
-		String formula = first.toString() + " || " + second.toString() + " || " + third.toString();
+		String formula = first + " || " + second + " || " + third;
 		// obtain the parse tree
 		ParseTree tree = parse(formula);
 		// generate an abstract syntax tree from the parse tree
-		Formula actual = this.generator.visit(tree);
+		Formula actual = generate(tree);
 		assertNotNull(actual);
 		assertEquals(expected, actual);
 	}
@@ -66,9 +66,9 @@ public class AssociativityTest extends BaseTest {
 		Formula second = Formula.random();
 		Formula third = Formula.random();
 		Formula expected = new And(new And(first, second), third);
-		String formula = first.toString() + " && " + second.toString() + " && " + third.toString();
+		String formula = first + " && " + second + " && " + third;
 		ParseTree tree = parse(formula);
-		Formula actual = this.generator.visit(tree);
+		Formula actual = generate(tree);
 		assertNotNull(actual);
 		assertEquals(expected, actual);
 	}
@@ -82,9 +82,9 @@ public class AssociativityTest extends BaseTest {
 		Formula second = Formula.random();
 		Formula third = Formula.random();
 		Formula expected = new Iff(new Iff(first, second), third);
-		String formula = first.toString() + " <-> " + second.toString() + " <-> " + third.toString();
+		String formula = first + " <-> " + second + " <-> " + third;
 		ParseTree tree = parse(formula);
-		Formula actual = this.generator.visit(tree);
+		Formula actual = generate(tree);
 		assertNotNull(actual);
 		assertEquals(expected, actual);
 	}
@@ -98,9 +98,9 @@ public class AssociativityTest extends BaseTest {
 		Formula second = Formula.random();
 		Formula third = Formula.random();
 		Formula expected = new Implies(first,new Implies(second, third));
-		String formula = first.toString() + " -> " + second.toString() + " -> " + third.toString();
+		String formula = first + " -> " + second + " -> " + third;
 		ParseTree tree = parse(formula);
-		Formula actual = this.generator.visit(tree);
+		Formula actual = generate(tree);
 		assertNotNull(actual);
 		assertEquals(expected, actual);
 	}
@@ -114,9 +114,9 @@ public class AssociativityTest extends BaseTest {
 		Formula second = Formula.random();
 		Formula third = Formula.random();
 		Formula expected = new ExistsUntil(first,new ExistsUntil(second, third));
-		String formula = first.toString() + " EU " + second.toString() + " EU " + third.toString();
+		String formula = first + " EU " + second + " EU " + third;
 		ParseTree tree = parse(formula);
-		Formula actual = this.generator.visit(tree);
+		Formula actual = generate(tree);
 		assertNotNull(actual);
 		assertEquals(expected, actual);
 	}
@@ -130,9 +130,9 @@ public class AssociativityTest extends BaseTest {
 		Formula second = Formula.random();
 		Formula third = Formula.random();
 		Formula expected = new ForAllUntil(first,new ForAllUntil(second, third));
-		String formula = first.toString() + " AU " + second.toString() + " AU " + third.toString();
+		String formula = first + " AU " + second + " AU " + third;
 		ParseTree tree = parse(formula);
-		Formula actual = this.generator.visit(tree);
+		Formula actual = generate(tree);
 		assertNotNull(actual);
 		assertEquals(expected, actual);
 	}
