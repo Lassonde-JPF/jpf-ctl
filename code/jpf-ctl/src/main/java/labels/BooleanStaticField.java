@@ -1,4 +1,4 @@
-package label;
+package labels;
 
 public class BooleanStaticField extends BinaryLabel {
 

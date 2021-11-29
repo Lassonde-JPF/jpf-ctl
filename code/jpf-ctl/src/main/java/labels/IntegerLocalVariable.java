@@ -1,13 +1,13 @@
-package label;
+package labels;
 
-public class BooleanLocalVariable extends BinaryLabel {
-	
+public class IntegerLocalVariable extends BinaryLabel {
+
 	private static final String label_suffix = ".variable";
 	
 	private final String parameterTypes, variableName;
 	
-	public BooleanLocalVariable(String qualifiedName, String parameterTypes, String variableName) {
-		super(BooleanLocalVariable.class.getSimpleName(), qualifiedName);
+	public IntegerLocalVariable(String qualifiedName, String parameterTypes, String variableName) {
+		super(IntegerLocalVariable.class.getSimpleName(), qualifiedName);
 		this.parameterTypes = parameterTypes;
 		this.variableName = variableName;
 	}
@@ -21,5 +21,5 @@ public class BooleanLocalVariable extends BinaryLabel {
 	public String labelVal() {
 		return this.qualifiedName + parameterTypes + ":" + variableName;
 	}
-	
+
 }

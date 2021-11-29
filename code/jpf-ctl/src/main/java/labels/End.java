@@ -1,4 +1,4 @@
-package label;
+package labels;
 
 public class End extends UnaryLabel{
 

@@ -15,7 +15,7 @@ import gov.nasa.jpf.Config;
 import gov.nasa.jpf.JPF;
 import gov.nasa.jpf.JPFConfigException;
 import gov.nasa.jpf.JPFException;
-import label.BinaryLabel;
+import labels.BinaryLabel;
 import logging.Logger;
 
 public class Checker {
@@ -85,13 +85,15 @@ public class Checker {
 						"JPF encountered an internal error and was forced to terminate... \n" + jx.getMessage());
 			}
 
-			File labFile = new File(target + LAB_EXTENSION);
-			File traFile = new File(target + TRA_EXTENSION);
-
+			String labString = target.getName() + LAB_EXTENSION;
+			String traString = target.getName() + TRA_EXTENSION;
+			File labFile = new File(labString);
+			File traFile = new File(traString);
+			
 			// build pts
 			LabelledPartialTransitionSystem pts;
 			try {
-				pts = new LabelledPartialTransitionSystem(labFile.getCanonicalPath(), traFile.getCanonicalPath());
+				pts = new LabelledPartialTransitionSystem(labString, traString);
 			} catch (IOException e) {
 				throw new ModelCheckingException(
 						"There was an error building the LabelledPartialTransitionSystem object:\n" + e.getMessage());

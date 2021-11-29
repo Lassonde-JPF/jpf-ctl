@@ -1,12 +1,12 @@
-package label;
+package labels;
 
-public class InvokedMethod extends BinaryLabel {
+public class ReturnedVoidMethod extends BinaryLabel {
 
 	private static final String label_suffix = ".method";
 	private final String parameterTypes;
 	
-	public InvokedMethod(String qualifiedName, String parameterTypes) {
-		super(InvokedMethod.class.getSimpleName(), qualifiedName);
+	public ReturnedVoidMethod(String qualifiedName, String parameterTypes) {
+		super(ReturnedVoidMethod.class.getSimpleName(), qualifiedName);
 		this.parameterTypes = parameterTypes;
 	}
 
@@ -19,6 +19,5 @@ public class InvokedMethod extends BinaryLabel {
 	public String labelVal() {
 		return this.qualifiedName + parameterTypes;
 	}
-	
 
 }

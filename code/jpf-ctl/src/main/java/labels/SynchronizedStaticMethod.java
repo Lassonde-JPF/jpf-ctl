@@ -1,12 +1,12 @@
-package label;
+package labels;
 
-public class ReturnedBooleanMethod extends BinaryLabel {
+public class SynchronizedStaticMethod extends BinaryLabel {
 
 	private static final String label_suffix = ".method";
 	private final String parameterTypes;
 	
-	public ReturnedBooleanMethod(String qualifiedName, String parameterTypes) {
-		super(ReturnedBooleanMethod.class.getSimpleName(), qualifiedName);
+	public SynchronizedStaticMethod(String qualifiedName, String parameterTypes) {
+		super(SynchronizedStaticMethod.class.getSimpleName(), qualifiedName);
 		this.parameterTypes = parameterTypes;
 	}
 
@@ -20,5 +20,4 @@ public class ReturnedBooleanMethod extends BinaryLabel {
 		return this.qualifiedName + parameterTypes;
 	}
 
-	
 }

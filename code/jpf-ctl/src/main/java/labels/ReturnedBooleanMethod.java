@@ -1,12 +1,12 @@
-package label;
+package labels;
 
-public class ReturnedVoidMethod extends BinaryLabel {
+public class ReturnedBooleanMethod extends BinaryLabel {
 
 	private static final String label_suffix = ".method";
 	private final String parameterTypes;
 	
-	public ReturnedVoidMethod(String qualifiedName, String parameterTypes) {
-		super(ReturnedVoidMethod.class.getSimpleName(), qualifiedName);
+	public ReturnedBooleanMethod(String qualifiedName, String parameterTypes) {
+		super(ReturnedBooleanMethod.class.getSimpleName(), qualifiedName);
 		this.parameterTypes = parameterTypes;
 	}
 
@@ -20,4 +20,5 @@ public class ReturnedVoidMethod extends BinaryLabel {
 		return this.qualifiedName + parameterTypes;
 	}
 
+	
 }

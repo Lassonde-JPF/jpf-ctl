@@ -1,4 +1,4 @@
-package label;
+package labels;
 
 public interface Label {
 	static final String label_prefix = "label.";

@@ -21,8 +21,7 @@ public class LabelChecker {
 		Set<String> unusedLabels = listener.getUnusedLabels();
 		if (!unusedLabels.isEmpty()) {
 			String msg = "It appears the following atomic propositions defined in the formula " + formulaTree.getText()
-					+ " do not exist:\n" + unusedLabels.stream().collect(Collectors.joining(", "))
-					+ "\nPerhaps they were defined after the formula.";
+					+ " do not exist:\n" + unusedLabels.stream().collect(Collectors.joining(", "));
 			throw new LabelDoesNotExistException(msg);
 		}
 

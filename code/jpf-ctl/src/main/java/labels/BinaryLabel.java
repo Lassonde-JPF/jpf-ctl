@@ -1,4 +1,4 @@
-package label;
+package labels;
 
 public abstract class BinaryLabel implements Label {
 	

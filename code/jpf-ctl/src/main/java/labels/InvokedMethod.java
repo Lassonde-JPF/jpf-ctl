@@ -1,12 +1,12 @@
-package label;
+package labels;
 
-public class SynchronizedStaticMethod extends BinaryLabel {
+public class InvokedMethod extends BinaryLabel {
 
 	private static final String label_suffix = ".method";
 	private final String parameterTypes;
 	
-	public SynchronizedStaticMethod(String qualifiedName, String parameterTypes) {
-		super(SynchronizedStaticMethod.class.getSimpleName(), qualifiedName);
+	public InvokedMethod(String qualifiedName, String parameterTypes) {
+		super(InvokedMethod.class.getSimpleName(), qualifiedName);
 		this.parameterTypes = parameterTypes;
 	}
 
@@ -19,5 +19,6 @@ public class SynchronizedStaticMethod extends BinaryLabel {
 	public String labelVal() {
 		return this.qualifiedName + parameterTypes;
 	}
+	
 
 }

@@ -26,10 +26,9 @@ import org.label.LabelParser;
 import ctl.Formula;
 import ctl.Generator;
 import logging.Logger;
-
-import label.Label;
 import error.LabelChecker;
 import error.LabelDoesNotExistException;
+import labels.Label;
 
 public class StructuredCTLConfig {
 	
@@ -65,7 +64,7 @@ public class StructuredCTLConfig {
 		
 				CharStream input = CharStreams.fromString(label);
 				ParseTree pT = new LabelParser(new CommonTokenStream(new LabelLexer(input))).label();
-				Label l = new label.Generator().visit(pT);
+				Label l = new labels.Generator().visit(pT);
 				
 				this.labels.computeIfAbsent(alias, k -> l);
 			}
@@ -120,7 +119,7 @@ public class StructuredCTLConfig {
 	
 	public String getLabelClasses() {
 		return this.labels.values().stream()
-				.map(Label::classDef)
+				.map(l -> l.classDef())
 				.distinct()
 				.collect(Collectors.joining(";"));
 	}
