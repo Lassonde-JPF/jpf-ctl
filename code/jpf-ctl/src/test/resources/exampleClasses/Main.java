@@ -8,6 +8,7 @@ public class Main {
 	/**
 	 * Whether the balance of the account is negative.
 	 */
+	@SuppressWarnings("unused")
 	private static boolean negative = false;
 	
 	/**

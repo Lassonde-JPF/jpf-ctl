@@ -1,4 +1,0 @@
-Model Checking Finished
- For the selected class:	c:users/desktop/example.class
- And the written formula:	AX true
-It has been determined that the formula holds in the initial state and is considered valid for this system.
