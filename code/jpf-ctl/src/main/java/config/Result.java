@@ -18,8 +18,8 @@ public class Result {
 
 	@Override
 	public String toString() {
-		return "Model Checking Finished\n For the selected class:\t" + this.target.getName()
-				+ "\n And the written formula:\t" + this.formula + "\nIt has been determined that the formula "
+		return "\nModel Checking Finished\nFor the selected class:\t" + this.target.getName()
+				+ "\nAnd the written formula:\t" + this.formula + "\nIt has been determined that the formula "
 				+ (this.valid ? "holds in the initial state and is considered valid for this system."
 						: "does not hold in the initial state and is considered invalid for this system."
 								+ "\nA counter example can be seen below:\n" + this.counterExample);

@@ -13,6 +13,7 @@ import algo.Checker;
 
 public class Main {
 
+	// Static Variables
 	private static final String JPF_CTL = "jpf-ctl";
 	private static final String CTL_EXTENSION = "ctl";
 	private static final String CLASS_EXTENSION = "class";
@@ -89,7 +90,7 @@ public class Main {
 		try {
 			logger.setOutputFile(JPF_CTL + "-" + System.currentTimeMillis());
 		} catch (Exception e) {
-			logger.severe("Error adding file handler to logger, logs will not be saved for this execution" + e);
+			logger.warning("Error adding file handler to logger, logs will not be saved for this execution" + e);
 		}
 
 		// Load config
@@ -98,7 +99,6 @@ public class Main {
 			config = new StructuredCTLConfig(configFile, targetFile, targetArgs, enumerateRandom);
 		} catch (Exception e) {
 			logger.severe("Error building CTL specification: " + e);
-			e.printStackTrace();
 			System.exit(1);
 		}
 
@@ -112,7 +112,7 @@ public class Main {
 			List<Result> results = checker.validate();
 			// Relay results back to user
 			for (Result r : results) {
-				logger.info("Result: " + r);
+				logger.info(r.toString());
 			}
 		} catch (Exception e) {
 			logger.severe("Error performing validation " + e);
