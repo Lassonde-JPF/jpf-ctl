@@ -77,7 +77,7 @@ generateGrammarSource {
 
 task fatJar(type: Jar) {
   manifest {
-    attributes 'Main-Class': 'gui.Interface'
+    attributes 'Main-Class': 'cmd.Main'
   }
   archiveClassifier = "all"
   from {
