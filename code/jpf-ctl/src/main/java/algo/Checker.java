@@ -94,18 +94,19 @@ public class Checker {
 			LabelledPartialTransitionSystem pts;
 			try {
 				pts = new LabelledPartialTransitionSystem(labString, traString);
+				
 			} catch (IOException e) {
 				throw new ModelCheckingException(
 						"There was an error building the LabelledPartialTransitionSystem object:\n" + e.getMessage());
 			}
 
 			// cleanup files
-//			if (!labFile.delete()) {
-//				logger.severe("File: " + labFile.getName() + " was not deleted");
-//			}
-//			if (!traFile.delete()) {
-//				logger.severe("File: " + traFile.getName() + " was not deleted");
-//			}
+			if (!labFile.delete()) {
+				logger.severe("File: " + labFile.getName() + " was not deleted");
+			}
+			if (!traFile.delete()) {
+				logger.severe("File: " + traFile.getName() + " was not deleted");
+			}
 
 			// perform model check
 			Model m = new Model(pts);

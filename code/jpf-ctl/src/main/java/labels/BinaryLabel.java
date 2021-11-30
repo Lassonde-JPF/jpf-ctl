@@ -20,7 +20,12 @@ public abstract class BinaryLabel implements Label {
 		return this.name + "__" + this.labelVal().replaceAll("\\.", "_");
 	}
 	
+	public String getQualifiedName() {
+		return this.qualifiedName;
+	}
+	
 	public abstract String labelDef();
 	
 	public abstract String labelVal();
+	
 }

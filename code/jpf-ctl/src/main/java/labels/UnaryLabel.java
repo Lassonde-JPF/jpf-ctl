@@ -2,7 +2,7 @@ package labels;
 
 public abstract class UnaryLabel implements Label {
 	
-	String name;
+	protected String name;
 	
 	public UnaryLabel(String name) {
 		this.name = name;
@@ -12,4 +12,9 @@ public abstract class UnaryLabel implements Label {
 	public String classDef() {
 		return UnaryLabel.label_prefix + this.name;
 	}
+	
+	public String getName() {
+		return this.name;
+	}
 }
+

@@ -22,11 +22,11 @@ public class Main {
 	public static void main(String[] args) {
 		Account account = new Account();
 		account.deposit(Integer.parseInt(args[0]));
-		for (int d = 0; d < Integer.parseInt(args[0]); d++) {
+		for (int d = 0; d < Integer.parseInt(args[1]); d++) {
 			new Deposit("d" + d, account).start();
 			negative = account.getBalance() < 0;
 		}
-		for (int w = 0; w < Integer.parseInt(args[0]); w++) {
+		for (int w = 0; w < Integer.parseInt(args[2]); w++) {
 			new Withdraw("w" + w, account).start();
 			negative = account.getBalance() < 0;
 		}

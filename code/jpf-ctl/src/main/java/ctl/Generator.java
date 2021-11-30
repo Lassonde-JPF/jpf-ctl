@@ -17,6 +17,8 @@
 
 package ctl;
 
+import java.util.Map;
+
 import org.ctl.CTLBaseVisitor;
 import org.ctl.CTLParser.AndContext;
 import org.ctl.CTLParser.AtomicPropositionContext;
@@ -36,6 +38,10 @@ import org.ctl.CTLParser.NotContext;
 import org.ctl.CTLParser.OrContext;
 import org.ctl.CTLParser.TrueContext;
 
+import labels.BinaryLabel;
+import labels.Label;
+import labels.UnaryLabel;
+
 /**
  * Generates an abstract syntax tree from a parse tree.
  * 
@@ -48,6 +54,12 @@ import org.ctl.CTLParser.TrueContext;
  * @author Hongru Wang
  */
 public class Generator extends CTLBaseVisitor<Formula> {
+	
+	private Map<String, Label> labels;
+	
+	public Generator(Map<String, Label> labels) {
+		this.labels = labels;
+	}
 	
 	/**
 	 * Visits the given Bracket node in the parse tree and returns the abstract syntax
@@ -151,7 +163,16 @@ public class Generator extends CTLBaseVisitor<Formula> {
 	 */	
 	@Override
 	public Formula visitAtomicProposition(AtomicPropositionContext context) {
-		return new AtomicProposition(context.ATOMIC_PROPOSITION().getText());
+		Label label = this.labels.get(context.ATOMIC_PROPOSITION().getText());
+		if (label instanceof BinaryLabel) {
+			BinaryLabel bL = (BinaryLabel) label;
+			return new AtomicProposition(bL.getQualifiedName());
+		}
+		if (label instanceof UnaryLabel) {
+			UnaryLabel uL = (UnaryLabel) label;
+			return new AtomicProposition(uL.getName());
+		}
+		return null; // TODO error
 	}
 
 	/**

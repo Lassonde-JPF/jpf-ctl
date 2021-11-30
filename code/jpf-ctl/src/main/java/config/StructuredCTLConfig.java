@@ -75,7 +75,7 @@ public class StructuredCTLConfig {
 				
 				CharStream input = CharStreams.fromString(formula);
 				ParseTree pT = new CTLParser(new CommonTokenStream(new CTLLexer(input))).formula();
-				Formula f = new Generator().visit(pT);
+				Formula f = new Generator(this.labels).visit(pT);
 
 				this.formulae.computeIfAbsent(alias, k -> f);
 			}
