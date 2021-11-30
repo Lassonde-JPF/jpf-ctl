@@ -40,7 +40,7 @@ public class Checker {
 
 		for (Formula f : this.config.getFormulae().values()) {
 
-			logger.info("Validation beginning with arguments:\n\tFormula: " + f + "\n\tPath: " + target.getPath());
+			logger.info("Validation beginning with arguments: Formula: " + f + " Path: " + target.getPath());
 
 			try {
 				Config conf = JPF.createConfig(new String[] {});
@@ -100,12 +100,12 @@ public class Checker {
 			}
 
 			// cleanup files
-			if (!labFile.delete()) {
-				logger.severe("File: " + labFile.getName() + " was not deleted");
-			}
-			if (!traFile.delete()) {
-				logger.severe("File: " + traFile.getName() + " was not deleted");
-			}
+//			if (!labFile.delete()) {
+//				logger.severe("File: " + labFile.getName() + " was not deleted");
+//			}
+//			if (!traFile.delete()) {
+//				logger.severe("File: " + traFile.getName() + " was not deleted");
+//			}
 
 			// perform model check
 			Model m = new Model(pts);
