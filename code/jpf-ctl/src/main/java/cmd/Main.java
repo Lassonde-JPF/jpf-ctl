@@ -18,7 +18,7 @@ public class Main {
 	private static final String CLASS_EXTENSION = "class";
 	private static final String DOT = ".";
 
-	// main entry loop for command line version
+	// main entry loop for command line version test
 	public static void main(String[] args) {
 
 		// Parse command line arguments
