@@ -116,7 +116,7 @@ public class Main {
 			List<Result> results = checker.validate();
 			// Relay results back to user
 			for (Result r : results) {
-				String msg = "Model Checking finished for " + r.getTarget() + " and " + r.getFormula() + "\n";
+				String msg = "Model Checking finished for " + r.getTarget().getName() + " and " + r.getFormula() + "\n";
 				if (r.isValid()) {
 					msg += "It has been determined that the formula holds in the initial state as is considered valid for this system.";
 					logger.info(msg);
