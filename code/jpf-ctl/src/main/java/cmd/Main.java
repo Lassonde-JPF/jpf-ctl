@@ -103,7 +103,7 @@ public class Main {
 			Logger.setEnabled(cmd.hasOption("v"));
 		} catch (ParseException e) {
 			new HelpFormatter().printHelp(JPF_CTL, HEADER, options, FOOTER, true);
-			System.out.println(e.getMessage());
+			System.out.println("\n" + e.getMessage());
 			System.exit(1);
 		}
 
@@ -138,15 +138,14 @@ public class Main {
 				String msg = "Model Checking finished for " + r.getTarget().getName() + " and " + r.getFormula() + "\n";
 				if (r.isValid()) {
 					msg += "It has been determined that the formula holds in the initial state as is considered valid for this system.";
-					logger.info(msg);
 				} else {
-					Path counterExamplePath = Paths.get("counterExamples/" + r.getTarget().getName() + ".ce");
+					Path counterExamplePath = Paths.get("counterExamples/" + r.getTarget().getName() + "_" + r.getFormula().toString().replaceAll("\\s", "") + ".ce");
 					Files.createDirectories(counterExamplePath.getParent());
 					Files.write(counterExamplePath, r.getCounterExample().getBytes());
 					msg += "It has been determined that the formula does not hold in the initial state and is considered invalid for this system.\nA counter example can be found at "
 							+ counterExamplePath.toAbsolutePath().normalize();
-					logger.info(msg);
 				}
+				logger.info(msg);
 			}
 		} catch (Exception e) {
 			logger.severe("Error performing validation " + e);
