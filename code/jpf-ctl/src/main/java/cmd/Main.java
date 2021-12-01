@@ -99,6 +99,7 @@ public class Main {
 			config = new StructuredCTLConfig(configFile, targetFile, targetArgs, enumerateRandom);
 		} catch (Exception e) {
 			logger.severe("Error building CTL specification: " + e);
+			e.printStackTrace();
 			System.exit(1);
 		}
 

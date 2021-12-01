@@ -50,6 +50,12 @@ public class Checker {
 
 				// Set classpath to target class
 				conf.setProperty("classpath", target.getPath());
+				
+				// Set extension
+				conf.setProperty("@using", "jpf-label");
+				
+				// Set listeners
+				conf.setProperty("listener", "label.StateLabelText;listeners.PartialTransitionSystemListener");
 
 				// Set args
 				if (!config.getTargetArgs().isEmpty()) {
@@ -85,27 +91,31 @@ public class Checker {
 						"JPF encountered an internal error and was forced to terminate... \n" + jx.getMessage());
 			}
 
-			String labString = target.getName() + LAB_EXTENSION;
-			String traString = target.getName() + TRA_EXTENSION;
-			File labFile = new File(labString);
-			File traFile = new File(traString);
+			File labFile = new File(target.getName() + LAB_EXTENSION);
+			if (!labFile.exists()) {
+				throw new ModelCheckingException(labFile.getName() + " does not exist!");
+			}
+			File traFile = new File(target.getName() + TRA_EXTENSION);
+			if (!traFile.exists()) {
+				throw new ModelCheckingException(traFile.getName() + " does not exist!");
+			}
 			
 			// build pts
 			LabelledPartialTransitionSystem pts;
 			try {
-				pts = new LabelledPartialTransitionSystem(labString, traString);
-				
+				pts = new LabelledPartialTransitionSystem(labFile, traFile);
 			} catch (IOException e) {
+				e.printStackTrace();
 				throw new ModelCheckingException(
-						"There was an error building the LabelledPartialTransitionSystem object:\n" + e.getMessage());
+						"There was an error building the LabelledPartialTransitionSystem object:\n" + e);
 			}
 
 			// cleanup files
 			if (!labFile.delete()) {
-				logger.severe("File: " + labFile.getName() + " was not deleted");
+				logger.warning("File: " + labFile.getName() + " was not deleted");
 			}
 			if (!traFile.delete()) {
-				logger.severe("File: " + traFile.getName() + " was not deleted");
+				logger.warning("File: " + traFile.getName() + " was not deleted");
 			}
 
 			// perform model check

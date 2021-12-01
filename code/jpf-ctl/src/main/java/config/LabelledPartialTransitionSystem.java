@@ -1,6 +1,11 @@
 package config;
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -158,14 +163,10 @@ public class LabelledPartialTransitionSystem {
 	}
 	
 	// Actual Constructor for production
-	public LabelledPartialTransitionSystem(String jpfLabelFile, String listenerFile) throws IOException {
+	public LabelledPartialTransitionSystem(File jpfLabelFile, File listenerFile) throws IOException {
 		// Wrap path string with Path object
-		Path pathToListenerFile = Paths.get(listenerFile);
-		Path pathToJpfLabelFile = Paths.get(jpfLabelFile);
-
-		// Get files as stream (of lines)
-		Stream<String> listenerFileLines = Files.lines(pathToListenerFile);
-		Stream<String> jpfLabelFileLines = Files.lines(pathToJpfLabelFile);
+		Path pathToListenerFile = Paths.get(listenerFile.getCanonicalPath());
+		Path pathToJpfLabelFile = Paths.get(jpfLabelFile.getCanonicalPath());
 
 		// regex for different line types
 		final String TRANSITION = "-?\\d+\\s->\\s\\d+"; // 3 -> 4
@@ -182,7 +183,7 @@ public class LabelledPartialTransitionSystem {
 		this.transitions = new HashSet<Transition>();
 		this.partial = new HashSet<Integer>();
 		// Listener File
-		listenerFileLines.forEach(line -> {
+		Files.lines(pathToListenerFile).forEach(line -> {
 			if (line.matches(TRANSITION)) {
 				String[] t = line.split(TRANSITION_DELIMETER);
 				int source = Integer.parseInt(t[0]);
@@ -198,7 +199,6 @@ public class LabelledPartialTransitionSystem {
 				this.stateSet.addAll(this.partial);
 			}
 		});
-		listenerFileLines.close();
 
 		this.stateSet.add(SINK_STATE);
 		this.states = this.stateSet.size();
@@ -206,7 +206,7 @@ public class LabelledPartialTransitionSystem {
 		// jpf-label File
 		this.labelling = new HashMap<Integer, Set<Integer>>();
 		this.fields = new HashMap<String, Integer>();
-		jpfLabelFileLines.forEach(line -> {
+		Files.lines(pathToJpfLabelFile).forEach(line -> {
 			if (line.matches(LABELLING)) {
 				String[] lr = line.split(LABELLING_DELIMETER);
 				Set<Integer> labels = new HashSet<Integer>();
@@ -230,7 +230,6 @@ public class LabelledPartialTransitionSystem {
 				});
 			}
 		});
-		jpfLabelFileLines.close();
 	}
 
 	@Override
