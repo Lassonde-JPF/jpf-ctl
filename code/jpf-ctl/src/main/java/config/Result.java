@@ -24,6 +24,18 @@ public class Result {
 						: "does not hold in the initial state and is considered invalid for this system."
 								+ "\nA counter example can be seen below:\n" + this.counterExample);
 	}
+	
+	public Formula getFormula() {
+		return this.formula;
+	}
+	
+	public String getCounterExample() {
+		return this.counterExample;
+	}
+	
+	public Target getTarget() {
+		return this.target;
+	}
 
 	public boolean isValid() {
 		return this.valid;

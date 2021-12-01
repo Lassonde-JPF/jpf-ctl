@@ -110,4 +110,5 @@ test {
 
 clean.doFirst {
     delete "${rootDir}/logs"
+    delete "${rootDir}/counterExamples"
 }

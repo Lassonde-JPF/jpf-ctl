@@ -1,6 +1,9 @@
 package cmd;
 
 import java.io.File;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.List;
 
 import config.Result;
@@ -113,7 +116,18 @@ public class Main {
 			List<Result> results = checker.validate();
 			// Relay results back to user
 			for (Result r : results) {
-				logger.info(r.toString());
+				String msg = "Model Checking finished for " + r.getTarget() + " and " + r.getFormula() + "\n";
+				if (r.isValid()) {
+					msg += "It has been determined that the formula holds in the initial state as is considered valid for this system.";
+					logger.info(msg);
+				} else {
+					Path counterExamplePath = Paths.get("counterExamples/" + r.getTarget().getName() + ".ce");
+					Files.createDirectories(counterExamplePath.getParent());
+					Files.write(counterExamplePath, r.getCounterExample().getBytes());
+					
+					msg += "It has been determined that the formula does not hold in the initial state and is considered invalid for this system.\nA counter example can be found at " + counterExamplePath;
+					logger.info(msg);
+				}
 			}
 		} catch (Exception e) {
 			logger.severe("Error performing validation " + e);

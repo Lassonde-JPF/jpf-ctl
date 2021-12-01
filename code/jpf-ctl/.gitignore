@@ -11,6 +11,9 @@ src/test/resources/toDot/*.pdf
 # Ignore logs
 logs
 
+# Ignore counter examples
+counterExamples
+
 # Ignore output
 *.tra
 *.lab
