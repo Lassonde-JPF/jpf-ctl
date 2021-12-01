@@ -22,6 +22,22 @@ public class Main {
 	private static final String CLASS_EXTENSION = "class";
 	private static final String DOT = ".";
 
+	// Help Printer
+	private static final String HEADER
+			= "\n"
+			+ "    o8o             .o88o.                       .   oooo  \r\n"
+			+ "    `\"'             888 `\"                     .o8   `888  \r\n"
+			+ "   oooo oo.ooooo.  o888oo           .ooooo.  .o888oo  888  \r\n"
+			+ "   `888  888' `88b  888            d88' `\"Y8   888    888  \r\n"
+			+ "    888  888   888  888    8888888 888         888    888  \r\n"
+			+ "    888  888   888  888            888   .o8   888 .  888  \r\n"
+			+ "    888  888bod8P' o888o           `Y8bod8P'   \"888\" o888o \r\n"
+			+ "    888  888                                               \r\n"
+			+ ".o. 88P o888o                                              \r\n"
+			+ "`Y888P                                                     \n\n";
+	private static final String FOOTER 
+			= "\nPlease report issues at https://github.com/Lassonde-JPF/jpf-ctl/issues";
+
 	// main entry loop for command line version test
 	public static void main(String[] args) {
 
@@ -29,18 +45,19 @@ public class Main {
 		Options options = new Options();
 
 		// Required Options
-		options.addRequiredOption("c", "configPath", true, "config gile path");
-		options.addRequiredOption("t", "targetPath", true, "target file path");
+		options.addRequiredOption("ctl", "configPath", true, "path to ctl config file");
+		options.addRequiredOption("tn", "targetName", true, "qualified name of target class");
+		options.addRequiredOption("tp", "classpath", true, "classpath of target");
 
 		// Optional Options
 		options.addOption(new Option("e", "enumerateRandom", false, "consider randomness"));
-		options.addOption(new Option("l", "logging", false, "enable logging"));
-		options.addOption(new Option("args", "targetArgs", true, "cmd line arguments for target"));
+		options.addOption(new Option("v", "verboseLogs", false, "enable logging to print to console"));
+		options.addOption(new Option("ta", "targetArgs", true, "cmd line arguments for target"));
 
 		// Parse Options
 		CommandLine cmd = null;
-		File configFile = null, targetFile = null;
-		String targetArgs = null, enumerateRandom = null;
+		File configFile = null;
+		String targetArgs = null, enumerateRandom = null, targetName = null, targetClasspath = null;
 		try {
 			cmd = new DefaultParser().parse(options, args);
 
@@ -62,7 +79,7 @@ public class Main {
 			}
 
 			// Check that target file exists and is correct
-			String targetPath = cmd.getOptionValue("targetPath");
+			String targetPath = cmd.getOptionValue("classpath") + cmd.getOptionValue("targetName").replaceAll("\\.", "/") + ".class";
 			try {
 				String extension = targetPath.substring(targetPath.lastIndexOf(DOT) + 1);
 				if (!extension.equals(CLASS_EXTENSION)) {
@@ -73,17 +90,19 @@ public class Main {
 				throw new ParseException(
 						"file does not contain an extension, expected '" + CLASS_EXTENSION + "' for " + configPath);
 			}
-			targetFile = new File(targetPath);
+			File targetFile = new File(targetPath);
 			if (!targetFile.exists()) {
 				throw new ParseException("could not find file specified by: " + targetPath);
 			}
+			targetName = cmd.getOptionValue("targetName");
+			targetClasspath = cmd.getOptionValue("classpath");
 
 			// build remaining arguments
 			targetArgs = cmd.getOptionValue("targetArgs");
 			enumerateRandom = cmd.hasOption("e") ? "true" : "false";
-			Logger.setEnabled(cmd.hasOption("l"));
+			Logger.setEnabled(cmd.hasOption("v"));
 		} catch (ParseException e) {
-			new HelpFormatter().printHelp(JPF_CTL, options);
+			new HelpFormatter().printHelp(JPF_CTL, HEADER, options, FOOTER, true);
 			System.out.println(e.getMessage());
 			System.exit(1);
 		}
@@ -99,7 +118,7 @@ public class Main {
 		// Load config
 		StructuredCTLConfig config = null;
 		try {
-			config = new StructuredCTLConfig(configFile, targetFile, targetArgs, enumerateRandom);
+			config = new StructuredCTLConfig(configFile, targetName, targetClasspath, targetArgs, enumerateRandom);
 		} catch (Exception e) {
 			logger.severe("Error building CTL specification: " + e);
 			e.printStackTrace();
@@ -124,8 +143,8 @@ public class Main {
 					Path counterExamplePath = Paths.get("counterExamples/" + r.getTarget().getName() + ".ce");
 					Files.createDirectories(counterExamplePath.getParent());
 					Files.write(counterExamplePath, r.getCounterExample().getBytes());
-					
-					msg += "It has been determined that the formula does not hold in the initial state and is considered invalid for this system.\nA counter example can be found at " + counterExamplePath;
+					msg += "It has been determined that the formula does not hold in the initial state and is considered invalid for this system.\nA counter example can be found at "
+							+ counterExamplePath.toAbsolutePath().normalize();
 					logger.info(msg);
 				}
 			}

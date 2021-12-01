@@ -43,7 +43,7 @@ public class StructuredCTLConfig {
 	// Logging
 	Logger logger;
 	
-	public StructuredCTLConfig(File configFile, File targetFile, String targetArgs, String enumerateRandom) throws IOException, ClassNotFoundException {
+	public StructuredCTLConfig(File configFile, String targetName, String targetClasspath, String targetArgs, String enumerateRandom) throws IOException, ClassNotFoundException {
 		// New logger
 		logger = new Logger(StructuredCTLConfig.class.getName(), "StructuredCTLConfig");
 		
@@ -91,26 +91,7 @@ public class StructuredCTLConfig {
 		}
 		
 		// Build Target Object
-		String className, packageName, path;
-		URL[] url;
-		try {
-			className = targetFile.getName().split("\\.")[0];
-			path = targetFile.getParentFile().getCanonicalPath();
-			url = new URL[] {
-					targetFile.getParentFile().toURI().toURL()
-			};
-			Class.forName(className, false, new URLClassLoader(url));
-			this.target = new Target(className, path);
-		} catch (NoClassDefFoundError | ClassNotFoundException e) {
-			packageName = targetFile.getParentFile().getName();
-			className = packageName + "." + targetFile.getName().split("\\.")[0];
-			path = targetFile.getParentFile().getParentFile().getCanonicalPath();
-			url = new URL[] {
-					targetFile.getParentFile().getParentFile().toURI().toURL()
-			};
-			Class.forName(className, false, new URLClassLoader(url));
-			this.target = new Target(className, packageName, path);
-		}
+		this.target = new Target(targetName, targetClasspath);
 		
 		// Build additional info
 		this.targetArgs = targetArgs;

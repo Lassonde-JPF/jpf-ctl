@@ -40,8 +40,6 @@ public class Checker {
 
 		for (Formula f : this.config.getFormulae().values()) {
 
-			logger.info("Validation beginning with arguments: Formula: " + f + " Path: " + target.getPath());
-
 			try {
 				Config conf = JPF.createConfig(new String[] {});
 
@@ -91,6 +89,7 @@ public class Checker {
 						"JPF encountered an internal error and was forced to terminate... \n" + jx.getMessage());
 			}
 
+			// Assert listener files exist
 			File labFile = new File(target.getName() + LAB_EXTENSION);
 			if (!labFile.exists()) {
 				throw new ModelCheckingException(labFile.getName() + " does not exist!");
