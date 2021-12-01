@@ -1,5 +1,7 @@
 package labels;
 
+import gov.nasa.jpf.vm.Types;
+
 public class BooleanStaticField extends BinaryLabel {
 
 	private static final String label_suffix = ".field"; 
@@ -16,6 +18,11 @@ public class BooleanStaticField extends BinaryLabel {
 	@Override
 	public String labelVal() {
 		return this.qualifiedName;
+	}
+	
+	@Override
+	public String toString() {
+		return this.qualifiedName.replace('.', '_');
 	}
 
 }

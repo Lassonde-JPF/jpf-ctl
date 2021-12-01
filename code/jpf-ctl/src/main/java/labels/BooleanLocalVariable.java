@@ -1,5 +1,7 @@
 package labels;
 
+import gov.nasa.jpf.vm.Types;
+
 public class BooleanLocalVariable extends BinaryLabel {
 	
 	private static final String label_suffix = ".variable";
@@ -20,6 +22,12 @@ public class BooleanLocalVariable extends BinaryLabel {
 	@Override
 	public String labelVal() {
 		return this.qualifiedName + parameterTypes + ":" + variableName;
+	}
+	
+	@Override
+	public String toString() {
+		String signature = Types.getSignatureName(this.qualifiedName + this.parameterTypes);
+		return Types.getJNIMangledMethodName(this.qualifiedName, this.name, signature);
 	}
 	
 }

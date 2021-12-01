@@ -1,3 +1,6 @@
-a: BooleanStaticField exampleClasses.Main.negative
+negative: BooleanStaticField exampleClasses.Main.negative
+mainExits: ReturnedVoidMethod exampleClasses.Main.main(java.lang.String[])
 
-f = AG!a
+f = AG ! negative
+
+f2 = AF mainExits

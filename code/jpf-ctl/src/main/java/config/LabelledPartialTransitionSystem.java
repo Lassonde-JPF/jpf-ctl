@@ -219,8 +219,12 @@ public class LabelledPartialTransitionSystem {
 					int index = Integer.parseInt(l.split("=")[0]);
 					String AP = l.split("=")[1];
 					String[] LR = AP.split("__");
-					if (LR[0].equals("true")) {
-						this.fields.put(LR[1].replace("_", "."), index);
+					if (!LR[0].equals("false")) { // TODO needs to be expanded
+						if (LR[1].contains("___")) {
+							this.fields.put(LR[1].split("___")[0].replace('_', '.'), index);
+						} else {
+							this.fields.put(LR[1].replace("_", "."), index);
+						}
 					}
 				});
 			}

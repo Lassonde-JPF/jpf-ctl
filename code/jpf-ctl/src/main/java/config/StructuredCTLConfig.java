@@ -53,6 +53,9 @@ public class StructuredCTLConfig {
 		formulaeTrees = new ArrayList<ParseTree>();
 		labels = new HashMap<String, Label>();
 
+		// Build Target Object
+		this.target = new Target(targetName, targetClasspath);
+		
 		// Build formulae and atomic proposition labels
 		Files.lines(pathToFile).map(String::trim).forEach(line -> {
 			// Atomic Proposition
@@ -62,7 +65,7 @@ public class StructuredCTLConfig {
 		
 				CharStream input = CharStreams.fromString(label);
 				ParseTree pT = new LabelParser(new CommonTokenStream(new LabelLexer(input))).label();
-				Label l = new labels.Generator().visit(pT);
+				Label l = new labels.Generator(this.target.getPath()).visit(pT);
 				
 				this.labels.computeIfAbsent(alias, k -> l);
 			}
@@ -87,9 +90,6 @@ public class StructuredCTLConfig {
 				logger.warning(e.getMessage());
 			}
 		}
-		
-		// Build Target Object
-		this.target = new Target(targetName, targetClasspath);
 		
 		// Build additional info
 		this.targetArgs = targetArgs;

@@ -8,6 +8,12 @@ import org.label.LabelBaseVisitor;
 import org.label.LabelParser;
 
 public class Generator extends LabelBaseVisitor<Label> {
+	
+	private String path;
+	
+	public Generator(String path) {
+		this.path = path;
+	}
 
 	@Override
 	public Label visitInitial(LabelParser.InitialContext ctx) {
@@ -41,12 +47,12 @@ public class Generator extends LabelBaseVisitor<Label> {
 
 	@Override
 	public Label visitInvokedMethod(LabelParser.InvokedMethodContext ctx) {
-		return new InvokedMethod(ctx.referenceType().getText(), ctx.parameters().getText());
+		return new InvokedMethod(ctx.referenceType().getText(), ctx.parameters().getText(), path);
 	}
 
 	@Override
 	public Label visitReturnedVoidMethod(LabelParser.ReturnedVoidMethodContext ctx) {
-		return new ReturnedVoidMethod(ctx.referenceType().getText(), ctx.parameters().getText());
+		return new ReturnedVoidMethod(ctx.referenceType().getText(), ctx.parameters().getText(), path);
 	}
 
 	@Override
