@@ -8,6 +8,7 @@ import java.util.List;
 
 import config.Result;
 import config.StructuredCTLConfig;
+import config.Target;
 import logging.Logger;
 
 import org.apache.commons.cli.*;
@@ -19,13 +20,10 @@ public class Main {
 	// Static Variables
 	private static final String JPF_CTL = "jpf-ctl";
 	private static final String CTL_EXTENSION = "ctl";
-	private static final String CLASS_EXTENSION = "class";
 	private static final String DOT = ".";
 
 	// Help Printer
-	private static final String HEADER
-			= "\n"
-			+ "    o8o             .o88o.                       .   oooo  \r\n"
+	private static final String HEADER = "\n" + "    o8o             .o88o.                       .   oooo  \r\n"
 			+ "    `\"'             888 `\"                     .o8   `888  \r\n"
 			+ "   oooo oo.ooooo.  o888oo           .ooooo.  .o888oo  888  \r\n"
 			+ "   `888  888' `88b  888            d88' `\"Y8   888    888  \r\n"
@@ -35,8 +33,7 @@ public class Main {
 			+ "    888  888                                               \r\n"
 			+ ".o. 88P o888o                                              \r\n"
 			+ "`Y888P                                                     \n\n";
-	private static final String FOOTER 
-			= "\nPlease report issues at https://github.com/Lassonde-JPF/jpf-ctl/issues";
+	private static final String FOOTER = "\nPlease report issues at https://github.com/Lassonde-JPF/jpf-ctl/issues";
 
 	// main entry loop for command line version test
 	public static void main(String[] args) {
@@ -46,18 +43,17 @@ public class Main {
 
 		// Required Options
 		options.addRequiredOption("ctl", "configPath", true, "path to ctl config file");
-		options.addRequiredOption("tn", "targetName", true, "qualified name of target class");
-		options.addRequiredOption("tp", "classpath", true, "classpath of target");
+		options.addOption("t", "targetPath", true, "path to target properties file");
 
 		// Optional Options
 		options.addOption(new Option("e", "enumerateRandom", false, "consider randomness"));
 		options.addOption(new Option("v", "verboseLogs", false, "enable logging to print to console"));
-		options.addOption(new Option("ta", "targetArgs", true, "cmd line arguments for target"));
 
 		// Parse Options
 		CommandLine cmd = null;
 		File configFile = null;
-		String targetArgs = null, enumerateRandom = null, targetName = null, targetClasspath = null;
+		String enumerateRandom = null;
+		Target target = null;
 		try {
 			cmd = new DefaultParser().parse(options, args);
 
@@ -78,27 +74,9 @@ public class Main {
 				throw new ParseException("could not find file specified by: " + configPath);
 			}
 
-			// Check that target file exists and is correct
-			String targetPath = cmd.getOptionValue("classpath") + cmd.getOptionValue("targetName").replaceAll("\\.", "/") + ".class";
-			try {
-				String extension = targetPath.substring(targetPath.lastIndexOf(DOT) + 1);
-				if (!extension.equals(CLASS_EXTENSION)) {
-					throw new ParseException("file has the wrong extension, expected '" + CLASS_EXTENSION + "' for "
-							+ targetPath + " but was " + extension);
-				}
-			} catch (IndexOutOfBoundsException e) {
-				throw new ParseException(
-						"file does not contain an extension, expected '" + CLASS_EXTENSION + "' for " + configPath);
-			}
-			File targetFile = new File(targetPath);
-			if (!targetFile.exists()) {
-				throw new ParseException("could not find file specified by: " + targetPath);
-			}
-			targetName = cmd.getOptionValue("targetName");
-			targetClasspath = cmd.getOptionValue("classpath");
+			target = new Target(cmd.getOptionValue("targetPath"));
 
 			// build remaining arguments
-			targetArgs = cmd.getOptionValue("targetArgs");
 			enumerateRandom = cmd.hasOption("e") ? "true" : "false";
 			Logger.setEnabled(cmd.hasOption("v"));
 		} catch (ParseException e) {
@@ -108,28 +86,30 @@ public class Main {
 		}
 
 		// Initialize logging service/obj
-		Logger logger = new Logger(Main.class.getName(), "Main");
+		Logger logger = new Logger(Main.class.getSimpleName());
+		logger.info("Initializing logging service...");
 		try {
-			logger.setOutputFile(JPF_CTL + "-" + System.currentTimeMillis());
+			logger.setOutputFile();
 		} catch (Exception e) {
 			logger.warning("Error adding file handler to logger, logs will not be saved for this execution" + e);
 		}
+		logger.info("Done.");
 
 		// Load config
+		logger.info("Loading " + configFile.getName() + "...");
 		StructuredCTLConfig config = null;
 		try {
-			config = new StructuredCTLConfig(configFile, targetName, targetClasspath, targetArgs, enumerateRandom);
+			config = new StructuredCTLConfig(configFile, target, enumerateRandom);
 		} catch (Exception e) {
 			logger.severe("Error building CTL specification: " + e);
 			e.printStackTrace();
 			System.exit(1);
 		}
-
-		logger.info("config\n" + config.toString());
+		logger.info("Done.");
 
 		// Build checker and results object(s)
+		logger.info("Building model checker...");
 		Checker checker = new Checker(config);
-
 		// Perform model check
 		try {
 			List<Result> results = checker.validate();
@@ -139,7 +119,8 @@ public class Main {
 				if (r.isValid()) {
 					msg += "It has been determined that the formula holds in the initial state as is considered valid for this system.";
 				} else {
-					Path counterExamplePath = Paths.get("counterExamples/" + r.getTarget().getName() + "_" + r.getFormula().toString().replaceAll("\\s", "") + ".ce");
+					Path counterExamplePath = Paths.get("counterExamples/" + r.getTarget().getName() + "_"
+							+ r.getFormula().toString().replaceAll("\\s", "") + ".ce");
 					Files.createDirectories(counterExamplePath.getParent());
 					Files.write(counterExamplePath, r.getCounterExample().getBytes());
 					msg += "It has been determined that the formula does not hold in the initial state and is considered invalid for this system.\nA counter example can be found at "

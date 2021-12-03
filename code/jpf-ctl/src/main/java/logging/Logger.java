@@ -2,60 +2,81 @@ package logging;
 
 import java.io.File;
 import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import java.util.logging.ConsoleHandler;
 import java.util.logging.FileHandler;
+import java.util.logging.Handler;
+import java.util.logging.Level;
 
 public class Logger {
 	
+	// Extensions
 	private static final String LOG_EXTENSION = ".log.dtd";
-	private static boolean enabled = false;
 	
-	private String prefix;
+	// Set of all loggers
+	private static List<java.util.logging.Logger> loggers = new ArrayList<java.util.logging.Logger>();	
+	
+	// This specific logger
 	private java.util.logging.Logger logger;
 	
-	public Logger(String className, String prefix) {
+	public Logger(String className) {
+		// Create a java.util.logging.Logger object
 		this.logger = java.util.logging.Logger.getLogger(className);
-		this.prefix = "[" + prefix + "] ";
+		
+		// Remove parent handlers -> i.e default console handler
+		this.logger.setUseParentHandlers(false);
+		
+		// Replace with better, new console handler (shiny, wow!)
+		ConsoleHandler cH = new ConsoleHandler();
+		cH.setFormatter(new LogFormatter());
+		this.logger.addHandler(cH);
+		
+		// Record this logger in the big book of loggers 
+		Logger.loggers.add(this.logger);
 	}
 
 	public void info(String msg) {
-		if (Logger.enabled) {
-			logger.info(this.prefix + msg + "\n");
-		}
+		this.logger.info(msg);
 	}
 	
 	public void warning(String msg) {
-		if (Logger.enabled) {
-			logger.warning(this.prefix + msg + "\n");
-		}
+		this.logger.warning(msg);
 	}
 	
 	public void severe(String msg) {
-		if (Logger.enabled) {
-			logger.severe(this.prefix + msg + "\n");
-		}
+		this.logger.severe(msg);
 	}
 	
 	public void fine(String msg) {
-		if (Logger.enabled) {
-			logger.fine(this.prefix + msg + "\n");
-		}
+		this.logger.fine(msg);
 	}
 	
-	public static boolean setEnabled(boolean val) {
-		Logger.enabled = val;
-		return Logger.enabled;
+	public static void setEnabled(boolean val) {
+		// Turn off logs for all levels
+		Logger.loggers.stream().forEach(logger -> logger.setLevel(val ? Level.ALL : Level.OFF));
 	}
 	
 	// Set Formatter (default xml)
-	public void setOutputFile(String fileName) throws SecurityException, IOException {
-		File logFile = new File("logs/" + fileName + LOG_EXTENSION);
+	public void setOutputFile() throws SecurityException, IOException {
+		// Build Log Name
+		SimpleDateFormat df = new SimpleDateFormat("D_hh_mm");
+		String logName = "[jpf-ctl]" + df.format(new Date());
+		File logFile = new File("logs/" + logName + LOG_EXTENSION);
 		logFile.getParentFile().mkdirs();
 		logger.addHandler(new FileHandler(logFile.getCanonicalPath(), 0, 1, true));
-		logger.setUseParentHandlers(true);
 	}
 	
-	public java.util.logging.Logger getRawLogger() {
-		return this.logger;
+	public static void clrscr(){
+	    //Clears Screen in java
+	    try {
+	        if (System.getProperty("os.name").contains("Windows"))
+	            new ProcessBuilder("cmd", "/c", "cls").inheritIO().start().waitFor();
+	        else
+	            Runtime.getRuntime().exec("clear");
+	    } catch (IOException | InterruptedException ex) {}
 	}
 
 }

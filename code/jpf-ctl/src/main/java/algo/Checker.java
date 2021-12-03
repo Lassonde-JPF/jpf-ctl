@@ -4,6 +4,8 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 
 import config.LabelledPartialTransitionSystem;
 import config.Result;
@@ -17,6 +19,7 @@ import gov.nasa.jpf.JPFConfigException;
 import gov.nasa.jpf.JPFException;
 import labels.BinaryLabel;
 import logging.Logger;
+import me.tongfei.progressbar.ProgressBar;
 
 public class Checker {
 
@@ -29,7 +32,7 @@ public class Checker {
 
 	public Checker(StructuredCTLConfig config) {
 		this.config = config;
-		this.logger = new Logger(Checker.class.getName(), "Checker");
+		this.logger = new Logger(Checker.class.getSimpleName());
 	}
 
 	public List<Result> validate() throws ModelCheckingException {
@@ -38,8 +41,14 @@ public class Checker {
 
 		Target target = this.config.getTarget();
 
-		for (Formula f : this.config.getFormulae().values()) {
+		logger.info("Running JPF on " + target.getName() + "...");
 
+		Map<String, Formula> formulae = this.config.getFormulae();
+		try (ProgressBar pb = new ProgressBar("jpf-ctl", (formulae.size()*10) + 25)) {
+
+			pb.step();
+			pb.setExtraMessage("Building JPF config...");
+			
 			try {
 				Config conf = JPF.createConfig(new String[] {});
 
@@ -48,12 +57,15 @@ public class Checker {
 
 				// Set classpath to target class
 				conf.setProperty("classpath", target.getPath());
-				
+
 				// Set extension
 				conf.setProperty("@using", "jpf-label");
-				
+
 				// Set listeners
 				conf.setProperty("listener", "label.StateLabelText;listeners.PartialTransitionSystemListener");
+
+				// Disable reporting (why isn't there a page on configuring this? smh)
+				conf.setProperty("report.console.class", "gov.nasa.jpf.report.XMLPublisher");
 
 				// Set args
 				if (!config.getTargetArgs().isEmpty()) {
@@ -65,28 +77,37 @@ public class Checker {
 
 				// build the label properties
 				conf.setProperty("label.class", config.getLabelClasses());
-				config.getLabels().values().stream()
-					.filter(BinaryLabel.class::isInstance)
-					.map(BinaryLabel.class::cast)
-					.forEach(bL -> {
-						String prev = conf.getProperty(bL.labelDef());
-						conf.setProperty(bL.labelDef(), prev == null ? bL.labelVal() : prev + ";" + bL.labelVal());
-					});
-				
+				config.getLabels().values().stream().filter(BinaryLabel.class::isInstance).map(BinaryLabel.class::cast)
+						.forEach(bL -> {
+							String prev = conf.getProperty(bL.labelDef());
+							conf.setProperty(bL.labelDef(), prev == null ? bL.labelVal() : prev + ";" + bL.labelVal());
+						});
+
 				JPF jpf = new JPF(conf);
 
+				pb.stepBy(4);
+				pb.setExtraMessage("running jpf...");
+				
 				jpf.run();
 				if (jpf.foundErrors()) {
-					results.add(new Result(target, f, jpf.getLastError().toString(), false));
+					results.add(new Result(target, null, jpf.getLastError().toString(), false));
 				}
 			} catch (JPFConfigException cx) {
 				throw new ModelCheckingException(
 						"There was an error configuring JPF, please check your settings: " + cx.getMessage());
-
 			} catch (JPFException jx) {
 				jx.printStackTrace();
 				throw new ModelCheckingException(
 						"JPF encountered an internal error and was forced to terminate... \n" + jx.getMessage());
+			}
+
+			pb.stepBy(5);
+			pb.setExtraMessage("cleaning up...");
+			
+			// Delete stupid xml
+			File xmlFile = new File("report.xml");
+			if (!xmlFile.delete()) {
+				logger.warning("File: report.xml was not deleted!");
 			}
 
 			// Assert listener files exist
@@ -98,7 +119,10 @@ public class Checker {
 			if (!traFile.exists()) {
 				throw new ModelCheckingException(traFile.getName() + " does not exist!");
 			}
-			
+
+			pb.stepBy(5);
+			pb.setExtraMessage("Building PTS...");
+
 			// build pts
 			LabelledPartialTransitionSystem pts;
 			try {
@@ -111,24 +135,31 @@ public class Checker {
 
 			// cleanup files
 			if (!labFile.delete()) {
-				logger.warning("File: " + labFile.getName() + " was not deleted");
+				logger.warning("File: " + labFile.getName() + " was not deleted!");
 			}
 			if (!traFile.delete()) {
-				logger.warning("File: " + traFile.getName() + " was not deleted");
+				logger.warning("File: " + traFile.getName() + " was not deleted!");
 			}
 
-			// perform model check
-			Model m = new Model(pts);
+			for (Entry<String, Formula> f : formulae.entrySet()) {
+				pb.stepBy(10);
+				pb.setExtraMessage("checking " + f.getKey() + "...");
 
-			boolean valid = m.check(f).getSat().contains(INITIAL_STATE);
+				// perform model check
+				Model m = new Model(pts);
 
-			try {
-				results.add(new Result(target, f, valid ? null : m.getCounterExample(f, INITIAL_STATE), valid));
-			} catch (Exception e) {
-				throw new ModelCheckingException(
-						"Someting went wrong when building the counter example:\n" + e.getMessage());
+				boolean valid = m.check(f.getValue()).getSat().contains(INITIAL_STATE);
+
+				try {
+					results.add(new Result(target, f.getValue(),
+							valid ? null : m.getCounterExample(f.getValue(), INITIAL_STATE), valid));
+				} catch (Exception e) {
+					throw new ModelCheckingException(
+							"Someting went wrong when building the counter example:\n" + e.getMessage());
+				}
 			}
-
+			pb.stepBy(10);
+			pb.setExtraMessage("Done!");
 		}
 		return results;
 	}

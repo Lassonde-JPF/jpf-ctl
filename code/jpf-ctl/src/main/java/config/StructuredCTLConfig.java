@@ -36,14 +36,14 @@ public class StructuredCTLConfig {
 	private List<ParseTree> formulaeTrees;
 
 	private Target target;
-	private String targetArgs, enumerateRandom;
+	private String enumerateRandom;
 	
 	// Logging
 	Logger logger;
 	
-	public StructuredCTLConfig(File configFile, String targetName, String targetClasspath, String targetArgs, String enumerateRandom) throws IOException, ClassNotFoundException {
+	public StructuredCTLConfig(File configFile, Target target, String enumerateRandom) throws IOException, ClassNotFoundException {
 		// New logger
-		logger = new Logger(StructuredCTLConfig.class.getName(), "StructuredCTLConfig");
+		logger = new Logger(StructuredCTLConfig.class.getName());
 		
 		// Path to actual .ctl file
 		Path pathToFile = Paths.get(configFile.getPath());
@@ -54,7 +54,7 @@ public class StructuredCTLConfig {
 		labels = new HashMap<String, Label>();
 
 		// Build Target Object
-		this.target = new Target(targetName, targetClasspath);
+		this.target = target;
 		
 		// Build formulae and atomic proposition labels
 		Files.lines(pathToFile).map(String::trim).forEach(line -> {
@@ -92,7 +92,6 @@ public class StructuredCTLConfig {
 		}
 		
 		// Build additional info
-		this.targetArgs = targetArgs;
 		this.enumerateRandom = enumerateRandom;
 	}
 	
@@ -116,7 +115,7 @@ public class StructuredCTLConfig {
 	}
 	
 	public String getTargetArgs() {
-		return this.targetArgs;
+		return this.target.getArgs();
 	}
 	
 	public String getEnumerateRandom() {
@@ -134,7 +133,6 @@ public class StructuredCTLConfig {
 			tmp += e.getKey() + "=" + e.getValue() + "\n";
 		}
 		tmp += this.target + "\n";
-		tmp += "Target Arguments: " + this.targetArgs + "\n";
 		tmp += "EnumerateRandom: " + this.enumerateRandom;
 		return tmp;
 	}
