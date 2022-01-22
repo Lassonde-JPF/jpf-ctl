@@ -1,7 +1,5 @@
 package labels;
 
-import gov.nasa.jpf.vm.Types;
-
 public class BooleanStaticField extends BinaryLabel {
 
 	private static final String label_suffix = ".field"; 

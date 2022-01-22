@@ -38,7 +38,7 @@ public class ReturnedVoidMethod extends BinaryLabel {
 			throw new LabelReflectionException("there was a problem reflecting method " + methodName);
 		}
 		
-		this.JNIName =  "returned__" + className.replace('.', '_') + "_" + Types.getJNIMangledMethodName(method);
+		this.JNIName = className.replace('.', '_') + "_" + Types.getJNIMangledMethodName(method);
 	}
 
 	@Override

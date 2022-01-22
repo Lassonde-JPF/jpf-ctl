@@ -4,6 +4,10 @@ import static org.junit.jupiter.api.Assertions.*;
 
 import org.junit.jupiter.api.RepeatedTest;
 
+import exampleClasses.Account;
+import exampleClasses.Deposit;
+import exampleClasses.Withdraw;
+
 class AccountTest {
 
 	private static final int TRIALS = 1000;

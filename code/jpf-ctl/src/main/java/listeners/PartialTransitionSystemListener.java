@@ -65,8 +65,6 @@ public class PartialTransitionSystemListener extends SearchListenerAdapter {
 	private int source;
 	private int target;
 	private int newStates;
-	
-	private static final int SINK_STATE = -2;
 
 	/**
 	 * Creates a new PartialTransitionSystemListener instance
@@ -164,10 +162,11 @@ public class PartialTransitionSystemListener extends SearchListenerAdapter {
 	 * @param search - the Search instance
 	 */
 	public void searchFinished(Search search) {
+		
 		for (Map.Entry<Integer, Set<Integer>> entry : transitions.entrySet()) {
 			int source = entry.getKey();
 			Set<Integer> targets = entry.getValue();
-
+			
 			for (int target : targets) {
 				writer.printf("%d -> %d%n", source, target);
 			}
@@ -175,11 +174,13 @@ public class PartialTransitionSystemListener extends SearchListenerAdapter {
 
 		StringJoiner sj = new StringJoiner(" ");
 		for (int state : unexploredStates) {
-			writer.printf("%d -> %d%n", state, SINK_STATE);
 			sj.add("" + state);
 		}
-
 		writer.printf(sj.toString());
+		
+		int num = transitions.keySet().size() + unexploredStates.size();
+		writer.printf("" + num);
+		
 		this.writer.close();
 	}
 
