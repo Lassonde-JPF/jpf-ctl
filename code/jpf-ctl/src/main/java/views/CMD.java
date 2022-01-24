@@ -2,6 +2,9 @@ package views;
 
 import java.io.IOException;
 import java.util.Map;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 
 import logging.Logger;
 import model.ModelChecker;
@@ -49,11 +52,13 @@ public class CMD {
 
 		// Parse Options
 		String targetPath = null, ctlPath = null;
+		boolean parallel = false;
 		try {
 			CommandLine cmd = new DefaultParser().parse(options, args);
 			// Build Options
 			targetPath = cmd.getOptionValue("targetPath");
 			ctlPath = cmd.getOptionValue("ctlPath");
+			parallel = cmd.hasOption("parallel");
 			Logger.setEnabled(cmd.hasOption("v"));
 		} catch (ParseException e) {
 			new HelpFormatter().printHelp(JPF_CTL, HEADER, options, FOOTER, true);
@@ -132,12 +137,22 @@ public class CMD {
 		logger.info("Done.");
 
 		// Begin Model Checking
+		// TODO probably implement a single thread executor for validateSequentially so
+		// we can timegate the operation ? (perhaps with a parameter)
 		logger.info("Beginning Model Checking...");
 		Map<String, ModelChecker.Result> results = null;
-		try {
-			results = manager.validateSequentially();
-		} catch (Exception e) {
-			logger.severe("Error validating: " + e.getMessage());
+		try { // TODO Should the error handing for parallel (at least for timeout) be moved
+				// inside the manager and handled there ? i.e fill will an empty result and log?
+			logger.info("validation mode: " + (parallel ? "parallel" : "sequential"));
+			results = parallel ? manager.validateParallel(10, TimeUnit.SECONDS) : manager.validateSequentially();
+		} catch (InterruptedException e) {
+			logger.severe("Error validating formula : Error=" + e);
+			System.exit(1);
+		} catch (ExecutionException e) {
+			logger.severe("Error validating formula : Error=" + e);
+			System.exit(1);
+		} catch (TimeoutException e) {
+			logger.severe("Validation timed out at " + 10 + TimeUnit.SECONDS + " : Error=" + e);
 			System.exit(1);
 		}
 		logger.info("Done.");

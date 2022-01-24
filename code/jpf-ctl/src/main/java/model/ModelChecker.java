@@ -116,21 +116,16 @@ public class ModelChecker {
 		public Status isValid() {
 			if (this.isPartial()) {
 				if (this.lower.get(0) && this.upper.get(0)) {
-					System.out.println("a");
 					return Status.VALID;
 				}
 				if (this.lower.get(0) || this.upper.get(0)) {
-					System.out.println("b");
 					return Status.UNKNOWN;
 				} 
-				System.out.println("c");
 				return Status.INVALID;
 			} else {
 				if (this.lower.get(0)) {
-					System.out.println("d");
 					return Status.VALID;
 				} else {
-					System.out.println("e");
 					return Status.INVALID;
 				}
 			}
