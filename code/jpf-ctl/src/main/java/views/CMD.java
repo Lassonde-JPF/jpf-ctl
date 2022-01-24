@@ -5,14 +5,14 @@ import java.util.Map;
 
 import logging.Logger;
 import model.ModelChecker;
-import model.Target;
-import model.TransitionSystem;
 
 import org.apache.commons.cli.*;
 
 import controllers.CTLParser;
 import controllers.JPFRunner;
 import controllers.Manager;
+import controllers.Target;
+import controllers.TransitionSystem;
 import error.ModelCheckingException;
 
 public class CMD {

@@ -15,7 +15,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package model;
+package controllers;
 
 import java.io.File;
 import java.io.IOException;
@@ -27,6 +27,8 @@ import java.util.NoSuchElementException;
 import java.util.Random;
 import java.util.Scanner;
 import java.util.Set;
+
+import logging.Logger;
 
 /**
  * A class which represents a partial transition system. The states of the
@@ -63,6 +65,8 @@ public class TransitionSystem {
 	private static final int MAX_LABELS = 3;
 	// probability that a label is used in any state in a random system
 	private static final double LABELLED = 0.8;
+	
+	private Logger logger;
 
 	/**
 	 * Initializes this transition system randomly.
@@ -173,7 +177,10 @@ public class TransitionSystem {
 		final String TRANSITION = "-?\\d+" + TRANSITION_SEPARATOR + "\\d+";
 		final String PARTIAL = "(\\d+\\s)*";
 		final String STATES = "\\d+";
+		
+		this.logger = new Logger(TransitionSystem.class.getSimpleName());
 
+		this.logger.info("locating .lab and .tra files...");
 		File labFile = new File(fileName + ".lab");
 		if (!labFile.exists()) {
 			throw new IOException("File " + fileName + ".lab does not exist!");
@@ -182,8 +189,10 @@ public class TransitionSystem {
 		if (!traFile.exists()) {
 			throw new IOException("File " + fileName + ".tra does not exist!");
 		}
+		this.logger.info("files found!");
 
 		// tra file
+		this.logger.info("Parsing .tra file...");
 		Scanner input = new Scanner(traFile);
 		this.successors = new HashMap<Integer, BitSet>();
 		String line = null;
@@ -216,8 +225,10 @@ public class TransitionSystem {
 			throw new IOException("File " + fileName + ".tra not in the correct format");
 		}
 		input.close();
+		this.logger.info("Done!");
 
 		// Labelling File
+		this.logger.info("Parsing .lab file...");
 		input = new Scanner(labFile);
 		this.indices = new HashMap<String, Integer>();
 		try {
@@ -237,7 +248,9 @@ public class TransitionSystem {
 			this.parseLabelling(line);
 		}
 		input.close();
+		this.logger.info("Done!");
 
+		this.logger.info("cleaning up leftover files...");
 		// Attempt to cleanup
 		if (deleteFiles) {
 			if (!labFile.delete()) {
@@ -247,6 +260,7 @@ public class TransitionSystem {
 				throw new IOException("File " + fileName + ".tra was not deleted!");
 			}
 		}
+		this.logger.info("Done!");
 	}
 
 	/**

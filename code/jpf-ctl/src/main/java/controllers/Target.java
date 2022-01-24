@@ -1,4 +1,4 @@
-package model;
+package controllers;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -9,15 +9,22 @@ import java.util.Properties;
 
 import org.apache.commons.cli.ParseException;
 
+import logging.Logger;
+
 public class Target {
 	private String name, path, args, enumerateRandom;
 	private static final String FILE_NAME = "target.properties";
 
+	private Logger logger;
+
 	// For loading from target.properties
 	public Target(String path) throws ParseException {
+		this.logger = new Logger(Target.class.getSimpleName());
+
 		// Build actual filepath
 		String filePath = (path == null) ? Paths.get(".").toAbsolutePath().normalize().toString() : path;
 		filePath += File.separator + FILE_NAME;
+		this.logger.info("Parsed path: " + filePath);
 
 		try (InputStream input = new FileInputStream(filePath)) {
 			Properties prop = new Properties();
@@ -45,15 +52,17 @@ public class Target {
 			if (!targetFile.exists()) {
 				throw new ParseException("could not find file specified by: " + targetPath);
 			}
-
 		} catch (IOException e) {
 			throw new ParseException("could not find properties file at " + filePath + e);
 		}
+		
+		// Log parsed target
+		this.logger.info("Parsed Target: name=" + this.name + ", path=" + this.path + ", args=" + this.args);
 	}
 
 	@Override
 	public String toString() {
-		return "Target Name: " + this.name + "\nTarget Path: " + this.path + "\nTarget Args: " + this.args;
+		return "Target: name=" + this.name + ", path=" + this.path + "args=" + this.args;
 	}
 
 	public String getName() {

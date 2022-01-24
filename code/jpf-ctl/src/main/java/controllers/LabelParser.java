@@ -7,7 +7,6 @@ import org.antlr.v4.runtime.tree.ParseTree;
 import org.label.LabelLexer;
 
 import labels.Label;
-import model.Target;
 
 public class LabelParser {
 

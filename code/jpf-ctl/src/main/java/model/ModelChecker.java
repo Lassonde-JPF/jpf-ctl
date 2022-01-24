@@ -21,6 +21,7 @@ import java.util.BitSet;
 import java.util.HashMap;
 import java.util.Map;
 
+import controllers.TransitionSystem;
 import formulas.And;
 import formulas.AtomicProposition;
 import formulas.ExistsAlways;
@@ -58,6 +59,13 @@ public class ModelChecker {
 	 * information to determine whether the CTL formula holds in that state.
 	 */
 	public static class Result {
+		
+		private static enum Status {
+			VALID,
+			INVALID,
+			UNKNOWN;
+		}
+		
 		private BitSet lower;
 		private BitSet upper;
 
@@ -90,13 +98,42 @@ public class ModelChecker {
 			return (BitSet) this.upper.clone();
 		}
 
+		
+		/**
+		 * Returns whether the corresponding pts for this result is partial
+		 * 
+		 * @return boolean - whether the corresponding pts is partial
+		 */
+		public boolean isPartial() {
+			return !this.upper.equals(this.lower);
+		}
+		
 		/**
 		 * Returns whether this result is valid.
 		 * 
 		 * @return boolean - whether this result is valid
 		 */
-		public boolean isValid() {
-			return this.lower.get(0);
+		public Status isValid() {
+			if (this.isPartial()) {
+				if (this.lower.get(0) && this.upper.get(0)) {
+					System.out.println("a");
+					return Status.VALID;
+				}
+				if (this.lower.get(0) || this.upper.get(0)) {
+					System.out.println("b");
+					return Status.UNKNOWN;
+				} 
+				System.out.println("c");
+				return Status.INVALID;
+			} else {
+				if (this.lower.get(0)) {
+					System.out.println("d");
+					return Status.VALID;
+				} else {
+					System.out.println("e");
+					return Status.INVALID;
+				}
+			}
 		}
 
 		@Override
@@ -117,7 +154,7 @@ public class ModelChecker {
 
 		@Override
 		public String toString() {
-			return "Lowerbound: " + this.lower.get(0) + ", Upperbound: " + this.upper.get(0);
+			return "Result: " + this.isValid();
 		}
 
 	}

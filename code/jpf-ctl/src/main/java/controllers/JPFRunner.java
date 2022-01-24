@@ -10,19 +10,23 @@ import gov.nasa.jpf.JPFConfigException;
 import gov.nasa.jpf.JPFException;
 import labels.BinaryLabel;
 import labels.Label;
-import model.Target;
+import logging.Logger;
 
 public class JPFRunner {
 
 	private Target target;
 	private Collection<Label> labelling;
+	
+	private Logger logger;
 
 	public JPFRunner(Target target, Collection<Label> labelling) {
 		this.target = target;
 		this.labelling = labelling;
+		this.logger = new Logger(JPFRunner.class.getSimpleName());
 	}
 
 	public void runJPF() throws ModelCheckingException {
+		logger.info("runJPF: target=" + target + ", labelling=" + labelling);
 		try {
 			Config conf = JPF.createConfig(new String[] {});
 

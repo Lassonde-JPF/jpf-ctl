@@ -6,7 +6,6 @@ import java.util.stream.Collectors;
 
 import formulas.Formula;
 import model.ModelChecker;
-import model.TransitionSystem;
 
 public class Manager {
 
