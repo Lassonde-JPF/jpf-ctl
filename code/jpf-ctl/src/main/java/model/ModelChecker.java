@@ -114,21 +114,13 @@ public class ModelChecker {
 		 * @return boolean - whether this result is valid
 		 */
 		public Status isValid() {
-			if (this.isPartial()) {
-				if (this.lower.get(0) && this.upper.get(0)) {
-					return Status.VALID;
-				}
-				if (this.lower.get(0) || this.upper.get(0)) {
-					return Status.UNKNOWN;
-				} 
-				return Status.INVALID;
-			} else {
-				if (this.lower.get(0)) {
-					return Status.VALID;
-				} else {
-					return Status.INVALID;
-				}
+			if (this.lower.get(0)) {
+				return Status.VALID;
 			}
+			if (!this.upper.get(0)) {
+				return Status.INVALID;
+			}
+			return Status.UNKNOWN;
 		}
 
 		@Override
