@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Paths;
 import java.util.Properties;
+import java.util.Random;
 
 import org.apache.commons.cli.ParseException;
 
@@ -16,6 +17,17 @@ public class Target {
 	private static final String FILE_NAME = "target.properties";
 
 	private Logger logger;
+
+	// For Random Generation
+	public Target() {
+		Random r = new Random();
+
+		this.name = "labels.ReflectionExamples";
+		this.path = "bin/test";
+		this.args = "" + r.nextInt(100) + "," + r.nextInt(100) + "," + r.nextInt(100);
+
+		this.enumerateRandom = r.nextBoolean() ? "true" : "false";
+	}
 
 	// For loading from target.properties
 	public Target(String path) throws ParseException {
@@ -33,7 +45,7 @@ public class Target {
 
 			this.name = prop.getProperty("target");
 			this.path = prop.getProperty("classpath");
-			this.args = prop.getProperty("args");
+			this.args = prop.getProperty("target.args");
 
 			this.enumerateRandom = prop.getProperty("enumerateRandom");
 
@@ -55,10 +67,12 @@ public class Target {
 		} catch (IOException e) {
 			throw new ParseException("could not find properties file at " + filePath + e);
 		}
-		
+
 		// Log parsed target
-		this.logger.info("Parsed Target: name=" + this.name + ", path=" + this.path + ", args=" + this.args);
+		this.logger.info("Parsed Target: name=" + this.name + ", path=" + this.path + ", args=" + this.args + ", enumerateRandom=" + this.enumerateRandom);
 	}
+	
+	
 
 	@Override
 	public String toString() {

@@ -12,17 +12,17 @@ import labels.BinaryLabel;
 import labels.Label;
 import logging.Logger;
 
-public class JPFRunner {
+public class JPFExecutor {
 
 	private Target target;
 	private Collection<Label> labelling;
 	
 	private Logger logger;
 
-	public JPFRunner(Target target, Collection<Label> labelling) {
+	public JPFExecutor(Target target, Collection<Label> labelling) {
 		this.target = target;
 		this.labelling = labelling;
-		this.logger = new Logger(JPFRunner.class.getSimpleName());
+		this.logger = new Logger(JPFExecutor.class.getSimpleName());
 	}
 
 	public void runJPF() throws ModelCheckingException {

@@ -37,6 +37,7 @@ import logging.Logger;
  * @author Franck van Breugel
  * @author Matt Walker
  */
+
 public class TransitionSystem {
 
 	// for each state, its successors
@@ -189,7 +190,7 @@ public class TransitionSystem {
 		if (!traFile.exists()) {
 			throw new IOException("File " + fileName + ".tra does not exist!");
 		}
-		this.logger.info("files found!");
+		this.logger.info("files found.");
 
 		// tra file
 		this.logger.info("Parsing .tra file...");
@@ -225,7 +226,7 @@ public class TransitionSystem {
 			throw new IOException("File " + fileName + ".tra not in the correct format");
 		}
 		input.close();
-		this.logger.info("Done!");
+		this.logger.info("Done.");
 
 		// Labelling File
 		this.logger.info("Parsing .lab file...");
@@ -248,7 +249,7 @@ public class TransitionSystem {
 			this.parseLabelling(line);
 		}
 		input.close();
-		this.logger.info("Done!");
+		this.logger.info("Done.");
 
 		this.logger.info("cleaning up leftover files...");
 		// Attempt to cleanup
@@ -260,7 +261,6 @@ public class TransitionSystem {
 				throw new IOException("File " + fileName + ".tra was not deleted!");
 			}
 		}
-		this.logger.info("Done!");
 	}
 
 	/**
@@ -372,7 +372,7 @@ public class TransitionSystem {
 
 		for (String label : this.indices.keySet()) {
 			int index = this.indices.get(label);
-			toString.append(index + "=" + "true__" + label + " ");
+			toString.append(index + "=" + "\"true__" + label + "\" ");
 		}
 		toString.append("\n");
 

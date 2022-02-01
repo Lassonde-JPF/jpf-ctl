@@ -23,12 +23,12 @@ public class Generator extends LabelBaseVisitor<Label> {
 
 	@Override
 	public Label visitBooleanStaticField(LabelParser.BooleanStaticFieldContext ctx) {
-		return new BooleanStaticField(ctx.referenceType().getText());
+		return new BooleanStaticField(ctx.referenceType().getText(), path);
 	}
 
 	@Override
 	public Label visitBooleanLocalVariable(LabelParser.BooleanLocalVariableContext ctx) {
-		return new BooleanLocalVariable(ctx.referenceType().getText(), ctx.parameters().getText(), ctx.variableType().getText());
+		return new BooleanLocalVariable(ctx.referenceType().getText(), ctx.parameters().getText(), ctx.variableType().getText(), path);
 	}
 
 	@Override
@@ -43,17 +43,17 @@ public class Generator extends LabelBaseVisitor<Label> {
 
 	@Override
 	public Label visitReturnedBooleanMethod(LabelParser.ReturnedBooleanMethodContext ctx) {
-		return new ReturnedBooleanMethod(ctx.referenceType().getText(), ctx.parameters().getText());
+		return new ReturnedBooleanMethod(ctx.referenceType().getText(), ctx.parameters().getText(), path);
 	}
 
 	@Override
 	public Label visitThrownException(LabelParser.ThrownExceptionContext ctx) {
-		return new ThrownException(ctx.referenceType().getText());
+		return new ThrownException(ctx.referenceType().getText(), path);
 	}
 
 	@Override
 	public Label visitSynchronizedStaticMethod(LabelParser.SynchronizedStaticMethodContext ctx) {
-		return new SynchronizedStaticMethod(ctx.referenceType().getText(), ctx.parameters().getText());
+		return new SynchronizedStaticMethod(ctx.referenceType().getText(), ctx.parameters().getText(), path);
 	}
 	
 }

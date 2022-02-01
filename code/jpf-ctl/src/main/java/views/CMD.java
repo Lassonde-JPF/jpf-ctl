@@ -12,7 +12,7 @@ import model.ModelChecker;
 import org.apache.commons.cli.*;
 
 import controllers.CTLParser;
-import controllers.JPFRunner;
+import controllers.JPFExecutor;
 import controllers.Manager;
 import controllers.Target;
 import controllers.TransitionSystem;
@@ -102,9 +102,9 @@ public class CMD {
 
 		// Run JPF on Target w/ appropriate labels
 		logger.info("Running JPF on Target...");
-		JPFRunner jpfRunner = new JPFRunner(target, ctl.getLabels());
+		JPFExecutor jpfExecutor = new JPFExecutor(target, ctl.getLabels());
 		try {
-			jpfRunner.runJPF();
+			jpfExecutor.runJPF();
 		} catch (ModelCheckingException e) {
 			logger.severe("Error running JPF on Target for JPFRunner: target=" + target + ", labels=" + ctl.getLabels()
 					+ " : Error=" + e);

@@ -1,14 +1,12 @@
 package labels;
 
 import java.lang.reflect.Method;
-
 import error.LabelReflectionException;
 import gov.nasa.jpf.vm.Types;
 
 public class InvokedMethod extends BinaryLabel {
 
 	private static final String label_suffix = ".method";
-	
 	private final String parameterList, JNIName;
 
 	public InvokedMethod(String qualifiedName, String parameterList, String path) {
@@ -17,11 +15,17 @@ public class InvokedMethod extends BinaryLabel {
 		// Build String Parameters
 		this.parameterList = parameterList;
 		
-		// Split qualifiedName into className and methodName
-		String className = qualifiedName.substring(0, qualifiedName.lastIndexOf('.'));
-		String methodName = qualifiedName.substring(qualifiedName.lastIndexOf('.') + 1);
+		// Identify Index of last dot
+		int idx = qualifiedName.lastIndexOf('.');
+		if (idx == -1) {
+			throw new LabelReflectionException("the qualified name does not appear to contain both a class name and field name separated by a \'.\' character " + qualifiedName);
+		}
 		
-		// Build list of method parameter type objects
+		// Split qualifiedName into className and methodName
+		String className = qualifiedName.substring(0, idx);
+		String methodName = qualifiedName.substring(idx + 1);
+		
+		// Extract Parameter Types
 		Class<?>[] parameterTypes = Utils.extractParameterTypes(parameterList, path);
 		if (parameterTypes == null) {
 			throw new LabelReflectionException("there was a problem reflecting parameter types " + parameterList);
@@ -33,13 +37,18 @@ public class InvokedMethod extends BinaryLabel {
 			throw new LabelReflectionException("there was a problem reflecting class " + className);
 		}
 		
-		// Build Method Object
+		// Extract method object
 		Method method = Utils.extractMethod(clazz, methodName, parameterTypes);
 		if (method == null) {
 			throw new LabelReflectionException("there was a problem reflecting method " + methodName);
 		}
 		
-		this.JNIName =  "invoked__" + className.replace('.', '_') + "_" + Types.getJNIMangledMethodName(method);
+		this.JNIName = className.replace('.', '_') + "_" + Types.getJNIMangledMethodName(method);
+	}
+	
+	@Override
+	public String getJNIName() {
+		return this.JNIName;
 	}
 
 	@Override
@@ -54,6 +63,6 @@ public class InvokedMethod extends BinaryLabel {
 
 	@Override
 	public String toString() {
-		return this.JNIName;
+		return this.name + " " + this.labelVal();
 	}
 }

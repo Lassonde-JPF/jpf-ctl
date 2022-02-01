@@ -1,12 +1,8 @@
-package example;
+package exampleClasses;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 import org.junit.jupiter.api.RepeatedTest;
-
-import exampleClasses.Account;
-import exampleClasses.Deposit;
-import exampleClasses.Withdraw;
 
 class AccountTest {
 

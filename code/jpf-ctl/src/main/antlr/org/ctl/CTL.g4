@@ -51,8 +51,12 @@ formula
 /* Atomic propositions */
 
 ATOMIC_PROPOSITION
-    : ALPHA (ALPHA | DIGIT)*
+    : SIMPLE_TYPE ('.' SIMPLE_TYPE)*
     ;
+
+SIMPLE_TYPE
+	:	ALPHA (ALPHA | DIGIT)*
+	;
 
 DIGIT: [0-9];
 ALPHA: [a-zA-Z_];

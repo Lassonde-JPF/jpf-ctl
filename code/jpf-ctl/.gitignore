@@ -3,6 +3,7 @@
 
 # Ignore Gradle build output directory
 build
+bin
 
 # Ignore content of toDot but not DotToPDF.bat
 src/test/resources/toDot/*.dot
@@ -17,3 +18,4 @@ counterExamples
 # Ignore output
 *.tra
 *.lab
+*.xml

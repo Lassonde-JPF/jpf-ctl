@@ -10,9 +10,9 @@ import labels.Label;
 
 public class LabelParser {
 
-	public static Label parseLabel(Target target, String input) {
+	public static Label parseLabel(String path, String input) {
 		CharStream inputStream = CharStreams.fromString(input);
 		ParseTree pT = new org.label.LabelParser(new CommonTokenStream(new LabelLexer(inputStream))).label();
-		return new labels.Generator(target.getPath()).visit(pT);
+		return new labels.Generator(path).visit(pT);
 	}
 }

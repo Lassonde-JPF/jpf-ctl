@@ -16,9 +16,15 @@ public class ReturnedVoidMethod extends BinaryLabel {
 		// Build String Parameters
 		this.parameterList = parameterList;
 		
+		// Identify Index of last dot
+		int idx = qualifiedName.lastIndexOf('.');
+		if (idx == -1) {
+			throw new LabelReflectionException("the qualified name does not appear to contain both a class name and method name separated by a \'.\' character " + qualifiedName);
+		}
+		
 		// Split qualifiedName into className and methodName
-		String className = qualifiedName.substring(0, qualifiedName.lastIndexOf('.'));
-		String methodName = qualifiedName.substring(qualifiedName.lastIndexOf('.') + 1);
+		String className = qualifiedName.substring(0, idx);
+		String methodName = qualifiedName.substring(idx + 1);
 		
 		// Build list of method parameter type objects
 		Class<?>[] parameterTypes = Utils.extractParameterTypes(parameterList, path);
@@ -42,6 +48,11 @@ public class ReturnedVoidMethod extends BinaryLabel {
 	}
 
 	@Override
+	public String getJNIName() {
+		return this.JNIName;
+	}
+	
+	@Override
 	public String labelDef() {
 		return label_prefix + this.name + label_suffix;
 	}
@@ -53,6 +64,6 @@ public class ReturnedVoidMethod extends BinaryLabel {
 
 	@Override
 	public String toString() {
-		return this.JNIName;
+		return this.name + " " + this.labelVal();
 	}
 }

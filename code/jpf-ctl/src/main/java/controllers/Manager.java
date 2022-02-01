@@ -13,7 +13,6 @@ import java.util.concurrent.TimeoutException;
 import java.util.stream.Collectors;
 
 import formulas.Formula;
-import logging.Logger;
 import model.ModelChecker;
 
 public class Manager {
@@ -38,12 +37,10 @@ public class Manager {
 
 	private Map<String, Formula> formulas;
 	private ModelChecker checker;
-	private Logger logger;
-
+	
 	public Manager(TransitionSystem pts, Map<String, String> jniMapping, Map<String, Formula> formulas) {
 		this.formulas = formulas;
 		this.checker = new ModelChecker(pts, jniMapping);
-		this.logger = new Logger(Manager.class.getSimpleName());
 	}
 	
 	public Map<String, ModelChecker.Result> validateSequentially() {
@@ -57,19 +54,15 @@ public class Manager {
 		Map<String, Future<ModelChecker.Result>> futureMap = new HashMap<>();
 		
 		// Spawn threads
-		logger.info("Spawning worker threads...");
 		for (Entry<String, Formula> entry : this.formulas.entrySet()) {
 			futureMap.computeIfAbsent(entry.getKey(), k -> pool.submit(new Worker(entry.getKey(), entry.getValue(), this.checker)));
 		}
-		logger.info("Done.");
 		
 		// Collect threads
-		logger.info("Collecting worker threads...");
 		Map<String, ModelChecker.Result> results = new HashMap<>();
 		for (Entry<String, Future<ModelChecker.Result>> entry : futureMap.entrySet()) {
 			results.put(entry.getKey(), entry.getValue().get(timeout, unit));
 		}
-		logger.info("Done");
 		
 		return results;
 	}
