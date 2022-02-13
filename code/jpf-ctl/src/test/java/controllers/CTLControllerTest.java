@@ -3,7 +3,7 @@ package controllers;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.RepeatedTest;
 
-public class CTLParserTest {
+public class CTLControllerTest {
 	/**
 	 * Number of times each test is run.
 	 */

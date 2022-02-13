@@ -1,4 +1,4 @@
-package controllers;
+package controller.CMD;
 
 import org.antlr.v4.runtime.CharStream;
 import org.antlr.v4.runtime.CharStreams;
@@ -8,7 +8,7 @@ import org.label.LabelLexer;
 
 import labels.Label;
 
-public class LabelParser {
+public class LabelController {
 
 	public static Label parseLabel(String path, String input) {
 		CharStream inputStream = CharStreams.fromString(input);

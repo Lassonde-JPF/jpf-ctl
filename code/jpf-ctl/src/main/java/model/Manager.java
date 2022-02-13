@@ -1,4 +1,4 @@
-package controllers;
+package model;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -13,7 +13,6 @@ import java.util.concurrent.TimeoutException;
 import java.util.stream.Collectors;
 
 import formulas.Formula;
-import model.ModelChecker;
 
 public class Manager {
 	
@@ -38,9 +37,9 @@ public class Manager {
 	private Map<String, Formula> formulas;
 	private ModelChecker checker;
 	
-	public Manager(TransitionSystem pts, Map<String, String> jniMapping, Map<String, Formula> formulas) {
+	public Manager(TransitionSystem pts, Map<String, Formula> formulas) {
 		this.formulas = formulas;
-		this.checker = new ModelChecker(pts, jniMapping);
+		this.checker = new ModelChecker(pts);
 	}
 	
 	public Map<String, ModelChecker.Result> validateSequentially() {

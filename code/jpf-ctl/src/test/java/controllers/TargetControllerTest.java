@@ -9,7 +9,10 @@ import java.io.PrintWriter;
 import org.apache.commons.cli.ParseException;
 import org.junit.jupiter.api.RepeatedTest;
 
-public class TargetTest {
+import controller.CMD.TargetController;
+import model.Target;
+
+public class TargetControllerTest {
 	
 	
 	@RepeatedTest(100)
@@ -22,10 +25,6 @@ public class TargetTest {
 			writer.println("target = " + expected.getName());
 			// path
 			writer.println("classpath = " + expected.getPath());
-			// args
-			writer.println("target.args = " + expected.getArgs());
-			// enumerate random
-			writer.println("enumerateRandom = " + expected.getEnumerateRandom());
 			// close
 			writer.close();
 		} catch (FileNotFoundException e) {
@@ -35,7 +34,7 @@ public class TargetTest {
 		
 		Target actual;
 		try {
-			actual = new Target(null);
+			actual = TargetController.parseTarget(null);
 			assertEquals(expected.toString(), actual.toString(), expected.toString() + "\n" + actual.toString());
 		} catch (ParseException e) {
 			e.printStackTrace();

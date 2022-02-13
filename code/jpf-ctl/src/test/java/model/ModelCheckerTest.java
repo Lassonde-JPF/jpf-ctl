@@ -25,7 +25,6 @@ import java.util.Map;
 import java.util.Set;
 import org.junit.jupiter.api.RepeatedTest;
 
-import controllers.TransitionSystem;
 import formulas.*;
 import model.ModelChecker.Result;
 
@@ -49,7 +48,7 @@ public class ModelCheckerTest {
 		TransitionSystem system = new TransitionSystem();
 		BitSet expected = new BitSet();
 		expected.set(0, system.getNumberOfStates());
-		ModelChecker model = new ModelChecker(system, null);
+		ModelChecker model = new ModelChecker(system);
 		Result result = model.check(formula);
 		BitSet actual = result.getLower();
 		assertEquals(expected, actual, system.toString());
@@ -66,7 +65,7 @@ public class ModelCheckerTest {
 		Formula formula = new False();
 		TransitionSystem system = new TransitionSystem();
 		BitSet expected = new BitSet();
-		ModelChecker model = new ModelChecker(system, null);
+		ModelChecker model = new ModelChecker(system);
 		Result result = model.check(formula);
 		BitSet actual = result.getLower();
 		assertEquals(expected, actual, system.toString());
@@ -88,9 +87,7 @@ public class ModelCheckerTest {
 		if (system.getLabelling().containsKey(index)) {
 			expected = system.getLabelling().get(index);
 		} 
-		Map<String, String> jniMapping = new HashMap<>();
-		jniMapping.put(name, name);
-		ModelChecker model = new ModelChecker(system, jniMapping);
+		ModelChecker model = new ModelChecker(system);
 		Result result = model.check(formula);
 		BitSet actual = result.getLower();
 		assertEquals(expected, actual, system.toString());
@@ -106,11 +103,7 @@ public class ModelCheckerTest {
 	public void testNot() {
 		Formula formula = Formula.random();
 		TransitionSystem system = new TransitionSystem(formula.getAtomicPropositions());
-		Map<String, String> jniMapping = new HashMap<>();
-		for (String ap : formula.getAtomicPropositions()) {
-			jniMapping.put(ap, ap);
-		}
-		ModelChecker model = new ModelChecker(system, jniMapping);
+		ModelChecker model = new ModelChecker(system);
 		Result expectedResult = model.check(formula);
 		BitSet expected = expectedResult.getUpper();
 		expected.flip(0, system.getNumberOfStates());
@@ -135,14 +128,7 @@ public class ModelCheckerTest {
 		Set<String> atomicPropositions = left.getAtomicPropositions();
 		atomicPropositions.addAll(right.getAtomicPropositions());
 		TransitionSystem system = new TransitionSystem(atomicPropositions);
-		Map<String, String> jniMapping = new HashMap<>();
-		for (String ap : left.getAtomicPropositions()) {
-			jniMapping.put(ap, ap);
-		}
-		for (String ap : right.getAtomicPropositions()) {
-			jniMapping.put(ap, ap);
-		}
-		ModelChecker model = new ModelChecker(system, jniMapping);
+		ModelChecker model = new ModelChecker(system);
 		Result resultLeft = model.check(left);
 		Result resultRight = model.check(right);
 		BitSet expectedLeft = resultLeft.getLower();
@@ -172,14 +158,7 @@ public class ModelCheckerTest {
 		Set<String> atomicPropositions = left.getAtomicPropositions();
 		atomicPropositions.addAll(right.getAtomicPropositions());
 		TransitionSystem system = new TransitionSystem(atomicPropositions);
-		Map<String, String> jniMapping = new HashMap<>();
-		for (String ap : left.getAtomicPropositions()) {
-			jniMapping.put(ap, ap);
-		}
-		for (String ap : right.getAtomicPropositions()) {
-			jniMapping.put(ap, ap);
-		}
-		ModelChecker model = new ModelChecker(system, jniMapping);
+		ModelChecker model = new ModelChecker(system);
 		Result resultLeft = model.check(left);
 		Result resultRight = model.check(right);
 		BitSet expectedLeft = resultLeft.getLower();
@@ -209,14 +188,7 @@ public class ModelCheckerTest {
 		Set<String> atomicPropositions = left.getAtomicPropositions();
 		atomicPropositions.addAll(right.getAtomicPropositions());
 		TransitionSystem system = new TransitionSystem(atomicPropositions);
-		Map<String, String> jniMapping = new HashMap<>();
-		for (String ap : left.getAtomicPropositions()) {
-			jniMapping.put(ap, ap);
-		}
-		for (String ap : right.getAtomicPropositions()) {
-			jniMapping.put(ap, ap);
-		}
-		ModelChecker model = new ModelChecker(system, jniMapping);
+		ModelChecker model = new ModelChecker(system);
 		Result resultLeft = model.check(left);
 		Result resultRight = model.check(right);
 		BitSet expectedLeft = resultLeft.getLower();
@@ -248,18 +220,44 @@ public class ModelCheckerTest {
 		Set<String> atomicPropositions = left.getAtomicPropositions();
 		atomicPropositions.addAll(right.getAtomicPropositions());
 		TransitionSystem system = new TransitionSystem(atomicPropositions);
-		Map<String, String> jniMapping = new HashMap<>();
-		for (String ap : left.getAtomicPropositions()) {
-			jniMapping.put(ap, ap);
-		}
-		for (String ap : right.getAtomicPropositions()) {
-			jniMapping.put(ap, ap);
-		}
-		ModelChecker model = new ModelChecker(system, jniMapping);
+		ModelChecker model = new ModelChecker(system);
 		Result resultLeft = model.check(left);
 		Result resultRight = model.check(right);
 		BitSet expectedLeft = resultLeft.getLower();
 		BitSet expectedRight = resultRight.getLower();
+		assertEquals(expectedLeft, resultLeft.getLower(), left.toString() + "\n" + system.toString());
+		assertEquals(expectedRight, resultRight.getLower(), right.toString() + "\n" + system.toString());
+		
+		// p <-> q === (!p or q) and (!q or p)
+		BitSet p = resultLeft.getLower();
+		BitSet q = resultRight.getLower();
+		
+		// !p
+		BitSet notP = (BitSet) p.clone();
+		notP.flip(0, system.getNumberOfStates());
+		
+		// !q
+		BitSet notQ = (BitSet) q.clone();
+		notQ.flip(0, system.getNumberOfStates());
+		
+		// (!p or q)
+		BitSet notPorQ = (BitSet) notP.clone();
+		notPorQ.or(q);
+		
+		// (!q or p)
+		BitSet notQorP = (BitSet) notQ.clone();
+		notQorP.or(p);
+		
+		// (!p or q) and (!q or p)
+		BitSet expected = (BitSet) notPorQ.clone();
+		expected.and(notQorP);
+		
+		Formula iff = new Iff(left, right);
+		Result result = model.check(iff);
+		BitSet actual = result.getLower();
+		assertEquals(expected, actual, iff.toString() + "\n" + system.toString());
+
+		//old
 		BitSet positive = expectedLeft;
 		positive.and(expectedRight);
 		expectedLeft = resultLeft.getUpper();
@@ -268,13 +266,11 @@ public class ModelCheckerTest {
 		expectedRight.flip(0, system.getNumberOfStates());
 		BitSet negative = expectedLeft;
 		negative.and(expectedRight);
-		BitSet expected = positive;
+		expected = positive;
 		expected.or(negative);
-		Formula iff = new Iff(left, right);
-		Result result = model.check(iff);
-		BitSet actual = result.getLower();
-		assertEquals(expected, actual, iff.toString() + "\n" + system.toString());
-
+		//
+		
+		
 		expectedLeft = resultLeft.getUpper();
 		expectedRight = resultRight.getUpper();
 		positive = expectedLeft;
@@ -298,12 +294,12 @@ public class ModelCheckerTest {
 	public void testExistsNextTrue() {
 		ExistsNext existsNext = new ExistsNext(new True());
 		TransitionSystem system = new TransitionSystem();
-		ModelChecker model = new ModelChecker(system, null);
+		ModelChecker model = new ModelChecker(system);
 		BitSet expected = new BitSet();
 		for (int state = 0; state < system.getNumberOfStates(); state++) {
 			expected.set(state, system.getSuccessors().containsKey(state) || system.getPartial().get(state));
 		}
-		model = new ModelChecker(system, null);
+		model = new ModelChecker(system);
 		Result result = model.check(existsNext);
 		BitSet actual = result.getLower();
 		assertEquals(expected, actual, existsNext.toString() + "\n" + system.toString());
@@ -319,7 +315,7 @@ public class ModelCheckerTest {
 	public void testExistsNextFalse() {
 		ExistsNext existsNext = new ExistsNext(new False());
 		TransitionSystem system = new TransitionSystem();
-		ModelChecker model = new ModelChecker(system, null);
+		ModelChecker model = new ModelChecker(system);
 		BitSet expected = new BitSet();
 		Result result = model.check(existsNext);
 		BitSet actual = result.getLower();
@@ -337,11 +333,7 @@ public class ModelCheckerTest {
 		String name = "C.f";
 		ExistsNext existsNext = new ExistsNext(new AtomicProposition(name));
 		TransitionSystem system = new TransitionSystem(existsNext.getAtomicPropositions());
-		Map<String, String> jniMapping = new HashMap<>();
-		for (String ap : existsNext.getAtomicPropositions()) {
-			jniMapping.put(ap, ap);
-		}
-		ModelChecker model = new ModelChecker(system, jniMapping);
+		ModelChecker model = new ModelChecker(system);
 		BitSet expected = new BitSet();
 		int index = system.getIndices().get(name);
 		if (system.getLabelling().containsKey(index)) {
@@ -367,7 +359,7 @@ public class ModelCheckerTest {
 	public void testForAllNextTrue() {
 		ForAllNext forAllNext = new ForAllNext(new True());
 		TransitionSystem system = new TransitionSystem();
-		ModelChecker model = new ModelChecker(system, null);
+		ModelChecker model = new ModelChecker(system);
 		BitSet expected = new BitSet();
 		expected.set(0, system.getNumberOfStates());
 		Result result = model.check(forAllNext);
@@ -385,7 +377,7 @@ public class ModelCheckerTest {
 	public void testForAllNextFalse() {
 		ForAllNext forAllNext = new ForAllNext(new False());
 		TransitionSystem system = new TransitionSystem();
-		ModelChecker model = new ModelChecker(system, null);
+		ModelChecker model = new ModelChecker(system);
 		BitSet expected = new BitSet();
 		Result result = model.check(forAllNext);
 		BitSet actual = result.getLower();
@@ -403,11 +395,7 @@ public class ModelCheckerTest {
 		String name = "C.f";
 		ForAllNext forAllNext = new ForAllNext(new AtomicProposition(name));
 		TransitionSystem system = new TransitionSystem(forAllNext.getAtomicPropositions());
-		Map<String, String> jniMapping = new HashMap<>();
-		for (String ap : forAllNext.getAtomicPropositions()) {
-			jniMapping.put(ap, ap);
-		}
-		ModelChecker model = new ModelChecker(system, jniMapping);
+		ModelChecker model = new ModelChecker(system);
 		int index = system.getIndices().get(name);
 		BitSet expected = new BitSet();
 		for (int state = 0; state < system.getNumberOfStates(); state++) {
@@ -442,7 +430,7 @@ public class ModelCheckerTest {
 	public void testExistsAlwaysTrue() {
 		ExistsAlways existsAlways = new ExistsAlways(new True());
 		TransitionSystem system = new TransitionSystem();
-		ModelChecker model = new ModelChecker(system, null);
+		ModelChecker model = new ModelChecker(system);
 		BitSet expected = new BitSet();
 		expected.set(0, system.getNumberOfStates(), true);
 		Result result = model.check(existsAlways);
@@ -460,7 +448,7 @@ public class ModelCheckerTest {
 	public void testExistsAlwaysFalse() {
 		ExistsAlways existsAlways = new ExistsAlways(new False());
 		TransitionSystem system = new TransitionSystem();
-		ModelChecker model = new ModelChecker(system, null);
+		ModelChecker model = new ModelChecker(system);
 		BitSet expected = new BitSet();
 		Result result = model.check(existsAlways);
 		BitSet actual = result.getLower();
@@ -478,11 +466,7 @@ public class ModelCheckerTest {
 		String name = "C.f";
 		ExistsAlways existsAlways = new ExistsAlways(new AtomicProposition(name));
 		TransitionSystem system = new TransitionSystem(existsAlways.getAtomicPropositions());
-		Map<String, String> jniMapping = new HashMap<>();
-		for (String ap : existsAlways.getAtomicPropositions()) {
-			jniMapping.put(ap, ap);
-		}
-		ModelChecker model = new ModelChecker(system, jniMapping);
+		ModelChecker model = new ModelChecker(system);
 		Result result = model.check(existsAlways);
 		int index = system.getIndices().get(name);
 		if (system.getLabelling().containsKey(index)) {
@@ -527,7 +511,7 @@ public class ModelCheckerTest {
 	public void testForAllAlwaysTrue() {
 		ForAllAlways forAllAlways = new ForAllAlways(new True());
 		TransitionSystem system = new TransitionSystem();
-		ModelChecker model = new ModelChecker(system, null);
+		ModelChecker model = new ModelChecker(system);
 		BitSet expected = new BitSet();
 		expected.set(0, system.getNumberOfStates(), true);
 		Result result = model.check(forAllAlways);
@@ -545,7 +529,7 @@ public class ModelCheckerTest {
 	public void testForAllAlwaysFalse() {
 		ForAllAlways forAllAlways = new ForAllAlways(new False());
 		TransitionSystem system = new TransitionSystem();
-		ModelChecker model = new ModelChecker(system, null);
+		ModelChecker model = new ModelChecker(system);
 		BitSet expected = new BitSet();
 		Result result = model.check(forAllAlways);
 		BitSet actual = result.getLower();
@@ -563,11 +547,7 @@ public class ModelCheckerTest {
 		String name = "C.f";
 		ForAllAlways forAllAlways = new ForAllAlways(new AtomicProposition(name));
 		TransitionSystem system = new TransitionSystem(forAllAlways.getAtomicPropositions());
-		Map<String, String> jniMapping = new HashMap<>();
-		for (String ap : forAllAlways.getAtomicPropositions()) {
-			jniMapping.put(ap, ap);
-		}
-		ModelChecker model = new ModelChecker(system, jniMapping);
+		ModelChecker model = new ModelChecker(system);
 		Result result = model.check(forAllAlways);
 		int index = system.getIndices().get(name);
 		
@@ -607,7 +587,7 @@ public class ModelCheckerTest {
 	public void testExistsEventuallyTrue() {
 		ExistsEventually existsEventually = new ExistsEventually(new True());
 		TransitionSystem system = new TransitionSystem();
-		ModelChecker model = new ModelChecker(system, null);
+		ModelChecker model = new ModelChecker(system);
 		BitSet expected = new BitSet();
 		expected.set(0, system.getNumberOfStates(), true);
 		Result result = model.check(existsEventually);
@@ -625,7 +605,7 @@ public class ModelCheckerTest {
 	public void testExistsEventuallyFalse() {
 		ExistsEventually existsEventually = new ExistsEventually(new False());
 		TransitionSystem system = new TransitionSystem();
-		ModelChecker model = new ModelChecker(system, null);
+		ModelChecker model = new ModelChecker(system);
 		BitSet expected = new BitSet();
 		Result result = model.check(existsEventually);
 		BitSet actual = result.getLower();
@@ -643,11 +623,7 @@ public class ModelCheckerTest {
 		String name = "C.f";
 		ExistsEventually existsEventually = new ExistsEventually(new AtomicProposition(name));
 		TransitionSystem system = new TransitionSystem(existsEventually.getAtomicPropositions());
-		Map<String, String> jniMapping = new HashMap<>();
-		for (String ap : existsEventually.getAtomicPropositions()) {
-			jniMapping.put(ap, ap);
-		}
-		ModelChecker model = new ModelChecker(system, jniMapping);
+		ModelChecker model = new ModelChecker(system);
 		Result result = model.check(existsEventually);
 		int index = system.getIndices().get(name);
 		
@@ -687,7 +663,7 @@ public class ModelCheckerTest {
 	public void testForAllEventuallyTrue() {
 		ForAllEventually forAllEventually = new ForAllEventually(new True());
 		TransitionSystem system = new TransitionSystem();
-		ModelChecker model = new ModelChecker(system, null);
+		ModelChecker model = new ModelChecker(system);
 		BitSet expected = new BitSet();
 		expected.set(0, system.getNumberOfStates(), true);
 		Result result = model.check(forAllEventually);
@@ -705,7 +681,7 @@ public class ModelCheckerTest {
 	public void testForAllEventuallyFalse() {
 		ForAllEventually forAllEventually = new ForAllEventually(new False());
 		TransitionSystem system = new TransitionSystem();
-		ModelChecker model = new ModelChecker(system, null);
+		ModelChecker model = new ModelChecker(system);
 		BitSet expected = new BitSet();
 		Result result = model.check(forAllEventually);
 		BitSet actual = result.getLower();
@@ -727,7 +703,7 @@ public class ModelCheckerTest {
 		for (String ap : forAllEventually.getAtomicPropositions()) {
 			jniMapping.put(ap, ap);
 		}
-		ModelChecker model = new ModelChecker(system, jniMapping);
+		ModelChecker model = new ModelChecker(system);
 		Result result = model.check(forAllEventually);
 		int index = system.getIndices().get(name);
 		
@@ -768,11 +744,7 @@ public class ModelCheckerTest {
 		TransitionSystem system = new TransitionSystem(left.getAtomicPropositions());
 		BitSet expected = new BitSet();
 		expected.set(0, system.getNumberOfStates());
-		Map<String, String> jniMapping = new HashMap<>();
-		for (String ap : left.getAtomicPropositions()) {
-			jniMapping.put(ap, ap);
-		}
-		ModelChecker model = new ModelChecker(system, jniMapping);
+		ModelChecker model = new ModelChecker(system);
 		Result result = model.check(existsUntil);
 		BitSet actual = result.getLower();
 		assertEquals(expected, actual, existsUntil.toString() + "\n" + system.toString());
@@ -789,7 +761,7 @@ public class ModelCheckerTest {
 		ExistsUntil existsUntil = new ExistsUntil(new True(), new False());
 		TransitionSystem system = new TransitionSystem();
 		BitSet expected = new BitSet();
-		ModelChecker model = new ModelChecker(system, null);
+		ModelChecker model = new ModelChecker(system);
 		Result result = model.check(existsUntil);
 		BitSet actual = result.getLower();
 		assertEquals(expected, actual, existsUntil.toString() + "\n" + system.toString());
@@ -807,12 +779,9 @@ public class ModelCheckerTest {
 		String right = "C.r";
 		ExistsUntil existsUntil = new ExistsUntil(new AtomicProposition(left), new AtomicProposition(right));
 		TransitionSystem system = new TransitionSystem(existsUntil.getAtomicPropositions());
-		Map<String, String> jniMapping = new HashMap<>();
-		jniMapping.put(left, left);
-		jniMapping.put(right, right);
 		int leftIndex = system.getIndices().get(left);
 		int rightIndex = system.getIndices().get(right);
-		ModelChecker model = new ModelChecker(system, jniMapping);
+		ModelChecker model = new ModelChecker(system);
 		Result result = model.check(existsUntil);
 		BitSet actual = result.getLower();
 		for (int state = actual.nextSetBit(0); state != -1; state = actual.nextSetBit(state + 1)) {
@@ -856,11 +825,7 @@ public class ModelCheckerTest {
 	public void testUpperSubsetLower() {
 		Formula formula = Formula.random();
 		TransitionSystem system = new TransitionSystem(formula.getAtomicPropositions());
-		Map<String, String> jniMapping = new HashMap<>();
-		for (String ap : formula.getAtomicPropositions()) {
-			jniMapping.put(ap, ap);
-		}
-		ModelChecker model = new ModelChecker(system, jniMapping);
+		ModelChecker model = new ModelChecker(system);
 		Result result = model.check(formula);
 		assertTrue(subset(result.getLower(), result.getUpper()), "lower is not a subset of upper for formula\n" + formula + "\nand system\n" + system);
 	}

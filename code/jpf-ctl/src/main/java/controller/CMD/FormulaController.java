@@ -1,4 +1,4 @@
-package controllers;
+package controller.CMD;
 
 import java.util.Set;
 
@@ -14,7 +14,7 @@ import error.LabelDoesNotExistException;
 import formulas.Formula;
 import formulas.Generator;
 
-public class FormulaParser {
+public class FormulaController {
 	
 	public static Formula parseFormula(Set<String> labels, String input) throws LabelDoesNotExistException {
 		CharStream inputStream = CharStreams.fromString(input);

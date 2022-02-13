@@ -1,6 +1,7 @@
-package controllers;
+package controller.CMD;
 
 import java.util.Collection;
+import java.util.Map.Entry;
 import java.util.stream.Collectors;
 
 import error.ModelCheckingException;
@@ -11,18 +12,19 @@ import gov.nasa.jpf.JPFException;
 import labels.BinaryLabel;
 import labels.Label;
 import logging.Logger;
+import model.Target;
 
-public class JPFExecutor {
+public class JPFController {
 
 	private Target target;
 	private Collection<Label> labelling;
 	
 	private Logger logger;
 
-	public JPFExecutor(Target target, Collection<Label> labelling) {
+	public JPFController(Target target, Collection<Label> labelling) {
 		this.target = target;
 		this.labelling = labelling;
-		this.logger = new Logger(JPFExecutor.class.getSimpleName());
+		this.logger = new Logger(JPFController.class.getSimpleName());
 	}
 
 	public void runJPF() throws ModelCheckingException {
@@ -44,15 +46,11 @@ public class JPFExecutor {
 
 			// move reporting to .xml
 			conf.setProperty("report.console.class", "gov.nasa.jpf.report.XMLPublisher");
-
-			// Set args
-			String args = target.getArgs();
-			if (!args.isEmpty()) {
-				conf.setProperty("target.args", args);
+			
+			// Set jpfArgs
+			for (Entry<String, String> e : target.getJpfArgs().entrySet()) {
+				conf.setProperty(e.getKey(), e.getValue());
 			}
-
-			// only needed if randomization is used
-			conf.setProperty("cg.enumerate_random", target.getEnumerateRandom());
 
 			// build the label properties
 			conf.setProperty("label.class",

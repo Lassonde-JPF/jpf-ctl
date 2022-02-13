@@ -25,13 +25,16 @@ import java.io.PrintWriter;
 
 import org.junit.jupiter.api.RepeatedTest;
 
+import controller.CMD.TransitionSystemController;
+import model.TransitionSystem;
+
 /**
  * Tests the class that represents a transition system.
  * 
  * @author Franck van Breugel
  */
-class TransitionSystemTest {
-
+class TransitionSystemControllerTest {
+	
 	@RepeatedTest(100)
 	void testToString() {
 		// create random transition system
@@ -69,7 +72,7 @@ class TransitionSystemTest {
 		
 		TransitionSystem actual;
 		try {
-			actual = new TransitionSystem("Example", true);
+			actual = TransitionSystemController.parseTransitionSystem("Example", null, true);
 			assertEquals(expected, actual);
 		} catch (IOException e) {
 			fail("Something went wrong with reading the file Example.tra or Example.lab");

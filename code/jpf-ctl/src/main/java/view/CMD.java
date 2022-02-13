@@ -1,4 +1,4 @@
-package views;
+package view;
 
 import java.io.IOException;
 import java.util.Map;
@@ -7,15 +7,18 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
 import logging.Logger;
+import model.CTL;
+import model.Manager;
 import model.ModelChecker;
+import model.Target;
+import model.TransitionSystem;
 
 import org.apache.commons.cli.*;
 
-import controllers.CTLParser;
-import controllers.JPFExecutor;
-import controllers.Manager;
-import controllers.Target;
-import controllers.TransitionSystem;
+import controller.CMD.CTLController;
+import controller.CMD.JPFController;
+import controller.CMD.TargetController;
+import controller.CMD.TransitionSystemController;
 import error.ModelCheckingException;
 
 public class CMD {
@@ -81,7 +84,7 @@ public class CMD {
 		logger.info("Building target object...");
 		Target target = null;
 		try {
-			target = new Target(targetPath);
+			target = TargetController.parseTarget(targetPath);
 		} catch (ParseException e) {
 			logger.severe("Error building target object for Target: path=" + targetPath + " : Error=" + e.getMessage());
 			System.exit(1);
@@ -90,9 +93,9 @@ public class CMD {
 
 		// Build CTL object
 		logger.info("Building CTL object...");
-		CTLParser ctl = null;
+		CTL ctl = null;
 		try {
-			ctl = new CTLParser(ctlPath, target);
+			ctl = CTLController.parseCTL(ctlPath, target.getPath());
 		} catch (IOException e) {
 			logger.severe("Error parsing ctl.properties file for CTLParser: path=" + ctlPath + ", target=" + target
 					+ " : Error=" + e);
@@ -102,9 +105,9 @@ public class CMD {
 
 		// Run JPF on Target w/ appropriate labels
 		logger.info("Running JPF on Target...");
-		JPFExecutor jpfExecutor = new JPFExecutor(target, ctl.getLabels());
+		JPFController jpfController = new JPFController(target, ctl.getLabels());
 		try {
-			jpfExecutor.runJPF();
+			jpfController.runJPF();
 		} catch (ModelCheckingException e) {
 			logger.severe("Error running JPF on Target for JPFRunner: target=" + target + ", labels=" + ctl.getLabels()
 					+ " : Error=" + e);
@@ -116,7 +119,7 @@ public class CMD {
 		logger.info("Building Transition System...");
 		TransitionSystem pts = null;
 		try {
-			pts = new TransitionSystem(target.getName(), true);
+			pts = TransitionSystemController.parseTransitionSystem(target.getName(), ctl.getReverseJNIMapping(), true);
 		} catch (IOException e) {
 			logger.severe("Error building Transistion System for TransitionSystem: target=" + target.getName()
 					+ " : Error=" + e);
@@ -128,7 +131,7 @@ public class CMD {
 		logger.info("Building Manager...");
 		Manager manager = null;
 		try {
-			manager = new Manager(pts, ctl.getJNIMapping(), ctl.getFormulaMapping());
+			manager = new Manager(pts, ctl.getFormulaMapping());
 		} catch (Exception e) {
 			logger.severe("Error initializing manager for ModelCheckingManager: pts=" + pts + ", jniMapping="
 					+ ctl.getJNIMapping() + ", formulas=" + ctl.getFormulaMapping() + " : Error=" + e);

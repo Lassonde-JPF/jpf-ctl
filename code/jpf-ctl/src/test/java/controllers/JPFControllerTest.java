@@ -3,9 +3,11 @@ package controllers;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
+import controller.CMD.JPFController;
 import error.ModelCheckingException;
+import model.Target;
 
-public class JPFExecutorTest {
+public class JPFControllerTest {
 	
 	// TODO add something interesting - random labels would be good
 	@Disabled
@@ -13,8 +15,8 @@ public class JPFExecutorTest {
 	public void testRunner() throws ModelCheckingException {
 		Target target = new Target();
 		
-		JPFExecutor executor = new JPFExecutor(target, null);
+		JPFController controller = new JPFController(target, null);
 		
-		executor.runJPF();
+		controller.runJPF();
 	}
 }

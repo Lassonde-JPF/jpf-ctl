@@ -15,20 +15,14 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package controllers;
+package model;
 
-import java.io.File;
-import java.io.IOException;
 import java.util.BitSet;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
-import java.util.NoSuchElementException;
 import java.util.Random;
-import java.util.Scanner;
 import java.util.Set;
-
-import logging.Logger;
 
 /**
  * A class which represents a partial transition system. The states of the
@@ -40,6 +34,11 @@ import logging.Logger;
 
 public class TransitionSystem {
 
+	// separates the source and target of a transition
+	public static final String TRANSITION_SEPARATOR = " -> ";
+	// separates the state and its labels
+	private static final String LABEL_SEPARATOR = ": ";
+	
 	// for each state, its successors
 	private final Map<Integer, BitSet> successors;
 	// for each label, its index
@@ -51,11 +50,6 @@ public class TransitionSystem {
 	// number of states
 	private int numberOfStates;
 
-	// separates the source and target of a transition
-	public static final String TRANSITION_SEPARATOR = " -> ";
-	// separates the state and its labels
-	public static final String LABEL_SEPARATOR = ": ";
-
 	// introduces randomness
 	private static final Random random = new Random(System.currentTimeMillis());
 	// maximum number of states of a random system
@@ -66,8 +60,6 @@ public class TransitionSystem {
 	private static final int MAX_LABELS = 3;
 	// probability that a label is used in any state in a random system
 	private static final double LABELLED = 0.8;
-	
-	private Logger logger;
 
 	/**
 	 * Initializes this transition system randomly.
@@ -138,7 +130,7 @@ public class TransitionSystem {
 				this.successors.put(source, post);
 			}
 			if (random.nextDouble() > FULLY_EXPLORED) {
-				this.partial.nextSetBit(source);
+				this.partial.set(source);
 			}
 		}
 
@@ -165,190 +157,56 @@ public class TransitionSystem {
 		}
 	}
 
-	/**
-	 * Initializes this partial transition system from the file with the given name.
-	 * The transitions are extracted from a file named fileName.tra and the
-	 * labelling of the states is extracted from a file named fileName.lab.
-	 * 
-	 * @param fileName the base name of the file containing the description of this
-	 *                 transition system and its labelling
-	 * @throws IOException if something goes wrong with reading the files
-	 */
-	public TransitionSystem(String fileName, boolean deleteFiles) throws IOException {
-		final String TRANSITION = "-?\\d+" + TRANSITION_SEPARATOR + "\\d+";
-		final String PARTIAL = "(\\d+\\s)*";
-		final String STATES = "\\d+";
-		
-		this.logger = new Logger(TransitionSystem.class.getSimpleName());
-
-		this.logger.info("locating .lab and .tra files...");
-		File labFile = new File(fileName + ".lab");
-		if (!labFile.exists()) {
-			throw new IOException("File " + fileName + ".lab does not exist!");
-		}
-		File traFile = new File(fileName + ".tra");
-		if (!traFile.exists()) {
-			throw new IOException("File " + fileName + ".tra does not exist!");
-		}
-		this.logger.info("files found.");
-
-		// tra file
-		this.logger.info("Parsing .tra file...");
-		Scanner input = new Scanner(traFile);
-		this.successors = new HashMap<Integer, BitSet>();
-		String line = null;
-		try {
-			line = input.nextLine();
-			while (line.matches(TRANSITION)) { // line represents a transition
-				this.parseTransition(line);
-				line = input.nextLine();
-			}
-		} catch (NoSuchElementException e) {
-			input.close();
-			throw new IOException("File " + fileName + ".tra not in the correct format");
-		}
-		// the one but last line contains the partially explored states
+	public TransitionSystem(Set<String> atomicPropositions, boolean fullyExplored) {
+		this.numberOfStates = 1 + random.nextInt(MAX_STATES);
 		this.partial = new BitSet();
-		if (line.matches(PARTIAL)) {
-			this.parsePartial(line);
-			line = input.nextLine();
-		}
-		// last line contains the number of states
-		try {
-			if (line.matches(STATES)) {
-				this.parseNumberOfStates(line);
-			} else {
-				input.close();
-				throw new IOException("File " + fileName + ".tra not in the correct format");
+
+		final double TRANSITIONS = 2 * Math.log(this.numberOfStates) / this.numberOfStates;
+		this.successors = new HashMap<Integer, BitSet>();
+		for (int source = 0; source < this.numberOfStates; source++) {
+			BitSet post = new BitSet(this.numberOfStates);
+			for (int target = 0; target < this.numberOfStates; target++) {
+				if (random.nextDouble() < TRANSITIONS) {
+					post.set(target);
+				}
 			}
-		} catch (NoSuchElementException e) {
-			input.close();
-			throw new IOException("File " + fileName + ".tra not in the correct format");
-		}
-		input.close();
-		this.logger.info("Done.");
-
-		// Labelling File
-		this.logger.info("Parsing .lab file...");
-		input = new Scanner(labFile);
-		this.indices = new HashMap<String, Integer>();
-		try {
-			line = input.nextLine(); // first line containing the labels and their indices
-			this.parseIndices(line);
-		} catch (NoSuchElementException e) {
-			input.close();
-			throw new IOException("File " + fileName + ".lab not in the correct format");
-		}
-
-		this.labelling = new HashMap<Integer, BitSet>();
-		for (int index = 0; index < this.indices.size(); index++) {
-			this.labelling.put(index, new BitSet(this.numberOfStates));
-		}
-		while (input.hasNextLine()) {
-			line = input.nextLine(); // line represents a state labelling
-			this.parseLabelling(line);
-		}
-		input.close();
-		this.logger.info("Done.");
-
-		this.logger.info("cleaning up leftover files...");
-		// Attempt to cleanup
-		if (deleteFiles) {
-			if (!labFile.delete()) {
-				throw new IOException("File " + fileName + ".lab was not deleted!");
-			}
-			if (!traFile.delete()) {
-				throw new IOException("File " + fileName + ".tra was not deleted!");
-			}
-		}
-	}
-
-	/**
-	 * Parses the given line.
-	 * 
-	 * @param line a line representing a transition
-	 */
-	private void parseTransition(String line) {
-		String[] part = line.split(TRANSITION_SEPARATOR);
-		int source = Integer.parseInt(part[0]);
-		int target = Integer.parseInt(part[1]);
-
-		if (source != -1) { // TODO to skip -1
-			BitSet post;
-			if (this.successors.containsKey(source)) {
-				post = this.successors.get(source);
-			} else {
-				post = new BitSet();
+			if (!post.isEmpty()) {
 				this.successors.put(source, post);
 			}
-			post.set(target);
-		}
-	}
-
-	/**
-	 * Parses the given line.
-	 * 
-	 * @param line a line representing the states that are partially explored
-	 */
-	private void parsePartial(String line) {
-		if (line.length() > 0) {
-			for (String state : line.split(" ")) {
-				int source = Integer.parseInt(state);
+			if (!fullyExplored) {
 				this.partial.set(source);
 			}
 		}
-	}
 
-	/**
-	 * Parses the given line.
-	 * 
-	 * @param line a line representing names of the atomic propositions and their
-	 *             indices
-	 */
-	private void parseIndices(String line) {
-		final String PREFIX = "true__";
-		final String RETURNED = "returned__";
-		for (String item : line.split(" ")) {
-			String[] pair = item.split("=");
-			int index = Integer.parseInt(pair[0]);
-			String label = pair[1].substring(1, pair[1].length() - 1); // TODO perhaps use indexOf
-			if (label.startsWith(PREFIX)) {
-				label = label.substring(PREFIX.length());
-				this.indices.put(label, index);
-			}
-			if (label.startsWith(RETURNED)) { // Added second case -> could be done a lot better
-				label = label.substring(RETURNED.length());
-				this.indices.put(label, index);
+		this.indices = new HashMap<String, Integer>();
+		int labels = 0;
+		for (String name : atomicPropositions) {
+			this.indices.put(name, labels);
+			labels++;
+		}
+
+		this.labelling = new HashMap<Integer, BitSet>();
+		for (int index = 0; index < labels; index++) {
+			BitSet stateSet = new BitSet(this.numberOfStates);
+			this.labelling.put(index, stateSet);
+			if (random.nextDouble() < LABELLED) {
+				do {
+					for (int state = 0; state < this.numberOfStates; state++) {
+						if (random.nextDouble() < LABELLED / this.numberOfStates) {
+							stateSet.set(state);
+						}
+					}
+				} while (stateSet.isEmpty());
 			}
 		}
 	}
 
-	/**
-	 * Parses the given line.
-	 * 
-	 * @param line a line representing a state and its labels
-	 */
-	private void parseLabelling(String line) {
-		String[] part = line.split(LABEL_SEPARATOR);
-		int state = Integer.parseInt(part[0]);
-		if (state != -1) {
-			for (String label : part[1].split(" ")) {
-				int index = Integer.parseInt(label);
-				BitSet set = this.labelling.get(index); // TODO modified this
-				if (set != null) {
-					set.set(state);
-				}
-			}
-		}
-	}
-
-	/**
-	 * Parses the given line.
-	 * 
-	 * @param line a line representing the number of states
-	 */
-	private void parseNumberOfStates(String line) {
-		this.numberOfStates = Integer.parseInt(line);
+	public TransitionSystem(Map<Integer, BitSet> successors, Map<String, Integer> indices, Map<Integer, BitSet> labelling, BitSet partial, int numberOfStates) {
+		this.successors = successors;
+		this.indices = indices;
+		this.labelling = labelling;
+		this.partial = partial;
+		this.numberOfStates = numberOfStates;
 	}
 
 	@Override

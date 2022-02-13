@@ -6,9 +6,10 @@ import java.util.Set;
 
 import org.junit.jupiter.api.RepeatedTest;
 
+import controller.CMD.FormulaController;
 import formulas.Formula;
 
-public class FormulaParserTest {
+public class FormulaControllerTest {
 	/**
 	 * Number of times each test is run.
 	 */
@@ -21,9 +22,7 @@ public class FormulaParserTest {
 	public void testParseFormula() {
 		Formula expected = Formula.random();
 		Set<String> labels = expected.getAtomicPropositions();
-		
-		Formula actual = FormulaParser.parseFormula(labels, expected.toString());
-		
+		Formula actual = FormulaController.parseFormula(labels, expected.toString());
 		assertEquals(expected, actual);
 	}
 }

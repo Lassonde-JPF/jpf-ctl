@@ -10,6 +10,8 @@ import java.util.concurrent.TimeoutException;
 import org.junit.jupiter.api.RepeatedTest;
 
 import formulas.Formula;
+import model.Manager;
+import model.TransitionSystem;
 import model.ModelChecker.Result;
 
 public class ManagerTest {
@@ -29,14 +31,12 @@ public class ManagerTest {
 		// Maps and Sets
 		Map<String, Formula> formulas = new HashMap<String, Formula>();
 		Set<String> atomicPropositions = new HashSet<String>();
-		Map<String, String> jniMapping = new HashMap<String, String>();
 
 		// Generate a mapping of random formulas, collect their APs, build mapping
 		for (int i = 0; i < 10; i++) {
 			Formula formula = Formula.random();
 			String key = "a" + (i + 1);
 			formulas.put(key, formula);
-			jniMapping.put(key, key);
 			atomicPropositions.addAll(formula.getAtomicPropositions());
 		}
 
@@ -44,7 +44,7 @@ public class ManagerTest {
 		TransitionSystem pts = new TransitionSystem(atomicPropositions);
 
 		// Generate a Manager
-		Manager manager = new Manager(pts, jniMapping, formulas);
+		Manager manager = new Manager(pts, formulas);
 
 		// Perform Validation
 		Map<String, Result> results = manager.validateSequentially();

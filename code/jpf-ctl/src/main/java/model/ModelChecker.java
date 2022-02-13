@@ -21,7 +21,6 @@ import java.util.BitSet;
 import java.util.HashMap;
 import java.util.Map;
 
-import controllers.TransitionSystem;
 import formulas.And;
 import formulas.AtomicProposition;
 import formulas.ExistsAlways;
@@ -149,9 +148,6 @@ public class ModelChecker {
 	// partial transition system
 	private final TransitionSystem system;
 
-	// alias -> jni mapping
-	private final Map<String, String> jniMapping;
-
 	// cache of lower- and upperbounds of the satisfaction set for formulas
 	private Map<Formula, Result> cache;
 
@@ -160,9 +156,8 @@ public class ModelChecker {
 	 * 
 	 * @param system a partial transition system
 	 */
-	public ModelChecker(TransitionSystem system, Map<String, String> jniMapping) {
+	public ModelChecker(TransitionSystem system) {
 		this.system = system;
-		this.jniMapping = jniMapping;
 		this.cache = new HashMap<Formula, Result>();
 	}
 
@@ -189,7 +184,6 @@ public class ModelChecker {
 				result = new Result(none, none);
 			} else if (formula instanceof AtomicProposition) {
 				String name = ((AtomicProposition) formula).toString();
-				name = jniMapping.get(name); // TODO conversion to jni name
 				BitSet labelling = new BitSet();
 				if (this.system.getIndices().containsKey(name)) {
 					int index = this.system.getIndices().get(name);
