@@ -47,7 +47,7 @@ public class BooleanLocalVariable extends BinaryLabel {
 		
 		this.JNIName = this.getQualifiedName().replace('.', '_') + "_" + Types.getJNIMangledMethodName(method);
 	}
-	
+
 	@Override
 	public String getJNIName() {
 		return this.JNIName;

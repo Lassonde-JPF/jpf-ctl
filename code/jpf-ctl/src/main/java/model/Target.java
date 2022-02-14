@@ -1,16 +1,11 @@
 package model;
 
+import java.util.HashMap;
 import java.util.Map;
 
 public class Target {
-	private String name, path, enumerateRandom;
+	private String name, path;
 	private Map<String, String> jpfArgs;
-
-	// For Static Generation
-	public Target() {
-		this.name = "labels.ReflectionExamples";
-		this.path = "bin/test";
-	}
 	
 	// Defualt Constructor
 	public Target(String name, String path, Map<String, String> jpfArgs) {
@@ -19,9 +14,14 @@ public class Target {
 		this.jpfArgs = jpfArgs;
 	}
 
+	// For Static Generation
+	public Target() {
+		this("labels.ReflectionExamples", "bin/test", new HashMap<String, String>());
+	}
+	
 	@Override
 	public String toString() {
-		return "Target: name=" + this.name + ", path=" + this.path + ", jpfArgs=" + this.jpfArgs + ", enumerateRandom=" + this.enumerateRandom;
+		return "Target: name=" + this.name + ", path=" + this.path + ", jpfArgs=" + this.jpfArgs;
 	}
 
 	public String getName() {

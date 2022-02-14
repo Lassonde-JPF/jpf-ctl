@@ -13,7 +13,7 @@ public class BaseTest {
 	/**
 	 * Number of random cases that are considered in each test.
 	 */
-	protected static final int CASES = 1000;
+	protected static final int CASES = 100;
 	
 	protected static final String PATH = "src/test/java";
 

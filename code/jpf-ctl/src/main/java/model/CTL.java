@@ -70,4 +70,14 @@ public class CTL {
 		}
 		return inverseMap;
 	}
+	
+	@Override
+	public boolean equals(Object object) {
+		if (object != null && this.getClass() == object.getClass()) {
+			CTL other = (CTL) object;
+			return this.formulas.equals(other.formulas) && this.labels.equals(other.labels);
+		} else {
+			return false;
+		}
+	}
 }

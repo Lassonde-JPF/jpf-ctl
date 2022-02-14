@@ -4,14 +4,11 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import org.antlr.v4.runtime.tree.ParseTree;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.RepeatedTest;
 import org.junit.jupiter.api.Test;
 
 public class LabelTest extends BaseTest {
 
-	// TODO Enable when random works
-	@Disabled
 	@RepeatedTest(BaseTest.CASES)
 	public void testRandomLabel() {
 		Label expected = Label.random();
