@@ -1,4 +1,4 @@
-package model;
+package controller.CMD;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -13,6 +13,8 @@ import java.util.concurrent.TimeoutException;
 import java.util.stream.Collectors;
 
 import formulas.Formula;
+import model.ModelChecker;
+import model.TransitionSystem;
 
 public class Manager {
 	
@@ -51,18 +53,15 @@ public class Manager {
 		ExecutorService pool = Executors.newCachedThreadPool();
 		// Contruct temporary structure to store future results
 		Map<String, Future<ModelChecker.Result>> futureMap = new HashMap<>();
-		
 		// Spawn threads
 		for (Entry<String, Formula> entry : this.formulas.entrySet()) {
 			futureMap.computeIfAbsent(entry.getKey(), k -> pool.submit(new Worker(entry.getKey(), entry.getValue(), this.checker)));
 		}
-		
 		// Collect threads
 		Map<String, ModelChecker.Result> results = new HashMap<>();
 		for (Entry<String, Future<ModelChecker.Result>> entry : futureMap.entrySet()) {
 			results.put(entry.getKey(), entry.getValue().get(timeout, unit));
 		}
-		
 		return results;
 	}
 	

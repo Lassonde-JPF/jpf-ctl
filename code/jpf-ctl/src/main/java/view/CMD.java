@@ -8,7 +8,6 @@ import java.util.concurrent.TimeoutException;
 
 import logging.Logger;
 import model.CTL;
-import model.Manager;
 import model.ModelChecker;
 import model.Target;
 import model.TransitionSystem;
@@ -17,6 +16,7 @@ import org.apache.commons.cli.*;
 
 import controller.CMD.CTLController;
 import controller.CMD.JPFController;
+import controller.CMD.Manager;
 import controller.CMD.TargetController;
 import controller.CMD.TransitionSystemController;
 import error.ModelCheckingException;
@@ -140,14 +140,10 @@ public class CMD {
 		logger.info("Done.");
 
 		// Begin Model Checking
-		// TODO probably implement a single thread executor for validateSequentially so
-		// we can timegate the operation ? (perhaps with a parameter)
 		logger.info("Beginning Model Checking...");
 		Map<String, ModelChecker.Result> results = null;
-		try { // TODO Should the error handing for parallel (at least for timeout) be moved
-				// inside the manager and handled there ? i.e fill will an empty result and log?
-			logger.info("validation mode: " + (parallel ? "parallel" : "sequential"));
-			results = parallel ? manager.validateParallel(10, TimeUnit.SECONDS) : manager.validateSequentially();
+		try { 
+			results = parallel ? manager.validateParallel(60, TimeUnit.SECONDS) : manager.validateSequentially();
 		} catch (InterruptedException e) {
 			logger.severe("Error validating formula : Error=" + e);
 			System.exit(1);
@@ -155,7 +151,7 @@ public class CMD {
 			logger.severe("Error validating formula : Error=" + e);
 			System.exit(1);
 		} catch (TimeoutException e) {
-			logger.severe("Validation timed out at " + 10 + TimeUnit.SECONDS + " : Error=" + e);
+			logger.severe("Validation timed out at " + 60 + TimeUnit.SECONDS + " : Error=" + e);
 			System.exit(1);
 		}
 		logger.info("Done.");

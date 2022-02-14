@@ -9,8 +9,8 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 import org.junit.jupiter.api.RepeatedTest;
 
+import controller.CMD.Manager;
 import formulas.Formula;
-import model.Manager;
 import model.TransitionSystem;
 import model.ModelChecker.Result;
 
