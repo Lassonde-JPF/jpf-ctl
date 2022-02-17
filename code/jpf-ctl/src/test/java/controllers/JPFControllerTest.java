@@ -5,7 +5,8 @@ import java.util.Random;
 import java.util.Set;
 
 import org.junit.jupiter.api.RepeatedTest;
-import controller.CMD.JPFController;
+
+import controller.JPFController;
 import error.ModelCheckingException;
 import labels.Label;
 import model.Target;

@@ -15,12 +15,14 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package formulas;
+package formulas.ctl;
 
 import java.util.Set;
 
+import formulas.Formula;
+
 /**
- * This class represents a CTL formula that is the for all always (box) of a formula. 
+ * This class represents a CTL formula that is the negation (not) of a formula. 
  * 
  * @author Neena Govindhan
  * @author Jonas Laya
@@ -29,15 +31,15 @@ import java.util.Set;
  * @author Franck van Breugel
  * @author Anto Nanah Ji
  */
-public class ForAllAlways extends Formula {
+public class Not extends Formula {
 	private Formula formula;
 
 	/**
-	 * Initializes this CTL formula as the for all always of the given formula.
+	 * Initializes this CTL formula as the negation of the given formula.
 	 * 
-	 * @param formula the subformula of this for all always formula
+	 * @param formula the subformula of this not formula
 	 */
-	public ForAllAlways(Formula formula) {
+	public Not(Formula formula) {
 		this.formula = formula;
 	}
 
@@ -52,7 +54,7 @@ public class ForAllAlways extends Formula {
 	@Override
 	public boolean equals(Object object) {
 		if (object != null && this.getClass() == object.getClass()) {
-			ForAllAlways other = (ForAllAlways) object;
+			Not other = (Not) object;
 			return this.formula.equals(other.formula);
 		} else {
 			return false;
@@ -61,9 +63,9 @@ public class ForAllAlways extends Formula {
 
 	@Override
 	public String toString() {
-		return "AG " + this.formula;
+		return "! " + this.formula;
 	}
-
+	
 	/**
 	 * Returns the subformula of this formula.
 	 * 
@@ -82,11 +84,15 @@ public class ForAllAlways extends Formula {
 	public Formula simplify() {
 		Formula formula = this.formula.simplify();
 		if (formula instanceof True) {
-			return new True();
-		} else if (formula instanceof False) {
 			return new False();
+		} else if (formula instanceof False) {
+			return new True();
+		} else if (formula instanceof Not) {
+			Not not = (Not) formula;
+			Formula subFormula = not.getFormula();
+			return subFormula;
 		} else {
-			return new ForAllAlways(formula);
+			return new Not(formula);
 		}
 	}
 }

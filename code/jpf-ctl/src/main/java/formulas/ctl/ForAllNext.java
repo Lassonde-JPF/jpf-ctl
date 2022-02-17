@@ -15,12 +15,14 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package formulas;
+package formulas.ctl;
 
 import java.util.Set;
 
+import formulas.Formula;
+
 /**
- * This class represents a CTL formula that is the for all eventually (diamond) of a formula.
+ * This class represents a CTL formula that is the for all next of a formula.
  * 
  * @author Neena Govindhan
  * @author Jonas Laya
@@ -29,15 +31,15 @@ import java.util.Set;
  * @author Franck van Breugel
  * @author Anto Nanah Ji
  */
-public class ForAllEventually extends Formula {
+public class ForAllNext extends Formula {
 	private Formula formula;
 
 	/**
-	 * Initializes this CTL formula as the for all eventually of the given formula.
+	 * Initializes this CTL formula as the for all next of the given formula.
 	 * 
-	 * @param formula the subformula of this for all eventually formula
+	 * @param formula the subformula of this for all next formula
 	 */
-	public ForAllEventually(Formula formula) {
+	public ForAllNext(Formula formula) {
 		this.formula = formula;
 	}
 
@@ -52,7 +54,7 @@ public class ForAllEventually extends Formula {
 	@Override
 	public boolean equals(Object object) {
 		if (object != null && this.getClass() == object.getClass()) {
-			ForAllEventually other = (ForAllEventually) object;
+			ForAllNext other = (ForAllNext) object;
 			return this.formula.equals(other.formula);
 		} else {
 			return false;
@@ -61,7 +63,7 @@ public class ForAllEventually extends Formula {
 
 	@Override
 	public String toString() {
-		return "AF " + this.formula;
+		return "AX " + this.formula;
 	}
 
 	/**
@@ -83,10 +85,8 @@ public class ForAllEventually extends Formula {
 		Formula formula = this.formula.simplify();
 		if (formula instanceof True) {
 			return new True();
-		} else if (formula instanceof False) {
-			return new False();
-		} else{
-			return new ForAllEventually(formula);
+		} else {
+			return new ForAllNext(formula);
 		}
 	}
 }

@@ -26,7 +26,22 @@ import java.util.Set;
 import org.junit.jupiter.api.RepeatedTest;
 
 import formulas.*;
-import model.ModelChecker.Result;
+import formulas.ctl.And;
+import formulas.ctl.AtomicProposition;
+import formulas.ctl.ExistsAlways;
+import formulas.ctl.ExistsEventually;
+import formulas.ctl.ExistsNext;
+import formulas.ctl.ExistsUntil;
+import formulas.ctl.False;
+import formulas.ctl.ForAllAlways;
+import formulas.ctl.ForAllEventually;
+import formulas.ctl.ForAllNext;
+import formulas.ctl.Iff;
+import formulas.ctl.Implies;
+import formulas.ctl.Not;
+import formulas.ctl.Or;
+import formulas.ctl.True;
+import model.ctl.CTLModelChecker;
 
 /**
  * Tests the ModelChecker class.
@@ -48,7 +63,7 @@ public class ModelCheckerTest {
 		TransitionSystem system = new TransitionSystem();
 		BitSet expected = new BitSet();
 		expected.set(0, system.getNumberOfStates());
-		ModelChecker model = new ModelChecker(system);
+		CTLModelChecker model = new CTLModelChecker(system);
 		Result result = model.check(formula);
 		BitSet actual = result.getLower();
 		assertEquals(expected, actual, system.toString());
@@ -65,7 +80,7 @@ public class ModelCheckerTest {
 		Formula formula = new False();
 		TransitionSystem system = new TransitionSystem();
 		BitSet expected = new BitSet();
-		ModelChecker model = new ModelChecker(system);
+		CTLModelChecker model = new CTLModelChecker(system);
 		Result result = model.check(formula);
 		BitSet actual = result.getLower();
 		assertEquals(expected, actual, system.toString());
@@ -87,7 +102,7 @@ public class ModelCheckerTest {
 		if (system.getLabelling().containsKey(index)) {
 			expected = system.getLabelling().get(index);
 		} 
-		ModelChecker model = new ModelChecker(system);
+		CTLModelChecker model = new CTLModelChecker(system);
 		Result result = model.check(formula);
 		BitSet actual = result.getLower();
 		assertEquals(expected, actual, system.toString());
@@ -103,7 +118,7 @@ public class ModelCheckerTest {
 	public void testNot() {
 		Formula formula = Formula.random();
 		TransitionSystem system = new TransitionSystem(formula.getAtomicPropositions());
-		ModelChecker model = new ModelChecker(system);
+		CTLModelChecker model = new CTLModelChecker(system);
 		Result expectedResult = model.check(formula);
 		BitSet expected = expectedResult.getUpper();
 		expected.flip(0, system.getNumberOfStates());
@@ -128,7 +143,7 @@ public class ModelCheckerTest {
 		Set<String> atomicPropositions = left.getAtomicPropositions();
 		atomicPropositions.addAll(right.getAtomicPropositions());
 		TransitionSystem system = new TransitionSystem(atomicPropositions);
-		ModelChecker model = new ModelChecker(system);
+		CTLModelChecker model = new CTLModelChecker(system);
 		Result resultLeft = model.check(left);
 		Result resultRight = model.check(right);
 		BitSet expectedLeft = resultLeft.getLower();
@@ -158,7 +173,7 @@ public class ModelCheckerTest {
 		Set<String> atomicPropositions = left.getAtomicPropositions();
 		atomicPropositions.addAll(right.getAtomicPropositions());
 		TransitionSystem system = new TransitionSystem(atomicPropositions);
-		ModelChecker model = new ModelChecker(system);
+		CTLModelChecker model = new CTLModelChecker(system);
 		Result resultLeft = model.check(left);
 		Result resultRight = model.check(right);
 		BitSet expectedLeft = resultLeft.getLower();
@@ -188,7 +203,7 @@ public class ModelCheckerTest {
 		Set<String> atomicPropositions = left.getAtomicPropositions();
 		atomicPropositions.addAll(right.getAtomicPropositions());
 		TransitionSystem system = new TransitionSystem(atomicPropositions);
-		ModelChecker model = new ModelChecker(system);
+		CTLModelChecker model = new CTLModelChecker(system);
 		Result resultLeft = model.check(left);
 		Result resultRight = model.check(right);
 		BitSet expectedLeft = resultLeft.getLower();
@@ -220,7 +235,7 @@ public class ModelCheckerTest {
 		Set<String> atomicPropositions = left.getAtomicPropositions();
 		atomicPropositions.addAll(right.getAtomicPropositions());
 		TransitionSystem system = new TransitionSystem(atomicPropositions);
-		ModelChecker model = new ModelChecker(system);
+		CTLModelChecker model = new CTLModelChecker(system);
 		Result resultLeft = model.check(left);
 		Result resultRight = model.check(right);
 		BitSet expectedLeft = resultLeft.getLower();
@@ -294,12 +309,12 @@ public class ModelCheckerTest {
 	public void testExistsNextTrue() {
 		ExistsNext existsNext = new ExistsNext(new True());
 		TransitionSystem system = new TransitionSystem();
-		ModelChecker model = new ModelChecker(system);
+		CTLModelChecker model = new CTLModelChecker(system);
 		BitSet expected = new BitSet();
 		for (int state = 0; state < system.getNumberOfStates(); state++) {
 			expected.set(state, system.getSuccessors().containsKey(state) || system.getPartial().get(state));
 		}
-		model = new ModelChecker(system);
+		model = new CTLModelChecker(system);
 		Result result = model.check(existsNext);
 		BitSet actual = result.getLower();
 		assertEquals(expected, actual, existsNext.toString() + "\n" + system.toString());
@@ -315,7 +330,7 @@ public class ModelCheckerTest {
 	public void testExistsNextFalse() {
 		ExistsNext existsNext = new ExistsNext(new False());
 		TransitionSystem system = new TransitionSystem();
-		ModelChecker model = new ModelChecker(system);
+		CTLModelChecker model = new CTLModelChecker(system);
 		BitSet expected = new BitSet();
 		Result result = model.check(existsNext);
 		BitSet actual = result.getLower();
@@ -333,7 +348,7 @@ public class ModelCheckerTest {
 		String name = "C.f";
 		ExistsNext existsNext = new ExistsNext(new AtomicProposition(name));
 		TransitionSystem system = new TransitionSystem(existsNext.getAtomicPropositions());
-		ModelChecker model = new ModelChecker(system);
+		CTLModelChecker model = new CTLModelChecker(system);
 		BitSet expected = new BitSet();
 		int index = system.getIndices().get(name);
 		if (system.getLabelling().containsKey(index)) {
@@ -359,7 +374,7 @@ public class ModelCheckerTest {
 	public void testForAllNextTrue() {
 		ForAllNext forAllNext = new ForAllNext(new True());
 		TransitionSystem system = new TransitionSystem();
-		ModelChecker model = new ModelChecker(system);
+		CTLModelChecker model = new CTLModelChecker(system);
 		BitSet expected = new BitSet();
 		expected.set(0, system.getNumberOfStates());
 		Result result = model.check(forAllNext);
@@ -377,7 +392,7 @@ public class ModelCheckerTest {
 	public void testForAllNextFalse() {
 		ForAllNext forAllNext = new ForAllNext(new False());
 		TransitionSystem system = new TransitionSystem();
-		ModelChecker model = new ModelChecker(system);
+		CTLModelChecker model = new CTLModelChecker(system);
 		BitSet expected = new BitSet();
 		Result result = model.check(forAllNext);
 		BitSet actual = result.getLower();
@@ -395,7 +410,7 @@ public class ModelCheckerTest {
 		String name = "C.f";
 		ForAllNext forAllNext = new ForAllNext(new AtomicProposition(name));
 		TransitionSystem system = new TransitionSystem(forAllNext.getAtomicPropositions());
-		ModelChecker model = new ModelChecker(system);
+		CTLModelChecker model = new CTLModelChecker(system);
 		int index = system.getIndices().get(name);
 		BitSet expected = new BitSet();
 		for (int state = 0; state < system.getNumberOfStates(); state++) {
@@ -430,7 +445,7 @@ public class ModelCheckerTest {
 	public void testExistsAlwaysTrue() {
 		ExistsAlways existsAlways = new ExistsAlways(new True());
 		TransitionSystem system = new TransitionSystem();
-		ModelChecker model = new ModelChecker(system);
+		CTLModelChecker model = new CTLModelChecker(system);
 		BitSet expected = new BitSet();
 		expected.set(0, system.getNumberOfStates(), true);
 		Result result = model.check(existsAlways);
@@ -448,7 +463,7 @@ public class ModelCheckerTest {
 	public void testExistsAlwaysFalse() {
 		ExistsAlways existsAlways = new ExistsAlways(new False());
 		TransitionSystem system = new TransitionSystem();
-		ModelChecker model = new ModelChecker(system);
+		CTLModelChecker model = new CTLModelChecker(system);
 		BitSet expected = new BitSet();
 		Result result = model.check(existsAlways);
 		BitSet actual = result.getLower();
@@ -466,7 +481,7 @@ public class ModelCheckerTest {
 		String name = "C.f";
 		ExistsAlways existsAlways = new ExistsAlways(new AtomicProposition(name));
 		TransitionSystem system = new TransitionSystem(existsAlways.getAtomicPropositions());
-		ModelChecker model = new ModelChecker(system);
+		CTLModelChecker model = new CTLModelChecker(system);
 		Result result = model.check(existsAlways);
 		int index = system.getIndices().get(name);
 		if (system.getLabelling().containsKey(index)) {
@@ -511,7 +526,7 @@ public class ModelCheckerTest {
 	public void testForAllAlwaysTrue() {
 		ForAllAlways forAllAlways = new ForAllAlways(new True());
 		TransitionSystem system = new TransitionSystem();
-		ModelChecker model = new ModelChecker(system);
+		CTLModelChecker model = new CTLModelChecker(system);
 		BitSet expected = new BitSet();
 		expected.set(0, system.getNumberOfStates(), true);
 		Result result = model.check(forAllAlways);
@@ -529,7 +544,7 @@ public class ModelCheckerTest {
 	public void testForAllAlwaysFalse() {
 		ForAllAlways forAllAlways = new ForAllAlways(new False());
 		TransitionSystem system = new TransitionSystem();
-		ModelChecker model = new ModelChecker(system);
+		CTLModelChecker model = new CTLModelChecker(system);
 		BitSet expected = new BitSet();
 		Result result = model.check(forAllAlways);
 		BitSet actual = result.getLower();
@@ -547,7 +562,7 @@ public class ModelCheckerTest {
 		String name = "C.f";
 		ForAllAlways forAllAlways = new ForAllAlways(new AtomicProposition(name));
 		TransitionSystem system = new TransitionSystem(forAllAlways.getAtomicPropositions());
-		ModelChecker model = new ModelChecker(system);
+		CTLModelChecker model = new CTLModelChecker(system);
 		Result result = model.check(forAllAlways);
 		int index = system.getIndices().get(name);
 		
@@ -587,7 +602,7 @@ public class ModelCheckerTest {
 	public void testExistsEventuallyTrue() {
 		ExistsEventually existsEventually = new ExistsEventually(new True());
 		TransitionSystem system = new TransitionSystem();
-		ModelChecker model = new ModelChecker(system);
+		CTLModelChecker model = new CTLModelChecker(system);
 		BitSet expected = new BitSet();
 		expected.set(0, system.getNumberOfStates(), true);
 		Result result = model.check(existsEventually);
@@ -605,7 +620,7 @@ public class ModelCheckerTest {
 	public void testExistsEventuallyFalse() {
 		ExistsEventually existsEventually = new ExistsEventually(new False());
 		TransitionSystem system = new TransitionSystem();
-		ModelChecker model = new ModelChecker(system);
+		CTLModelChecker model = new CTLModelChecker(system);
 		BitSet expected = new BitSet();
 		Result result = model.check(existsEventually);
 		BitSet actual = result.getLower();
@@ -623,7 +638,7 @@ public class ModelCheckerTest {
 		String name = "C.f";
 		ExistsEventually existsEventually = new ExistsEventually(new AtomicProposition(name));
 		TransitionSystem system = new TransitionSystem(existsEventually.getAtomicPropositions());
-		ModelChecker model = new ModelChecker(system);
+		CTLModelChecker model = new CTLModelChecker(system);
 		Result result = model.check(existsEventually);
 		int index = system.getIndices().get(name);
 		
@@ -663,7 +678,7 @@ public class ModelCheckerTest {
 	public void testForAllEventuallyTrue() {
 		ForAllEventually forAllEventually = new ForAllEventually(new True());
 		TransitionSystem system = new TransitionSystem();
-		ModelChecker model = new ModelChecker(system);
+		CTLModelChecker model = new CTLModelChecker(system);
 		BitSet expected = new BitSet();
 		expected.set(0, system.getNumberOfStates(), true);
 		Result result = model.check(forAllEventually);
@@ -681,7 +696,7 @@ public class ModelCheckerTest {
 	public void testForAllEventuallyFalse() {
 		ForAllEventually forAllEventually = new ForAllEventually(new False());
 		TransitionSystem system = new TransitionSystem();
-		ModelChecker model = new ModelChecker(system);
+		CTLModelChecker model = new CTLModelChecker(system);
 		BitSet expected = new BitSet();
 		Result result = model.check(forAllEventually);
 		BitSet actual = result.getLower();
@@ -703,7 +718,7 @@ public class ModelCheckerTest {
 		for (String ap : forAllEventually.getAtomicPropositions()) {
 			jniMapping.put(ap, ap);
 		}
-		ModelChecker model = new ModelChecker(system);
+		CTLModelChecker model = new CTLModelChecker(system);
 		Result result = model.check(forAllEventually);
 		int index = system.getIndices().get(name);
 		
@@ -744,7 +759,7 @@ public class ModelCheckerTest {
 		TransitionSystem system = new TransitionSystem(left.getAtomicPropositions());
 		BitSet expected = new BitSet();
 		expected.set(0, system.getNumberOfStates());
-		ModelChecker model = new ModelChecker(system);
+		CTLModelChecker model = new CTLModelChecker(system);
 		Result result = model.check(existsUntil);
 		BitSet actual = result.getLower();
 		assertEquals(expected, actual, existsUntil.toString() + "\n" + system.toString());
@@ -761,7 +776,7 @@ public class ModelCheckerTest {
 		ExistsUntil existsUntil = new ExistsUntil(new True(), new False());
 		TransitionSystem system = new TransitionSystem();
 		BitSet expected = new BitSet();
-		ModelChecker model = new ModelChecker(system);
+		CTLModelChecker model = new CTLModelChecker(system);
 		Result result = model.check(existsUntil);
 		BitSet actual = result.getLower();
 		assertEquals(expected, actual, existsUntil.toString() + "\n" + system.toString());
@@ -781,7 +796,7 @@ public class ModelCheckerTest {
 		TransitionSystem system = new TransitionSystem(existsUntil.getAtomicPropositions());
 		int leftIndex = system.getIndices().get(left);
 		int rightIndex = system.getIndices().get(right);
-		ModelChecker model = new ModelChecker(system);
+		CTLModelChecker model = new CTLModelChecker(system);
 		Result result = model.check(existsUntil);
 		BitSet actual = result.getLower();
 		for (int state = actual.nextSetBit(0); state != -1; state = actual.nextSetBit(state + 1)) {
@@ -825,7 +840,7 @@ public class ModelCheckerTest {
 	public void testUpperSubsetLower() {
 		Formula formula = Formula.random();
 		TransitionSystem system = new TransitionSystem(formula.getAtomicPropositions());
-		ModelChecker model = new ModelChecker(system);
+		CTLModelChecker model = new CTLModelChecker(system);
 		Result result = model.check(formula);
 		assertTrue(subset(result.getLower(), result.getUpper()), "lower is not a subset of upper for formula\n" + formula + "\nand system\n" + system);
 	}

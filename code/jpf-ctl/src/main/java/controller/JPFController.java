@@ -1,4 +1,4 @@
-package controller.CMD;
+package controller;
 
 import java.util.Collection;
 import java.util.Map.Entry;

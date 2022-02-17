@@ -24,6 +24,20 @@ import org.antlr.v4.runtime.tree.ParseTree;
 
 import org.junit.jupiter.api.Test;
 
+import formulas.ctl.And;
+import formulas.ctl.ExistsAlways;
+import formulas.ctl.ExistsEventually;
+import formulas.ctl.ExistsNext;
+import formulas.ctl.ExistsUntil;
+import formulas.ctl.ForAllAlways;
+import formulas.ctl.ForAllEventually;
+import formulas.ctl.ForAllNext;
+import formulas.ctl.ForAllUntil;
+import formulas.ctl.Iff;
+import formulas.ctl.Implies;
+import formulas.ctl.Not;
+import formulas.ctl.Or;
+
 /**
  * Tests that the precedence of operators.
  *

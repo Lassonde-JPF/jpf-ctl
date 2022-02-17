@@ -15,12 +15,14 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package formulas;
+package formulas.ctl;
 
 import java.util.Set;
 
+import formulas.Formula;
+
 /**
- * This class represents a CTL formula that is the negation (not) of a formula. 
+ * This class represents a CTL formula that is the exists always (box) of a formula. 
  * 
  * @author Neena Govindhan
  * @author Jonas Laya
@@ -29,15 +31,15 @@ import java.util.Set;
  * @author Franck van Breugel
  * @author Anto Nanah Ji
  */
-public class Not extends Formula {
+public class ExistsAlways extends Formula {
 	private Formula formula;
 
 	/**
-	 * Initializes this CTL formula as the negation of the given formula.
+	 * Initializes this CTL formula as the exists always of the given formula.
 	 * 
-	 * @param formula the subformula of this not formula
+	 * @param formula the subformula of this exists always formula
 	 */
-	public Not(Formula formula) {
+	public ExistsAlways(Formula formula) {
 		this.formula = formula;
 	}
 
@@ -52,7 +54,7 @@ public class Not extends Formula {
 	@Override
 	public boolean equals(Object object) {
 		if (object != null && this.getClass() == object.getClass()) {
-			Not other = (Not) object;
+			ExistsAlways other = (ExistsAlways) object;
 			return this.formula.equals(other.formula);
 		} else {
 			return false;
@@ -61,9 +63,9 @@ public class Not extends Formula {
 
 	@Override
 	public String toString() {
-		return "! " + this.formula;
+		return "EG " + this.formula;
 	}
-	
+
 	/**
 	 * Returns the subformula of this formula.
 	 * 
@@ -77,20 +79,16 @@ public class Not extends Formula {
 	public Set<String> getAtomicPropositions() {
 		return this.formula.getAtomicPropositions();
 	}
-	
+
 	@Override
 	public Formula simplify() {
 		Formula formula = this.formula.simplify();
 		if (formula instanceof True) {
-			return new False();
-		} else if (formula instanceof False) {
 			return new True();
-		} else if (formula instanceof Not) {
-			Not not = (Not) formula;
-			Formula subFormula = not.getFormula();
-			return subFormula;
-		} else {
-			return new Not(formula);
+		} else if (formula instanceof False) {
+			return new False();
+		} else{
+			return new ExistsAlways(formula);
 		}
 	}
 }

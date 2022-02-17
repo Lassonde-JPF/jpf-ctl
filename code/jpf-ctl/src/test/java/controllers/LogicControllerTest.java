@@ -13,13 +13,14 @@ import java.util.Set;
 
 import org.junit.jupiter.api.RepeatedTest;
 
-import controller.CMD.CTLController;
+import controller.CMD.LogicController;
 import formulas.Formula;
 import labels.Label;
-import model.CTL;
+import model.Logic;
+import model.LogicType;
 import model.Target;
 
-public class CTLControllerTest {
+public class LogicControllerTest {
 	/**
 	 * Number of times each test is run.
 	 */
@@ -56,7 +57,7 @@ public class CTLControllerTest {
 		Target target = new Target();
 
 		// Generate ctl.properties file
-		PrintWriter writer = new PrintWriter("ctl.properties");
+		PrintWriter writer = new PrintWriter("logic.properties");
 		for (Entry<String, Label> e : labels.entrySet()) {
 			writer.println(e.getKey() + ": " + e.getValue());
 		}
@@ -67,8 +68,8 @@ public class CTLControllerTest {
 		writer.close();
 		
 		// Generate expected and actual
-		CTL expected = new CTL(labels, formulas);
-		CTL actual = CTLController.parseCTL(null, target.getPath());
+		Logic expected = new Logic(labels, formulas, LogicType.CTL);
+		Logic actual = LogicController.parseLogic(null, target.getPath(), "CTL");
 
 		// Perform Assertion
 		assertEquals(expected, actual, expected.toString() + "\n" + actual.toString());

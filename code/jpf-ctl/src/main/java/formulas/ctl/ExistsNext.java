@@ -15,12 +15,14 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package formulas;
+package formulas.ctl;
 
 import java.util.Set;
 
+import formulas.Formula;
+
 /**
- * This class represents a CTL formula that is the for all next of a formula.
+ * This class represents a CTL formula that is the exists next of a formula.
  * 
  * @author Neena Govindhan
  * @author Jonas Laya
@@ -29,15 +31,15 @@ import java.util.Set;
  * @author Franck van Breugel
  * @author Anto Nanah Ji
  */
-public class ForAllNext extends Formula {
+public class ExistsNext extends Formula {
 	private Formula formula;
 
 	/**
-	 * Initializes this CTL formula as the for all next of the given formula.
+	 * Initializes this CTL formula as the exists next of the given formula.
 	 * 
-	 * @param formula the subformula of this for all next formula
+	 * @param formula the subformula of this exists next formula
 	 */
-	public ForAllNext(Formula formula) {
+	public ExistsNext(Formula formula) {
 		this.formula = formula;
 	}
 
@@ -52,7 +54,7 @@ public class ForAllNext extends Formula {
 	@Override
 	public boolean equals(Object object) {
 		if (object != null && this.getClass() == object.getClass()) {
-			ForAllNext other = (ForAllNext) object;
+			ExistsNext other = (ExistsNext) object;
 			return this.formula.equals(other.formula);
 		} else {
 			return false;
@@ -61,7 +63,7 @@ public class ForAllNext extends Formula {
 
 	@Override
 	public String toString() {
-		return "AX " + this.formula;
+		return "EX " + this.formula;
 	}
 
 	/**
@@ -81,10 +83,10 @@ public class ForAllNext extends Formula {
 	@Override
 	public Formula simplify() {
 		Formula formula = this.formula.simplify();
-		if (formula instanceof True) {
-			return new True();
+		if (formula instanceof False) {
+			return new False();
 		} else {
-			return new ForAllNext(formula);
+			return new ExistsNext(formula);
 		}
 	}
 }

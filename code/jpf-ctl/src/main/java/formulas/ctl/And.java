@@ -15,13 +15,15 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package formulas;
+package formulas.ctl;
 
 import java.util.HashSet;
 import java.util.Set;
 
+import formulas.Formula;
+
 /**
- * This class represents a CTL formula that is an implication (implies) of two formulas.
+ * This class represents a CTL formula that is a conjuction (and) of two formulas.
  * 
  * @author Neena Govindhan
  * @author Jonas Laya
@@ -30,17 +32,17 @@ import java.util.Set;
  * @author Franck van Breugel
  * @author Anto Nanah Ji
  */
-public class Implies extends Formula {
+public class And extends Formula {
 	private Formula left;
 	private Formula right;
 
 	/**
-	 * Initializes this CTL formula as the implication (implies) of the given {@code left} and {@code right} subformulas.
+	 * Initializes this CTL formula as the conjunction (and) of the given {@code left} and {@code right} subformulas.
 	 * 
-	 * @param left the left subformula of this implies formula
-	 * @param right the right subformula of this implies formula
+	 * @param left the left subformula of this and formula
+	 * @param right the right subformula of this and formula
 	 */
-	public Implies(Formula left, Formula right) {
+	public And(Formula left, Formula right) {
 		this.left = left;
 		this.right = right;
 	}
@@ -57,7 +59,7 @@ public class Implies extends Formula {
 	@Override
 	public boolean equals(Object object) {
 		if (object != null && this.getClass() == object.getClass()) {
-			Implies other = (Implies) object;
+			And other = (And) object;
 			return this.left.equals(other.left) && this.right.equals(other.right);
 		} else {
 			return false;
@@ -66,7 +68,7 @@ public class Implies extends Formula {
 
 	@Override
 	public String toString() {
-		return "(" + this.left + " -> " + this.right + ")";
+		return "(" + this.left + " && " + this.right + ")";
 	}
 
 	/**
@@ -86,7 +88,7 @@ public class Implies extends Formula {
 	public Formula getRight() {
 		return this.right;
 	}  
-	
+
 	@Override
 	public Set<String> getAtomicPropositions() {
 		Set<String> set = new HashSet<String>();
@@ -94,19 +96,19 @@ public class Implies extends Formula {
 		set.addAll(this.right.getAtomicPropositions());
 		return set;
 	}
-	
+
 	@Override
 	public Formula simplify() {
 		Formula left = this.left.simplify();
 		Formula right = this.right.simplify();
-		if (left instanceof False || right instanceof True) { 
-			return new True();
-		} else if (right instanceof False) { 
-			return (new Not(left)).simplify();
+		if (left instanceof False || right instanceof False) {
+			return new False();
 		} else if (left instanceof True) {
 			return right;
-		} else {
-			return new Implies(left, right);
-		}
+		} else if (right instanceof True) {
+			return left;
+		} else 
+			return new And(left, right);
 	}
 }
+

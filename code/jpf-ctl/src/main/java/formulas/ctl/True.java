@@ -15,13 +15,15 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package formulas;
+package formulas.ctl;
 
 import java.util.HashSet;
 import java.util.Set;
 
+import formulas.Formula;
+
 /**
- * This class represents the CTL formula false.
+ * This class represents the CTL formula true.
  * 
  * @author Neena Govindhan
  * @author Jonas Laya
@@ -29,26 +31,26 @@ import java.util.Set;
  * @author Paul Sison
  * @author Franck van Breugel
  */
-public class False extends Formula {
+public class True extends Formula {
 
 	/**
-	 * Initializes this CTL formula as false.
+	 * Initializes this CTL formula as true.
 	 */
-	public False() {}
+	public True() {}
 	
 	@Override
 	public int hashCode() {
-		return 0;
+		return 1;
 	}
 	
 	@Override
 	public boolean equals(Object object) {
-		return object instanceof False;
+		return object instanceof True;
 	}
 	
 	@Override
 	public String toString() {
-		return "false";
+		return "true";
 	}
 	
 	@Override

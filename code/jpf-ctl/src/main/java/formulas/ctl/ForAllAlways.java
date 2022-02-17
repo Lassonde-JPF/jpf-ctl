@@ -15,12 +15,14 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package formulas;
+package formulas.ctl;
 
 import java.util.Set;
 
+import formulas.Formula;
+
 /**
- * This class represents a CTL formula that is the exists eventually (diamond) of a formula.
+ * This class represents a CTL formula that is the for all always (box) of a formula. 
  * 
  * @author Neena Govindhan
  * @author Jonas Laya
@@ -29,15 +31,15 @@ import java.util.Set;
  * @author Franck van Breugel
  * @author Anto Nanah Ji
  */
-public class ExistsEventually extends Formula {
+public class ForAllAlways extends Formula {
 	private Formula formula;
 
 	/**
-	 * Initializes this CTL formula as the exists eventually of the given formula.
+	 * Initializes this CTL formula as the for all always of the given formula.
 	 * 
-	 * @param formula the subformula of this exists eventually formula
+	 * @param formula the subformula of this for all always formula
 	 */
-	public ExistsEventually(Formula formula) {
+	public ForAllAlways(Formula formula) {
 		this.formula = formula;
 	}
 
@@ -52,7 +54,7 @@ public class ExistsEventually extends Formula {
 	@Override
 	public boolean equals(Object object) {
 		if (object != null && this.getClass() == object.getClass()) {
-			ExistsEventually other = (ExistsEventually) object;
+			ForAllAlways other = (ForAllAlways) object;
 			return this.formula.equals(other.formula);
 		} else {
 			return false;
@@ -61,7 +63,7 @@ public class ExistsEventually extends Formula {
 
 	@Override
 	public String toString() {
-		return "EF " + this.formula;
+		return "AG " + this.formula;
 	}
 
 	/**
@@ -86,7 +88,7 @@ public class ExistsEventually extends Formula {
 		} else if (formula instanceof False) {
 			return new False();
 		} else {
-			return new ExistsEventually(formula);
+			return new ForAllAlways(formula);
 		}
 	}
 }

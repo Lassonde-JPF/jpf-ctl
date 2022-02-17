@@ -9,10 +9,11 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 import org.junit.jupiter.api.RepeatedTest;
 
-import controller.CMD.Manager;
+import controller.Manager;
 import formulas.Formula;
+import model.LogicType;
 import model.TransitionSystem;
-import model.ModelChecker.Result;
+import model.Result;
 
 public class ManagerTest {
 
@@ -44,7 +45,7 @@ public class ManagerTest {
 		TransitionSystem pts = new TransitionSystem(atomicPropositions);
 
 		// Generate a Manager
-		Manager manager = new Manager(pts, formulas);
+		Manager manager = new Manager(pts, formulas, LogicType.CTL);
 
 		// Perform Validation
 		Map<String, Result> results = manager.validateSequentially();

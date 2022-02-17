@@ -6,26 +6,33 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.Map;
+
+import controller.FormulaController;
+import controller.LabelController;
 import formulas.Formula;
 import labels.Label;
 import logging.Logger;
-import model.CTL;
+import model.Logic;
+import model.LogicType;
 
-public class CTLController {
+public class LogicController {
 
 	// Static filename
-	private static final String FILE_NAME = "ctl.properties";
+	private static final String FILE_NAME = "logic.properties";
 
 	// Default Contructor
-	public static CTL parseCTL(String path, String classpath) throws IOException {
+	public static Logic parseLogic(String path, String classpath, String logicLanguage) throws IOException, IllegalArgumentException {
 		// Initialize Logging
-		Logger logger = new Logger(CTLController.class.getSimpleName());
+		Logger logger = new Logger(LogicController.class.getSimpleName());
 
 		// Parse the path
 		String filePath = (path == null) ? Paths.get(".").toAbsolutePath().normalize().toString() : path;
 		filePath += File.separator + FILE_NAME;
 		logger.info("Parsed path: " + filePath);
 
+		// Parse the language
+		LogicType type = LogicType.valueOf(logicLanguage);
+		
 		// Parse Labels First
 		Map<String, Label> labels = new HashMap<String, Label>();
 		Files.lines(Paths.get(filePath)).filter(line -> line.contains(":")).forEach(line -> {
@@ -42,11 +49,11 @@ public class CTLController {
 			String alias = line.substring(0, line.indexOf("=")).trim();
 			String formula = line.substring(line.indexOf("=") + 1).trim();
 
-			formulas.computeIfAbsent(alias, k -> FormulaController.parseFormula(labels.keySet(), formula));
+			formulas.computeIfAbsent(alias, k -> FormulaController.parseFormula(labels.keySet(), formula, type));
 			logger.info("Parsed Formula: " + alias + " = " + formulas.get(alias));
 		});
 		
-		return new CTL(labels, formulas);
+		return new Logic(labels, formulas, type);
 	}
 
 

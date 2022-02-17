@@ -53,6 +53,17 @@ if (!jpfLabelExists) {
     throw new GradleException("${userHome}/.jpf/site.properties points to the jpf-label installation at ${jpfLabel} but that directory does not exist")
 }
 
+// find jpf-nhandler -> just warn for now
+ext.jpfNHandlerExists = false
+ext.jpfNHandler = siteProperties.getProperty("jpf-nhandler")
+if (jpfNHandler != null) {
+    jpfNHandler = jpfNHandler.replace('${user.home}', userHome)
+    jpfNHandlerExists = new File(jpfNHandler).exists()
+}
+if (!jpfNHandlerExists) {
+    logger.warn("${userHome}/.jpf/site.properties points to the jpf-nhandler installation at ${jpfNHandler} but that directory does not exist")
+}
+
 dependencies {
 
     // Use JUnit test framework
@@ -110,6 +121,7 @@ test {
     }
 }
 
+// TODO probably should include .lab, .tra, etc.
 clean.doFirst {
     delete "${rootDir}/logs"
     delete "${rootDir}/counterExamples"

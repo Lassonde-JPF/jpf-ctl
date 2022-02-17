@@ -1,4 +1,4 @@
-package controller.CMD;
+package controller;
 
 import org.antlr.v4.runtime.CharStream;
 import org.antlr.v4.runtime.CharStreams;

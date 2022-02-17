@@ -15,47 +15,62 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package formulas;
+package formulas.ctl;
 
 import java.util.HashSet;
 import java.util.Set;
 
+import formulas.Formula;
+
 /**
- * This class represents the CTL formula true.
+ * This class represents the CTL state formula consisting of an atomic proposition.
  * 
  * @author Neena Govindhan
  * @author Jonas Laya
  * @author Jessie Leung
  * @author Paul Sison
  * @author Franck van Breugel
+ * @author Matthew Walker
  */
-public class True extends Formula {
+public class AtomicProposition extends Formula {
+	private String alias;
 
 	/**
-	 * Initializes this CTL formula as true.
+	 * Initializes this CTL formula as an atomic proposition with the given name.
+	 * 
+	 * @param name the name of this atomic proposition
 	 */
-	public True() {}
+	public AtomicProposition(String alias) {
+		this.alias = alias;
+	}
 	
 	@Override
 	public int hashCode() {
-		return 1;
+		return this.alias.hashCode();
 	}
-	
+
 	@Override
 	public boolean equals(Object object) {
-		return object instanceof True;
+		if (object != null && this.getClass() == object.getClass()) {
+			AtomicProposition other = (AtomicProposition) object;
+			return this.alias.equals(other.alias);
+		} else {
+			return false;
+		}
 	}
-	
+
 	@Override
 	public String toString() {
-		return "true";
+		return this.alias;
 	}
 	
 	@Override
 	public Set<String> getAtomicPropositions() {
-		return new HashSet<String>();
+		Set<String> set = new HashSet<String>();
+		set.add(this.toString());
+		return set;
 	}
-
+	
 	@Override
 	public Formula simplify() {
 		return this;

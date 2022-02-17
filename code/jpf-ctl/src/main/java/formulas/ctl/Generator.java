@@ -15,7 +15,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package formulas;
+package formulas.ctl;
 
 import org.ctl.CTLBaseVisitor;
 import org.ctl.CTLParser.AndContext;
@@ -35,6 +35,8 @@ import org.ctl.CTLParser.ImpliesContext;
 import org.ctl.CTLParser.NotContext;
 import org.ctl.CTLParser.OrContext;
 import org.ctl.CTLParser.TrueContext;
+
+import formulas.Formula;
 
 /**
  * Generates an abstract syntax tree from a parse tree.

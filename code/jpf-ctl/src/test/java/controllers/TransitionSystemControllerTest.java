@@ -25,7 +25,7 @@ import java.io.PrintWriter;
 
 import org.junit.jupiter.api.RepeatedTest;
 
-import controller.CMD.TransitionSystemController;
+import controller.TransitionSystemController;
 import model.TransitionSystem;
 
 /**

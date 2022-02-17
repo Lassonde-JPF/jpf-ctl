@@ -9,16 +9,21 @@ import formulas.Formula;
 import labels.BinaryLabel;
 import labels.Label;
 import labels.UnaryLabel;
+import model.Logic;
 
-public class CTL {
+public class Logic {
 
 	// Attributes
 	private Map<String, Label> labels;
 	private Map<String, Formula> formulas;
 	
-	public CTL(Map<String, Label> labels, Map<String, Formula> formulas) {
+	// Type of Logic
+	private LogicType type;
+	
+	public Logic(Map<String, Label> labels, Map<String, Formula> formulas, LogicType type) {
 		this.labels = labels;
 		this.formulas = formulas;
+		this.type = type;
 	}
 	
 	public Map<String, Label> getLabelMapping() {
@@ -35,6 +40,10 @@ public class CTL {
 
 	public Collection<Formula> getFormulas() {
 		return this.formulas.values();
+	}
+	
+	public LogicType getLogicType() {
+		return this.type;
 	}
 
 	public Map<String, String> getJNIMapping() {
@@ -74,7 +83,7 @@ public class CTL {
 	@Override
 	public boolean equals(Object object) {
 		if (object != null && this.getClass() == object.getClass()) {
-			CTL other = (CTL) object;
+			Logic other = (Logic) object;
 			return this.formulas.equals(other.formulas) && this.labels.equals(other.labels);
 		} else {
 			return false;

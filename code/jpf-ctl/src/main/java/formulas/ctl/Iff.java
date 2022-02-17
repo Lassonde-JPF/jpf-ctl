@@ -15,10 +15,12 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package formulas;
+package formulas.ctl;
 
 import java.util.HashSet;
 import java.util.Set;
+
+import formulas.Formula;
 
 /**
  * This class represents a CTL formula that is an equivalence (iff) of two formulas.

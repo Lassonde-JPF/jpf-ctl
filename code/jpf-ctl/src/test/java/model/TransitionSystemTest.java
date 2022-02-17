@@ -8,6 +8,7 @@ import java.util.Set;
 import org.junit.jupiter.api.RepeatedTest;
 
 import formulas.Formula;
+import model.ctl.CTLModelChecker;
 
 public class TransitionSystemTest {
 
@@ -22,10 +23,10 @@ public class TransitionSystemTest {
 		}
 
 		TransitionSystem pts = new TransitionSystem(atomicPropositions);
-		ModelChecker checker = new ModelChecker(pts);
+		CTLModelChecker checker = new CTLModelChecker(pts);
 		
 		for (Formula f : formulas) {
-			ModelChecker.Result result = checker.check(f);
+			Result result = checker.check(f);
 			assertEquals(result.getUpper(), result.getLower());
 		}
 	}

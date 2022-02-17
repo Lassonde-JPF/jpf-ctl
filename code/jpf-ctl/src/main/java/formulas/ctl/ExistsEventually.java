@@ -15,12 +15,14 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package formulas;
+package formulas.ctl;
 
 import java.util.Set;
 
+import formulas.Formula;
+
 /**
- * This class represents a CTL formula that is the exists next of a formula.
+ * This class represents a CTL formula that is the exists eventually (diamond) of a formula.
  * 
  * @author Neena Govindhan
  * @author Jonas Laya
@@ -29,15 +31,15 @@ import java.util.Set;
  * @author Franck van Breugel
  * @author Anto Nanah Ji
  */
-public class ExistsNext extends Formula {
+public class ExistsEventually extends Formula {
 	private Formula formula;
 
 	/**
-	 * Initializes this CTL formula as the exists next of the given formula.
+	 * Initializes this CTL formula as the exists eventually of the given formula.
 	 * 
-	 * @param formula the subformula of this exists next formula
+	 * @param formula the subformula of this exists eventually formula
 	 */
-	public ExistsNext(Formula formula) {
+	public ExistsEventually(Formula formula) {
 		this.formula = formula;
 	}
 
@@ -52,7 +54,7 @@ public class ExistsNext extends Formula {
 	@Override
 	public boolean equals(Object object) {
 		if (object != null && this.getClass() == object.getClass()) {
-			ExistsNext other = (ExistsNext) object;
+			ExistsEventually other = (ExistsEventually) object;
 			return this.formula.equals(other.formula);
 		} else {
 			return false;
@@ -61,7 +63,7 @@ public class ExistsNext extends Formula {
 
 	@Override
 	public String toString() {
-		return "EX " + this.formula;
+		return "EF " + this.formula;
 	}
 
 	/**
@@ -81,10 +83,12 @@ public class ExistsNext extends Formula {
 	@Override
 	public Formula simplify() {
 		Formula formula = this.formula.simplify();
-		if (formula instanceof False) {
+		if (formula instanceof True) {
+			return new True();
+		} else if (formula instanceof False) {
 			return new False();
 		} else {
-			return new ExistsNext(formula);
+			return new ExistsEventually(formula);
 		}
 	}
 }

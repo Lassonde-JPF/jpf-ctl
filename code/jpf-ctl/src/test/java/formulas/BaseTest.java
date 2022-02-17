@@ -25,6 +25,8 @@ import org.antlr.v4.runtime.tree.ParseTree;
 import org.ctl.CTLLexer;
 import org.ctl.CTLParser;
 
+import formulas.ctl.Generator;
+
 /**
  * Base for all the tests.
  * 

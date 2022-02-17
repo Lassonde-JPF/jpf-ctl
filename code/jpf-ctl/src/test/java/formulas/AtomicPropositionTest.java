@@ -26,6 +26,8 @@ import org.antlr.v4.runtime.tree.ParseTree;
 
 import org.junit.jupiter.api.Test;
 
+import formulas.ctl.AtomicProposition;
+
 /**
  * Tests a range of atomic propositions.
  * 

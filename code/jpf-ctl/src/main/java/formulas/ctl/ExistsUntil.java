@@ -15,13 +15,15 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package formulas;
+package formulas.ctl;
 
 import java.util.HashSet;
 import java.util.Set;
 
+import formulas.Formula;
+
 /**
- * This class represents a CTL formula that is a disjunction (or) of two formulas.
+ * This class represents a CTL formula that is an exists until of two formulas.
  * 
  * @author Neena Govindhan
  * @author Jonas Laya
@@ -30,17 +32,17 @@ import java.util.Set;
  * @author Franck van Breugel
  * @author Anto Nanah Ji
  */
-public class Or extends Formula {
+public class ExistsUntil extends Formula {
 	private Formula left;
 	private Formula right;
 
 	/**
-	 * Initializes this CTL formula as the disjunction (or) of the given {@code left} and {@code right} subformulas.
+	 * Initializes this CTL formula as the exists until of the given {@code left} and {@code right} subformulas.
 	 * 
-	 * @param left the left subformula of this or formula
-	 * @param right the right subformula of this or formula
+	 * @param left the left subformula of this exists until formula
+	 * @param right the right subformula of this exists until formula
 	 */
-	public Or(Formula left, Formula right) {
+	public ExistsUntil(Formula left, Formula right) {
 		this.left = left;
 		this.right = right;
 	}
@@ -57,7 +59,7 @@ public class Or extends Formula {
 	@Override
 	public boolean equals(Object object) {
 		if (object != null && this.getClass() == object.getClass()) {
-			Or other = (Or) object;
+			ExistsUntil other = (ExistsUntil) object;
 			return this.left.equals(other.left) && this.right.equals(other.right);
 		} else {
 			return false;
@@ -66,7 +68,7 @@ public class Or extends Formula {
 
 	@Override
 	public String toString() {
-		return "(" + this.left + " || " + this.right + ")";
+		return "(" + this.left + " EU " + this.right + ")";
 	}
 
 	/**
@@ -99,14 +101,12 @@ public class Or extends Formula {
 	public Formula simplify() {
 		Formula left = this.left.simplify();
 		Formula right = this.right.simplify();
-		if (left instanceof True || right instanceof True) {
+		if (right instanceof True) {
 			return new True();
-		} else if (left instanceof False) {
-			return right;
 		} else if (right instanceof False) {
-			return left;
+			return new False();
 		} else {
-			return new Or(left, right);
+			return new ExistsUntil(left, right);
 		}
 	}
 }
