@@ -69,7 +69,7 @@ public class LogicControllerTest {
 		
 		// Generate expected and actual
 		Logic expected = new Logic(labels, formulas, LogicType.CTL);
-		Logic actual = LogicController.parseLogic(null, target.getPath(), "CTL");
+		Logic actual = LogicController.parseLogic(null, target.getPath(), target.getLogic());
 
 		// Perform Assertion
 		assertEquals(expected, actual, expected.toString() + "\n" + actual.toString());

@@ -11,6 +11,7 @@ import java.util.Properties;
 import org.apache.commons.cli.ParseException;
 
 import logging.Logger;
+import model.LogicType;
 import model.Target;
 
 public class TargetController {
@@ -35,6 +36,13 @@ public class TargetController {
 			String name = (String) prop.remove("target");
 			String classpath = (String) prop.remove("classpath");
 			
+			LogicType logic;
+			try {
+				logic = LogicType.valueOf((String) prop.remove("logic.language"));
+			} catch (NullPointerException e) {
+				throw new ParseException("it appears logic.language has not been specified ");
+			}
+			
 			// Assume remaining arguments are jpf related
 			Map<String, String> jpfArgs = prop.entrySet().stream().collect(Collectors.toMap(entry -> entry.getKey().toString(), entry -> entry.getValue().toString()));
 
@@ -54,8 +62,8 @@ public class TargetController {
 				throw new ParseException("could not find file specified by: " + targetPath);
 			}
 			// Log parsed target
-			logger.info("Parsed Target: name=" + name + ", path=" + classpath + ", jpfargs=" + jpfArgs.toString());
-			return new Target(name, classpath, jpfArgs);
+			logger.info("Parsed Target: name=" + name + ", path=" + classpath + ", logic.language=" + logic + ", jpfargs=" + jpfArgs.toString());
+			return new Target(name, classpath, logic, jpfArgs);
 		} catch (IOException e) {
 			throw new ParseException("could not find properties file at " + filePath + e);
 		}

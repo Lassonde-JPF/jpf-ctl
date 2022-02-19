@@ -6,22 +6,24 @@ import java.util.Map;
 public class Target {
 	private String name, path;
 	private Map<String, String> jpfArgs;
+	private LogicType logic;
 	
 	// Defualt Constructor
-	public Target(String name, String path, Map<String, String> jpfArgs) {
+	public Target(String name, String path, LogicType logic, Map<String, String> jpfArgs) {
 		this.name = name;
 		this.path = path;
+		this.logic = logic;
 		this.jpfArgs = jpfArgs;
 	}
 
 	// For Static Generation
 	public Target() {
-		this("labels.ReflectionExamples", "bin/test", new HashMap<String, String>());
+		this("labels.ReflectionExamples", "bin/test", LogicType.CTL, new HashMap<String, String>());
 	}
 	
 	@Override
 	public String toString() {
-		return "Target: name=" + this.name + ", path=" + this.path + ", jpfArgs=" + this.jpfArgs;
+		return "Target: name=" + this.name + ", path=" + this.path + ", logic.language=" + this.logic + ", jpfArgs=" + this.jpfArgs;
 	}
 
 	public String getName() {
@@ -30,6 +32,10 @@ public class Target {
 
 	public String getPath() {
 		return this.path;
+	}
+	
+	public LogicType getLogic() {
+		return this.logic;
 	}
 	
 	public Map<String, String> getJpfArgs() {

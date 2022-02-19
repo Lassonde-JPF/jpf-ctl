@@ -21,7 +21,7 @@ public class LogicController {
 	private static final String FILE_NAME = "logic.properties";
 
 	// Default Contructor
-	public static Logic parseLogic(String path, String classpath, String logicLanguage) throws IOException, IllegalArgumentException {
+	public static Logic parseLogic(String path, String classpath, LogicType logic) throws IOException, IllegalArgumentException {
 		// Initialize Logging
 		Logger logger = new Logger(LogicController.class.getSimpleName());
 
@@ -29,9 +29,6 @@ public class LogicController {
 		String filePath = (path == null) ? Paths.get(".").toAbsolutePath().normalize().toString() : path;
 		filePath += File.separator + FILE_NAME;
 		logger.info("Parsed path: " + filePath);
-
-		// Parse the language
-		LogicType type = LogicType.valueOf(logicLanguage);
 		
 		// Parse Labels First
 		Map<String, Label> labels = new HashMap<String, Label>();
@@ -49,11 +46,11 @@ public class LogicController {
 			String alias = line.substring(0, line.indexOf("=")).trim();
 			String formula = line.substring(line.indexOf("=") + 1).trim();
 
-			formulas.computeIfAbsent(alias, k -> FormulaController.parseFormula(labels.keySet(), formula, type));
+			formulas.computeIfAbsent(alias, k -> FormulaController.parseFormula(labels.keySet(), formula, logic));
 			logger.info("Parsed Formula: " + alias + " = " + formulas.get(alias));
 		});
 		
-		return new Logic(labels, formulas, type);
+		return new Logic(labels, formulas, logic);
 	}
 
 

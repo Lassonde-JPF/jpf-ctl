@@ -23,19 +23,19 @@ import error.ModelCheckingException;
 public class CMD {
 
 	// Static Variables
-	private static final String JPF_CTL = "jpf-ctl";
+	private static final String JPF_LOGIC = "jpf-logic";
 
 	// Help Printer
-	private static final String HEADER = "\n" + "    o8o             .o88o.                       .   oooo  \r\n"
-			+ "    `\"'             888 `\"                     .o8   `888  \r\n"
-			+ "   oooo oo.ooooo.  o888oo           .ooooo.  .o888oo  888  \r\n"
-			+ "   `888  888' `88b  888            d88' `\"Y8   888    888  \r\n"
-			+ "    888  888   888  888    8888888 888         888    888  \r\n"
-			+ "    888  888   888  888            888   .o8   888 .  888  \r\n"
-			+ "    888  888bod8P' o888o           `Y8bod8P'   \"888\" o888o \r\n"
-			+ "    888  888                                               \r\n"
-			+ ".o. 88P o888o                                              \r\n"
-			+ "`Y888P                                                     \n\n";
+	private static final String HEADER = "\n" + "    o8o             .o88o.         oooo                        o8o            \r\n"
+			+ "    `\"'             888 `\"         `888                        `\"'            \r\n"
+			+ "   oooo oo.ooooo.  o888oo           888   .ooooo.   .oooooooo oooo   .ooooo.  \r\n"
+			+ "   `888  888' `88b  888             888  d88' `88b 888' `88b  `888  d88' `\"Y8 \r\n"
+			+ "    888  888   888  888    8888888  888  888   888 888   888   888  888       \r\n"
+			+ "    888  888   888  888             888  888   888 `88bod8P'   888  888   .o8 \r\n"
+			+ "    888  888bod8P' o888o           o888o `Y8bod8P' `8oooooo.  o888o `Y8bod8P' \r\n"
+			+ "    888  888                                       d\"     YD                  \r\n"
+			+ ".o. 88P o888o                                      \"Y88888P'                  \r\n"
+			+ "`Y888P                                                                        \n";
 	private static final String FOOTER = "\nPlease report issues at https://github.com/Lassonde-JPF/jpf-ctl/issues";
 
 	// main entry loop for command line version test
@@ -46,7 +46,6 @@ public class CMD {
 
 		// Required Options
 		options.addRequiredOption("p", "logicPath", true, "path to logic properties file");
-		options.addRequiredOption("l", "logicLanguage", true, "language of the logic");
 
 		// Optional Options
 		options.addOption(new Option("v", "verboseLogs", false, "enable logging to print to console"));
@@ -55,7 +54,7 @@ public class CMD {
 		options.addOption("t", "targetPath", true, "path to target properties file");
 
 		// Parse Options
-		String targetPath = null, logicPath = null, logicLanguage = null;
+		String targetPath = null, logicPath = null;
 		boolean parallel = false;
 		try {
 			CommandLine cmd = new DefaultParser().parse(options, args);
@@ -63,10 +62,9 @@ public class CMD {
 			targetPath = cmd.getOptionValue("targetPath");
 			logicPath = cmd.getOptionValue("logicPath");
 			parallel = cmd.hasOption("computationStyle");
-			logicLanguage = cmd.getOptionValue("logicLanguage");
 			Logger.setEnabled(cmd.hasOption("v"));
 		} catch (ParseException e) {
-			new HelpFormatter().printHelp(JPF_CTL, HEADER, options, FOOTER, true);
+			new HelpFormatter().printHelp(JPF_LOGIC, HEADER, options, FOOTER, true);
 			System.out.println("\n" + e.getMessage());
 			System.exit(1);
 		}
@@ -97,7 +95,7 @@ public class CMD {
 		logger.info("Building Logic object...");
 		Logic logic = null;
 		try {
-			logic = LogicController.parseLogic(logicPath, target.getPath(), logicLanguage);
+			logic = LogicController.parseLogic(logicPath, target.getPath(), target.getLogic());
 		} catch (IOException | IllegalArgumentException e) {
 			logger.severe("Error parsing logic.properties file for parseLogic: path=" + logicPath + ", target=" + target
 					+ " : Error=" + e);
