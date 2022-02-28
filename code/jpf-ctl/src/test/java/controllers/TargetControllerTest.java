@@ -25,6 +25,8 @@ public class TargetControllerTest {
 			writer.println("target = " + expected.getName());
 			// path
 			writer.println("classpath = " + expected.getPath());
+			// language
+			writer.println("logic.language = " + expected.getLogic());
 			// close
 			writer.close();
 		} catch (FileNotFoundException e) {
