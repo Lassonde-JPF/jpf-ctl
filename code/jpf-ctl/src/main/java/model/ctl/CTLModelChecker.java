@@ -18,9 +18,11 @@
 package model.ctl;
 
 import java.util.BitSet;
+
 import formulas.Formula;
 import formulas.ctl.And;
 import formulas.ctl.AtomicProposition;
+import formulas.ctl.CTLFormula;
 import formulas.ctl.ExistsAlways;
 import formulas.ctl.ExistsEventually;
 import formulas.ctl.ExistsNext;
@@ -69,7 +71,7 @@ public class CTLModelChecker extends ModelChecker {
 	 */
 	@Override
 	public Result check(Formula formula) {
-		formula = formula.simplify();
+		//formula = formula.simplify();
 		if (this.cache.containsKey(formula)) {
 			return this.cache.get(formula);
 		} else {
@@ -93,7 +95,7 @@ public class CTLModelChecker extends ModelChecker {
 				result = new Result(labelling, (BitSet) labelling.clone());
 			} else if (formula instanceof Not) {
 				Not not = (Not) formula;
-				Formula subformula = not.getFormula(); // TODO changed from 'getSubFormula'
+				CTLFormula subformula = not.getFormula(); // TODO changed from 'getSubFormula'
 				result = check(subformula);
 				BitSet lower = result.getLower();
 				BitSet upper = result.getUpper();
@@ -102,8 +104,8 @@ public class CTLModelChecker extends ModelChecker {
 				result = new Result(upper, lower);
 			} else if (formula instanceof And) {
 				And and = (And) formula;
-				Formula left = and.getLeft();
-				Formula right = and.getRight();
+				CTLFormula left = and.getLeft();
+				CTLFormula right = and.getRight();
 				Result leftResult = check(left);
 				Result rightResult = check(right);
 				BitSet leftLower = leftResult.getLower();
@@ -117,25 +119,25 @@ public class CTLModelChecker extends ModelChecker {
 				result = new Result(lower, upper);
 			} else if (formula instanceof Or) {
 				Or or = (Or) formula;
-				Formula left = or.getLeft();
-				Formula right = or.getRight();
-				Formula equivalent = new Not(new And(new Not(left), new Not(right)));
+				CTLFormula left = or.getLeft();
+				CTLFormula right = or.getRight();
+				CTLFormula equivalent = new Not(new And(new Not(left), new Not(right)));
 				result = check(equivalent);
 			} else if (formula instanceof Implies) {
 				Implies implies = (Implies) formula;
-				Formula left = implies.getLeft();
-				Formula right = implies.getRight();
-				Formula equivalent = new Or(new Not(left), right);
+				CTLFormula left = implies.getLeft();
+				CTLFormula right = implies.getRight();
+				CTLFormula equivalent = new Or(new Not(left), right);
 				result = check(equivalent);
 			} else if (formula instanceof Iff) {
 				Iff iff = (Iff) formula;
-				Formula left = iff.getLeft();
-				Formula right = iff.getRight();
-				Formula equivalent = new And(new Implies(left, right), new Implies(right, left));
+				CTLFormula left = iff.getLeft();
+				CTLFormula right = iff.getRight();
+				CTLFormula equivalent = new And(new Implies(left, right), new Implies(right, left));
 				result = check(equivalent);
 			} else if (formula instanceof ExistsNext) {
 				ExistsNext existsNext = (ExistsNext) formula;
-				Formula subFormula = existsNext.getFormula();
+				CTLFormula subFormula = existsNext.getFormula();
 				Result subResult = check(subFormula);
 				BitSet subLower = subResult.getLower();
 				BitSet subUpper = subResult.getUpper();
@@ -176,7 +178,7 @@ public class CTLModelChecker extends ModelChecker {
 				result = new Result(lower, upper);
 			} else if (formula instanceof ForAllNext) {
 				ForAllNext alwaysNext = (ForAllNext) formula;
-				Formula subformula = alwaysNext.getFormula();
+				CTLFormula subformula = alwaysNext.getFormula();
 				Result subResult = check(subformula);
 				BitSet subLower = subResult.getLower();
 				BitSet subUpper = subResult.getUpper();
@@ -202,7 +204,7 @@ public class CTLModelChecker extends ModelChecker {
 				result = new Result(lower, upper);
 			} else if (formula instanceof ExistsAlways) {
 				ExistsAlways existsAlways = (ExistsAlways) formula;
-				Formula subFormula = existsAlways.getFormula();
+				CTLFormula subFormula = existsAlways.getFormula();
 				Result subResult = check(subFormula);
 				BitSet subLower = subResult.getLower();
 				BitSet subUpper = subResult.getUpper();
@@ -258,23 +260,23 @@ public class CTLModelChecker extends ModelChecker {
 				result = new Result(lower, upper);
 			} else if (formula instanceof ForAllAlways) {
 				ForAllAlways forAllAlways = (ForAllAlways) formula;
-				Formula subformula = forAllAlways.getFormula();
-				Formula equivalent = new Not(new ExistsUntil(new True(), new Not(subformula)));
+				CTLFormula subformula = forAllAlways.getFormula();
+				CTLFormula equivalent = new Not(new ExistsUntil(new True(), new Not(subformula)));
 				result = check(equivalent);
 			} else if (formula instanceof ExistsEventually) {
 				ExistsEventually existsEventually = (ExistsEventually) formula;
-				Formula subFormula = existsEventually.getFormula();
-				Formula equivalent = new ExistsUntil(new True(), subFormula);
+				CTLFormula subFormula = existsEventually.getFormula();
+				CTLFormula equivalent = new ExistsUntil(new True(), subFormula);
 				result = check(equivalent);
 			} else if (formula instanceof ForAllEventually) {
 				ForAllEventually forAllEventually = (ForAllEventually) formula;
-				Formula subformula = forAllEventually.getFormula();
-				Formula equivalent = new Not(new ExistsAlways(new Not(subformula)));
+				CTLFormula subformula = forAllEventually.getFormula();
+				CTLFormula equivalent = new Not(new ExistsAlways(new Not(subformula)));
 				result = check(equivalent);
 			} else if (formula instanceof ExistsUntil) {
 				ExistsUntil existsUntil = (ExistsUntil) formula;
-				Formula left = existsUntil.getLeft();
-				Formula right = existsUntil.getRight();
+				CTLFormula left = existsUntil.getLeft();
+				CTLFormula right = existsUntil.getRight();
 				Result leftResult = check(left);
 				Result rightResult = check(right);
 				BitSet leftLower = leftResult.getLower();
@@ -327,9 +329,9 @@ public class CTLModelChecker extends ModelChecker {
 				result = new Result(lower, upper);
 			} else if (formula instanceof ForAllUntil) {
 				ForAllUntil forAllUntil = (ForAllUntil) formula;
-				Formula left = forAllUntil.getLeft();
-				Formula right = forAllUntil.getRight();
-				Formula equivalent = new And(
+				CTLFormula left = forAllUntil.getLeft();
+				CTLFormula right = forAllUntil.getRight();
+				CTLFormula equivalent = new And(
 						new Not(new ExistsUntil(new Not(right), new And(new Not(left), new Not(right)))),
 						new Not(new ExistsAlways(new Not(right))));
 				result = check(equivalent);

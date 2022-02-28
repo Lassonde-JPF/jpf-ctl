@@ -7,25 +7,25 @@ import java.util.Set;
 
 import org.junit.jupiter.api.RepeatedTest;
 
-import formulas.Formula;
+import formulas.ctl.CTLFormula;
 import model.ctl.CTLModelChecker;
 
 public class TransitionSystemTest {
 
 	@RepeatedTest(100)
 	void testUpperLowerBoundsConside() {
-		Set<Formula> formulas = new HashSet<Formula>();
+		Set<CTLFormula> formulas = new HashSet<CTLFormula>();
 		Set<String> atomicPropositions = new HashSet<String>();
 
 		for (int i = 0; i < 10; i++) {
-			Formula formula = Formula.random();
+			CTLFormula formula = CTLFormula.random();
 			atomicPropositions.addAll(formula.getAtomicPropositions());
 		}
 
 		TransitionSystem pts = new TransitionSystem(atomicPropositions);
 		CTLModelChecker checker = new CTLModelChecker(pts);
 		
-		for (Formula f : formulas) {
+		for (CTLFormula f : formulas) {
 			Result result = checker.check(f);
 			assertEquals(result.getUpper(), result.getLower());
 		}

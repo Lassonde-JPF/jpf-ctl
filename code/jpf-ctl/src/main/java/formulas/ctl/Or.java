@@ -20,8 +20,6 @@ package formulas.ctl;
 import java.util.HashSet;
 import java.util.Set;
 
-import formulas.Formula;
-
 /**
  * This class represents a CTL formula that is a disjunction (or) of two formulas.
  * 
@@ -32,9 +30,9 @@ import formulas.Formula;
  * @author Franck van Breugel
  * @author Anto Nanah Ji
  */
-public class Or extends Formula {
-	private Formula left;
-	private Formula right;
+public class Or extends CTLFormula {
+	private CTLFormula left;
+	private CTLFormula right;
 
 	/**
 	 * Initializes this CTL formula as the disjunction (or) of the given {@code left} and {@code right} subformulas.
@@ -42,7 +40,7 @@ public class Or extends Formula {
 	 * @param left the left subformula of this or formula
 	 * @param right the right subformula of this or formula
 	 */
-	public Or(Formula left, Formula right) {
+	public Or(CTLFormula left, CTLFormula right) {
 		this.left = left;
 		this.right = right;
 	}
@@ -76,7 +74,7 @@ public class Or extends Formula {
 	 * 
 	 * @return the left subformula of this formula
 	 */
-	public Formula getLeft() {
+	public CTLFormula getLeft() {
 		return this.left;
 	}
 
@@ -85,7 +83,7 @@ public class Or extends Formula {
 	 * 
 	 * @return the right subformula of this formula
 	 */
-	public Formula getRight() {
+	public CTLFormula getRight() {
 		return this.right;
 	}  
 	
@@ -98,9 +96,9 @@ public class Or extends Formula {
 	}
 	
 	@Override
-	public Formula simplify() {
-		Formula left = this.left.simplify();
-		Formula right = this.right.simplify();
+	public CTLFormula simplify() {
+		CTLFormula left = this.left.simplify();
+		CTLFormula right = this.right.simplify();
 		if (left instanceof True || right instanceof True) {
 			return new True();
 		} else if (left instanceof False) {

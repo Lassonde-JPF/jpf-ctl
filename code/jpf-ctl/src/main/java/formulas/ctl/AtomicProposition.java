@@ -20,8 +20,6 @@ package formulas.ctl;
 import java.util.HashSet;
 import java.util.Set;
 
-import formulas.Formula;
-
 /**
  * This class represents the CTL state formula consisting of an atomic proposition.
  * 
@@ -32,7 +30,7 @@ import formulas.Formula;
  * @author Franck van Breugel
  * @author Matthew Walker
  */
-public class AtomicProposition extends Formula {
+public class AtomicProposition extends CTLFormula {
 	private String alias;
 
 	/**
@@ -72,7 +70,7 @@ public class AtomicProposition extends Formula {
 	}
 	
 	@Override
-	public Formula simplify() {
+	public CTLFormula simplify() {
 		return this;
 	}
 }

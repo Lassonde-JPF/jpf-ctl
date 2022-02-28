@@ -4,13 +4,23 @@ import java.lang.reflect.Field;
 
 import error.LabelReflectionException;
 
+/**
+ * BooleanStaticField - A label representing a boolean static field
+ * 
+ * @author Matthew Walker
+ * @author Franck van Breugel
+ */
 public class BooleanStaticField extends BinaryLabel {
 
+	// Attributes
 	private static final String label_suffix = ".field";
-
 	private final String JNIName;
 	
-	// Production Constructor
+	/**
+	 * Initializes this BooleanStaticField with a qualified name and path
+	 * @param qualifiedName - qualified name of the method containing this boolean static field
+	 * @param path - classpath where this boolean local variable resides
+	 */
 	public BooleanStaticField(String qualifiedName, String path) {
 		super(BooleanStaticField.class.getSimpleName(), qualifiedName);
 		

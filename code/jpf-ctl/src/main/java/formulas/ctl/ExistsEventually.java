@@ -19,8 +19,6 @@ package formulas.ctl;
 
 import java.util.Set;
 
-import formulas.Formula;
-
 /**
  * This class represents a CTL formula that is the exists eventually (diamond) of a formula.
  * 
@@ -31,15 +29,15 @@ import formulas.Formula;
  * @author Franck van Breugel
  * @author Anto Nanah Ji
  */
-public class ExistsEventually extends Formula {
-	private Formula formula;
+public class ExistsEventually extends CTLFormula {
+	private CTLFormula formula;
 
 	/**
 	 * Initializes this CTL formula as the exists eventually of the given formula.
 	 * 
 	 * @param formula the subformula of this exists eventually formula
 	 */
-	public ExistsEventually(Formula formula) {
+	public ExistsEventually(CTLFormula formula) {
 		this.formula = formula;
 	}
 
@@ -71,7 +69,7 @@ public class ExistsEventually extends Formula {
 	 * 
 	 * @return the subformula of this formula
 	 */
-	public Formula getFormula() {
+	public CTLFormula getFormula() {
 		return this.formula;
 	}
 	
@@ -81,8 +79,8 @@ public class ExistsEventually extends Formula {
 	}
 	
 	@Override
-	public Formula simplify() {
-		Formula formula = this.formula.simplify();
+	public CTLFormula simplify() {
+		CTLFormula formula = this.formula.simplify();
 		if (formula instanceof True) {
 			return new True();
 		} else if (formula instanceof False) {

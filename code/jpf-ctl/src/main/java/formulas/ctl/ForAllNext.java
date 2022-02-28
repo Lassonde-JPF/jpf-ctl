@@ -19,8 +19,6 @@ package formulas.ctl;
 
 import java.util.Set;
 
-import formulas.Formula;
-
 /**
  * This class represents a CTL formula that is the for all next of a formula.
  * 
@@ -31,15 +29,15 @@ import formulas.Formula;
  * @author Franck van Breugel
  * @author Anto Nanah Ji
  */
-public class ForAllNext extends Formula {
-	private Formula formula;
+public class ForAllNext extends CTLFormula {
+	private CTLFormula formula;
 
 	/**
 	 * Initializes this CTL formula as the for all next of the given formula.
 	 * 
 	 * @param formula the subformula of this for all next formula
 	 */
-	public ForAllNext(Formula formula) {
+	public ForAllNext(CTLFormula formula) {
 		this.formula = formula;
 	}
 
@@ -71,7 +69,7 @@ public class ForAllNext extends Formula {
 	 * 
 	 * @return the subformula of this formula
 	 */
-	public Formula getFormula() {
+	public CTLFormula getFormula() {
 		return this.formula;
 	}
 	
@@ -81,8 +79,8 @@ public class ForAllNext extends Formula {
 	}
 	
 	@Override
-	public Formula simplify() {
-		Formula formula = this.formula.simplify();
+	public CTLFormula simplify() {
+		CTLFormula formula = this.formula.simplify();
 		if (formula instanceof True) {
 			return new True();
 		} else {

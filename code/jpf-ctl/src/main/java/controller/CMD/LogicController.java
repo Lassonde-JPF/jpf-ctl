@@ -15,13 +15,31 @@ import logging.Logger;
 import model.Logic;
 import model.LogicType;
 
+/**
+ * Logic controller for command line view
+ * 
+ * @author Matthew Walker
+ * @author Franck van Breugel
+ */
 public class LogicController {
 
-	// Static filename
+	// Attributes
 	private static final String FILE_NAME = "logic.properties";
 
-	// Default Contructor
-	public static Logic parseLogic(String path, String classpath, LogicType logic) throws IOException, IllegalArgumentException {
+	/**
+	 * 
+	 * Parses a `logic.properties` file into a Logic object of a specified type.
+	 * 
+	 * @param path      - path to `logic.properties` file
+	 * @param classpath - classpath of target application
+	 * @param logic     - the type of logic to consider when parsing
+	 * @return Logic - a Logic object
+	 * 
+	 * @throws IOException
+	 * @throws IllegalArgumentException
+	 */
+	public static Logic parseLogic(String path, String classpath, LogicType logic)
+			throws IOException, IllegalArgumentException {
 		// Initialize Logging
 		Logger logger = new Logger(LogicController.class.getSimpleName());
 
@@ -29,7 +47,7 @@ public class LogicController {
 		String filePath = (path == null) ? Paths.get(".").toAbsolutePath().normalize().toString() : path;
 		filePath += File.separator + FILE_NAME;
 		logger.info("Parsed path: " + filePath);
-		
+
 		// Parse Labels First
 		Map<String, Label> labels = new HashMap<String, Label>();
 		Files.lines(Paths.get(filePath)).filter(line -> line.contains(":")).forEach(line -> {
@@ -49,9 +67,7 @@ public class LogicController {
 			formulas.computeIfAbsent(alias, k -> FormulaController.parseFormula(labels.keySet(), formula, logic));
 			logger.info("Parsed Formula: " + alias + " = " + formulas.get(alias));
 		});
-		
+
 		return new Logic(labels, formulas, logic);
 	}
-
-
 }

@@ -19,8 +19,6 @@ package formulas.ctl;
 
 import java.util.Set;
 
-import formulas.Formula;
-
 /**
  * This class represents a CTL formula that is the negation (not) of a formula. 
  * 
@@ -31,15 +29,15 @@ import formulas.Formula;
  * @author Franck van Breugel
  * @author Anto Nanah Ji
  */
-public class Not extends Formula {
-	private Formula formula;
+public class Not extends CTLFormula {
+	private CTLFormula formula;
 
 	/**
 	 * Initializes this CTL formula as the negation of the given formula.
 	 * 
 	 * @param formula the subformula of this not formula
 	 */
-	public Not(Formula formula) {
+	public Not(CTLFormula formula) {
 		this.formula = formula;
 	}
 
@@ -71,7 +69,7 @@ public class Not extends Formula {
 	 * 
 	 * @return the subformula of this formula
 	 */
-	public Formula getFormula() {
+	public CTLFormula getFormula() {
 		return this.formula;
 	}
 	
@@ -81,15 +79,15 @@ public class Not extends Formula {
 	}
 	
 	@Override
-	public Formula simplify() {
-		Formula formula = this.formula.simplify();
+	public CTLFormula simplify() {
+		CTLFormula formula = this.formula.simplify();
 		if (formula instanceof True) {
 			return new False();
 		} else if (formula instanceof False) {
 			return new True();
 		} else if (formula instanceof Not) {
 			Not not = (Not) formula;
-			Formula subFormula = not.getFormula();
+			CTLFormula subFormula = not.getFormula();
 			return subFormula;
 		} else {
 			return new Not(formula);

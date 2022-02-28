@@ -28,6 +28,7 @@ import org.junit.jupiter.api.RepeatedTest;
 import formulas.*;
 import formulas.ctl.And;
 import formulas.ctl.AtomicProposition;
+import formulas.ctl.CTLFormula;
 import formulas.ctl.ExistsAlways;
 import formulas.ctl.ExistsEventually;
 import formulas.ctl.ExistsNext;
@@ -116,13 +117,13 @@ public class ModelCheckerTest {
 	 */
 	@RepeatedTest(CASES)
 	public void testNot() {
-		Formula formula = Formula.random();
+		CTLFormula formula = CTLFormula.random();
 		TransitionSystem system = new TransitionSystem(formula.getAtomicPropositions());
 		CTLModelChecker model = new CTLModelChecker(system);
 		Result expectedResult = model.check(formula);
 		BitSet expected = expectedResult.getUpper();
 		expected.flip(0, system.getNumberOfStates());
-		Formula not = new Not(formula);
+		CTLFormula not = new Not(formula);
 		Result actualResult = model.check(not);
 		BitSet actual = actualResult.getLower();
 		assertEquals(expected, actual, "\n" + not.toString() + "\n" + system.toString());
@@ -138,8 +139,8 @@ public class ModelCheckerTest {
 	 */
 	@RepeatedTest(CASES)
 	public void testAnd() {
-		Formula left = Formula.random();
-		Formula right = Formula.random();
+		CTLFormula left = CTLFormula.random();
+		CTLFormula right = CTLFormula.random();
 		Set<String> atomicPropositions = left.getAtomicPropositions();
 		atomicPropositions.addAll(right.getAtomicPropositions());
 		TransitionSystem system = new TransitionSystem(atomicPropositions);
@@ -150,7 +151,7 @@ public class ModelCheckerTest {
 		BitSet expectedRight = resultRight.getLower();
 		BitSet expected = expectedLeft;
 		expected.and(expectedRight);
-		Formula and = new And(left, right);
+		CTLFormula and = new And(left, right);
 		Result result = model.check(and);
 		BitSet actual = result.getLower();
 		assertEquals(expected, actual, and.toString() + "\n" + system.toString());
@@ -168,8 +169,8 @@ public class ModelCheckerTest {
 	 */
 	@RepeatedTest(CASES)
 	public void testOr() {
-		Formula left = Formula.random();
-		Formula right = Formula.random();
+		CTLFormula left = CTLFormula.random();
+		CTLFormula right = CTLFormula.random();
 		Set<String> atomicPropositions = left.getAtomicPropositions();
 		atomicPropositions.addAll(right.getAtomicPropositions());
 		TransitionSystem system = new TransitionSystem(atomicPropositions);
@@ -198,8 +199,8 @@ public class ModelCheckerTest {
 	 */
 	@RepeatedTest(CASES)
 	public void testImplies() {
-		Formula left = Formula.random();
-		Formula right = Formula.random();
+		CTLFormula left = CTLFormula.random();
+		CTLFormula right = CTLFormula.random();
 		Set<String> atomicPropositions = left.getAtomicPropositions();
 		atomicPropositions.addAll(right.getAtomicPropositions());
 		TransitionSystem system = new TransitionSystem(atomicPropositions);
@@ -230,8 +231,8 @@ public class ModelCheckerTest {
 	 */
 	@RepeatedTest(CASES)
 	public void testIff() {
-		Formula left = Formula.random();
-		Formula right = Formula.random();
+		CTLFormula left = CTLFormula.random();
+		CTLFormula right = CTLFormula.random();
 		Set<String> atomicPropositions = left.getAtomicPropositions();
 		atomicPropositions.addAll(right.getAtomicPropositions());
 		TransitionSystem system = new TransitionSystem(atomicPropositions);
@@ -754,7 +755,7 @@ public class ModelCheckerTest {
 	 */
 	@RepeatedTest(CASES)
 	public void testExistsUntilTrue() {
-		Formula left = Formula.random();
+		CTLFormula left = CTLFormula.random();
 		ExistsUntil existsUntil = new ExistsUntil(left, new True());
 		TransitionSystem system = new TransitionSystem(left.getAtomicPropositions());
 		BitSet expected = new BitSet();
@@ -838,7 +839,7 @@ public class ModelCheckerTest {
 	 */
 	@RepeatedTest(CASES)
 	public void testUpperSubsetLower() {
-		Formula formula = Formula.random();
+		CTLFormula formula = CTLFormula.random();
 		TransitionSystem system = new TransitionSystem(formula.getAtomicPropositions());
 		CTLModelChecker model = new CTLModelChecker(system);
 		Result result = model.check(formula);

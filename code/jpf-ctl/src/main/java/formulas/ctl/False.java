@@ -20,8 +20,6 @@ package formulas.ctl;
 import java.util.HashSet;
 import java.util.Set;
 
-import formulas.Formula;
-
 /**
  * This class represents the CTL formula false.
  * 
@@ -31,7 +29,7 @@ import formulas.Formula;
  * @author Paul Sison
  * @author Franck van Breugel
  */
-public class False extends Formula {
+public class False extends CTLFormula {
 
 	/**
 	 * Initializes this CTL formula as false.
@@ -59,7 +57,7 @@ public class False extends Formula {
 	}
 
 	@Override
-	public Formula simplify() {
+	public CTLFormula simplify() {
 		return this;
 	}
 }

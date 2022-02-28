@@ -5,11 +5,24 @@ import java.lang.reflect.Method;
 import error.LabelReflectionException;
 import gov.nasa.jpf.vm.Types;
 
+/**
+ * ReturnedBooleanMethod - A label representing the return value of a boolean method
+ * 
+ * @author Matthew Walker
+ * @author Franck van Breugel
+ */
 public class ReturnedBooleanMethod extends BinaryLabel {
 
+	// Attribute
 	private static final String label_suffix = ".method";
 	private final String parameterList, JNIName;
 	
+	/**
+	 * Initializes this ReturnedBooleanMethod with a qualified name, parameter list, and path.
+	 * @param qualifiedName - qualified name of the method containing this boolean method
+	 * @param parameterList - parameter type list of the method containing this boolean method
+	 * @param path - classpath where this boolean method resides
+	 */
 	public ReturnedBooleanMethod(String qualifiedName, String parameterList, String path) {
 		super(ReturnedBooleanMethod.class.getSimpleName(), qualifiedName);
 		

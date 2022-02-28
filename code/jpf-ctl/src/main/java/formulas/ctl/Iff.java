@@ -20,8 +20,6 @@ package formulas.ctl;
 import java.util.HashSet;
 import java.util.Set;
 
-import formulas.Formula;
-
 /**
  * This class represents a CTL formula that is an equivalence (iff) of two formulas.
  * 
@@ -32,9 +30,9 @@ import formulas.Formula;
  * @author Franck van Breugel
  * @author Anto Nanah Ji
  */
-public class Iff extends Formula {
-	private Formula left;
-	private Formula right;
+public class Iff extends CTLFormula {
+	private CTLFormula left;
+	private CTLFormula right;
 
 	/**
 	 * Initializes this CTL formula as the equivalence (iff) of the given {@code left} and {@code right} subformulas.
@@ -42,7 +40,7 @@ public class Iff extends Formula {
 	 * @param left the left subformula of this iff formula
 	 * @param right the right subformula of this iff formula
 	 */
-	public Iff(Formula left, Formula right) {
+	public Iff(CTLFormula left, CTLFormula right) {
 		this.left = left;
 		this.right = right;
 	}
@@ -76,7 +74,7 @@ public class Iff extends Formula {
 	 * 
 	 * @return the left subformula of this formula
 	 */
-	public Formula getLeft() {
+	public CTLFormula getLeft() {
 		return this.left;
 	}
 
@@ -85,7 +83,7 @@ public class Iff extends Formula {
 	 * 
 	 * @return the right subformula of this formula
 	 */
-	public Formula getRight() {
+	public CTLFormula getRight() {
 		return this.right;
 	}  
 	
@@ -98,9 +96,9 @@ public class Iff extends Formula {
 	}
 	
 	@Override
-	public Formula simplify() {
-		Formula left = this.left.simplify();
-		Formula right = this.right.simplify();
+	public CTLFormula simplify() {
+		CTLFormula left = this.left.simplify();
+		CTLFormula right = this.right.simplify();
 		if (left instanceof True) {
 			return right;
 		} else if (right instanceof True) {

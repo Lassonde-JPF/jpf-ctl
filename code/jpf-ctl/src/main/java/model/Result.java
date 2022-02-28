@@ -12,12 +12,18 @@ import java.util.BitSet;
  */
 public class Result {
 	
+	/**
+	 * Status - the status of this result
+	 * @author mattw
+	 *
+	 */
 	private static enum Status {
 		VALID,
 		INVALID,
 		UNKNOWN;
 	}
 	
+	// Attributes
 	private BitSet lower;
 	private BitSet upper;
 

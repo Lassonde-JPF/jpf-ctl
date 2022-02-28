@@ -10,6 +10,12 @@ import java.util.Scanner;
 
 import model.TransitionSystem;
 
+/**
+ * Transition System Controller.
+ * 
+ * @author Matthew Walker
+ * @author Franck van Breugel
+ */
 public class TransitionSystemController {
 	
 	// separates the source and target of a transition
@@ -165,7 +171,7 @@ public class TransitionSystemController {
 	 * @param line a line representing names of the atomic propositions and their
 	 *             indices
 	 */
-	private static void parseIndices(String line, Map<String, Integer> indices, Map<String, String> jniMapping) {
+	private static void parseIndices(String line, Map<String, Integer> indices, Map<String, String> inverseJNIMap) {
 		final String PREFIX = "true__";
 		for (String item : line.split(" ")) {
 			String[] pair = item.split("=");
@@ -173,10 +179,10 @@ public class TransitionSystemController {
 			String label = pair[1].substring(1, pair[1].length()-1); // TODO perhaps use indexOf
 			if (label.startsWith(PREFIX)) {
 				label = label.substring(PREFIX.length());
-				if (jniMapping == null) {
+				if (inverseJNIMap == null) {
 					indices.put(label, index);
 				} else {
-					indices.put(jniMapping.get(label), index);
+					indices.put(inverseJNIMap.get(label), index);
 				}
 			}
 		}

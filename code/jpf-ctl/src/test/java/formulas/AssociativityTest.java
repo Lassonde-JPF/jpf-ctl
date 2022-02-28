@@ -25,6 +25,7 @@ import org.antlr.v4.runtime.tree.ParseTree;
 import org.junit.jupiter.api.Test;
 
 import formulas.ctl.And;
+import formulas.ctl.CTLFormula;
 import formulas.ctl.ExistsUntil;
 import formulas.ctl.ForAllUntil;
 import formulas.ctl.Iff;
@@ -50,11 +51,11 @@ public class AssociativityTest extends BaseTest {
 	public void testOr() {
 		for (int c = 0; c < CASES; c++) {
 			// generate three random abstract syntax trees
-			Formula first = Formula.random();
-			Formula second = Formula.random();
-			Formula third = Formula.random();
+			CTLFormula first = CTLFormula.random();
+			CTLFormula second = CTLFormula.random();
+			CTLFormula third = CTLFormula.random();
 			// combine the three
-			Formula expected = new Or(new Or(first, second), third);
+			CTLFormula expected = new Or(new Or(first, second), third);
 			// create its string representation without parentheses
 			String formula = first.toString() + " || " + second.toString() + " || " + third.toString();
 			// obtain the parse tree
@@ -72,13 +73,13 @@ public class AssociativityTest extends BaseTest {
 	@Test
 	public void testAnd() {
 		for (int c = 0; c < CASES; c++) {
-			Formula first = Formula.random();
-			Formula second = Formula.random();
-			Formula third = Formula.random();
-			Formula expected = new And(new And(first, second), third);
+			CTLFormula first = CTLFormula.random();
+			CTLFormula second = CTLFormula.random();
+			CTLFormula third = CTLFormula.random();
+			CTLFormula expected = new And(new And(first, second), third);
 			String formula = first.toString() + " && " + second.toString() + " && " + third.toString();
 			ParseTree tree = parse(formula);
-			Formula actual = this.generator.visit(tree);
+			CTLFormula actual = this.generator.visit(tree);
 			assertNotNull(actual);
 			assertEquals(expected, actual);
 		}
@@ -90,13 +91,13 @@ public class AssociativityTest extends BaseTest {
 	@Test
 	public void testIff() {
 		for (int c = 0; c < CASES; c++) {
-			Formula first = Formula.random();
-			Formula second = Formula.random();
-			Formula third = Formula.random();
-			Formula expected = new Iff(new Iff(first, second), third);
+			CTLFormula first = CTLFormula.random();
+			CTLFormula second = CTLFormula.random();
+			CTLFormula third = CTLFormula.random();
+			CTLFormula expected = new Iff(new Iff(first, second), third);
 			String formula = first.toString() + " <-> " + second.toString() + " <-> " + third.toString();
 			ParseTree tree = parse(formula);
-			Formula actual = this.generator.visit(tree);
+			CTLFormula actual = this.generator.visit(tree);
 			assertNotNull(actual);
 			assertEquals(expected, actual);
 		}
@@ -108,13 +109,13 @@ public class AssociativityTest extends BaseTest {
 	@Test
 	public void testImplies() {
 		for (int c = 0; c < CASES; c++) {
-			Formula first = Formula.random();
-			Formula second = Formula.random();
-			Formula third = Formula.random();
-			Formula expected = new Implies(first,new Implies(second, third));
+			CTLFormula first = CTLFormula.random();
+			CTLFormula second = CTLFormula.random();
+			CTLFormula third = CTLFormula.random();
+			CTLFormula expected = new Implies(first,new Implies(second, third));
 			String formula = first.toString() + " -> " + second.toString() + " -> " + third.toString();
 			ParseTree tree = parse(formula);
-			Formula actual = this.generator.visit(tree);
+			CTLFormula actual = this.generator.visit(tree);
 			assertNotNull(actual);
 			assertEquals(expected, actual);
 		}
@@ -127,13 +128,13 @@ public class AssociativityTest extends BaseTest {
 	@Test
 	public void testExistsUntil() {
 		for (int c = 0; c < CASES; c++) {
-			Formula first = Formula.random();
-			Formula second = Formula.random();
-			Formula third = Formula.random();
-			Formula expected = new ExistsUntil(first,new ExistsUntil(second, third));
+			CTLFormula first = CTLFormula.random();
+			CTLFormula second = CTLFormula.random();
+			CTLFormula third = CTLFormula.random();
+			CTLFormula expected = new ExistsUntil(first,new ExistsUntil(second, third));
 			String formula = first.toString() + " EU " + second.toString() + " EU " + third.toString();
 			ParseTree tree = parse(formula);
-			Formula actual = this.generator.visit(tree);
+			CTLFormula actual = this.generator.visit(tree);
 			assertNotNull(actual);
 			assertEquals(expected, actual);
 		}
@@ -146,13 +147,13 @@ public class AssociativityTest extends BaseTest {
 	@Test
 	public void testForAllUntil() {
 		for (int c = 0; c < CASES; c++) {
-			Formula first = Formula.random();
-			Formula second = Formula.random();
-			Formula third = Formula.random();
-			Formula expected = new ForAllUntil(first,new ForAllUntil(second, third));
+			CTLFormula first = CTLFormula.random();
+			CTLFormula second = CTLFormula.random();
+			CTLFormula third = CTLFormula.random();
+			CTLFormula expected = new ForAllUntil(first,new ForAllUntil(second, third));
 			String formula = first.toString() + " AU " + second.toString() + " AU " + third.toString();
 			ParseTree tree = parse(formula);
-			Formula actual = this.generator.visit(tree);
+			CTLFormula actual = this.generator.visit(tree);
 			assertNotNull(actual);
 			assertEquals(expected, actual);
 		}

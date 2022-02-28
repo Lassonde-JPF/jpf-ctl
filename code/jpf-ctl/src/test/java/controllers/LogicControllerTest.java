@@ -15,6 +15,7 @@ import org.junit.jupiter.api.RepeatedTest;
 
 import controller.CMD.LogicController;
 import formulas.Formula;
+import formulas.ctl.CTLFormula;
 import labels.Label;
 import model.Logic;
 import model.LogicType;
@@ -40,7 +41,7 @@ public class LogicControllerTest {
 		Map<String, Formula> formulas = new HashMap<>();
 		Set<String> atomicPropositions = new HashSet<>();
 		for (int i = 0; i < numOfFormulas; i++) {
-			Formula formula = Formula.random();
+			CTLFormula formula = CTLFormula.random();
 			formulas.put("f" + (i + 1), formula);
 			atomicPropositions.addAll(formula.getAtomicPropositions());
 		}

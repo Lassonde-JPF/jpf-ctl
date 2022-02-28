@@ -12,15 +12,34 @@ import java.util.stream.Collectors;
 
 import gov.nasa.jpf.vm.Types;
 
+/**
+ * Utils - Utilities for label reflection
+ * 
+ * @author mattw
+ *
+ */
 public class Utils {
 
+	/**
+	 * Extracts parameter types from a given string representation of a parameter
+	 * list on a particular classpath
+	 * 
+	 * @param parameterList - string representation of a parameter list
+	 * @param classPath     - classpath where the parameter types may reside
+	 * @return - {@code Class<?>[]}
+	 */
 	public static Class<?>[] extractParameterTypes(String parameterList, String classPath) {
+		// Extract inner parameters (remove parenthesis)
 		String innerParameters = parameterList.substring(parameterList.indexOf('(') + 1, parameterList.indexOf(')'));
+
+		// Split and stream on each individual parameter type (string representation)
 		List<Class<?>> typeObjects = Pattern.compile(",").splitAsStream(innerParameters)
 				.map(parameterType -> Types.getTypeSignature(parameterType, true)).map(typeSignature -> {
+					// Try to reflect the type on default classpath (project buildpath)
 					try {
 						return Class.forName(typeSignature);
 					} catch (ClassNotFoundException e) {
+						// Try to reflect the type on user supplied classpath
 						URLClassLoader cl;
 						try {
 							cl = new URLClassLoader(new URL[] { new File(classPath).toURI().toURL() });
@@ -59,10 +78,19 @@ public class Utils {
 		return typeObjects.toArray(new Class<?>[typeObjects.size()]);
 	}
 
+	/**
+	 * Extracts class type for a given class name on a potential classpath
+	 * 
+	 * @param className - name of class to extract
+	 * @param classPath - potential classpath of class
+	 * @return {@code Class<?>} - Class type of class
+	 */
 	public static Class<?> extractClass(String className, String classPath) {
+		// Try to reflect on default classpath
 		try {
 			return Class.forName(className);
 		} catch (ClassNotFoundException e) {
+			// Try to reflect on supplied classpath
 			URLClassLoader cl = null;
 			try {
 				cl = new URLClassLoader(new URL[] { new File(classPath).toURI().toURL() });
@@ -76,6 +104,14 @@ public class Utils {
 		}
 	}
 
+	/**
+	 * Extracts method object for a given class, method name, and parameter types.
+	 * 
+	 * @param clazz          - class of method to extract
+	 * @param methodName     - name of method to extract
+	 * @param parameterTypes - parameter types of method to extract
+	 * @return {@code Method} - Method object representing extracted method
+	 */
 	public static Method extractMethod(Class<?> clazz, String methodName, Class<?>[] parameterTypes) {
 		try {
 			return clazz.getDeclaredMethod(methodName, parameterTypes);
@@ -85,6 +121,13 @@ public class Utils {
 		}
 	}
 
+	/**
+	 * Extracts Field object for a given class and field name
+	 * 
+	 * @param clazz     - class containing field to extract
+	 * @param fieldName - name of field to extract
+	 * @return {@code Field} - Field object of extracted field.
+	 */
 	public static Field extractField(Class<?> clazz, String fieldName) {
 		try {
 			return clazz.getDeclaredField(fieldName);
@@ -93,11 +136,18 @@ public class Utils {
 		}
 	}
 
+	/**
+	 * Converts a method signature (class name and signature) to it's Java Native
+	 * Interface representation
+	 * 
+	 * @param className - class containing method
+	 * @param signature - signature of method
+	 * @return {@code String} - string containing the method signature's JNI
+	 *         representation
+	 */
 	public static String methodSignatureToJNI(String className, String signature) {
 		StringBuilder s = new StringBuilder();
-
 		s.append(className.replace('.', '_'));
-		
 		s.append('_');
 
 		for (char c : signature.toCharArray()) {

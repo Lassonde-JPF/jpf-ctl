@@ -11,6 +11,7 @@ import org.junit.jupiter.api.RepeatedTest;
 
 import controller.Manager;
 import formulas.Formula;
+import formulas.ctl.CTLFormula;
 import model.LogicType;
 import model.TransitionSystem;
 import model.Result;
@@ -35,7 +36,7 @@ public class ManagerTest {
 
 		// Generate a mapping of random formulas, collect their APs, build mapping
 		for (int i = 0; i < 10; i++) {
-			Formula formula = Formula.random();
+			CTLFormula formula = CTLFormula.random();
 			String key = "a" + (i + 1);
 			formulas.put(key, formula);
 			atomicPropositions.addAll(formula.getAtomicPropositions());

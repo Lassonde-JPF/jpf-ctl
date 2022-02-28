@@ -5,11 +5,26 @@ import java.lang.reflect.Method;
 import error.LabelReflectionException;
 import gov.nasa.jpf.vm.Types;
 
+/**
+ * BooleanLocalVariable - A label representing a boolean local variable
+ * 
+ * @author Matthew Walker
+ * @author Franck van Breugel
+ */
 public class BooleanLocalVariable extends BinaryLabel {
 
+	// Attributes
 	private static final String label_suffix = ".variable";
 	private final String parameterList, variableName, JNIName;
 
+	/**
+	 * Initializes this BooleanLocalVariable with a qualified name, parameter list, variable name, and path.
+	 * 
+	 * @param qualifiedName - qualified name of the method containing this boolean local variable
+	 * @param parameterList - parameter type list of the method containing this boolean local variable
+	 * @param variableName - variable name of this boolean local variable
+	 * @param path - classpath where this boolean local variable resides
+	 */
 	public BooleanLocalVariable(String qualifiedName, String parameterList, String variableName, String path) {
 		super(BooleanLocalVariable.class.getSimpleName(), qualifiedName);
 

@@ -23,6 +23,8 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import org.antlr.v4.runtime.tree.ParseTree;
 import org.junit.jupiter.api.RepeatedTest;
 
+import formulas.ctl.CTLFormula;
+
 /**
  * Generates a random abstract syntax tree, parses its textual representation,
  * and translates the parse tree into a abstract syntax tree. The resulting
@@ -43,7 +45,7 @@ public class RandomTest extends BaseTest {
 	@RepeatedTest(CASES)
 	void test() {
 		// generate a random abstract syntax tree
-		Formula randomFormula = Formula.random();
+		CTLFormula randomFormula = CTLFormula.random();
 		// obtain the parse tree of the textual representation of the abstract syntax
 		// tree
 		ParseTree tree = parse(randomFormula.toString());

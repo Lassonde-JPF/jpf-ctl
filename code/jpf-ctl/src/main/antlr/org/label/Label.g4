@@ -7,20 +7,22 @@ package org.label;
 /* Parser Rules */
 
 label
-	: 'Initial'																	#Initial
-	| 'End'																		#End
-	| 'BooleanStaticField' 			referenceType								#BooleanStaticField
-	| 'IntegerStaticField' 			referenceType								#IntegerStaticField
-	| 'BooleanLocalVariable' 		referenceType parameters ':' variableType	#BooleanLocalVariable
-	| 'IntegerLocalVariable' 		referenceType parameters ':' variableType 	#IntegerLocalVariable
-	| 'InvokedMethod' 				referenceType parameters 					#InvokedMethod
-	| 'ReturnedVoidMethod' 			referenceType parameters 					#ReturnedVoidMethod
-	| 'ReturnedBooleanMethod' 		referenceType parameters  					#ReturnedBooleanMethod
-	| 'ReturnedIntegerMethod' 		referenceType parameters  					#ReturnedIntegerMethod
-	| 'ThrownException' 			referenceType 								#ThrownException
-	| 'SynchronizedStaticMethod'	referenceType parameters  					#SynchronizedStaticMethod
+	: 'Initial'																		#Initial
+	| 'End'																			#End
+	| 'BooleanStaticField' 			referenceType value								#BooleanStaticField
+	| 'BooleanLocalVariable' 		referenceType parameters ':' variableType value	#BooleanLocalVariable
+	| 'InvokedMethod' 				referenceType parameters 						#InvokedMethod
+	| 'ReturnedVoidMethod' 			referenceType parameters 						#ReturnedVoidMethod
+	| 'ReturnedBooleanMethod' 		referenceType parameters value 					#ReturnedBooleanMethod
+	| 'ThrownException' 			referenceType 									#ThrownException
+	| 'SynchronizedStaticMethod'	referenceType parameters  						#SynchronizedStaticMethod
 	;
 
+
+value
+	: 'true'
+	| 'false'
+	;
 
 // Types, values, variables
 

@@ -5,11 +5,25 @@ import java.lang.reflect.Method;
 import error.LabelReflectionException;
 import gov.nasa.jpf.vm.Types;
 
+/**
+ * ReturnedVoidMethod - A label representing that a void method returned
+ * 
+ * @author Matthew Walker
+ * @author Franck van Breugel
+ */
 public class ReturnedVoidMethod extends BinaryLabel {
 
+	// Attributes
 	private static final String label_suffix = ".method";
 	private final String parameterList, JNIName;
 	
+	/**
+	 * Initializes a ReturnedVoidMethod with a qualified name, parameter list, and path.
+	 * 
+	 * @param qualifiedName - qualified name of the method containing this void method
+	 * @param parameterList - parameter type list of the method containing this void method
+	 * @param path - classpath where the void method resides
+	 */
 	public ReturnedVoidMethod(String qualifiedName, String parameterList, String path) {
 		super(ReturnedVoidMethod.class.getSimpleName(), qualifiedName);
 		

@@ -4,11 +4,25 @@ import java.lang.reflect.Method;
 import error.LabelReflectionException;
 import gov.nasa.jpf.vm.Types;
 
+/**
+ * InvokedMethod - A label representing a method invocation
+ * 
+ * @author Matthew Walker
+ * @author Franck van Breugel
+ */
 public class InvokedMethod extends BinaryLabel {
 
+	// Attributes
 	private static final String label_suffix = ".method";
 	private final String parameterList, JNIName;
 
+	/**
+	 * Initializes this InvokedMethod with a qualified name, parameter list, and path.
+	 * 
+	 * @param qualifiedName
+	 * @param parameterList
+	 * @param path
+	 */
 	public InvokedMethod(String qualifiedName, String parameterList, String path) {
 		super(InvokedMethod.class.getSimpleName(), qualifiedName);
 		

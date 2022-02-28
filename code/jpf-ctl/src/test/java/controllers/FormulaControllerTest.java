@@ -8,6 +8,7 @@ import org.junit.jupiter.api.RepeatedTest;
 
 import controller.FormulaController;
 import formulas.Formula;
+import formulas.ctl.CTLFormula;
 import model.LogicType;
 
 public class FormulaControllerTest {
@@ -21,7 +22,7 @@ public class FormulaControllerTest {
 	 */
 	@RepeatedTest(CASES)
 	public void testParseFormula() {
-		Formula expected = Formula.random();
+		CTLFormula expected = CTLFormula.random();
 		Set<String> labels = expected.getAtomicPropositions();
 		Formula actual = FormulaController.parseFormula(labels, expected.toString(), LogicType.CTL);
 		assertEquals(expected, actual);
