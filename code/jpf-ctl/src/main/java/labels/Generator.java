@@ -78,7 +78,7 @@ public class Generator extends LabelBaseVisitor<Label> {
 	@Override
 	public Label visitBooleanLocalVariable(LabelParser.BooleanLocalVariableContext ctx) {
 		return new BooleanLocalVariable(ctx.referenceType().getText(), ctx.parameters().getText(),
-				ctx.variableType().getText(), path);
+				ctx.variableType().getText(), ctx.value().getText(), path);
 	}
 
 	/**

@@ -16,6 +16,7 @@ public class BooleanLocalVariable extends BinaryLabel {
 	// Attributes
 	private static final String label_suffix = ".variable";
 	private final String parameterList, variableName, JNIName;
+	private final boolean value;
 
 	/**
 	 * Initializes this BooleanLocalVariable with a qualified name, parameter list, variable name, and path.
@@ -25,12 +26,15 @@ public class BooleanLocalVariable extends BinaryLabel {
 	 * @param variableName - variable name of this boolean local variable
 	 * @param path - classpath where this boolean local variable resides
 	 */
-	public BooleanLocalVariable(String qualifiedName, String parameterList, String variableName, String path) {
+	public BooleanLocalVariable(String qualifiedName, String parameterList, String variableName, String value, String path) {
 		super(BooleanLocalVariable.class.getSimpleName(), qualifiedName);
 
 		// Build String Parameters
 		this.parameterList = parameterList;
 		this.variableName = variableName;
+		
+		// Parse value (should be fine since ANTLR will not tokenize if it's not true or false exactly)
+		this.value = Boolean.parseBoolean(value);
 
 		// Identify Index of last dot
 		int idx = qualifiedName.lastIndexOf('.');
@@ -63,6 +67,10 @@ public class BooleanLocalVariable extends BinaryLabel {
 		this.JNIName = this.getQualifiedName().replace('.', '_') + "_" + Types.getJNIMangledMethodName(method);
 	}
 
+	public boolean getValue() {
+		return this.value;
+	}
+	
 	@Override
 	public String getJNIName() {
 		return this.JNIName;

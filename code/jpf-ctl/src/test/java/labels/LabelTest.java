@@ -44,10 +44,18 @@ public class LabelTest extends BaseTest {
 		String qualifiedName = "labels.ReflectionExamples.main";
 		String parameterList = "(java.lang.String[])";
 		String variableName = "variable";
+		String value = "true";
 		
-		BooleanLocalVariable expected = new BooleanLocalVariable(qualifiedName, parameterList, variableName, PATH);
+		BooleanLocalVariable expected = new BooleanLocalVariable(qualifiedName, parameterList, variableName, value, PATH);
 		ParseTree tree = parse(expected.toString());
 		BooleanLocalVariable actual = (BooleanLocalVariable) generator.visit(tree);
+		
+		assertNotNull(actual, tree.toString());
+		assertEquals(expected, actual);
+		
+		expected = new BooleanLocalVariable(qualifiedName, parameterList, variableName, value, PATH);
+		tree = parse(expected.toString());
+		actual = (BooleanLocalVariable) generator.visit(tree);
 		
 		assertNotNull(actual, tree.toString());
 		assertEquals(expected, actual);

@@ -94,7 +94,7 @@ public abstract class BinaryLabel implements Label {
 		Random random = new Random();
 		switch (random.nextInt(7)) {
 		case 0:
-			return new BooleanLocalVariable("labels.ReflectionExamples.main", "(java.lang.String[])", "variable",
+			return new BooleanLocalVariable("labels.ReflectionExamples.main", "(java.lang.String[])", "variable", "true",
 					"src/test/java");
 		case 1:
 			return new BooleanStaticField("labels.ReflectionExamples.one", "src/test/java");
