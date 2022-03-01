@@ -13,6 +13,7 @@ import java.util.concurrent.TimeoutException;
 import java.util.stream.Collectors;
 
 import formulas.Formula;
+import logging.Logger;
 import model.LogicType;
 import model.ModelChecker;
 import model.Result;
@@ -67,6 +68,7 @@ public class Manager {
 	// Attributes
 	private Map<String, Formula> formulas;
 	private CTLModelChecker checker;
+	private Logger logger;
 
 	/**
 	 * Initializes this Manager with a transition system, map of alias -> formulas,
@@ -77,6 +79,7 @@ public class Manager {
 	 * @param type     - Type of Logic to consider for model checking
 	 */
 	public Manager(TransitionSystem pts, Map<String, Formula> formulas, LogicType type) {
+		logger = new Logger(Manager.class.getSimpleName());
 		this.formulas = formulas;
 		switch (type) {
 		case CTL:
@@ -91,6 +94,7 @@ public class Manager {
 	 *         formulas.
 	 */
 	public Map<String, Result> validateSequentially() {
+		logger.info("validating...");
 		return this.formulas.entrySet().stream()
 				.collect(Collectors.toMap(Map.Entry::getKey, e -> this.checker.check(e.getValue())));
 	}
@@ -108,19 +112,23 @@ public class Manager {
 	 */
 	public Map<String, Result> validateParallel(long timeout, TimeUnit unit)
 			throws InterruptedException, ExecutionException, TimeoutException {
+		logger.info("validateParallel: timeout=" + timeout + ", unit=" + unit);
 		// Construct thread executor pool
 		ExecutorService pool = Executors.newCachedThreadPool();
 		// Contruct temporary structure to store future results
 		Map<String, Future<Result>> futureMap = new HashMap<>();
 		// Spawn threads
 		for (Entry<String, Formula> entry : this.formulas.entrySet()) {
+			logger.info("spawning worker thread Worker: alias=" + entry.getKey() + ", formula=" + entry.getValue());
 			futureMap.computeIfAbsent(entry.getKey(),
 					k -> pool.submit(new Worker(entry.getKey(), entry.getValue(), this.checker)));
 		}
 		// Collect threads
 		Map<String, Result> results = new HashMap<>();
 		for (Entry<String, Future<Result>> entry : futureMap.entrySet()) {
+			logger.info("collecting worker thread Worker: alias=" + entry.getKey() + ", formula=" + entry.getValue());
 			results.put(entry.getKey(), entry.getValue().get(timeout, unit));
+			logger.info("collected worker thread Worker: alias=" + entry.getKey() + ", formula=" + entry.getValue());
 		}
 		return results;
 	}

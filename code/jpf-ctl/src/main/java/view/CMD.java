@@ -89,6 +89,7 @@ public class CMD {
 			logger.severe("Error building target object for Target: path=" + targetPath + " : Error=" + e.getMessage());
 			System.exit(1);
 		}
+		logger.info("Target: " + target);
 		logger.info("Done.");
 
 		// Build CTL object
@@ -101,6 +102,7 @@ public class CMD {
 					+ " : Error=" + e);
 			System.exit(1);
 		}
+		logger.info("Logic: " + logic);
 		logger.info("Done.");
 
 		// Run JPF on Target w/ appropriate labels
@@ -126,6 +128,7 @@ public class CMD {
 					+ ", inverseJNIMap=" + logic.getReverseJNIMapping() + ", deleteFiles=" + true + " : Error=" + e);
 			System.exit(1);
 		}
+		// logger.info("TransitionSystem: " + pts);
 		logger.info("Done.");
 
 		// Build Manager Object
@@ -138,6 +141,7 @@ public class CMD {
 					+ logic.getJNIMapping() + ", formulas=" + logic.getFormulaMapping() + " : Error=" + e);
 			System.exit(1);
 		}
+		logger.info("Manager: " + manager);
 		logger.info("Done.");
 
 		// Begin Model Checking

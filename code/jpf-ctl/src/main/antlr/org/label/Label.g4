@@ -9,7 +9,7 @@ package org.label;
 label
 	: 'Initial'																		#Initial
 	| 'End'																			#End
-	| 'BooleanStaticField' 			referenceType value								#BooleanStaticField
+	| 'BooleanStaticField' 			referenceType									#BooleanStaticField
 	| 'BooleanLocalVariable' 		referenceType parameters ':' variableType value	#BooleanLocalVariable
 	| 'InvokedMethod' 				referenceType parameters 						#InvokedMethod
 	| 'ReturnedVoidMethod' 			referenceType parameters 						#ReturnedVoidMethod

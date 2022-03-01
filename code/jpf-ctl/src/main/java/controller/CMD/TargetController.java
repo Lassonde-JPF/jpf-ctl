@@ -48,11 +48,15 @@ public class TargetController {
 
 			// Load static arguments
 			String name = (String) prop.remove("target");
+			logger.info("Parsed name: " + name);
+			
 			String classpath = (String) prop.remove("classpath");
+			logger.info("Parsed classpath: " + classpath);
 
 			LogicType logic;
 			try {
 				logic = LogicType.valueOf((String) prop.remove("logic.language"));
+				logger.info("Parsed logic: " + logic);
 			} catch (NullPointerException e) {
 				throw new ParseException("it appears logic.language has not been specified ");
 			}
@@ -60,7 +64,8 @@ public class TargetController {
 			// Assume remaining arguments are jpf related
 			Map<String, String> jpfArgs = prop.entrySet().stream().collect(
 					Collectors.toMap(entry -> entry.getKey().toString(), entry -> entry.getValue().toString()));
-
+			logger.info("Parsed jpfArgs: " + jpfArgs);
+			
 			// Check that target file exists and is correct
 			String targetPath = classpath + File.separatorChar + name.replaceAll("\\.", "/") + ".class";
 			try {
@@ -76,9 +81,6 @@ public class TargetController {
 			if (!targetFile.exists()) {
 				throw new ParseException("could not find file specified by: " + targetPath);
 			}
-			// Log parsed target
-			logger.info("Parsed Target: name=" + name + ", path=" + classpath + ", logic.language=" + logic
-					+ ", jpfargs=" + jpfArgs.toString());
 			return new Target(name, classpath, logic, jpfArgs);
 		} catch (IOException e) {
 			throw new ParseException("could not find properties file at " + filePath + e);

@@ -80,15 +80,19 @@ public class JPFController {
 				String prev = conf.getProperty(bL.labelDef());
 				conf.setProperty(bL.labelDef(), prev == null ? bL.labelVal() : prev + ";" + bL.labelVal());
 			});
+			
+			logger.info("configured jpf: " + conf);
 
 			// Build JPF object
 			JPF jpf = new JPF(conf);
 
+			logger.info("running jpf...");
 			jpf.run();
 			if (jpf.foundErrors()) {
 				throw new ModelCheckingException(
 						"JPF discovered fundamental errors with the target application..." + jpf.getLastError());
 			}
+			logger.info("done.");
 		} catch (JPFConfigException cx) {
 			throw new ModelCheckingException(
 					"There was an error configuring JPF, please check your settings: " + cx.getMessage());
