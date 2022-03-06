@@ -64,22 +64,6 @@ public class Generator extends CTLBaseVisitor<CTLFormula> {
 	}
 
 	/**
-	 * Visits the given ForAllAlways node in the parse tree and returns the abstract
-	 * syntax tree corresponding to the subtree of the parse tree rooted at the
-	 * ForAllAlways node.
-	 * 
-	 * @param context a node in the syntax tree that corresponds to the ForAllAlways
-	 *                alternative
-	 * @return A {@code ForAllAlways} instance that represents abstract syntax tree
-	 *         corresponding to the subtree of the parse tree rooted {@code context}
-	 */
-	@Override
-	public CTLFormula visitForAllAlways(ForAllAlwaysContext context) {
-		CTLFormula formula = (CTLFormula) visit(context.formula());
-		return new ForAllAlways(formula);
-	}
-
-	/**
 	 * Visits the left and right sub trees of the given Or node in the parse tree
 	 * and returns an Or instance containing the left and right abstract syntax
 	 * trees
@@ -139,23 +123,6 @@ public class Generator extends CTLBaseVisitor<CTLFormula> {
 	}
 
 	/**
-	 * Visits the given ExistsEventually node in the parse tree and returns the
-	 * abstract syntax tree corresponding to the subtree of the parse tree rooted at
-	 * the ExistsEventually node.
-	 * 
-	 * @param context a node in the syntax tree that corresponds to the
-	 *                ExistsEventually alternative
-	 * @return A {@code ExistsEventually} instance that represents abstract syntax
-	 *         tree corresponding to the subtree of the parse tree rooted
-	 *         {@code context}
-	 */
-	@Override
-	public CTLFormula visitExistsEventually(ExistsEventuallyContext context) {
-		CTLFormula formula = (CTLFormula) visit(context.formula());
-		return new ExistsEventually(formula);
-	}
-
-	/**
 	 * Visits the given AtomicProposition Terminal node in the parse tree and return
 	 * the context of atomic proposition
 	 * 
@@ -167,23 +134,6 @@ public class Generator extends CTLBaseVisitor<CTLFormula> {
 	@Override
 	public CTLFormula visitAtomicProposition(AtomicPropositionContext context) {
 		return new AtomicProposition(context.ATOMIC_PROPOSITION().getText());
-	}
-
-	/**
-	 * Visits the given ForAllEventually node in the parse tree and returns the
-	 * abstract syntax tree corresponding to the subtree of the parse tree rooted at
-	 * the ForAllEventually node.
-	 * 
-	 * @param context a node in the syntax tree that corresponds to the
-	 *                ForAllEventually alternative
-	 * @return A {@code ForAllEventually} instance that represents abstract syntax
-	 *         tree corresponding to the subtree of the parse tree rooted
-	 *         {@code context}
-	 */
-	@Override
-	public CTLFormula visitForAllEventually(ForAllEventuallyContext context) {
-		CTLFormula formula = (CTLFormula) visit(context.formula());
-		return new ForAllEventually(formula);
 	}
 
 	/**
@@ -199,25 +149,6 @@ public class Generator extends CTLBaseVisitor<CTLFormula> {
 	public CTLFormula visitNot(NotContext context) {
 		CTLFormula formula = (CTLFormula) visit(context.formula());
 		return new Not(formula);
-	}
-
-	/**
-	 * Visits the left and right sub trees of the given ForAllUntil node in the
-	 * parse tree and returns an ForAllUntil instance containing the left and right
-	 * abstract syntax trees
-	 * 
-	 * @param context a node in the syntax tree that corresponds to the ForAllUntil
-	 *                formula
-	 * @return A {@code ForAllUntil} instance that represents abstract syntax tree
-	 *         corresponding to the left and right subtree of the parse tree rooted
-	 *         {@code context}
-	 */
-	@Override
-	public CTLFormula visitForAllUntil(ForAllUntilContext context) {
-		// AU is right associative so we visit the right sub tree first
-		CTLFormula right = (CTLFormula) visit(context.formula(1));
-		CTLFormula left = (CTLFormula) visit(context.formula(0));
-		return new ForAllUntil(left, right);
 	}
 
 	/**
@@ -240,22 +171,6 @@ public class Generator extends CTLBaseVisitor<CTLFormula> {
 	}
 
 	/**
-	 * Visits the given ForAllNext node in the parse tree and returns the abstract
-	 * syntax tree corresponding to the subtree of the parse tree rooted at the
-	 * ForAllNext node.
-	 * 
-	 * @param context a node in the syntax tree that corresponds to the ForAllNext
-	 *                alternative
-	 * @return A {@code ForAllNext} instance that represents abstract syntax tree
-	 *         corresponding to the subtree of the parse tree rooted {@code context}
-	 */
-	@Override
-	public CTLFormula visitForAllNext(ForAllNextContext context) {
-		CTLFormula formula = (CTLFormula) visit(context.formula());
-		return new ForAllNext(formula);
-	}
-
-	/**
 	 * Visits the left and right sub trees of the given Implies node in the parse
 	 * tree and returns an And instance containing the left and right abstract
 	 * syntax trees
@@ -270,56 +185,5 @@ public class Generator extends CTLBaseVisitor<CTLFormula> {
 		CTLFormula left = (CTLFormula) visit(context.formula(0));
 		CTLFormula right = (CTLFormula) visit(context.formula(1));
 		return new And(left, right);
-	}
-
-	/**
-	 * Visits the given ExistsAlways node in the parse tree and returns the abstract
-	 * syntax tree corresponding to the subtree of the parse tree rooted at the
-	 * ExistsAlways node.
-	 * 
-	 * @param context a node in the syntax tree that corresponds to the ExistsAlways
-	 *                alternative
-	 * @return A {@code ExistsAlways} instance that represents abstract syntax tree
-	 *         corresponding to the subtree of the parse tree rooted {@code context}
-	 */
-	@Override
-	public CTLFormula visitExistsAlways(ExistsAlwaysContext context) {
-		CTLFormula formula = (CTLFormula) visit(context.formula());
-		return new ExistsAlways(formula);
-	}
-
-	/**
-	 * Visits the left and right sub trees of the given ExistsUntil node in the
-	 * parse tree and returns an ExistsUntil instance containing the left and right
-	 * abstract syntax trees
-	 * 
-	 * @param context a node in the syntax tree that corresponds to the ExistUntil
-	 *                formula
-	 * @return A {@code ExistsUntil} instance that represents abstract syntax tree
-	 *         corresponding to the left and right subtree of the parse tree rooted
-	 *         {@code context}
-	 */
-	@Override
-	public CTLFormula visitExistsUntil(ExistsUntilContext context) {
-		// EU is right associative so we visit the right sub tree first
-		CTLFormula right = (CTLFormula) visit(context.formula(1));
-		CTLFormula left = (CTLFormula) visit(context.formula(0));
-		return new ExistsUntil(left, right);
-	}
-
-	/**
-	 * Visits the given ExistsNext node in the parse tree and returns the abstract
-	 * syntax tree corresponding to the subtree of the parse tree rooted at the
-	 * ExistsNext node.
-	 * 
-	 * @param context a node in the syntax tree that corresponds to the ExistsNext
-	 *                alternative
-	 * @return A {@code ExistsNext} instance that represents abstract syntax tree
-	 *         corresponding to the subtree of the parse tree rooted {@code context}
-	 */
-	@Override
-	public CTLFormula visitExistsNext(ExistsNextContext context) {
-		CTLFormula formula = (CTLFormula) visit(context.formula());
-		return new ExistsNext(formula);
 	}
 }

@@ -26,8 +26,6 @@ import org.junit.jupiter.api.Test;
 
 import formulas.ctl.And;
 import formulas.ctl.CTLFormula;
-import formulas.ctl.ExistsUntil;
-import formulas.ctl.ForAllUntil;
 import formulas.ctl.Iff;
 import formulas.ctl.Implies;
 import formulas.ctl.Or;
@@ -114,44 +112,6 @@ public class AssociativityTest extends BaseTest {
 			CTLFormula third = CTLFormula.random();
 			CTLFormula expected = new Implies(first,new Implies(second, third));
 			String formula = first.toString() + " -> " + second.toString() + " -> " + third.toString();
-			ParseTree tree = parse(formula);
-			CTLFormula actual = this.generator.visit(tree);
-			assertNotNull(actual);
-			assertEquals(expected, actual);
-		}
-	}
-
-	
-	/**
-	 * Tests that the EA operator is right associative.
-	 */
-	@Test
-	public void testExistsUntil() {
-		for (int c = 0; c < CASES; c++) {
-			CTLFormula first = CTLFormula.random();
-			CTLFormula second = CTLFormula.random();
-			CTLFormula third = CTLFormula.random();
-			CTLFormula expected = new ExistsUntil(first,new ExistsUntil(second, third));
-			String formula = first.toString() + " EU " + second.toString() + " EU " + third.toString();
-			ParseTree tree = parse(formula);
-			CTLFormula actual = this.generator.visit(tree);
-			assertNotNull(actual);
-			assertEquals(expected, actual);
-		}
-	}
-	
-	
-	/**
-	 * Tests that the AU operator is right associative.
-	 */
-	@Test
-	public void testForAllUntil() {
-		for (int c = 0; c < CASES; c++) {
-			CTLFormula first = CTLFormula.random();
-			CTLFormula second = CTLFormula.random();
-			CTLFormula third = CTLFormula.random();
-			CTLFormula expected = new ForAllUntil(first,new ForAllUntil(second, third));
-			String formula = first.toString() + " AU " + second.toString() + " AU " + third.toString();
 			ParseTree tree = parse(formula);
 			CTLFormula actual = this.generator.visit(tree);
 			assertNotNull(actual);

@@ -15,7 +15,7 @@ public abstract class CTLFormula extends Formula {
 	 */
 	public static CTLFormula random(int depth) {
 		final int BASE_CASES = 3;
-		final int INDUCTIVE_CASES = 13;
+		final int INDUCTIVE_CASES = 6;
 		final int MAX_INDEX = 4;
 
 		if (depth == 0) {
@@ -51,20 +51,6 @@ public abstract class CTLFormula extends Formula {
 				return new Iff(CTLFormula.random(depth - 1), CTLFormula.random(depth - 1));
 			case 8:
 				return new ExistsAlways(CTLFormula.random(depth - 1));
-			case 9:
-				return new ForAllAlways(CTLFormula.random(depth - 1));
-			case 10:
-				return new ExistsEventually(CTLFormula.random(depth - 1));
-			case 11:
-				return new ForAllEventually(CTLFormula.random(depth - 1));
-			case 12:
-				return new ExistsNext(CTLFormula.random(depth - 1));
-			case 13:
-				return new ForAllNext(CTLFormula.random(depth - 1));
-			case 14:
-				return new ExistsUntil(CTLFormula.random(depth - 1), CTLFormula.random(depth - 1));
-			case 15:
-				return new ForAllUntil(CTLFormula.random(depth - 1), CTLFormula.random(depth - 1));
 			default:
 				throw new IllegalArgumentException("Illegal argument for switch in inductive case");
 			}
