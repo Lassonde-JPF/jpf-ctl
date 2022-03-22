@@ -15,10 +15,9 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package model.ctl;
+package sets;
 
-import java.util.BitSet;
-
+import java.util.HashSet;
 import formulas.Formula;
 import formulas.ctl.And;
 import formulas.ctl.AtomicProposition;
@@ -37,9 +36,6 @@ import formulas.ctl.Implies;
 import formulas.ctl.Not;
 import formulas.ctl.Or;
 import formulas.ctl.True;
-import model.ModelChecker;
-import model.Result;
-import model.TransitionSystem;
 
 /**
  * CTL model checking for partial transition systems.
@@ -69,6 +65,7 @@ public class CTLModelChecker extends ModelChecker {
 	 * @return a lower- and upperbound of the satisfaction set of the given CTL
 	 *         formula
 	 */
+	@SuppressWarnings("unchecked")
 	@Override
 	public Result check(Formula formula) {
 		// formula = formula.simplify();
@@ -77,30 +74,43 @@ public class CTLModelChecker extends ModelChecker {
 		} else {
 			Result result;
 			if (formula instanceof True) {
-				BitSet all = new BitSet(this.system.getNumberOfStates());
-				all.set(0, this.system.getNumberOfStates());
-				result = new Result(all, all);
+				HashSet<Integer> upper = new HashSet<Integer>();
+				for (int state = 0; state < this.system.getNumberOfStates(); state++) {
+					upper.add(state);
+				}
+				HashSet<Integer> lower = new HashSet<Integer>();
+				for (int state = 0; state < this.system.getNumberOfStates(); state++) {
+					lower.add(state);
+				}
+				result = new Result(upper, lower);
 			} else if (formula instanceof False) {
-				BitSet none = new BitSet(this.system.getNumberOfStates());
-				result = new Result(none, none);
+				result = new Result(new HashSet<Integer>(), new HashSet<Integer>());
 			} else if (formula instanceof AtomicProposition) {
 				String name = ((AtomicProposition) formula).toString();
-				BitSet labelling = new BitSet();
+				HashSet<Integer> labelling = new HashSet<Integer>();
 				if (this.system.getIndices().containsKey(name)) {
 					int index = this.system.getIndices().get(name);
-					if (this.system.getLabelling().containsKey(index)) {
-						labelling = (BitSet) this.system.getLabelling().get(index).clone();
-					}
+							if (this.system.getLabelling().containsKey(index)) {
+								labelling = (HashSet<Integer>) this.system.getLabelling().get(index).clone();
+							}
 				}
-				result = new Result(labelling, (BitSet) labelling.clone());
+				result = new Result(labelling, (HashSet<Integer>) labelling.clone());
 			} else if (formula instanceof Not) {
 				Not not = (Not) formula;
-				CTLFormula subformula = not.getFormula(); // TODO changed from 'getSubFormula'
+				CTLFormula subformula = not.getFormula();
 				result = check(subformula);
-				BitSet lower = result.getLower();
-				BitSet upper = result.getUpper();
-				lower.flip(0, this.system.getNumberOfStates());
-				upper.flip(0, this.system.getNumberOfStates());
+				HashSet<Integer> resultLower = result.getLower();
+				HashSet<Integer> resultUpper = result.getUpper();
+				HashSet<Integer> lower = new HashSet<Integer>();
+				HashSet<Integer> upper = new HashSet<Integer>();
+				for (int state = 0; state < this.system.getNumberOfStates(); state++) {
+					if (!resultLower.contains(state)) {
+						lower.add(state);
+					}
+					if (!resultUpper.contains(state)) {
+						upper.add(state);
+					}
+				}
 				result = new Result(upper, lower);
 			} else if (formula instanceof And) {
 				And and = (And) formula;
@@ -108,30 +118,26 @@ public class CTLModelChecker extends ModelChecker {
 				CTLFormula right = and.getRight();
 				Result leftResult = check(left);
 				Result rightResult = check(right);
-				BitSet leftLower = leftResult.getLower();
-				BitSet leftUpper = leftResult.getUpper();
-				BitSet rightLower = rightResult.getLower();
-				BitSet rightUpper = rightResult.getUpper();
-				BitSet lower = leftLower;
-				lower.and(rightLower);
-				BitSet upper = leftUpper;
-				upper.and(rightUpper);
-				result = new Result(lower, upper);
+				HashSet<Integer> leftLower = leftResult.getLower();
+				HashSet<Integer> leftUpper = leftResult.getUpper();
+				HashSet<Integer> rightLower = rightResult.getLower();
+				HashSet<Integer> rightUpper = rightResult.getUpper();
+				leftLower.retainAll(rightLower);
+				leftUpper.retainAll(rightUpper);
+				result = new Result(leftLower, leftUpper);
 			} else if (formula instanceof Or) {
 				Or or = (Or) formula;
 				CTLFormula left = or.getLeft();
 				CTLFormula right = or.getRight();
 				Result leftResult = check(left);
 				Result rightResult = check(right);
-				BitSet leftLower = leftResult.getLower();
-				BitSet leftUpper = leftResult.getUpper();
-				BitSet rightLower = rightResult.getLower();
-				BitSet rightUpper = rightResult.getUpper();
-				BitSet lower = leftLower;
-				lower.or(rightLower);
-				BitSet upper = leftUpper;
-				upper.or(rightUpper);
-				result = new Result(lower, upper);
+				HashSet<Integer> leftLower = leftResult.getLower();
+				HashSet<Integer> leftUpper = leftResult.getUpper();
+				HashSet<Integer> rightLower = rightResult.getLower();
+				HashSet<Integer> rightUpper = rightResult.getUpper();
+				leftLower.addAll(rightLower);
+				leftUpper.addAll(rightUpper);
+				result = new Result(leftLower, leftUpper);
 			} else if (formula instanceof Implies) {
 				Implies implies = (Implies) formula;
 				CTLFormula left = implies.getLeft();
@@ -148,21 +154,25 @@ public class CTLModelChecker extends ModelChecker {
 				ExistsNext existsNext = (ExistsNext) formula;
 				CTLFormula subFormula = existsNext.getFormula();
 				Result subResult = check(subFormula);
-				BitSet subLower = subResult.getLower();
-				BitSet subUpper = subResult.getUpper();
-				BitSet lower = new BitSet(this.system.getNumberOfStates());
-				BitSet upper = new BitSet(this.system.getNumberOfStates());
+				HashSet<Integer> subLower = subResult.getLower();
+				HashSet<Integer> subUpper = subResult.getUpper();
+				HashSet<Integer> lower = new HashSet<Integer>(this.system.getNumberOfStates());
+				HashSet<Integer> upper = new HashSet<Integer>(this.system.getNumberOfStates());
 				for (int state = 0; state < this.system.getNumberOfStates(); state++) {
-					if (this.system.getPartial().get(state)) {
-						upper.set(state);
+					if (this.system.getPartial().contains(state)) {
+						upper.add(state);
 					}
 					if (this.system.getSuccessors().containsKey(state)) { // post(state) is nonempty
-						BitSet post = this.system.getSuccessors().get(state);
-						if (post.intersects(subLower)) {
-							lower.set(state);
+						HashSet<Integer> post = this.system.getSuccessors().get(state);
+						HashSet<Integer> p1 = (HashSet<Integer>) post.clone();
+						p1.retainAll(subLower);
+						if (!p1.isEmpty()) {
+							lower.add(state);
 						}
-						if (post.intersects(subUpper)) {
-							upper.set(state);
+						HashSet<Integer> p2 = (HashSet<Integer>) post.clone();
+						p2.retainAll(subUpper);
+						if (!p2.isEmpty()) {
+							upper.add(state);
 						}
 					}
 				}
@@ -171,22 +181,22 @@ public class CTLModelChecker extends ModelChecker {
 				ForAllNext alwaysNext = (ForAllNext) formula;
 				CTLFormula subformula = alwaysNext.getFormula();
 				Result subResult = check(subformula);
-				BitSet subLower = subResult.getLower();
-				BitSet subUpper = subResult.getUpper();
+				HashSet<Integer> subLower = subResult.getLower();
+				HashSet<Integer> subUpper = subResult.getUpper();
 
-				BitSet lower = new BitSet(this.system.getNumberOfStates());
-				BitSet upper = new BitSet(this.system.getNumberOfStates());
+				HashSet<Integer> lower = new HashSet<Integer>(this.system.getNumberOfStates());
+				HashSet<Integer> upper = new HashSet<Integer>(this.system.getNumberOfStates());
 				for (int state = 0; state < this.system.getNumberOfStates(); state++) {
-					if (this.system.getPartial().get(state)) {
-						upper.set(state);
+					if (this.system.getPartial().contains(state)) {
+						upper.add(state);
 					} else {
 						if (this.system.getSuccessors().containsKey(state)) { // post(state) is nonempty
-							BitSet post = this.system.getSuccessors().get(state);
-							if (subset(post, subLower)) {
-								lower.set(state);
+							HashSet<Integer> post = this.system.getSuccessors().get(state);
+							if (post.containsAll(subLower)) {
+								lower.add(state);
 							}
-							if (subset(post, subUpper)) {
-								upper.set(state);
+							if (post.containsAll(subUpper)) {
+								upper.add(state);
 							}
 						}
 					}
@@ -196,45 +206,51 @@ public class CTLModelChecker extends ModelChecker {
 				ExistsAlways existsAlways = (ExistsAlways) formula;
 				CTLFormula subFormula = existsAlways.getFormula();
 				Result subResult = check(subFormula);
-				BitSet subLower = subResult.getLower();
-				BitSet subUpper = subResult.getUpper();
+				HashSet<Integer> subLower = subResult.getLower();
+				HashSet<Integer> subUpper = subResult.getUpper();
 
-				BitSet lower = new BitSet(this.system.getNumberOfStates());
-				lower.set(0, this.system.getNumberOfStates());
-				BitSet previous;
+				HashSet<Integer> lower = new HashSet<Integer>(this.system.getNumberOfStates());
+				for (int state = 0; state < this.system.getNumberOfStates(); state++) {
+					lower.add(state);
+				}
+				HashSet<Integer> previous;
 				do {
 					previous = lower;
-					lower = new BitSet(this.system.getNumberOfStates());
-					for (int state = subLower.nextSetBit(0); state != -1; state = subLower.nextSetBit(state + 1)) {
+					lower = new HashSet<Integer>(this.system.getNumberOfStates());
+					for (Integer state : subLower) {
 						if (this.system.getSuccessors().containsKey(state)) { // post(state) is nonempty
-							BitSet post = this.system.getSuccessors().get(state);
-							if (post.intersects(previous)) {
-								lower.set(state);
+							HashSet<Integer> post = this.system.getSuccessors().get(state);
+							post.retainAll(previous);
+							if (!post.isEmpty()) {
+								lower.add(state);
 							}
 						} else { // post(state) is empty
-							if (!this.system.getPartial().get(state)) {
-								lower.set(state);
+							if (!this.system.getPartial().contains(state)) {
+								lower.add(state);
 							}
 						}
 					}
 				} while (!lower.equals(previous));
 
-				BitSet upper = new BitSet();
-				upper.set(0, this.system.getNumberOfStates());
+				HashSet<Integer> upper = new HashSet<Integer>(this.system.getNumberOfStates());
+				for (int state = 0; state < this.system.getNumberOfStates(); state++) {
+					upper.add(state);
+				}
 				do {
 					previous = upper;
-					upper = new BitSet(this.system.getNumberOfStates());
-					for (int state = subUpper.nextSetBit(0); state != -1; state = subUpper.nextSetBit(state + 1)) {
+					upper = new HashSet<Integer>(this.system.getNumberOfStates());
+					for (Integer state : subUpper) {
 						if (this.system.getSuccessors().containsKey(state)) { // post(state) is nonempty
-							BitSet post = this.system.getSuccessors().get(state);
-							if (post.intersects(previous)) {
-								upper.set(state);
+							HashSet<Integer> post = this.system.getSuccessors().get(state);
+							post.retainAll(previous);
+							if (!post.isEmpty()) {
+								upper.add(state);
 							}
 						} else { // post(state) is empty
-							upper.set(state);
+							upper.add(state);
 						}
-						if (this.system.getPartial().get(state)) {
-							upper.set(state);
+						if (this.system.getPartial().contains(state)) {
+							upper.add(state);
 						}
 					}
 				} while (!upper.equals(previous));
@@ -261,43 +277,45 @@ public class CTLModelChecker extends ModelChecker {
 				CTLFormula right = existsUntil.getRight();
 				Result leftResult = check(left);
 				Result rightResult = check(right);
-				BitSet leftLower = leftResult.getLower();
-				BitSet leftUpper = leftResult.getUpper();
-				BitSet rightLower = rightResult.getLower();
-				BitSet rightUpper = rightResult.getUpper();
+				HashSet<Integer> leftLower = leftResult.getLower();
+				HashSet<Integer> leftUpper = leftResult.getUpper();
+				HashSet<Integer> rightLower = rightResult.getLower();
+				HashSet<Integer> rightUpper = rightResult.getUpper();
 
-				BitSet lower = new BitSet(system.getNumberOfStates());
-				BitSet previous;
+				HashSet<Integer> lower = new HashSet<Integer>(system.getNumberOfStates());
+				HashSet<Integer> previous;
 				do {
 					previous = lower;
-					lower = new BitSet(this.system.getNumberOfStates());
-					for (int state = leftLower.nextSetBit(0); state != -1; state = leftLower.nextSetBit(state + 1)) {
+					lower = new HashSet<Integer>(this.system.getNumberOfStates());
+					for (Integer state : leftLower) {
 						if (this.system.getSuccessors().containsKey(state)) {
-							BitSet post = this.system.getSuccessors().get(state); // post(state)
-							if (post.intersects(previous)) {
-								lower.set(state);
+							HashSet<Integer> post = this.system.getSuccessors().get(state); // post(state)
+							post.retainAll(previous);
+							if (!post.isEmpty()) {
+								lower.add(state);
 							}
 						}
 					}
-					lower.or(rightLower);
+					lower.addAll(rightLower);
 				} while (!lower.equals(previous));
 
-				BitSet upper = new BitSet(system.getNumberOfStates());
+				HashSet<Integer> upper = new HashSet<Integer>(system.getNumberOfStates());
 				do {
 					previous = upper;
-					upper = new BitSet(this.system.getNumberOfStates());
-					for (int state = leftUpper.nextSetBit(0); state != -1; state = leftUpper.nextSetBit(state + 1)) {
-						if (this.system.getPartial().get(state)) {
-							upper.set(state);
+					upper = new HashSet<Integer>(this.system.getNumberOfStates());
+					for (Integer state : leftUpper) {
+						if (this.system.getPartial().contains(state)) {
+							upper.add(state);
 						}
 						if (this.system.getSuccessors().containsKey(state)) {
-							BitSet post = system.getSuccessors().get(state); // post(state)
-							if (post.intersects(previous)) {
-								upper.set(state);
+							HashSet<Integer> post = system.getSuccessors().get(state); // post(state)
+							post.retainAll(previous);
+							if (!post.isEmpty()) {
+								upper.add(state);
 							}
 						}
 					}
-					upper.or(rightUpper);
+					upper.addAll(rightUpper);
 				} while (!upper.equals(previous));
 
 				result = new Result(lower, upper);

@@ -15,7 +15,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package model;
+package sets;
 
 import java.util.BitSet;
 import java.util.HashMap;
@@ -40,13 +40,13 @@ public class TransitionSystem {
 	private static final String LABEL_SEPARATOR = ": ";
 	
 	// for each state, its successors
-	private final Map<Integer, BitSet> successors;
+	private final Map<Integer, HashSet<Integer>> successors;
 	// for each label, its index
 	private final Map<String, Integer> indices;
 	// for each label index, its states
-	private final Map<Integer, BitSet> labelling;
+	private final Map<Integer, HashSet<Integer>> labelling;
 	// states that are partially explored
-	private BitSet partial;
+	private HashSet<Integer> partial;
 	// number of states
 	private int numberOfStates;
 
@@ -66,22 +66,22 @@ public class TransitionSystem {
 	 */
 	public TransitionSystem() {
 		this.numberOfStates = 1 + random.nextInt(MAX_STATES);
-		this.partial = new BitSet(numberOfStates);
+		this.partial = new HashSet<Integer>();
 
 		final double TRANSITIONS = 2 * Math.log(this.numberOfStates) / this.numberOfStates;
-		this.successors = new HashMap<Integer, BitSet>();
+		this.successors = new HashMap<Integer, HashSet<Integer>>();
 		for (int source = 0; source < this.numberOfStates; source++) {
-			BitSet post = new BitSet(this.numberOfStates);
+			HashSet<Integer> post = new HashSet<Integer>(this.numberOfStates);
 			for (int target = 0; target < this.numberOfStates; target++) {
 				if (random.nextDouble() < TRANSITIONS) {
-					post.set(target);
+					post.add(target);
 				}
 			}
 			if (!post.isEmpty()) {
 				this.successors.put(source, post);
 			}
 			if (random.nextDouble() > FULLY_EXPLORED) {
-				this.partial.set(source);
+				this.partial.add(source);
 			}
 		}
 
@@ -91,15 +91,15 @@ public class TransitionSystem {
 			this.indices.put("C.f" + index, index);
 		}
 
-		this.labelling = new HashMap<Integer, BitSet>();
+		this.labelling = new HashMap<Integer, HashSet<Integer>>();
 		for (int index = 0; index < labels; index++) {
-			BitSet stateSet = new BitSet(this.numberOfStates);
+			HashSet<Integer> stateSet = new HashSet<Integer>(this.numberOfStates);
 			this.labelling.put(index, stateSet);
 			if (random.nextDouble() < LABELLED) {
 				do {
 					for (int state = 0; state < this.numberOfStates; state++) {
 						if (random.nextDouble() < LABELLED / this.numberOfStates) {
-							stateSet.set(state);
+							stateSet.add(state);
 						}
 					}
 				} while (stateSet.isEmpty());
@@ -115,22 +115,22 @@ public class TransitionSystem {
 	 */
 	public TransitionSystem(Set<String> atomicPropositions) {
 		this.numberOfStates = 1 + random.nextInt(MAX_STATES);
-		this.partial = new BitSet();
+		this.partial = new HashSet<Integer>(this.numberOfStates);
 
 		final double TRANSITIONS = 2 * Math.log(this.numberOfStates) / this.numberOfStates;
-		this.successors = new HashMap<Integer, BitSet>();
+		this.successors = new HashMap<Integer, HashSet<Integer>>();
 		for (int source = 0; source < this.numberOfStates; source++) {
-			BitSet post = new BitSet(this.numberOfStates);
+			HashSet<Integer> post = new HashSet<Integer>(this.numberOfStates);
 			for (int target = 0; target < this.numberOfStates; target++) {
 				if (random.nextDouble() < TRANSITIONS) {
-					post.set(target);
+					post.add(target);
 				}
 			}
 			if (!post.isEmpty()) {
 				this.successors.put(source, post);
 			}
 			if (random.nextDouble() > FULLY_EXPLORED) {
-				this.partial.set(source);
+				this.partial.add(source);
 			}
 		}
 
@@ -141,15 +141,15 @@ public class TransitionSystem {
 			labels++;
 		}
 
-		this.labelling = new HashMap<Integer, BitSet>();
+		this.labelling = new HashMap<Integer, HashSet<Integer>>();
 		for (int index = 0; index < labels; index++) {
-			BitSet stateSet = new BitSet(this.numberOfStates);
+			HashSet<Integer> stateSet = new HashSet<Integer>(this.numberOfStates);
 			this.labelling.put(index, stateSet);
 			if (random.nextDouble() < LABELLED) {
 				do {
 					for (int state = 0; state < this.numberOfStates; state++) {
 						if (random.nextDouble() < LABELLED / this.numberOfStates) {
-							stateSet.set(state);
+							stateSet.add(state);
 						}
 					}
 				} while (stateSet.isEmpty());
@@ -159,22 +159,22 @@ public class TransitionSystem {
 
 	public TransitionSystem(Set<String> atomicPropositions, boolean fullyExplored) {
 		this.numberOfStates = 1 + random.nextInt(MAX_STATES);
-		this.partial = new BitSet();
+		this.partial = new HashSet<Integer>(this.numberOfStates);
 
 		final double TRANSITIONS = 2 * Math.log(this.numberOfStates) / this.numberOfStates;
-		this.successors = new HashMap<Integer, BitSet>();
+		this.successors = new HashMap<Integer, HashSet<Integer>>();
 		for (int source = 0; source < this.numberOfStates; source++) {
-			BitSet post = new BitSet(this.numberOfStates);
+			HashSet<Integer> post = new HashSet<Integer>(this.numberOfStates);
 			for (int target = 0; target < this.numberOfStates; target++) {
 				if (random.nextDouble() < TRANSITIONS) {
-					post.set(target);
+					post.add(target);
 				}
 			}
 			if (!post.isEmpty()) {
 				this.successors.put(source, post);
 			}
 			if (!fullyExplored) {
-				this.partial.set(source);
+				this.partial.add(source);
 			}
 		}
 
@@ -185,15 +185,15 @@ public class TransitionSystem {
 			labels++;
 		}
 
-		this.labelling = new HashMap<Integer, BitSet>();
+		this.labelling = new HashMap<Integer, HashSet<Integer>>();
 		for (int index = 0; index < labels; index++) {
-			BitSet stateSet = new BitSet(this.numberOfStates);
+			HashSet<Integer> stateSet = new HashSet<Integer>(this.numberOfStates);
 			this.labelling.put(index, stateSet);
 			if (random.nextDouble() < LABELLED) {
 				do {
 					for (int state = 0; state < this.numberOfStates; state++) {
 						if (random.nextDouble() < LABELLED / this.numberOfStates) {
-							stateSet.set(state);
+							stateSet.add(state);
 						}
 					}
 				} while (stateSet.isEmpty());
@@ -201,7 +201,7 @@ public class TransitionSystem {
 		}
 	}
 
-	public TransitionSystem(Map<Integer, BitSet> successors, Map<String, Integer> indices, Map<Integer, BitSet> labelling, BitSet partial, int numberOfStates) {
+	public TransitionSystem(Map<Integer, HashSet<Integer>> successors, Map<String, Integer> indices, Map<Integer, HashSet<Integer>> labelling, HashSet<Integer> partial, int numberOfStates) {
 		this.successors = successors;
 		this.indices = indices;
 		this.labelling = labelling;
@@ -214,14 +214,13 @@ public class TransitionSystem {
 		StringBuffer toString = new StringBuffer();
 
 		for (Integer source : this.successors.keySet()) {
-			BitSet post = this.successors.get(source);
-			for (int target = post.nextSetBit(0); target != -1; target = post.nextSetBit(target + 1)) {
+			HashSet<Integer> post = this.successors.get(source);
+			for (Integer target : post) {
 				toString.append(source + TRANSITION_SEPARATOR + target);
 				toString.append("\n");
 			}
 		}
-
-		for (int state = this.partial.nextSetBit(0); state != -1; state = this.partial.nextSetBit(state + 1)) {
+		for (Integer state : this.partial) {
 			toString.append(state + " ");
 		}
 		toString.append("\n");
@@ -237,7 +236,7 @@ public class TransitionSystem {
 		for (int state = 0; state < this.numberOfStates; state++) {
 			Set<Integer> labelSet = new HashSet<Integer>();
 			for (Integer index : this.labelling.keySet()) {
-				if (this.labelling.get(index).get(state)) {
+				if (this.labelling.get(index).contains(state)) {
 					labelSet.add(index);
 				}
 			}
@@ -267,59 +266,6 @@ public class TransitionSystem {
 	}
 
 	/**
-	 * Returns the dot representation of this partial transition system as a string.
-	 * 
-	 * @return the dot representation of this partial transition system as a string
-	 */
-	public String toDot() {
-		StringBuffer toDot = new StringBuffer();
-
-		toDot.append("digraph system {\n");
-		toDot.append("  node [colorscheme=\"set312\" style=wedged]\n");
-
-		for (Integer source : this.successors.keySet()) {
-			BitSet post = this.successors.get(source);
-			for (int target = post.nextSetBit(0); target != -1; target = post.nextSetBit(target + 1)) {
-				toDot.append(String.format("  %d -> %d%n", source, target));
-			}
-		}
-
-		for (int state = 0; state < this.numberOfStates; state++) {
-			Set<Integer> labelSet = new HashSet<Integer>();
-			for (Integer index : this.labelling.keySet()) {
-				if (this.labelling.get(index).get(state)) {
-					labelSet.add(index);
-				}
-			}
-			if (!labelSet.isEmpty()) {
-				toDot.append("  " + state + " [");
-
-				if (this.partial.get(state)) { // partially explored
-					toDot.append("shape=box ");
-				}
-
-				if (labelSet.size() == 1) {
-					toDot.append("style=filled fillcolor=");
-				} else {
-					toDot.append("fillcolor=\"");
-				}
-				for (Integer label : labelSet) {
-					toDot.append((label + 1) + ":");
-				}
-				toDot.setLength(toDot.length() - 1); // remove last :
-				if (labelSet.size() != 1) {
-					toDot.append("\"");
-				}
-				toDot.append("]\n");
-			}
-		}
-
-		toDot.append("}\n");
-
-		return toDot.toString();
-	}
-
-	/**
 	 * Returns the number of states of this partial transition system.
 	 * 
 	 * @return the number of states of this partial transition system
@@ -333,7 +279,7 @@ public class TransitionSystem {
 	 * 
 	 * @return the set of successors of this partial transition system
 	 */
-	public Map<Integer, BitSet> getSuccessors() {
+	public Map<Integer, HashSet<Integer>> getSuccessors() {
 		return this.successors;
 	}
 
@@ -342,7 +288,7 @@ public class TransitionSystem {
 	 * 
 	 * @return the labelling of this partial transition system
 	 */
-	public Map<Integer, BitSet> getLabelling() {
+	public Map<Integer, HashSet<Integer>> getLabelling() {
 		return this.labelling;
 	}
 
@@ -360,7 +306,8 @@ public class TransitionSystem {
 	 * 
 	 * @return the set of states that are partially explored
 	 */
-	public BitSet getPartial() {
-		return (BitSet) this.partial.clone();
+	@SuppressWarnings("unchecked")
+	public HashSet<Integer> getPartial() {
+		return (HashSet<Integer>) this.partial.clone();
 	}
 }

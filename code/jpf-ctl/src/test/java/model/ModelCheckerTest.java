@@ -305,40 +305,63 @@ public class ModelCheckerTest {
 
 	/**
 	 * Tests the formula EX true for a random system. 
+	 * 
+	 * TODO does not handle special cases
 	 */
 	@RepeatedTest(CASES)
 	public void testExistsNextTrue() {
 		ExistsNext existsNext = new ExistsNext(new True());
 		TransitionSystem system = new TransitionSystem();
 		CTLModelChecker model = new CTLModelChecker(system);
-		BitSet expected = new BitSet();
+		
+		// Test Lower
+		BitSet expectedLower = new BitSet();
 		for (int state = 0; state < system.getNumberOfStates(); state++) {
-			expected.set(state, system.getSuccessors().containsKey(state) || system.getPartial().get(state));
+			 if (system.getSuccessors().containsKey(state)) {
+				 expectedLower.set(state);
+			 }
 		}
 		model = new CTLModelChecker(system);
 		Result result = model.check(existsNext);
 		BitSet actual = result.getLower();
-		assertEquals(expected, actual, existsNext.toString() + "\n" + system.toString());
+		assertEquals(expectedLower, actual, existsNext.toString() + "\n" + system.toString());
 
+		BitSet expectedUpper = (BitSet) expectedLower.clone();
+		for (int state = 0; state < system.getNumberOfStates(); state++) {
+			if (system.getPartial().get(state)) {
+				expectedUpper.set(state);
+			}
+		}
 		actual = result.getUpper();
-		assertEquals(expected, actual, existsNext.toString() + "\n" + system.toString());
+		assertEquals(expectedUpper, actual, existsNext.toString() + "\n" + system.toString());
 	}
 
 	/**
 	 * Tests the formula EX false for a random system. 
+	 * 
+	 * TODO not considering special case for false
 	 */
 	@RepeatedTest(CASES)
 	public void testExistsNextFalse() {
 		ExistsNext existsNext = new ExistsNext(new False());
 		TransitionSystem system = new TransitionSystem();
 		CTLModelChecker model = new CTLModelChecker(system);
-		BitSet expected = new BitSet();
+		
+		// Test Lower
+		BitSet expectedLower = new BitSet();
 		Result result = model.check(existsNext);
 		BitSet actual = result.getLower();
-		assertEquals(expected, actual, existsNext.toString() + "\n" + system.toString());
+		assertEquals(expectedLower, actual, existsNext.toString() + "\n" + system.toString());
 
+		// Test Upper
+		BitSet expectedUpper = (BitSet) expectedLower.clone();
+		for (int state = 0; state < system.getNumberOfStates(); state++) {
+			if (system.getPartial().get(state)) {
+				expectedUpper.set(state);
+			}
+		}
 		actual = result.getUpper();
-		assertEquals(expected, actual, existsNext.toString() + "\n" + system.toString());
+		assertEquals(expectedUpper, actual, existsNext.toString() + "\n" + system.toString());
 	}
 
 	/**
@@ -350,22 +373,28 @@ public class ModelCheckerTest {
 		ExistsNext existsNext = new ExistsNext(new AtomicProposition(name));
 		TransitionSystem system = new TransitionSystem(existsNext.getAtomicPropositions());
 		CTLModelChecker model = new CTLModelChecker(system);
-		BitSet expected = new BitSet();
+		BitSet expectedLower = new BitSet();
 		int index = system.getIndices().get(name);
 		if (system.getLabelling().containsKey(index)) {
 			for (int state = 0; state < system.getNumberOfStates(); state++) {
-				boolean holds = system.getSuccessors().containsKey(state) // state has successors
-						&& system.getLabelling().containsKey(index) // atomic proposition exists
-						&& system.getSuccessors().get(state).intersects(system.getLabelling().get(index)); // one of the successors is labelled with the atomic proposition
-				expected.set(state, holds);
+					boolean holds = system.getSuccessors().containsKey(state) // state has successors
+							&& system.getLabelling().containsKey(index) // atomic proposition exists
+							&& system.getSuccessors().get(state).intersects(system.getLabelling().get(index)); // one of the successors is labelled with the atomic proposition
+					expectedLower.set(state, holds);
 			}
 		}
 		Result result = model.check(existsNext);
 		BitSet actual = result.getLower();
-		assertEquals(expected, actual, existsNext.toString() + "\n" + system.toString());
+		assertEquals(expectedLower, actual, existsNext.toString() + "\n" + system.toString());
 
+		BitSet expectedUpper = (BitSet) expectedLower.clone();
+		for (int state = 0; state < system.getNumberOfStates(); state++) {
+			if (system.getPartial().get(state)) {
+				expectedUpper.set(state);
+			}
+		}
 		actual = result.getUpper();
-		assertEquals(expected, actual, existsNext.toString() + "\n" + system.toString());
+		assertEquals(expectedUpper, actual, existsNext.toString() + "\n" + system.toString());
 	}
 
 	/**
@@ -376,14 +405,28 @@ public class ModelCheckerTest {
 		ForAllNext forAllNext = new ForAllNext(new True());
 		TransitionSystem system = new TransitionSystem();
 		CTLModelChecker model = new CTLModelChecker(system);
-		BitSet expected = new BitSet();
-		expected.set(0, system.getNumberOfStates());
+		BitSet expectedLower = new BitSet();
+		
+		for (int state = 0; state < system.getNumberOfStates(); state++) {
+			if (!system.getPartial().get(state)) {
+				if (system.getSuccessors().containsKey(state)) {
+					expectedLower.set(state);
+				}
+			}
+		}
 		Result result = model.check(forAllNext);
 		BitSet actual = result.getLower();
-		assertEquals(expected, actual, forAllNext.toString() + "\n" + system.toString());
+		assertEquals(expectedLower, actual, forAllNext.toString() + "\n" + system.toString());
 
+		BitSet expectedUpper = (BitSet) expectedLower.clone();
+		for (int state = 0; state < system.getNumberOfStates(); state++) {
+			if (system.getPartial().get(state)) {
+				expectedUpper.set(state);
+			}
+		}
+		
 		actual = result.getUpper();
-		assertEquals(expected, actual, forAllNext.toString() + "\n" + system.toString());
+		assertEquals(expectedUpper, actual, forAllNext.toString() + "\n" + system.toString());
 	}
 
 	/**
@@ -394,13 +437,20 @@ public class ModelCheckerTest {
 		ForAllNext forAllNext = new ForAllNext(new False());
 		TransitionSystem system = new TransitionSystem();
 		CTLModelChecker model = new CTLModelChecker(system);
-		BitSet expected = new BitSet();
 		Result result = model.check(forAllNext);
+		BitSet expectedLower = new BitSet();
 		BitSet actual = result.getLower();
-		assertEquals(expected, actual, forAllNext.toString() + "\n" + system.toString());
+		assertEquals(expectedLower, actual, forAllNext.toString() + "\n" + system.toString());
 
+		BitSet expectedUpper = (BitSet) expectedLower.clone();
+		for (int state = 0; state < system.getNumberOfStates(); state++) {
+			if (system.getPartial().get(state)) {
+				expectedUpper.set(state);
+			}
+		}
+		
 		actual = result.getUpper();
-		assertEquals(expected, actual, forAllNext.toString() + "\n" + system.toString());
+		assertEquals(expectedUpper, actual, forAllNext.toString() + "\n" + system.toString());
 	}
 
 	/**
@@ -447,14 +497,25 @@ public class ModelCheckerTest {
 		ExistsAlways existsAlways = new ExistsAlways(new True());
 		TransitionSystem system = new TransitionSystem();
 		CTLModelChecker model = new CTLModelChecker(system);
-		BitSet expected = new BitSet();
-		expected.set(0, system.getNumberOfStates(), true);
+		
+		BitSet expectedLower = new BitSet();
+		for (int state = 0; state < system.getNumberOfStates(); state++) {
+			if (!system.getPartial().get(state)) {
+				expectedLower.set(state);
+			} else {
+				if (system.getSuccessors().containsKey(state)) {
+					expectedLower.set(state);
+				}
+			}
+		}
 		Result result = model.check(existsAlways);
 		BitSet actual = result.getLower();
-		assertEquals(expected, actual, existsAlways.toString() + "\n" + system.toString());
+		assertEquals(expectedLower, actual, existsAlways.toString() + "\n" + system.toString());
 
+		BitSet expectedUpper = new BitSet();
+		expectedUpper.set(0, system.getNumberOfStates());
 		actual = result.getUpper();
-		assertEquals(expected, actual, existsAlways.toString() + "\n" + system.toString());
+		assertEquals(expectedUpper, actual, existsAlways.toString() + "\n" + system.toString());
 	}
 
 	/**
@@ -771,19 +832,35 @@ public class ModelCheckerTest {
 
 	/**
 	 * Tests the formula f EU false, where f is a random formula, for a random system. 
+	 * 
+	 * TODO doesn't handle special case -> should always be false (algo change needed)
 	 */
 	@RepeatedTest(CASES)
 	public void testExistsUntilFalse() {
-		ExistsUntil existsUntil = new ExistsUntil(new True(), new False());
+		CTLFormula left = CTLFormula.random();
+		ExistsUntil existsUntil = new ExistsUntil(left, new False());
 		TransitionSystem system = new TransitionSystem();
-		BitSet expected = new BitSet();
 		CTLModelChecker model = new CTLModelChecker(system);
 		Result result = model.check(existsUntil);
+		
+		// Test Lower
+		BitSet expectedLower = new BitSet(system.getNumberOfStates());
 		BitSet actual = result.getLower();
-		assertEquals(expected, actual, existsUntil.toString() + "\n" + system.toString());
+		assertEquals(expectedLower, actual, existsUntil.toString() + "\n" + system.toString());
 
+		// Test Upper
+		BitSet expectedUpper = new BitSet(system.getNumberOfStates());
+		Result leftResult = model.check(left);
+		BitSet leftLower = leftResult.getLower();
+		for (int state = 0; state < system.getNumberOfStates(); state++) {
+			if (system.getPartial().get(state)) {
+				if (leftLower.get(state)) { // if this state satisfies left
+					expectedUpper.set(state);
+				}
+			}
+		}
 		actual = result.getUpper();
-		assertEquals(expected, actual, existsUntil.toString() + "\n" + system.toString());
+		assertEquals(expectedUpper, actual, existsUntil.toString() + "\n" + system.toString());
 	}
 
 	/**

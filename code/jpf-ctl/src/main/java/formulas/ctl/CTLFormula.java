@@ -71,7 +71,7 @@ public abstract class CTLFormula extends Formula {
 		}
 	}
 
-	private static final int DEFAULT_DEPTH = 5;
+	private static final int DEFAULT_DEPTH = 1;
 
 	/**
 	 * Returns a random formula.

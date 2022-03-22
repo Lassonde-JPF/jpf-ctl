@@ -1,6 +1,7 @@
-package model;
+package sets;
 
 import java.util.BitSet;
+import java.util.HashSet;
 
 /**
  * Result of model checking consists of two sets: a lower- and upperbound of the
@@ -17,15 +18,15 @@ public class Result {
 	 * @author mattw
 	 *
 	 */
-	public static enum Status {
+	static enum Status {
 		VALID,
 		INVALID,
 		UNKNOWN;
 	}
 	
 	// Attributes
-	private BitSet lower;
-	private BitSet upper;
+	private HashSet<Integer> lower;
+	private HashSet<Integer> upper;
 
 	/**
 	 * Initializes this result with the given lower- and upperbound.
@@ -33,7 +34,7 @@ public class Result {
 	 * @param lower the lowerbound of this result
 	 * @param upper the upperbound of this result
 	 */
-	public Result(BitSet lower, BitSet upper) {
+	public Result(HashSet<Integer> lower, HashSet<Integer> upper) {
 		this.lower = lower;
 		this.upper = upper;
 	}
@@ -43,8 +44,9 @@ public class Result {
 	 * 
 	 * @return the lowerbound of this result
 	 */
-	public BitSet getLower() {
-		return (BitSet) this.lower.clone();
+	@SuppressWarnings("unchecked")
+	public HashSet<Integer> getLower() {
+		return (HashSet<Integer>) this.lower.clone();
 	}
 
 	/**
@@ -52,8 +54,9 @@ public class Result {
 	 * 
 	 * @return the upperbound of this result
 	 */
-	public BitSet getUpper() {
-		return (BitSet) this.upper.clone();
+	@SuppressWarnings("unchecked")
+	public HashSet<Integer> getUpper() {
+		return (HashSet<Integer>) this.upper.clone();
 	}
 
 	
@@ -72,10 +75,10 @@ public class Result {
 	 * @return boolean - whether this result is valid
 	 */
 	public Status isValid() {
-		if (this.lower.get(0)) {
+		if (this.lower.contains(0)) {
 			return Status.VALID;
 		}
-		if (!this.upper.get(0)) {
+		if (!this.upper.contains(0)) {
 			return Status.INVALID;
 		}
 		return Status.UNKNOWN;
