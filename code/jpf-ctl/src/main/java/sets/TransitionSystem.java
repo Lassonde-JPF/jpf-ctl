@@ -53,7 +53,7 @@ public class TransitionSystem {
 	// introduces randomness
 	private static final Random random = new Random(System.currentTimeMillis());
 	// maximum number of states of a random system
-	private static final int MAX_STATES = 5;
+	private static final int MAX_STATES = 2;
 	// probability that a state is fully explored in a random system
 	private static final double FULLY_EXPLORED = 0.8;
 	// maximum number of labels of a random system

@@ -25,6 +25,10 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import org.junit.BeforeClass;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.RepeatedTest;
 
 import formulas.ctl.CTLFormula;
@@ -40,16 +44,19 @@ public class ModelCheckerTest {
 	 */
 	private static final int CASES = 1000;
 
-	
-	/**
-	 * Tests the formula true for a random system. 
-	 */
-	@RepeatedTest(CASES)
-	public void testDifferenceSetToBit() {
-		
-		CTLFormula formula = CTLFormula.random();
-		
-		sets.TransitionSystem setSystem = new sets.TransitionSystem(formula.getAtomicPropositions());
+	CTLFormula formula;
+
+	sets.TransitionSystem setSystem;
+	model.TransitionSystem bitSystem;
+
+	sets.ModelChecker setChecker;
+	model.ctl.CTLModelChecker bitChecker;
+
+	@BeforeEach
+	public void setUp() {
+		formula = CTLFormula.random();
+
+		setSystem = new sets.TransitionSystem(formula.getAtomicPropositions());
 		// Build Partial for bit system
 		BitSet partial = new BitSet(setSystem.getNumberOfStates());
 		for (Integer state : setSystem.getPartial()) {
@@ -73,43 +80,66 @@ public class ModelCheckerTest {
 			}
 			labelling.put(entry.getKey(), equivalent);
 		}
-		model.TransitionSystem bitSystem = new model.TransitionSystem(successors, setSystem.getIndices(), labelling, partial, setSystem.getNumberOfStates());
-		// Ensure resulting systems are the same
+		bitSystem = new model.TransitionSystem(successors, setSystem.getIndices(), labelling, partial,
+				setSystem.getNumberOfStates());
 		assertEquals(setSystem.toString(), bitSystem.toString(), setSystem.toString() + "\n" + bitSystem.toString());
-		
-		sets.ModelChecker setChecker = new sets.CTLModelChecker(setSystem);
-		model.ctl.CTLModelChecker bitChecker = new model.ctl.CTLModelChecker(bitSystem);
+
+		setChecker = new sets.CTLModelChecker(setSystem);
+		bitChecker = new model.ctl.CTLModelChecker(bitSystem);
+	}
+
+	/**
+	 * Tests the formula true for a random system.
+	 */
+	@RepeatedTest(CASES)
+	@DisplayName("Test Lower & Upper Bounds Coincide")
+	public void testLowerAndUpperCoincide() {
+
 		sets.Result setResult = setChecker.check(formula);
 		model.Result bitResult = bitChecker.check(formula);
-		
+
 		// Translate BitSet Result to Set<Integer>
-		HashSet<Integer> equivalentSetLower = new HashSet<Integer>();
-		HashSet<Integer> equivalentSetUpper = new HashSet<Integer>();
-		BitSet bitLower = bitResult.getLower();
-		BitSet bitUpper = bitResult.getUpper();
-		for (int state = bitLower.nextSetBit(0); state >= 0; state = bitLower.nextSetBit(state+1)) {
-			equivalentSetLower.add(state);
-		}
-		for (int state = bitUpper.nextSetBit(0); state >= 0; state = bitUpper.nextSetBit(state+1)) {
-			equivalentSetUpper.add(state);
-		}
-		
-		assertEquals(setResult.getLower(), equivalentSetLower, formula.toString() + "\n" + setSystem.toString());
-		assertEquals(setResult.getUpper(), equivalentSetUpper, formula.toString() + "\n" + setSystem.toString());
-		
+		HashSet<Integer> equivalentSetLower = getEquivalentSet(bitResult.getLower());
+		HashSet<Integer> equivalentSetUpper = getEquivalentSet(bitResult.getUpper());
+		assertAll(
+				() -> assertEquals(setResult.getLower(), equivalentSetLower,
+						"expected=HashSet<Integer>, actual=BitSet\n" + formula.toString() + "\n" + setSystem.toString()
+								+ "\n" + "Bound: lower"),
+				() -> assertEquals(setResult.getUpper(), equivalentSetUpper,
+						"expected=HashSet<Integer>, actual=BitSet\n" + formula.toString() + "\n" + setSystem.toString()
+								+ "\n" + "Bound: upper"));
+
 		// Translate Set<Integer> Result to BitSet
-		BitSet equivalentBitLower = new BitSet(bitSystem.getNumberOfStates());
-		BitSet equivalentBitUpper = new BitSet(bitSystem.getNumberOfStates());
-		for (Integer state : setResult.getLower()) {
-			equivalentBitLower.set(state);
+		BitSet equivalentBitLower = getEquivalentBitSet(setResult.getLower());
+		BitSet equivalentBitUpper = getEquivalentBitSet(setResult.getUpper());
+		assertAll(
+				() -> assertEquals(bitResult.getLower(), equivalentBitLower,
+						"expected=BitSet, actual=HashSet<Integer>\n" + formula.toString() + "\n" + bitSystem.toString()
+								+ "\n" + "Bound: lower"),
+				() -> assertEquals(bitResult.getUpper(), equivalentBitUpper,
+						"expected=BitSet, actual=HashSet<Integer>\n" + formula.toString() + "\n" + bitSystem.toString()
+								+ "\n" + "Bound: upper"));
+
+		// Test final "isValid" call
+		assertEquals(setResult.isValid().toString(), bitResult.isValid().toString(),
+				formula.toString() + "\n" + setSystem.toString());
+	}
+
+	// Convert BitSet -> HashSet<Integer>
+	private HashSet<Integer> getEquivalentSet(BitSet other) {
+		HashSet<Integer> equivalent = new HashSet<Integer>();
+		for (int state = other.nextSetBit(0); state >= 0; state = other.nextSetBit(state + 1)) {
+			equivalent.add(state);
 		}
-		for (Integer state : setResult.getUpper()) {
-			equivalentBitUpper.set(state);
+		return equivalent;
+	}
+
+	// Convert HashSet<Integer> -> BitSet
+	private BitSet getEquivalentBitSet(HashSet<Integer> other) {
+		BitSet equivalent = new BitSet();
+		for (Integer state : other) {
+			equivalent.set(state);
 		}
-		
-		assertEquals(bitResult.getLower(), equivalentBitLower, formula.toString() + "\n" + bitSystem.toString());
-		assertEquals(bitResult.getUpper(), equivalentBitUpper, formula.toString() + "\n" + bitSystem.toString());
-		
-		assertEquals(setResult.isValid().toString(), bitResult.isValid().toString(), formula.toString() + "\n" + setSystem.toString());		
+		return equivalent;
 	}
 }

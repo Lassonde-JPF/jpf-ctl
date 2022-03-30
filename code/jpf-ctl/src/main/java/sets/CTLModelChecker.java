@@ -91,10 +91,10 @@ public class CTLModelChecker extends ModelChecker {
 				if (this.system.getIndices().containsKey(name)) {
 					int index = this.system.getIndices().get(name);
 							if (this.system.getLabelling().containsKey(index)) {
-								labelling = (HashSet<Integer>) this.system.getLabelling().get(index).clone();
+								labelling = new HashSet<Integer>(this.system.getLabelling().get(index));
 							}
 				}
-				result = new Result(labelling, (HashSet<Integer>) labelling.clone());
+				result = new Result(labelling, new HashSet<Integer>(labelling));
 			} else if (formula instanceof Not) {
 				Not not = (Not) formula;
 				CTLFormula subformula = not.getFormula();
@@ -164,12 +164,12 @@ public class CTLModelChecker extends ModelChecker {
 					}
 					if (this.system.getSuccessors().containsKey(state)) { // post(state) is nonempty
 						HashSet<Integer> post = this.system.getSuccessors().get(state);
-						HashSet<Integer> p1 = (HashSet<Integer>) post.clone();
+						HashSet<Integer> p1 = new HashSet<Integer>(post);
 						p1.retainAll(subLower);
 						if (!p1.isEmpty()) {
 							lower.add(state);
 						}
-						HashSet<Integer> p2 = (HashSet<Integer>) post.clone();
+						HashSet<Integer> p2 = new HashSet<Integer>(post);
 						p2.retainAll(subUpper);
 						if (!p2.isEmpty()) {
 							upper.add(state);
@@ -184,18 +184,18 @@ public class CTLModelChecker extends ModelChecker {
 				HashSet<Integer> subLower = subResult.getLower();
 				HashSet<Integer> subUpper = subResult.getUpper();
 
-				HashSet<Integer> lower = new HashSet<Integer>(this.system.getNumberOfStates());
-				HashSet<Integer> upper = new HashSet<Integer>(this.system.getNumberOfStates());
+				HashSet<Integer> lower = new HashSet<Integer>();
+				HashSet<Integer> upper = new HashSet<Integer>();
 				for (int state = 0; state < this.system.getNumberOfStates(); state++) {
 					if (this.system.getPartial().contains(state)) {
 						upper.add(state);
 					} else {
 						if (this.system.getSuccessors().containsKey(state)) { // post(state) is nonempty
 							HashSet<Integer> post = this.system.getSuccessors().get(state);
-							if (post.containsAll(subLower)) {
+							if (subLower.containsAll(post)) {
 								lower.add(state);
 							}
-							if (post.containsAll(subUpper)) {
+							if (subUpper.containsAll(post)) {
 								upper.add(state);
 							}
 						}
