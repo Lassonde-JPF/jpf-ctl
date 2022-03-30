@@ -103,22 +103,20 @@ public class ModelCheckerTest {
 		HashSet<Integer> equivalentSetUpper = getEquivalentSet(bitResult.getUpper());
 		assertAll(
 				() -> assertEquals(setResult.getLower(), equivalentSetLower,
-						"expected=HashSet<Integer>, actual=BitSet\n" + formula.toString() + "\n" + setSystem.toString()
-								+ "\n" + "Bound: lower"),
-				() -> assertEquals(setResult.getUpper(), equivalentSetUpper,
-						"expected=HashSet<Integer>, actual=BitSet\n" + formula.toString() + "\n" + setSystem.toString()
-								+ "\n" + "Bound: upper"));
+						formula.toString() + "\n" + setSystem.toString()
+								+ "Bound: lower\nexpected=HashSet<Integer>, actual=BitSet\n"),
+				() -> assertEquals(setResult.getUpper(), equivalentSetUpper, formula.toString() + "\n"
+						+ setSystem.toString() + "Bound: upper\nexpected=HashSet<Integer>, actual=BitSet\n"));
 
 		// Translate Set<Integer> Result to BitSet
 		BitSet equivalentBitLower = getEquivalentBitSet(setResult.getLower());
 		BitSet equivalentBitUpper = getEquivalentBitSet(setResult.getUpper());
 		assertAll(
 				() -> assertEquals(bitResult.getLower(), equivalentBitLower,
-						"expected=BitSet, actual=HashSet<Integer>\n" + formula.toString() + "\n" + bitSystem.toString()
-								+ "\n" + "Bound: lower"),
-				() -> assertEquals(bitResult.getUpper(), equivalentBitUpper,
-						"expected=BitSet, actual=HashSet<Integer>\n" + formula.toString() + "\n" + bitSystem.toString()
-								+ "\n" + "Bound: upper"));
+						formula.toString() + "\n" + bitSystem.toString()
+								+ "Bound: lower\nexpected=BitSet, actual=HashSet<Integer>\n"),
+				() -> assertEquals(bitResult.getUpper(), equivalentBitUpper, formula.toString() + "\n"
+						+ bitSystem.toString() + "Bound: upper\nexpected=BitSet, actual=HashSet<Integer>\n"));
 
 		// Test final "isValid" call
 		assertEquals(setResult.isValid().toString(), bitResult.isValid().toString(),
