@@ -6,11 +6,8 @@
   - [Java PathFinder (jpf-core)](#Java-PathFinder-jpf-core)
   - [jpf-label](#jpf-label)
   - [jpf-ctl](#jpf-ctl)
-- [Installation instructions for developing jpf-ctl](#Installation-instructions-for-developing-jpf-ctl)
-  - [ANTLR4](#ANTLR4)
-  - [jpf-nhandler](#jpf-nhandler)
-- [Using jpf-ctl](#Using-jpf-ctl)
-- [Contributing to jpf-ctl](#Contributing-to-jpf-ctl)
+- [Using jpf-logic](#Using-jpf-logic)
+- [Contributing to jpf-logic](#Contributing-to-jpf-logic)
 - [License](#License)
 - [Contact](#Contact)
 
@@ -18,7 +15,7 @@
 
 The most common approach to finding errors in software is testing. However, testing is of limited use when checking *concurrent software* for errors. Hence, other techniques, including *model checking*, have been developed to supplement testing. We focus on Java as Java is one of the most widely used programming languages. Presently, the most popular tool for model checking of Java code, [*Java PathFinder*](https://github.com/javapathfinder) (JPF), does not support the checking of properties expressed in temporal logics; instead, it checks properties such as deadlocks and data races. To resolve this, we present jpf-logic, a framework to extend of JPF with support for the checking of properties specified in temporal logics such as *computational tree logic* (CTL). 
 
-Let us consider a simple example. The class [Account](src/main/java/examples/Account.java) models a bank account.  The classes [Deposit](src/main/java/examples/Deposit.java) and [Withdraw](src/main/java/examples/Withdraw.java) are threads that deposit to and withdraw from a bank account.  The class [Main](src/main/java/examples/Main.java) is an app that creates a single bank account and multiple threads that deposit to and withdraw from that bank account.  It takes three command line arguments:
+Let us consider a simple example. The class [Account](src/main/java/jpf/logic/examples/Account.java) models a bank account.  The classes [Deposit](src/main/java/jpf/logic/examples/Deposit.java) and [Withdraw](src/main/java/jpf/logic/examples/Withdraw.java) are threads that deposit to and withdraw from a bank account.  The class [Main](src/main/java/jpf/logic/examples/Main.java) is an app that creates a single bank account and multiple threads that deposit to and withdraw from that bank account.  It takes three command line arguments:
 - the initial balance of the bank account,
 - the number of Deposit threads that do one deposit transaction to the bank account, and
 - the number of Withdraw threads that do one withdrawal transaction to the back account.
