@@ -1,0 +1,54 @@
+// use Gradle's Java and ANTLR plugins
+plugins {
+    id 'java'
+    id 'antlr'
+}
+
+sourceCompatibility = '1.8'
+targetCompatibility = '1.8'
+
+repositories {
+    // repository search.maven.org
+    mavenCentral()
+}
+
+dependencies {
+    // jpf-core
+    implementation files(jpf.logic.Jar.getJPF())
+
+    // JUnit 5
+    testImplementation 'org.junit.jupiter:junit-jupiter:5.8.1'
+
+    // ANTLR 4
+    antlr 'org.antlr:antlr4:4.9.2'
+}
+
+// generate ANTLR visitor
+generateGrammarSource {
+    arguments += ['-visitor']
+}
+
+// configure the jar task
+jar {
+    manifest { 
+        attributes 'Main-Class': 'jpf.logic.Main'
+    }  
+
+    from {
+        configurations.compileClasspath.collect { it.isDirectory() ? it : zipTree(it) }
+    }
+}
+
+// configure the test task
+test {
+    // use JUnit 5
+    useJUnitPlatform()
+
+    // print result and number of passed, failed, and skipped tests
+    afterSuite { descriptor, result ->
+        if (!descriptor.parent) { // only executed for the root suite
+            println "Test execution: ${result.resultType}" 
+            println "Summary: ${result.testCount} tests, ${result.successfulTestCount} passed,${result.failedTestCount} failed, ${result.skippedTestCount} skipped"
+        }
+    }
+}
