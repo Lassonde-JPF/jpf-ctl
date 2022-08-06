@@ -7,6 +7,7 @@
   - [jpf-label](#jpf-label)
   - [jpf-ctl](#jpf-ctl)
 - [Using jpf-logic](#Using-jpf-logic)
+- [Questions about jpf-logic](#Questions-about-jpf-logic)
 - [Contributing to jpf-logic](#Contributing-to-jpf-logic)
 - [License](#License)
 - [Contact](#Contact)
@@ -38,7 +39,7 @@ public boolean withdraw(double amount) {
 ```
 attempts to ensure that the balance never becomes negative. However, as the method is not synchronized, the balance may become negative. The Main class contains a static boolean field named negative which captures whether the balance of the account is negative. This field is regularly updated in the app.
 
-The JUnit test [AccountTest](src/test/java/examples/AccountTest.java), which performs one thousand runs of the app with an initial balance of one, two Deposit threads, and two Withdraw threads, does *not* detect a negative balance. The property that the balance never becomes negative can be captured by the CTL formula AG ! negative. This formula specifies that for every run of the Java app (*A* stands for "for all"), and for every state of such a run (*G* stands for "globally"), the atomic proposition negative, which captures that the value of the boolean static field Example.negative is true, does not hold. As will be shown in the demo below, jpf-logic is *successful* in determining that the CTL formula does not hold for this Java app, that is, the balance can become negative.
+The JUnit test [AccountTest](src/test/java/jpf/logic/examples/AccountTest.java), which performs one thousand runs of the app with an initial balance of one, two Deposit threads, and two Withdraw threads, does *not* detect a negative balance. The property that the balance never becomes negative can be captured by the CTL formula AG ! negative. This formula specifies that for every run of the Java app (*A* stands for "for all"), and for every state of such a run (*G* stands for "globally"), the atomic proposition negative, which captures that the value of the boolean static field Example.negative is true, does not hold. As will be shown in the demo below, jpf-logic is *successful* in determining that the CTL formula does not hold for this Java app, that is, the balance can become negative.
 
 ### Limitations
 
@@ -66,7 +67,7 @@ git version 2.26.2.windows.1
 
 ### Java PathFinder (jpf-core)
 
-It is convenient, yet not essential, to put the directories of jpf-core and jpf-symbc in a common directory.  Assume that this common directory is called jpf.
+It is convenient, yet not essential, to put the directories of jpf-core, jpf-ctl and jpf-label in a common directory.  Assume that this common directory is called jpf.
 
 ```
 jpf/
@@ -75,7 +76,7 @@ jpf/
 | jpf-label/
 ```
 
-1. Clone [jpf-core](https://github.com/javapathfinder/jpf-core) using Git: go the directory where you want to put jpf-core and issue the following command.
+1. Clone [jpf-core](https://github.com/javapathfinder/jpf-core) using Git: go the directory where you want to put jpf-core (for example, the directory jpf mentioned above) and issue the following command.
 ```
 > git clone https://github.com/javapathfinder/jpf-core.git
 Cloning into 'jpf-core'...
@@ -85,9 +86,6 @@ remote: Compressing objects: 100% (194/194), done.
 remote: Total 3868 (delta 105), reused 242 (delta 60), pack-reused 3535
 Receiving objects: 100% (3868/3868), 2.26 MiB | 1.18 MiB/s, done.
 Resolving deltas: 100% (1865/1865), done.
-> cd jpf-core
-> git branch
-* master
 ```
 2. Build jpf-core with the Gradle wrapper (you do not need to install Gradle): inside the jpf-core directory, issue the following command.
 ```
@@ -162,7 +160,7 @@ loaded code:        classes=60,methods=1338
 
 ### jpf-label
 
-1. Clone [jpf-label](https://github.com/javapathfinder/jpf-label) using Git: go the directory where you want to put jpf-label and issue the following command.
+1. Clone [jpf-label](https://github.com/javapathfinder/jpf-label) using Git: go the directory where you want to put jpf-label (for example, the directory jpf mentioned above) and issue the following command.
 ```
 > git clone https://github.com/javapathfinder/jpf-label.git
 Cloning into 'jpf-label'...
@@ -192,7 +190,7 @@ to JPF's site.properties file.
 
 ### jpf-logic
 
-1. Clone jpf-ctl using Git: go the directory where you want to put jpf-ctl and issue the following command.
+1. Clone jpf-ctl using Git: go the directory where you want to put jpf-ctl (for example, the directory jpf mentioned above) and issue the following command.
 
 ```
 > git clone https://github.com/Lassonde-JPF/jpf-ctl.git
@@ -206,7 +204,7 @@ Resolving deltas: 100% (2260/2260), done.
 ```
 2. Switch to the jpf22 branch: inside the jpf-ctl directory, issue the following command.
 ```
-git checkout -b jpf22 origin/jpf22
+> git checkout -b jpf22 origin/jpf22
 Switched to a new branch 'jpf22'
 Branch 'jpf22' set up to track remote branch 'jpf22' from 'origin'.
 ```
@@ -231,15 +229,45 @@ to JPF's site.properties file.
 
 << how to use >>
 
+## Questions about jpf-logic
+
+If you have any questions about jpf-logic, check the [JPF Google group](https://groups.google.com/g/java-pathfinder/).  If you cannot find the answer, post your question there.
+
+## Contributing to SPF
+
+First install JPF and SPF, as described above.  
+
+
+
 ## Contributing to jpf-logic
 
-If you wish to contribute to jpf-ctl by addressing some of the [open issues](https://github.com/Lassonde-JPF/jpf-ctl-extension/issues) or suggesting new features, please note that we do not have time to review minor changes such as variable renames, spelling mistakes, etc. If you would wish to point these out, please create an issue rather than a pull request.
+First, install jpf-logic as described above.  Next, run the examples provided with jpf-logic.  
+
+### Add examples
+
+Add examples to the src/main/java/jpf/logic/examples/ directory of jpf-logic.
+
+### Tackle reported issues
+
+Tackle one of the reported [issues](https://github.com/Lassonde-JPF/jpf-ctl-extension/issues/).
+
+### Add tests
+
+Add tests to the src/tests/ directory of jpf-logic.
+
+### Add new features
+
+Add a new feature to jpf-logic.
+
+### How to contribute
 
 1. Fork ctl-jpf. 
 2. Create your feature branch (`git checkout -b feature/AmazingFeature`).
 3. Commit your changes (`git commit -m 'Add some AmazingFeature'`).
 4. Push to the branch (`git push origin feature/AmazingFeature`).
 5. Open a pull request.
+
+Please note that we do not have time to review minor changes such as variable renames, spelling mistakes, etc. If you would wish to point these out, please create an issue rather than a pull request.
 
 ## License
 
