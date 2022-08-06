@@ -224,6 +224,7 @@ BUILD SUCCESSFUL in 34s
 jpf-logic=/path/to/directory/of/jpf-ctl/
 ```
 to JPF's site.properties file.
+4. Add the path to the bin directory of jpf-ctl to the environment variable PATH.
 
 ## Using jpf-logic
 
@@ -305,7 +306,36 @@ return: ReturnedVoidMethod jpf.logic.examples.Main.main(java.lang.String[])
 (AG ! negative) && (AF return)
 ```
 
+As we already mentioned above, the second file specifies the Java app of which you want to check the property as well as some other details.  It is essential to set the property `target` to the fully qualified name of the Java app that is checked.  If the app needs command line arguments, then the property `target.args` should be set as well.  The `classpath' property should contain the path to the directory in which the bytecode of the app can be found.  For example, if the file Main.class can be found in the directory with path C:/Users/someone/Documents/jpf/jpf-ctl/build/classes/java/main/jpf/logic/examples/ then `classpath' should be set to C:/Users/someone/Documents/jpf/jpf-ctl/build/classes/java/main/.  The property `jpf.logic.formula` point to the file that contains the aliases and the formula such as the `property.txt` file described above.  Since jpf-logic only supports CTL at this time, the properties `jpf.logic.parser` and 
+`jpf.logic.model-checker` are set as in the example below.
 
+```
+# name of the app being checked
+target = jpf.logic.examples.Main
+# commandline arguments for the app
+target.args = 1,2,2
+
+# path to the directory in which the bytecode of the app can be found
+classpath = path/to/directory/bytecode/of/app
+
+# name of the file that contains the aliases and formula
+jpf.logic.formula = path/of/file/with/aliases/and/formula
+# class to parse the formula
+jpf.logic.parser = jpf.logic.ctl.CTLFormulaParser
+# class to model check
+jpf.logic.model-checker = jpf.logic.ctl.CTLModelChecker
+```
+
+Assume the above described file is named `Main.jpf`.  We can run jpf-logic by issuing the following command in the directory that contains the file `Main.jpf`.
+```
+> jpf-logic Main.jpf
+The formula does not hold
+```
+If we replace the formula `(AG ! negative) && (AF return)` with `AF return` and run jpf-logic again, we get the following.
+```
+> jpf-logic Main.jpf
+The formula holds
+```
 
 ## Questions about jpf-logic
 
