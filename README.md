@@ -227,17 +227,89 @@ to JPF's site.properties file.
 
 ## Using jpf-logic
 
-<< how to use >>
+To use jpf-logic, you need to create two files.  The one file specifies the property that you want to check and the other file specifies the Java app of which you want to check the property.  Let us first discuss the file that specifies the property.  Assume that this file is called `property.txt`.  Your `property.txt` file consists of two parts.  First, you specify the atomic propositions and their aliases.  We have introduced aliases so that the formulas become easier to read.  The following types of atomic proposition are currently supported.
+
+- `Initial`
+Labels the initial state.
+
+- `End`
+Labels the final states.
+
+- `BooleanStaticField <fully qualified name of a boolean static field> <boolean value>`
+For example, 
+`BooleanStaticField examples.Main.negative true`
+labels those states in which the boolean static field `examples.Main.negative` has the value true.
+
+- `BooleanLocalVariable <fully qualified name of the method in which the boolean local variable is declared> <parameter types of the method> : <name of the boolean local variable> <boolean value>`
+For example,
+`BooleanLocalVariable examples.Account.withdraw(double) : success true`
+labels those states in which the boolean local variable `success` of the method `examples.Account.withdraw(double)` has the value true.  (Note: a local variable only has a value within its scope.)
+
+- `InvokedMethod <fully qualified name of a method> <parameter types of the method>`
+For example,
+`InvokedMethod examples.Account.deposit(double)`
+labels those states in which the method `examples.Account.deposit(double)` is invoked.
+
+- `ReturnedVoidMethod <fully qualified name of a void method> <parameter types of the method>`
+For example,
+`ReturnedVoidMethod examples.Main.main(java.lang.String[])`
+labels those states in which the void method `examples.Main.main(java.lang.String[])` returns.
+
+- `ReturnedBooleanMethod <fully qualified name of a void method> <parameter types of the method> <boolean value>`
+For example,
+`ReturnedBooleanMethod examples.Account.withdraw(double) false`
+labels those states in which the method `examples.Account.withdraw(double)` returns the value false.
+
+- `ThrownException <fully qualified name of an exception class>`
+For example,
+`ThrownException java.lang.IllegalArgumentException`
+labels those states in which a `java.lang.IllegalArgumentException` is thrown.
+
+- `SynchronizedStaticMethod <fully qualified name of a synchronized static method> <parameter types of the method>`
+For example,
+`SynchronizedStaticMethod getNumberOfAccounts()`
+labels those states in which a thread acquires or releases the lock on the synchronized static method `getNumberOfAccounts()`.
+
+For example, the above introduced atomic propositions can be linked to aliases as follows.
+```
+negative: BooleanStaticField examples.Main.negative true
+mainReturns: ReturnedVoidMethod examples.Main.main(java.lang.String[])
+```
+
+In the second part of the `property.txt` file, you specify the property you want to check in terms of a temporal logic supported by jpf-logic.  For example, computation tree logic (CTL) is supported by jpf-logic.  Its syntax is captured by the following grammar in Bachus-Naur format.
+```
+formula ::
+      '(' formula ')'
+    | '!' formula
+    | 'true'
+    | 'false'
+    | ALIAS
+    | 'AX' formula
+    | 'AG' formula
+    | 'AF' formula
+    | 'EX' formula
+    | 'EG' formula
+    | 'EF' formula
+    | formula 'AU' formula
+    | formula 'EU' formula
+    | formula '&&' formula
+    | formula '||' formula
+    | formula '->' formula
+    | formula '<->' formula
+```
+For example, to express that the boolean static field `examples.Main.negative` is never true, we can use for CTL formula `AG ! negative`.  The CTL formula `AF mainReturns` captures that the method exampleClasses.Main.main(java.lang.String[]) always eventually returns.  Combining these two CTL formulas and adding them to the above atomic propositions and their aliases, we arrive at the following `property.txt` file.
+```
+negative: BooleanStaticField examples.Main.negative true
+mainReturns: ReturnedVoidMethod examples.Main.main(java.lang.String[])
+
+(AG ! negative) && (AF mainReturns)
+```
+
+
 
 ## Questions about jpf-logic
 
 If you have any questions about jpf-logic, check the [JPF Google group](https://groups.google.com/g/java-pathfinder/).  If you cannot find the answer, post your question there.
-
-## Contributing to SPF
-
-First install JPF and SPF, as described above.  
-
-
 
 ## Contributing to jpf-logic
 
