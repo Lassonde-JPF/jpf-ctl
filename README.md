@@ -49,12 +49,10 @@ Since jpf-logic relies on jpf-core, the core of JPF, and jpf-core currently supp
 
 ### Java
 
-Use [Java](https://www.oracle.com/ca-en/java/technologies/javase/javase8-archive-downloads.html)'s version 8 (we have successfully used 1.8.0_251, 1.8.0_281, and 1.8.0_301).  To check which version of Java (if any) is currently in use, issue the following command.
+Use [Java](https://www.oracle.com/ca-en/java/technologies/javase/javase8-archive-downloads.html)'s version 8 (we have successfully used 1.8.0_241, 1.8.0_251, 1.8.0_281, and 1.8.0_301).  To check which version of Java (if any) is currently in use, issue the following command.
 ```
-> java -version
-java version "1.8.0_251"
-Java(TM) SE Runtime Environment (build 1.8.0_251-b08)
-Java HotSpot(TM) 64-Bit Server VM (build 25.251-b08, mixed mode)
+> javac -version
+javac 1.8.0_241
 ```
 
 ### Git
